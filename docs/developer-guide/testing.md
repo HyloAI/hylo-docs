@@ -67,7 +67,7 @@ The rules and their reasons are in [repository structure](../design/repository-s
 | `testing.point_reach` | envs | hylo-core (`hylo.testing.point_reach`) |
 | `testing/reach-v0` | benchmarks | hylo-eval |
 | `testing.p_controller`, `testing.landmark` | agents | hylo-agents |
-| `testing.rule_landmark` | reasoners | hylo-agents |
+| `testing.rule_landmark` | reasoners | hylo-reasoners |
 | `testing.summary` | learners | hylo-core (`hylo.testing.learners`) |
 
 !!! warning "A test double, not an evaluation environment"

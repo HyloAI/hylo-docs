@@ -16,7 +16,8 @@ it; bench, serve, studio and plugins are leaves that use it.*
 |---|---|---|
 | Contracts and kernel | `hylo-core` | data contracts (EnvSpec, Observation, ActionChunk, TaskSpec, ...), behavioural contracts (Environment, Agent, ChunkPolicy, Guard, Learner, ...), the episode loop, the SafetyShield, events and traces, the plugin registry, experiment configs, store, formats |
 | Evaluation | `hylo-eval` | benchmarks and splits, the runner, scorers, paired statistics and gate tests |
-| Decision-making | `hylo-agents`, `hylo-policies`, `hylo-memory` | agents that run any policy (plain, temporal ensemble, steered), reference policies, memories, reasoners, instruments |
+| Decision-making | `hylo-agents`, `hylo-policies`, `hylo-memory`, `hylo-reasoners` | agents that run any policy (plain, temporal ensemble, steered), reference policies, memories, rule-based reasoners |
+| Instruments | `hylo-instruments` | success judges, chunk value models, world models: they measure or predict, never act |
 | Learning | `hylo-learn` | learner jobs, sealed artifacts, judge calibration and labelling, external data |
 | Improvement | `hylo-evolve` | campaigns: generators, the cascade, the sequential gate, approvals, active versions |
 | Catalog and CLI | `hylo-catalog`, `hylo-cli` | read-only queries over runs and campaigns; the harness's `hylo` commands |
@@ -125,7 +126,5 @@ artifact manifests, store ids, scorecards, `active.json`, the workcell API. A bo
 ## Not yet
 
 - No job layer: campaigns run in a foreground process, studio jobs are bare subprocesses (RFC-0005 part 6).
-- Every plugin contract is in hylo-core, one group per role; the hylo-agents package itself still holds decision-making
-  agents, instruments and rule-based reasoners together (RFC-0005 part 5).
 - No real robot has been connected; the robot path has run with a simulated arm.
 - Weight-level learning on LIBERO (self-training, RL fine-tuning) waits for a GPU.

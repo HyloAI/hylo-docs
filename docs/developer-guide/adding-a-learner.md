@@ -6,7 +6,7 @@ This tutorial covers the four ways to make Hylo learn, from a plugin package to 
 |---|---|---|---|
 | build a model from recorded runs | an offline **learner** | `Learner.fit(job) -> sealed artifact` | `policy.bc` / `flow` / `knn` / `tokens` (hylo-policies), `critic.chunk_value`, `world_model.state`, `judge.trace` (hylo-learn) |
 | learn by acting | an online **learner** | `OnlineLearner`: `start / policies / update / finished / seal` | `examples.cem` (hylo-plugins) |
-| measure or label episodes | an **instrument** (success judge) | `SuccessJudge.judge(trace) -> Judgement` | `judge.trace` (hylo-agents), `judge.vlm` |
+| measure or label episodes | an **instrument** (success judge) | `SuccessJudge.judge(trace) -> Judgement` | `judge.trace` (hylo-instruments), `judge.vlm` |
 | propose improvements | a candidate **generator** | `propose(diagnosis, cfg, parent_id, archive) -> [(Candidate, hypothesis)]` | `rule.gain`, `rule.steering`, `learn` (hylo-evolve), `llm.steering` |
 
 The steps were run while writing this page, in a scratch directory with its own store; the outputs are real. The
@@ -114,7 +114,7 @@ loads it, as in [adding a policy](adding-a-policy.md#6-a-learned-policy-weights-
 
 !!! tip "Learners with heavy dependencies"
     A learner that needs torch (the LeRobot ones) runs in that venv: `hylo learn job.json --python ...`, or `python:`
-    / `python_path:` in the `learn` generator below. hylo-learn is light (hylo-core and hylo-agents), so install it into
+    / `python_path:` in the `learn` generator below. hylo-learn is light (hylo-core and hylo-instruments), so install it into
     the model's venv.
 
 ## 2. An online learner

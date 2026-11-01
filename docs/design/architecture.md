@@ -100,13 +100,15 @@ layering inside and across them is enforced by `harness/dev/test_boundaries.py`:
 |---|---|---|---|
 | harness | hylo-core | contracts (incl. the policy contract `core.policy`), kernel, SafetyShield, trace, registry, remote protocols and wire codec, artifact provenance + split guard, conformance kit, every cross-repository format (active version, scorecard, workcell API), the `hylo` dispatcher | - |
 | harness | hylo-eval | evaluation engine: benchmark contract, splits and seeds, evaluation runner, scorers, paired statistics and gate tests | core |
-| harness | hylo-agents | runtime only: steering, memory / critic / noise steering, skills, planner, judges, world-model environment, shadow agent | core |
+| harness | hylo-agents | decision-making only: steering, memory / critic / noise steering, skills, planner, shadow agent, baselines | core (instruments, reasoners as optional extras) |
+| harness | hylo-instruments | models that measure or predict, never act: success judges, chunk value models, world models (and the world-model environment) | core |
+| harness | hylo-reasoners | rule-based reasoners and choosers (`hylo.reasoners.rules`; the LLM ones are in the reasoner-llm adapter) | core |
 | harness | hylo-memory | action / noise banks, skill library, lesson book | core |
-| harness | hylo-policies | reference policies, one per family (kNN, BC, flow matching, tokens, MPC) and their learners | core, agents |
-| harness | hylo-learn | offline: learner jobs, calibration and labelling, external-data ingestion, learners for runtime components | core, eval, agents |
+| harness | hylo-policies | reference policies, one per family (kNN, BC, flow matching, tokens, MPC) and their learners | core, instruments |
+| harness | hylo-learn | offline: learner jobs, calibration and labelling, external-data ingestion, learners for runtime components | core, eval, instruments |
 | harness | hylo-evolve | improvement protocol (cascade, gate, registry, campaigns, active.json, prescreen, shadow config) and rule / learning proposers | core, eval, learn |
 | harness | hylo-catalog | read-only query API over runs, episodes, comparisons, campaigns, artifacts, skills, lessons, memories | core, eval |
-| harness | hylo-cli | the harness's `hylo` subcommands (run, evolve, learn, calibrate, ...) | core, eval, agents, memory, evolve, learn |
+| harness | hylo-cli | the harness's `hylo` subcommands (run, evolve, learn, calibrate, ...) | core, eval, agents, instruments, reasoners, memory, evolve, learn |
 | harness | adapters | policy-lerobot, policy-openpi, reasoner-llm (runtime LLM / VLM), proposer-llm (evolve-time LLM proposer and reflector), data-video | core and the layer they plug into |
 | bench | hylo-bench | protocols, scorecards, leaderboards, pairwise comparison (`hylo bench`) | core, eval |
 | bench | env-libero, env-mujoco | benchmark suites and their environments | core, eval |
@@ -153,7 +155,12 @@ Privileged state (ground-truth poses, etc.) enters only the Trace via `Privilege
 Benchmark (versioned TaskSpec set + protocol) → EvaluationRunner → Kernel → Trace → Scorer → EvalLog.
 The `train / validation / heldout` three-way split is a first-class concept, and seeds must not be reused across splits (checked at construction) **[Validated in prototype]**.
 
-### 3.4 Intelligence Layer (`hylo-agents`)
+### 3.4 Intelligence Layer (`hylo-agents`, `hylo-instruments`, `hylo-reasoners`)
+
+Decision-making agents are in hylo-agents, which installs with hylo-core alone (what a robot computer needs). Models
+that measure or predict but never act (success judges, chunk value models, world models) are in hylo-instruments;
+rule-based reasoners and choosers in hylo-reasoners. An agent that consults one of them (the critic-steered agent, the
+composable agents) imports it only when it is built: extras `hylo-agents[critic]` and `hylo-agents[rules]`.
 
 The Kernel only calls `Agent.reset/act/on_step/on_episode_end`. The reference implementation `ComposableAgent` composes:
 - **Reasoner** (slow, event-triggered) → `Decision` (subgoal/skill/abort)

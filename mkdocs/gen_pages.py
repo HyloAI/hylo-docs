@@ -192,8 +192,9 @@ def formats() -> None:
 
 # ---------------------------------------------------------------- API reference, one page per package
 PACKAGES = {  # repository -> package directories, in the order of the nav
-    "harness": ["packages/hylo-core", "packages/hylo-eval", "packages/hylo-agents", "packages/hylo-memory", "packages/hylo-learn",
-                "packages/hylo-evolve", "packages/hylo-catalog", "packages/hylo-policies", "packages/hylo-cli",
+    "harness": ["packages/hylo-core", "packages/hylo-eval", "packages/hylo-agents", "packages/hylo-instruments",
+                "packages/hylo-reasoners", "packages/hylo-memory", "packages/hylo-learn", "packages/hylo-evolve",
+                "packages/hylo-catalog", "packages/hylo-policies", "packages/hylo-cli",
                 "adapters/hylo-policy-lerobot", "adapters/hylo-policy-openpi", "adapters/hylo-reasoner-llm",
                 "adapters/hylo-proposer-llm", "adapters/hylo-data-video"],
     "bench": ["packages/hylo-bench", "adapters/hylo-env-mujoco", "adapters/hylo-env-libero"],

@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| Status | Parts 1 and 3 implemented (2026-10-31); parts 2 and 4 implemented, part 5 partly (2026-11-01); part 6 proposed |
+| Status | Parts 1 and 3 implemented (2026-10-31); parts 2, 4 and 5 implemented (2026-11-01); part 6 proposed |
 | Scope | hylo-harness (hylo-core, hylo-eval, hylo-agents), hylo-bench, hylo-serve, deployments |
 | Builds on | RFC-0001 (contracts), RFC-0002 (gate), RFC-0004 (artifacts), design/repository-structure.md |
 
@@ -119,11 +119,41 @@ Six structural problems found in the code on 2026-10-31, ordered by how much the
   run manifests and campaign archives): 59 implemented, 23 unverified, 6 test doubles (e.g. unverified: openpi, the
   generic memory / noise steering agents, the experience, learn, critic and self-training generators, lesson books
   and skill libraries, the VLM judge), 1 needs-hardware (`lerobot.robot`: it has run with the simulated arm only).
+- Verification round (2026-11-01, runs in the store under `maturity-20261101/`; each plugin's note names its
+  evidence): 17 of the 23 became `implemented`, giving 76 implemented, 6 unverified, 6 test doubles,
+  1 needs-hardware (18 distributions). Three already had recorded runs: `judge.vlm` (calibrated, not ready to
+  label), `llm.reflector` and `lerobot.dataset`. The others were run end to end:
+  - `sqlite`, `planner.identity` and `planner.subgoal` in experiment runs.
+  - `sign` and `paired_permutation` as the gate test of MuJoCo campaigns.
+  - `shadow` through `hylo evolve shadow`.
+  - `world_model` as a campaign pre-screen, with a state model retrained on MuJoCo reach.
+  - `experience`, `lesson_book`, `skill_library` and `skills`: two experience campaigns on a flow policy, where an
+    `llm.steering` candidate was promoted (held-out 0.775 vs 0.40), became a verified skill and was applied by the
+    skills agent in 80 of 80 episodes.
+  - `learn`, which retrained the flow policy inside a campaign.
+  - `video.files`: 40 mp4 files, then 16 judge labels, all correct.
+  - `planner.llm` on LIBERO-10: it ran, 1 of 10 succeeded.
+
+  Generic plugins were verified on MuJoCo, and the notes say so. Still unverified, with the reason in the note:
+  - `openpi`: needs a policy server and checkpoint.
+  - the two expert-iteration plugins: smoke run only; a real run needs a GPU.
+  - the `critic.chunk_value` generator: its target is LIBERO, where the offline accuracy was below its proposal
+    floor.
+  - `memory.steered` and `noise.steered` by name: only PriorLeRobotSampler implements the prior protocol they need,
+    and their LeRobot variants have run.
+
+  Found on the way:
+  - Skill derivation recognises only the remote layout's steering path (`agent.params.params.steering`), while
+    `SkillAgent` looks for the SteeredAgent in its own process. A skills agent must therefore run inside the remote
+    process that holds the steered agent.
+  - `hylo evolve shadow` defaults to the experiment's split, which an `rsi` protocol benchmark does not have
+    (KeyError on `validation`).
+  - `video.files` needs the `ffmpeg` extra, which the workspace venv did not install.
   Weights: LeRobot checkpoints per model card (PaliGemma-based pi0 / pi0.5 under the Gemma Terms of Use), openpi
   checkpoints under the Gemma Terms of Use, LLM plugins under the served model's licence.
 - Not yet: studio does not show maturity and licence next to the components it runs.
 
-## Part 5: contracts in hylo-core, one plugin group per role (partly implemented, 2026-11-01)
+## Part 5: contracts in hylo-core, one plugin group per role (implemented, 2026-11-01)
 
 Done:
 
@@ -140,11 +170,22 @@ Done:
   standard splits (`improvement_cycle`, used by the demos) takes the same `Proposer` as campaigns; `rule.gain`
   gained `adaptive` (scale up on timeouts, down on oscillation or safety aborts).
 
-Not done:
-
-- Splitting the hylo-agents package itself: hylo-agents (decision-making), hylo-instruments (judges, value models,
-  world models), hylo-reasoners (rule-based reasoners). With the contracts in core this is a packaging change only;
-  it matters once the robot computer should install decision-making alone.
+- The hylo-agents package is split in three (2026-11-01):
+  - hylo-agents: decision-making only.
+  - hylo-instruments (`hylo.instruments`): success judges (`judge.trace`), chunk value models (the critic model) and
+    world models (with the `world_model` environment).
+  - hylo-reasoners (`hylo.reasoners.rules`): the rule-based reasoner and chooser. `hylo.reasoners` stays a namespace
+    shared with hylo-reasoner-llm.
+  - `CriticSteeredAgent` stays in hylo-agents and loads the critic model when it is built; the composable agents load
+    their rule-based reasoner the same way. These are optional extras (`hylo-agents[critic]`, `hylo-agents[rules]`),
+    so hylo-agents installs with hylo-core alone. Checked in a fresh venv with only those two packages: every
+    `hylo.agents` module imports, and `composable.object_reach` fails with `No module named 'hylo.reasoners'`.
+  - hylo-learn and hylo-policies now depend on hylo-instruments instead of hylo-agents, and hylo-cli installs the
+    two extras.
+  - Plugin names did not change. Module paths did: `hylo.agents.{judges,world_model}` moved to
+    `hylo.instruments.*`, the critic model to `hylo.instruments.critic`, and `hylo.agents.{reasoner,object_reasoner}`
+    to `hylo.reasoners.rules.{landmark,objects}`. No compatibility shims are kept: every in-repo reference is
+    updated, and stored artifacts and run manifests refer to plugins by name.
 
 ## Part 6: a job layer (proposed)
 
