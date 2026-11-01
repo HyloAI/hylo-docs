@@ -4,7 +4,7 @@ hylo-bench scores policies. A **protocol** fixes everything about an evaluation 
 policy under it writes a **scorecard**. Scorecards of one protocol form a **leaderboard**, and any two of them can
 be compared episode by episode.
 
-![The mujoco-reach leaderboard: success rate with 95% Wilson intervals for eight policies](../assets/figures/leaderboard-mujoco-reach.png){ .wc-figure }
+![The mujoco-reach leaderboard: success rate with 95% Wilson intervals for eight policies](../assets/figures/leaderboard-mujoco-reach.png){ .hylo-figure }
 
 *The mujoco-reach leaderboard of the reference policies: 100 held-out episodes each, 95% Wilson intervals.*
 
@@ -74,7 +74,7 @@ uv run hylo bench compare scorecards/mujoco-reach/ik-0.3.json scorecards/mujoco-
 All options: [CLI reference](../cli/index.md#hylo-bench). Next: [protocols](protocols.md) and
 [leaderboards](leaderboard.md).
 
-![The MuJoCo scenes used by the protocols and examples](../assets/figures/mujoco-scenes.png){ .wc-figure }
+![The MuJoCo scenes used by the protocols and examples](../assets/figures/mujoco-scenes.png){ .hylo-figure }
 
 *The MuJoCo environments of hylo-env-mujoco: planar reach (the mujoco-reach protocol) and the table scene of the
 examples.*

@@ -6,7 +6,7 @@ and promotes at most one, only when a confirmatory paired test on yet other init
 held-out split that no decision ever reads reports the result. This is the RFC-0002 protocol
 ([RFC-0002](../rfcs/RFC-0002-physical-rsi.md)).
 
-![The improvement loop](../assets/diagrams/improvement-loop.svg){ .wc-figure }
+![The improvement loop](../assets/diagrams/improvement-loop.svg){ .hylo-figure }
 
 *One cycle: diagnose the parent on `search`, propose, check at stage 0, select on `search_val`, confirm on `gate`,
 report on `heldout`, approve, promote. The promoted candidate is the next cycle's parent.*
@@ -31,7 +31,7 @@ approval: auto
 out_dir: runs/evolve/mujoco-reach-gain
 ```
 
-![MuJoCo gain campaign](../assets/figures/campaign-mujoco-reach-gain.png){ .wc-figure }
+![MuJoCo gain campaign](../assets/figures/campaign-mujoco-reach-gain.png){ .hylo-figure }
 
 *This campaign on this project's workstation: in cycle 1 the parent (`kp: 0.02`) succeeds on 0.40 of the held-out
 episodes, the promoted candidate on 1.00 (24 wins, 0 losses over 40 pairs, p = 6e-8). Cycle 2 finds nothing better
@@ -54,7 +54,7 @@ and the campaign stops.*
 
 ## Splits
 
-![RFC-0002 splits](../assets/diagrams/splits.svg){ .wc-figure }
+![RFC-0002 splits](../assets/diagrams/splits.svg){ .hylo-figure }
 
 The benchmark must provide the four RFC-0002 splits (`benchmark.params.protocol: rsi`). Each has one reader:
 
@@ -159,7 +159,7 @@ uv run hylo evolve shadow runs/evolve/my-campaign --candidate cand-9147236d7d
 Studio shows campaigns, their archives and pending approvals, and lets an approver approve or roll back
 ([studio](studio.md)).
 
-![A campaign in studio](../assets/figures/studio-campaign.png){ .wc-figure }
+![A campaign in studio](../assets/figures/studio-campaign.png){ .hylo-figure }
 
 ## LIBERO-10 campaigns
 

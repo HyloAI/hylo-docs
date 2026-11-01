@@ -5,7 +5,7 @@ run and every sealed artifact has a global id; configs name ids, and each machin
 ([RFC-0005](../rfcs/RFC-0005-architecture-measurement-and-placement.md), part 2). The store also refuses to delete
 anything that something else still refers to, and copies runs and artifacts between machines.
 
-![Store ids, references and sync](../assets/diagrams/store.svg){ .wc-figure }
+![Store ids, references and sync](../assets/diagrams/store.svg){ .hylo-figure }
 
 *Ids name content; the index records what each artifact was built from and what each campaign refers to; push and
 pull copy entries between machines.*

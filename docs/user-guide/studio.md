@@ -8,7 +8,7 @@ The playground reads runs and campaigns through the harness's catalog, runs `hyl
 a person would type, with the same checks), and talks to workcells through the workcell API. It never sends
 actions to a robot.
 
-![The runs page: every recorded run with its benchmark, split, success and episodes](../assets/figures/studio-runs.png){ .wc-figure }
+![The runs page: every recorded run with its benchmark, split, success and episodes](../assets/figures/studio-runs.png){ .hylo-figure }
 
 ## Starting it
 
@@ -49,7 +49,7 @@ The runs page lists every run under the runs directory (benchmark, split, agent,
 split or text. Opening an episode replays it from its trace: camera frames, executed actions, chunk boundaries, safety
 interventions, and the success judge's estimate along the episode.
 
-![Episode replay: camera frames, actions, chunk boundaries and the judge's progress estimate](../assets/figures/studio-episode.png){ .wc-figure }
+![Episode replay: camera frames, actions, chunk boundaries and the judge's progress estimate](../assets/figures/studio-episode.png){ .hylo-figure }
 
 ### Compare
 
@@ -65,7 +65,7 @@ group-sequential gate statistics, vetoes, the promotion ledger and the active ve
 (`hylo evolve approve`); the active version can be rolled back with a reason (`hylo evolve rollback`). Both need the
 approver role.
 
-![A campaign: cycles, candidates and gate statistics](../assets/figures/studio-campaign.png){ .wc-figure }
+![A campaign: cycles, candidates and gate statistics](../assets/figures/studio-campaign.png){ .hylo-figure }
 
 ### Live sandbox
 

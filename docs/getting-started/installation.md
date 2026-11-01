@@ -9,7 +9,7 @@ harness is the base; bench, serve, studio and plugins are leaves on top of it (s
 - [uv](https://docs.astral.sh/uv/);
 - no GPU: everything here runs on CPU.
 
-![The Hylo repositories](../assets/diagrams/repositories.svg){ .wc-figure }
+![The Hylo repositories](../assets/diagrams/repositories.svg){ .hylo-figure }
 
 *The harness is the only base. Leaves never import each other; they cooperate through formats defined in hylo-core.*
 

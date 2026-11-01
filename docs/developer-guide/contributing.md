@@ -4,7 +4,7 @@ Hylo is several repositories developed together: the harness (the base) and the 
 (bench, serve, studio, plugins), plus this documentation and the deployments template
 ([repository structure](../design/repository-structure.md)). This page is how to work on them.
 
-![The repositories and how they depend on each other](../assets/diagrams/repositories.svg){ .wc-figure }
+![The repositories and how they depend on each other](../assets/diagrams/repositories.svg){ .hylo-figure }
 
 ## The development workspace
 

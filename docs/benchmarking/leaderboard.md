@@ -80,7 +80,7 @@ uv run python bench/examples/policies/compare.py --out runs/policies
 uv run hylo bench leaderboard runs/policies/scorecards
 ```
 
-![The mujoco-reach leaderboard](../assets/figures/leaderboard-mujoco-reach.png){ .wc-figure }
+![The mujoco-reach leaderboard](../assets/figures/leaderboard-mujoco-reach.png){ .hylo-figure }
 
 The recorded result (mujoco-reach v1, scorecards with protocol digest `5e0c57ef414a0b21`, written before the rename to Hylo; see [protocols](protocols.md#the-digest)):
 

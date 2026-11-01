@@ -17,7 +17,7 @@ the approved version on a robot, with one set of contracts from simulation to ha
 
 </div>
 
-![Hylo layers: simulators, robots and models reach the harness through adapters; bench, serve, studio and plugins build on the harness](assets/diagrams/architecture.svg){ .wc-figure }
+![Hylo layers: simulators, robots and models reach the harness through adapters; bench, serve, studio and plugins build on the harness](assets/diagrams/architecture.svg){ .hylo-figure }
 
 ## What it does
 

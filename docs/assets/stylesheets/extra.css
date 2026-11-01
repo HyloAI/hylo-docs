@@ -20,13 +20,13 @@
   --hylo-hw: #c4b5fd;
   --hylo-figure-bg: #f8fafc;
 }
-.wc-badge { font-weight: 600; white-space: nowrap; }
-.wc-ok { color: var(--hylo-ok); }
-.wc-warn { color: var(--hylo-warn); }
-.wc-hw { color: var(--hylo-hw); }
+.hylo-badge { font-weight: 600; white-space: nowrap; }
+.hylo-ok { color: var(--hylo-ok); }
+.hylo-warn { color: var(--hylo-warn); }
+.hylo-hw { color: var(--hylo-hw); }
 
 /* diagrams and figures are drawn on white; in dark mode they sit on a light card */
-.md-typeset img.wc-figure, .md-typeset figure img {
+.md-typeset img.hylo-figure, .md-typeset figure img {
   background: var(--hylo-figure-bg);
   border-radius: 6px;
   padding: 6px;
@@ -35,9 +35,9 @@
 .md-typeset figcaption { max-width: 46rem; font-size: .72rem; color: var(--md-default-fg-color--light); }
 
 /* home page */
-.wc-hero { padding: 1.2rem 0 .4rem; }
-.wc-hero h1 { margin-bottom: .3rem; font-weight: 700; letter-spacing: -.01em; }
-.wc-hero p.wc-tagline { font-size: 1.05rem; max-width: 40rem; color: var(--md-default-fg-color--light); }
+.hylo-hero { padding: 1.2rem 0 .4rem; }
+.hylo-hero h1 { margin-bottom: .3rem; font-weight: 700; letter-spacing: -.01em; }
+.hylo-hero p.hylo-tagline { font-size: 1.05rem; max-width: 40rem; color: var(--md-default-fg-color--light); }
 .md-typeset .grid.cards > ul > li { border-radius: 8px; }
 .md-typeset table:not([class]) { font-size: .72rem; }
 [data-md-color-scheme="slate"] .md-typeset .md-button:not(.md-button--primary) {

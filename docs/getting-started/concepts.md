@@ -3,7 +3,7 @@
 The vocabulary used throughout Hylo. Each entry names the code that defines it; the other pages assume these
 meanings.
 
-![Architecture](../assets/diagrams/architecture.svg){ .wc-figure }
+![Architecture](../assets/diagrams/architecture.svg){ .hylo-figure }
 
 *Contracts and the kernel in hylo-core; evaluation, agents, memory, learning and campaigns on top; adapters connect
 simulators, robots and policy stacks; the leaf repositories use all of it through the same formats.*
@@ -29,7 +29,7 @@ Benchmark, task, split
     `search_val` (candidate selection), `gate` (confirmation, plus `gate_r1`, ... for further looks) and `heldout`
     (report only). Learners read only `search` and `search_val`.
 
-![RFC-0002 splits](../assets/diagrams/splits.svg){ .wc-figure }
+![RFC-0002 splits](../assets/diagrams/splits.svg){ .hylo-figure }
 
 Environment
 :   A simulator or a robot behind `core.env.Environment`: `spec()`, `reset(task)`, `step(action)`, `close()`.

@@ -11,7 +11,7 @@ Safety never depends on the network: if the policy server is slow the arm holds,
 watchdog aborts the episode, and an e-stop is latched in the workcell until an operator clears it. The playground in
 [studio](studio.md) is the control plane: it starts episodes and relays operator input, but never sends actions.
 
-![Deployment topology: control plane, workcell next to the robot, policy server on the GPU machine](../assets/diagrams/deployment.svg){ .wc-figure }
+![Deployment topology: control plane, workcell next to the robot, policy server on the GPU machine](../assets/diagrams/deployment.svg){ .hylo-figure }
 
 *Who talks to whom: the control plane calls the workcell API; the workcell calls the policy server; episodes are
 recorded where the robot is and copied to the workstation through the store.*
@@ -96,7 +96,7 @@ The workcell runs the same episode loop as evaluation: `core.kernel.EpisodeRunne
 ([RFC-0005 part 3](../rfcs/RFC-0005-architecture-measurement-and-placement.md)). A benchmark can therefore measure
 exactly what a workcell runs (`timing: {mode: realtime}` in an experiment or protocol).
 
-![Sync and realtime episode loops: in realtime the arm keeps executing while the next chunk is computed](../assets/diagrams/episode-loop.svg){ .wc-figure }
+![Sync and realtime episode loops: in realtime the arm keeps executing while the next chunk is computed](../assets/diagrams/episode-loop.svg){ .hylo-figure }
 
 *Sync: the world waits for every policy call. Realtime: the next chunk is requested while the current one still
 executes; actions that went stale during inference are dropped, and gaps are held.*

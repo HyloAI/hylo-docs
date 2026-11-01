@@ -101,7 +101,7 @@ runtime's for a one-off. None of them enter the digest. Component processes talk
 
 ## Timing: sync and realtime
 
-![Sync and realtime episode loops](../assets/diagrams/episode-loop.svg){ .wc-figure }
+![Sync and realtime episode loops](../assets/diagrams/episode-loop.svg){ .hylo-figure }
 
 *In sync mode the world waits for every chunk. In realtime mode it keeps moving while the next chunk is computed;
 actions that went stale are dropped and the hold action fills any gap.*

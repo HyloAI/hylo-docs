@@ -5,7 +5,7 @@ weak controller through the gate. Everything is MuJoCo planar reach: a two-link 
 target. It needs [the development workspace](installation.md) with harness and bench; nothing here needs LIBERO, a
 GPU or downloaded weights.
 
-![MuJoCo planar reach and table reach](../assets/figures/mujoco-scenes.png){ .wc-figure }
+![MuJoCo planar reach and table reach](../assets/figures/mujoco-scenes.png){ .hylo-figure }
 
 *The MuJoCo environments in bench: planar reach (left) and table reach.*
 
@@ -157,7 +157,7 @@ uv run hylo playground --repo bench          # http://127.0.0.1:8765
 `--repo` is the directory whose `runs/`, `examples/configs` and `examples/evolve` the UI shows and runs jobs in.
 See [studio](../user-guide/studio.md).
 
-![Runs in studio](../assets/figures/studio-runs.png){ .wc-figure }
+![Runs in studio](../assets/figures/studio-runs.png){ .hylo-figure }
 
 ## Next
 

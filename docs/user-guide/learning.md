@@ -19,7 +19,7 @@ the two trust paths are separate.
 
 ## The split guard
 
-![RFC-0002 splits](../assets/diagrams/splits.svg){ .wc-figure }
+![RFC-0002 splits](../assets/diagrams/splits.svg){ .hylo-figure }
 
 *Learners read only the development splits. Gate and held-out runs are refused when a job starts, refused again when
 an artifact is sealed, and checked again by the gate for every artifact a candidate references.*

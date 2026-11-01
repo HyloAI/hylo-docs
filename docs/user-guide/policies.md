@@ -102,7 +102,7 @@ learner params: `chunk` (default 8), `seed`, `epochs`, `hidden`, `execution_step
     `mujoco_policy_flow_steered.yaml` references the sampler as `artifact:policy.flow`: without a digest, the one
     artifact with that name in the store; the run's manifest pins the full id it used.
 
-![mujoco-reach leaderboard](../assets/figures/leaderboard-mujoco-reach.png){ .wc-figure }
+![mujoco-reach leaderboard](../assets/figures/leaderboard-mujoco-reach.png){ .hylo-figure }
 
 *`compare.py` on this project's workstation: 120 demonstration episodes from the search and search_val splits;
 the mujoco-reach protocol (100 held-out episodes on seeds never used for learning); 95% Wilson intervals.*
@@ -154,7 +154,7 @@ before reading a difference into them: flow + steering against bc, for example, 
     `ws://127.0.0.1:8000`, and an input `preset`, default `libero`). It is **unverified** here: no openpi server
     and checkpoint have been run with it yet.
 
-![SmolVLA on LIBERO-10](../assets/figures/libero-episode-strip.png){ .wc-figure }
+![SmolVLA on LIBERO-10](../assets/figures/libero-episode-strip.png){ .hylo-figure }
 
 *SmolVLA (`lerobot/smolvla_libero`) on a LIBERO-10 task, every 10th camera frame of one episode.*
 

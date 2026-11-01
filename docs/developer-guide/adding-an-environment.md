@@ -150,7 +150,7 @@ diagnosis and learning), `search_val` (a..b-1, selection), `gate` (b..c-1, the p
 (c..n-1, reported only). `replicates` adds noise replicates of every init state, and `gate_looks > 1` adds
 `gate_r1`, `gate_r2`, ... for the sequential gate. See [splits](../user-guide/campaigns.md#splits).
 
-![RFC-0002 splits](../assets/diagrams/splits.svg){ .wc-figure }
+![RFC-0002 splits](../assets/diagrams/splits.svg){ .hylo-figure }
 
 How the references do it:
 

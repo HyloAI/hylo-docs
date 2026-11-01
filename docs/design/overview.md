@@ -5,7 +5,7 @@ them to robots, behind one set of contracts. This page is the map: the layers, t
 from runs to deployed versions, and the decisions behind them. The full design is in
 [architecture](architecture.md); the decisions are recorded in the [RFCs](../rfcs/index.md).
 
-![Layers: contracts and kernel in hylo-core; evaluation, agents, memory, learning, improvement and catalog on top; the leaf repositories above](../assets/diagrams/architecture.svg){ .wc-figure }
+![Layers: contracts and kernel in hylo-core; evaluation, agents, memory, learning, improvement and catalog on top; the leaf repositories above](../assets/diagrams/architecture.svg){ .hylo-figure }
 
 *The harness is the base: hylo-core defines the contracts and runs every episode; the other harness packages build on
 it; bench, serve, studio and plugins are leaves that use it.*
@@ -41,7 +41,7 @@ part of what an experiment measures:
   inference are dropped, gaps are held, a watchdog aborts after too many holds; on a virtual clock (deterministic,
   for benchmarks) or the wall clock (a real control loop).
 
-![Sync and realtime timing of the episode loop](../assets/diagrams/episode-loop.svg){ .wc-figure }
+![Sync and realtime timing of the episode loop](../assets/diagrams/episode-loop.svg){ .hylo-figure }
 
 *The same loop in both modes. A benchmark in realtime timing measures what a robot will run: on LIBERO-10 the
 first reading was 0.20 success in sync and 0.05 in realtime for the same policy and episodes (20 episodes; not yet
@@ -53,7 +53,7 @@ Replay, scoring, judges, learners and the catalog all read these traces.
 
 ## From runs to deployed versions
 
-![Data flow: runs and traces feed learners; sealed artifacts and config patches become candidates; the gate decides; an approved version becomes active and is served to robots](../assets/diagrams/improvement-loop.svg){ .wc-figure }
+![Data flow: runs and traces feed learners; sealed artifacts and config patches become candidates; the gate decides; an approved version becomes active and is served to robots](../assets/diagrams/improvement-loop.svg){ .hylo-figure }
 
 1. **Runs.** An experiment ([config](../user-guide/experiments.md)) runs a benchmark split and records traces and an
    `evallog.json`. A protocol fixes everything but the policy and writes a [scorecard](../benchmarking/index.md).
@@ -73,7 +73,7 @@ Replay, scoring, judges, learners and the catalog all read these traces.
 6. **Deployment.** A workcell runs the active version on the robot through the same loop; its episodes are recorded
    as runs and flow back through the store ([deployment](../user-guide/deployment.md)).
 
-![Splits: search and search_val for development, gate for decisions, heldout only for reporting](../assets/diagrams/splits.svg){ .wc-figure }
+![Splits: search and search_val for development, gate for decisions, heldout only for reporting](../assets/diagrams/splits.svg){ .hylo-figure }
 
 *The split guard: learners and generators read development splits only; the gate decides on its own split; held-out
 data is never read by anything that is gated on it. Builders refuse forbidden splits, and the gate re-checks the
@@ -91,11 +91,11 @@ components run is not part of it ([RFC-0005 part 1](../rfcs/RFC-0005-architectur
 - the digest is taken over the ids and names, so the same experiment has the same digest on the workstation, the
   GPU machine and the robot computer.
 
-![The store: ids for runs and artifacts, provenance links, push and pull between machines](../assets/diagrams/store.svg){ .wc-figure }
+![The store: ids for runs and artifacts, provenance links, push and pull between machines](../assets/diagrams/store.svg){ .hylo-figure }
 
 ## Repositories
 
-![The repositories: the harness is the base, the leaves depend on it only](../assets/diagrams/repositories.svg){ .wc-figure }
+![The repositories: the harness is the base, the leaves depend on it only](../assets/diagrams/repositories.svg){ .hylo-figure }
 
 | Repository | Holds | Depends on |
 |---|---|---|

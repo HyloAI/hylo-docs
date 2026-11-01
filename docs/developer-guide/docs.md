@@ -58,7 +58,7 @@ of failing the build.
 - Reference them with the `hylo-figure` class, which gives them a light card in dark mode, and an italic caption:
 
 ```markdown
-![The improvement loop](../assets/diagrams/improvement-loop.svg){ .wc-figure }
+![The improvement loop](../assets/diagrams/improvement-loop.svg){ .hylo-figure }
 
 *One campaign cycle: diagnose, propose, screen, gate, approve.*
 ```

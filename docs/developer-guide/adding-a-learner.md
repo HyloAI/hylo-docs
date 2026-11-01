@@ -12,7 +12,7 @@ This tutorial covers the four ways to make Hylo learn, from a plugin package to 
 The steps were run while writing this page, in a scratch directory with its own store; the outputs are real. The
 background is in [learning](../user-guide/learning.md) and [campaigns](../user-guide/campaigns.md).
 
-![The improvement loop](../assets/diagrams/improvement-loop.svg){ .wc-figure }
+![The improvement loop](../assets/diagrams/improvement-loop.svg){ .hylo-figure }
 
 ## The rules every learner follows
 
