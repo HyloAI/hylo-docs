@@ -1,0 +1,6 @@
+# Third-party sources are kept out of our history; provenance is tracked in references/MANIFEST.md
+references/*/*/
+references/*/*.err
+
+.venv/
+__pycache__/
