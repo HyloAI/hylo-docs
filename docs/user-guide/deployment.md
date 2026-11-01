@@ -1,222 +1,251 @@
 # Deployment
 
-hylo-serve runs policies next to robots. Two services split the work:
+This page takes you from a simulated arm to a real one, and back to the recorded episodes on your workstation. A
+reference section follows the steps. Commands run from the workspace directory unless a step says otherwise.
 
-- a **policy server** (`hylo serve policy`) runs an agent, usually on a GPU machine, and answers observations with
-  action chunks;
-- a **workcell** (`hylo serve workcell`) runs next to the robot or simulator. It owns the environment, the
-  SafetyShield, the episode loop and the trace, and reaches the policy over the network.
+Two services and a control plane split the work:
 
-Safety never depends on the network: if the policy server is slow the arm holds, if it stops answering the
-watchdog aborts the episode, and an e-stop is latched in the workcell until an operator clears it. The playground in
-[studio](studio.md) is the control plane: it starts episodes and relays operator input, but never sends actions.
+- A **policy server** (`hylo serve policy`) runs an agent, usually on a GPU machine, and answers observations with
+  action chunks.
+- A **workcell** (`hylo serve workcell`) runs next to the robot or simulator. It owns the environment, the episode
+  loop with its safety shield, and the trace. It reaches the policy server over a WebSocket.
+- **Studio** (`hylo playground`) is the control plane. It starts episodes and relays operator input over HTTP. It
+  never sends actions.
 
-![Deployment topology: control plane, workcell next to the robot, policy server on the GPU machine](../assets/diagrams/deployment.svg){ .hylo-figure }
+![Deployment topology: Studio and the store on the workstation; the workcell, with the episode loop and the safety shield, on the robot computer; the policy server on a GPU box](../assets/diagrams/deployment.svg){ .hylo-figure }
 
-*Who talks to whom: the control plane calls the workcell API; the workcell calls the policy server; episodes are
-recorded where the robot is and copied to the workstation through the store.*
+*The workcell's runs are copied to the store on the workstation.*
 
-serve's packages depend on `hylo-core` only, so a robot computer installs nothing else.
+With `clock: wall` ([step 2](#step-2-set-up-the-robot-computer)), the workcell handles a slow network on its own: if
+the policy server is slow, the arm holds its position, and if it stops answering, the watchdog ends the episode. An
+e-stop stays latched in the workcell until an operator clears it. Where these layers stop is on the
+[safety](safety.md#on-a-real-robot) page.
 
-## Policy server
+## Step 1: bring up without hardware
 
-```bash
-uv run hylo serve policy --agent '{"type": "bringup.wave", "params": {"amplitude": 12, "horizon": 15}}' --port 8002
-uv run hylo serve policy --config bench/examples/configs/libero10_steered.yaml --port 8001   # the config's agent
-uv run hylo serve policy --campaign runs/evolve/libero10-steering --port 8001               # a campaign's active version
-```
-
-| Option | Default | Meaning |
-|---|---|---|
-| `--agent JSON` / `--config FILE` / `--campaign DIR` | (one required) | what to serve: an agent spec, an experiment config's agent, or a campaign's active version |
-| `--host` | `127.0.0.1` | bind address; `0.0.0.0` exposes it on the network |
-| `--port` | `8000` | |
-| `--token` | none | require `Authorization: Bearer <token>` (or openpi's `Api-Key <token>`) |
-| `--openpi-inputs` | `libero` | preset name, or a JSON mapping from openpi observation keys to observation fields |
-
-One WebSocket server speaks two protocols, chosen by path:
-
-| Path | Protocol | Clients |
-|---|---|---|
-| `/hylo` | the Hylo agent protocol (JSON): spec, reset, act, on_step, on_episode_end | workcells, `remote.ws` agents |
-| `/openpi` | openpi's protocol (msgpack-numpy): metadata, then observation dict in, `{"actions": (H, A)}` out | openpi clients (DROID, RoboArena, openpi's examples) |
-| `/healthz`, `/meta` | HTTP | liveness; the served agent's spec as JSON |
-
-- `reset` carries the client's EnvSpec. The server refuses the session there, before any motion, if the agent is
-  not compatible with it (`core.compat`: action space, control mode, cameras, state keys).
-- One session at a time: a robot talks to one policy, and a second client is refused (close code 1013). The agent
-  is built once and reused across sessions.
-- With `--campaign`, the server follows the campaign's `active.json` (`hylo.active/v0.1`,
-  [campaigns](campaigns.md)): when a promotion or a rollback changes the active version, it rebuilds the agent
-  between sessions, never during one.
-- openpi has no reset message: the agent is reset on connect, when the prompt changes, or when the client sends
-  `{"reset": true}`.
-
-## Workcells
+Clone the deployments template next to the other repositories, once. Studio's web UI also needs a one-time build
+([installation](../getting-started/installation.md)).
 
 ```bash
-uv run hylo serve workcell --config deployments-template/workcells/sim_arm.yaml --port 8102
-uv run hylo serve workcell --config workcells/so101.yaml --host 0.0.0.0 --port 8100 --token $HYLO_TOKEN
+git clone https://github.com/HyloAI/hylo-deployments-template.git deployments-template
 ```
 
-`--config` (required), `--host` (default `127.0.0.1`), `--port` (default `8100`), `--token`. A workcell config
-(`hylo.serve.workcell.WorkcellConfig`) lives in your lab's [deployments repository](../configuration/deployments-repo.md):
-
-```yaml
-name: sim-libero10
-env:
-  type: libero
-  remote: {runtime: libero-sim}          # the simulator in its own venv (execution profile)
-benchmark:                               # optional: named tasks and init states
-  type: libero
-  params: {suite: libero_10, n_validation: 10, n_heldout: 0}
-policy: {url: ws://127.0.0.1:8001/hylo, protocol: hylo}
-runtime: {clock: virtual, refill_steps: 10, max_hold_steps: 200}
-image_every: 10
-split: deployment
-output_dir: runs/workcell
-```
-
-| Field | Default | Meaning |
-|---|---|---|
-| `name` | (required) | the workcell's name; its run is `<output_dir>/workcell-<name>` |
-| `env` | (required) | any environment plugin, local or in another venv (`remote`) |
-| `benchmark` | none | a benchmark whose tasks can be started by `task_id`; without it, free-form instructions only |
-| `policy` | none | default policy endpoint: `url`, `protocol` (`hylo` or `openpi`), `token`, `params` |
-| `runtime` | realtime, wall clock | the episode loop's timing (below), plus `image_every` and `record_privileged` |
-| `safety` | `{}` | SafetyShield config: `max_delta`, `guards` ([safety](safety.md)) |
-| `image_every` | `10` | keep every n-th frame in the trace (every frame is streamed live) |
-| `split` | `deployment` | the split recorded episodes get; no learner reads it unless asked |
-| `max_steps` | `600` | step limit for free-form instructions (benchmark tasks have their own) |
-| `output_dir` | `runs/workcell` | where the run is written, relative to the working directory |
-
-### The realtime runner
-
-The workcell runs the same episode loop as evaluation: `core.kernel.EpisodeRunner`, in realtime mode
-([RFC-0005 part 3](../rfcs/RFC-0005-architecture-measurement-and-placement.md)). A benchmark can therefore measure
-exactly what a workcell runs (`timing: {mode: realtime}` in an experiment or protocol).
-
-![Sync and realtime episode loops: in realtime the arm keeps executing while the next chunk is computed](../assets/diagrams/episode-loop.svg){ .hylo-figure }
-
-*Sync: the world waits for every policy call. Realtime: the next chunk is requested while the current one still
-executes; actions that went stale during inference are dropped, and gaps are held.*
-
-In realtime mode:
-
-1. when only `refill_steps` actions are left in the queue (or earlier, with `adaptive_refill`, when the queue covers
-   only the recent latency plus one step) the runner requests the next chunk;
-2. when the chunk arrives it is merged aligned with time: the actions for steps that already passed during inference
-   are dropped;
-3. when the queue is empty the arm executes a hold action: the environment's own `hold_action` (a real robot holds
-   its measured position), the last target for absolute control, or zero motion with the gripper kept for delta
-   control;
-4. after `max_hold_steps` consecutive holds the watchdog aborts the episode.
-
-| `runtime` field | Default | Meaning |
-|---|---|---|
-| `mode` | `realtime` (in a workcell) | `sync` waits for every call |
-| `clock` | `virtual` | `virtual`: simulated latency, deterministic; `wall`: a real control loop at `control_hz`, the policy in a worker thread. Use `wall` on hardware |
-| `control_hz` | the environment's | control rate |
-| `refill_steps` | `2` | request the next chunk when this many queued actions remain |
-| `adaptive_refill` | `true` | request earlier when the recent latency needs it |
-| `latency_s` | measured | virtual clock only: a fixed inference latency instead of the measured one |
-| `max_hold_steps` | `100` | watchdog |
-| `require_reset_confirm` | `false` | wait for the operator's `reset_done` before an episode starts |
-| `verdict_timeout_s` | `0` | how long to wait for the operator's verdict when the environment cannot judge success |
-| `image_every`, `record_privileged` | `1`, `true` | what the trace keeps |
-
-## Operating a workcell
-
-The workcell API (`hylo.workcell/v0.1`, models in `hylo.core.remote.workcell`, so the control plane never
-imports serve):
-
-| Endpoint | Body / reply | Notes |
-|---|---|---|
-| `GET /healthz` | `{"ok": "yes"}` | no auth |
-| `GET /status` | name, state, episode, last result, latched fault, run id, policy, split, runtime, tasks | |
-| `POST /episodes` | `StartEpisode` → `EpisodeStarted` | 409 while an episode runs or a fault is latched |
-| `POST /operator` | `OperatorEvent` → `OperatorAck` | 400 for an unknown or malformed event |
-| `WS /events` | one JSON event per message | observations (JPEG), actions, chunks, safety, operator events, done |
-
-With `--token`, HTTP calls need `Authorization: Bearer <token>` and the WebSocket `?token=<token>`.
-
-A `StartEpisode` names a `task_id` of the workcell's benchmark (with `seed`), or a free-form `instruction`; with a
-`task_id`, an `instruction` overrides only what the agent hears, not the task or its success check. `policy`
-overrides the configured endpoint. States: `idle`, `starting`, `running`, `awaiting_reset`, `awaiting_verdict`,
-`fault`.
-
-```bash
-curl -s -X POST localhost:8102/episodes -H 'content-type: application/json' -d '{"instruction": "wave", "max_steps": 120}'
-curl -s -X POST localhost:8102/operator -H 'content-type: application/json' -d '{"type": "reset_done", "by": "me"}'
-curl -s -X POST localhost:8102/operator -H 'content-type: application/json' -d '{"type": "verdict", "verdict": "success"}'
-```
-
-Operator events:
-
-| Event | Effect |
-|---|---|
-| `stop` | end the episode (the robot holds) |
-| `estop` | stop and latch a fault: no episode starts until `clear_fault` |
-| `clear_fault` | clear the latched fault |
-| `reset_done` | the scene is reset; the episode may start (`require_reset_confirm`) |
-| `verdict` | `success`, `failure` or `partial` for an episode the environment could not judge |
-
-The playground's operator station sends these with roles ([studio](studio.md#operator-station)); the e-stop is open
-to every role.
-
-!!! warning "Not a certified safety function"
-    The SafetyShield is a software layer. On a real robot keep the robot's own limits (LeRobot's
-    `max_relative_target`, torque limits) and a hardware e-stop within reach. For `real_robot` environments the
-    shield aborts on any modification instead of correcting the action ([safety](safety.md)).
-
-## Robots and bring-up
-
-`hylo-env-lerobot-robot` (`lerobot.robot`) turns any robot with LeRobot's `Robot` interface into an environment:
-SO-100/101 and Koch followers and others. It adds an EnvSpec (named state groups, cameras, an action box in the
-robot's units, the control rate), resets by moving to the `home` pose in small steps within the shield's limits,
-never claims success (the operator's verdict or a calibrated judge decides), and holds the measured position when
-the policy is late.
-
-Bring a workcell up without hardware first:
+Then run three processes, each in its own terminal:
 
 ```bash
 uv run hylo serve policy --agent '{"type": "bringup.wave", "params": {"amplitude": 8}}' --port 8002
 uv run hylo serve workcell --config deployments-template/workcells/sim_arm.yaml --port 8102
+uv run hylo playground --repo bench --workcell sim-arm=http://127.0.0.1:8102 --policy wave=ws://127.0.0.1:8002/hylo
 ```
 
-`sim_arm` is a simulated five-joint arm with a gripper, in degrees like LeRobot's SO follower, with first-order
-motor dynamics and a per-step limit on the commanded change. `bringup.wave` makes small sinusoidal moves around the
-measured pose, joint by joint: it checks the chain (policy server, workcell, adapter, motors) without coming near
-any limit. Then the same with the real arm (`workcells/so101.yaml`, with `lerobot[feetech]` in the robot venv).
+- `bringup.wave` is not a task policy. It moves one joint in a small sine wave around the pose where the episode
+  starts, `amplitude` degrees each way.
+- `sim_arm` is a simulated arm with five joints and a gripper, in degrees. It goes through the same LeRobot robot
+  adapter as a real arm, with `real_robot` safety.
+- Studio opens at `http://127.0.0.1:8765`.
 
-!!! info "Maturity"
-    `lerobot.robot` has run with the simulated arm only; no real arm has been connected yet
-    ([plugin catalogue](../developer-guide/plugin-catalogue.md)).
+In Studio's **Operator station**, pick `sim-arm` and `wave`, and start an episode with the instruction `wave`. The
+`sim_arm` config asks for reset confirmation and a verdict, so the episode goes through every operator step:
 
-## Recorded episodes
+1. The workcell waits in `awaiting_reset`. Confirm the reset.
+2. The arm moves to its home pose, then waves until `max_steps`.
+3. The environment cannot judge success, so the workcell waits in `awaiting_verdict`. Give a verdict.
 
-Every workcell episode is recorded as an ordinary run in `<output_dir>/workcell-<name>/`: a trace per episode,
-`evallog.json` and `manifest.json` updated after each one. Replay, judges and the catalog work on it. The operator's
-verdict is the episode's label (`labels.success.by: operator:<who>`).
+Without Studio, the same flow with `curl`:
+
+```bash
+curl -s -X POST localhost:8102/episodes -H 'content-type: application/json' -d '{"instruction": "wave", "max_steps": 120}'
+curl -s -X POST localhost:8102/operator -H 'content-type: application/json' -d '{"type": "reset_done", "by": "me"}'
+curl -s -X POST localhost:8102/operator -H 'content-type: application/json' -d '{"type": "verdict", "verdict": "success", "by": "me"}'
+curl -s localhost:8102/status
+```
+
+After the verdict, `/status` is back to `idle` and reports the episode:
+
+```text
+"state": "idle", "last": {"status": "success", "steps": 120, "holds": 1, "chunks": 12, "safety_interventions": 0, ...}
+```
+
+The episode is in `runs/workcell/workcell-sim-arm/`.
+
+## Step 2: set up the robot computer
+
+The robot computer needs:
+
+- **Hylo with the serve packages.** Install `hylo-core`, `hylo-serve` and `hylo-env-lerobot-robot` (plus
+  `hylo-policy-openpi` to reach an openpi policy server), for example as a
+  [subset of the repositories](../getting-started/installation.md).
+- **A venv for the robot SDK.** It holds LeRobot with your robot's extras (`lerobot[feetech]` for SO-100/101),
+  `hylo-core` and `hylo-env-lerobot-robot`. Register it as the `robot` runtime of this machine's
+  [execution profile](../configuration/profiles.md):
+
+    ```bash
+    uv run hylo profile set-runtime robot --python ~/robot/.venv/bin/python
+    ```
+
+- **A calibrated arm.** Calibrate it with LeRobot's own tools. The calibration is keyed by the robot `id` in the
+  workcell config.
+- **Your lab's deployments repository**, created from `deployments-template`. Start from
+  `workcells/so101.yaml` and set the serial port, the robot `id`, the cameras, the action limits and the home pose
+  for your arm ([deployments repository](../configuration/deployments-repo.md)).
+
+!!! danger "Set `clock: wall` on hardware"
+    The default clock is `virtual`. With it, the episode loop does not pace itself to `control_hz`: it sends actions
+    as fast as the robot's I/O returns. It blocks in each policy call and sends no commands while it waits, so the
+    watchdog cannot fire. A stalled policy server ends the episode only when the call times out, after 600 s on the `hylo` protocol. On a
+    real robot, always set `runtime: {clock: wall}` in the workcell config. The `so101` and `sim_arm` templates
+    already do.
+
+Keep the robot's own limits (LeRobot's `max_relative_target`, torque limits) and a hardware e-stop within reach. The
+safety shield is not a certified safety function ([safety](safety.md)).
+
+The LeRobot robot adapter has run only with the simulated arm ([plugin catalogue](../developer-guide/plugin-catalogue.md)).
+
+## Step 3: serve your policy
+
+On the GPU machine, serve the agent of an experiment config, or the promoted version of a campaign:
+
+```bash
+uv run hylo serve policy --config bench/examples/configs/libero10_steered.yaml --host 0.0.0.0 --port 8000 --token $POLICY_TOKEN
+uv run hylo serve policy --campaign bench/runs/evolve/libero10-steering --host 0.0.0.0 --port 8000 --token $POLICY_TOKEN
+```
+
+- `--config` serves only the config's agent. The workcell brings its own environment and safety settings.
+- `--campaign` serves the campaign's active version and follows promotions and rollbacks. It rebuilds the agent
+  between sessions, never during one ([campaigns](campaigns.md)).
+- The server checks compatibility when the workcell resets the episode, before any motion. It refuses the session if
+  the agent does not fit the environment's spec: action space, control mode, cameras, state keys.
+- It serves one session at a time. A second client is refused.
+
+The workcell config points at the server with `policy: {url: "ws://gpu-box:8000/hylo", protocol: hylo}`. Give the
+token per episode rather than in that config ([security](security.md)).
+
+## Step 4: run and operate episodes
+
+Start the workcell on the robot computer, and point Studio at it and at the policy server:
+
+```bash
+uv run hylo serve workcell --config workcells/so101.yaml --host 0.0.0.0 --port 8100 --token $HYLO_TOKEN
+uv run hylo playground --repo bench \
+    --workcell so101=http://robot-host:8100#$HYLO_TOKEN --policy smolvla=ws://gpu-box:8000/hylo#$POLICY_TOKEN
+```
+
+An episode starts with a `StartEpisode` request to `POST /episodes`. It names either a `task_id` from the
+workcell's benchmark (with a `seed`), or a free-form `instruction`. With a `task_id`, an `instruction` changes only
+what the agent hears, not the task or its success check. `policy` overrides the configured endpoint.
+
+A workcell moves through these states:
+
+| State | When | Leaves when |
+|---|---|---|
+| `idle` | no episode | an episode is requested |
+| `starting` | the environment and the policy connection are being set up | setup ends; a setup failure returns to `idle` |
+| `awaiting_reset` | `require_reset_confirm` is on, before the move to home | the operator sends `reset_done`; `stop` ends the episode instead |
+| `running` | the arm moves to home, then the episode runs | the episode ends |
+| `awaiting_verdict` | the environment cannot judge success and `verdict_timeout_s` is above 0 | a verdict arrives, or `verdict_timeout_s` passes |
+| `fault` | an e-stop is latched | the operator sends `clear_fault` |
+
+Confirm the reset only when the path to the home pose is clear: the move to home does not pass through the safety
+shield. While an episode runs or a fault is latched, `POST /episodes` answers 409.
+
+Operator events go to `POST /operator`:
+
+| Event | Effect |
+|---|---|
+| `stop` | end the episode as `safety_abort`; the arm holds its measured position |
+| `estop` | the same, and latch a fault: no episode starts until `clear_fault` |
+| `clear_fault` | clear the latched fault |
+| `reset_done` | the scene is reset; the episode may start |
+| `verdict` | `success`, `failure` or `partial`, for an episode the environment could not judge |
+
+Studio's Operator station sends these events. Every Studio role can press the e-stop; the other events need the
+operator role ([security](security.md#studio-roles)).
+
+## Step 5: bring the episodes home
+
+All episodes of a workcell go into one run, `<output_dir>/workcell-<name>/`. Unlike `hylo run`, which writes a new
+run each time, the workcell appends a trace per episode and updates `evallog.json` after each one. Replay, judges and Studio work on it like any run. Episodes get the split `deployment`, which no learner reads
+unless asked.
+
+The operator's verdict becomes the episode's label (`labels.success.by: operator:<by>`); `partial` counts as
+`failure`. A workcell run scores `unlabeled`, `safety_abort` and `error` episodes differently from `hylo run`
+([episode statuses](experiments.md#what-a-run-contains)).
 
 To bring the runs to the workstation, make the workcell's output directory the robot computer's
 [store](store.md) and pull from it:
 
 ```bash
-hylo store init runs                                         # on the robot computer, where output_dir lands
-uv run hylo store pull robot-host:/path/to/runs              # on the workstation: runs it does not have yet
-uv run hylo store push robot-host:/path/to/runs artifact:l10-trace-v2@54a1efadf00d34d8   # an artifact the other way
+uv run hylo store init runs                                  # on the robot computer, where output_dir lands
+uv run hylo store pull robot-host:/path/to/runs              # on the workstation: new runs, and new episodes of runs it has
 ```
 
-## Serving one component
+## Reference
 
-`hylo serve env` and `hylo serve agent` put a single plugin behind a WebSocket (`core.remote.ws`), for example a
-simulator in its own venv on another machine:
+### Policy server
 
-```bash
-uv run hylo serve env libero --params '{"image_size": 256}' --port 8765
-uv run hylo serve agent lerobot --params '{...}' --port 8766 --token-env HYLO_TOKEN
-```
+| Option | Default | Meaning |
+|---|---|---|
+| `--agent JSON` / `--config FILE` / `--campaign DIR` | one required | what to serve: an agent spec, an experiment config's agent, or a campaign's active version |
+| `--port` | `8000` | |
+| `--openpi-inputs` | `libero` | preset name, or a JSON mapping from openpi observation keys to observation fields |
 
-Configs then use `{type: remote.ws, params: {url: "ws://host:8765"}}` as the environment or agent.
-`--token-env` names an environment variable holding the token, so it never appears in a command line.
+`--host` and `--token` are described on the [security](security.md#what-is-exposed-where) page. One server
+answers on several paths:
+
+| Path | Wire format | Clients |
+|---|---|---|
+| `/hylo` | JSON: the Hylo agent protocol (spec, reset, act, on_step, on_episode_end) | workcells, `remote.ws` agents |
+| `/openpi` | msgpack-numpy: openpi's protocol (metadata, then an observation dict in and `{"actions": (H, A)}` out) | openpi clients (DROID, RoboArena, openpi's examples) |
+| `/healthz` | HTTP | liveness, no token needed |
+| `/meta` | HTTP, JSON | the served agent's spec |
+
+On `/openpi` the server only computes chunks. There is no safety shield and no compatibility check: the openpi
+client runs its own control loop and applies its own limits. openpi has no reset message, so the agent is reset on
+connect, when the prompt changes, or when the client sends `{"reset": true}`.
+
+### Workcells
+
+`hylo serve workcell` takes `--config` (required), `--host` (default `127.0.0.1`), `--port` (default `8100`) and
+`--token`. Its config:
+
+| Field | Default | Meaning |
+|---|---|---|
+| `name` | required | the workcell's name; its run is `<output_dir>/workcell-<name>` |
+| `env` | required | any environment plugin, local or in another venv (`remote: {runtime: ...}`) |
+| `benchmark` | none | a benchmark whose `validation` tasks can be started by `task_id`; without it, free-form instructions only |
+| `policy` | none | default policy endpoint: `url`, `protocol` (`hylo` or `openpi`), `token`, `params` |
+| `runtime` | see below | the episode loop's timing |
+| `safety` | `{}` | safety shield config: `max_delta`, `guards` ([safety](safety.md#configure-guards)) |
+| `image_every` | `10` | keep every n-th camera frame in the trace; every frame is streamed live |
+| `split` | `deployment` | the split recorded episodes get |
+| `max_steps` | `600` | step limit for free-form instructions; benchmark tasks have their own |
+| `output_dir` | `runs/workcell` | where the run is written, relative to the working directory |
+
+The workcell's `runtime:` block holds the episode loop's timing. It takes the keys of an experiment's
+[`timing:`](experiments.md#sync-and-realtime-timing), with these differences:
+
+| Key | Workcell default | Meaning |
+|---|---|---|
+| `mode` | `realtime` | experiments default to `sync` |
+| `clock` | `virtual` | set `wall` on hardware ([step 2](#step-2-set-up-the-robot-computer)) |
+| `require_reset_confirm` | `false` | wait for the operator's `reset_done` before the move to home |
+| `verdict_timeout_s` | `0` | how long to wait for a verdict when the environment cannot judge success |
+| `record_privileged` | `true` | store privileged state, when the environment has any |
+
+`runtime.image_every` has no effect: the top-level `image_every` decides which frames the trace keeps.
+
+### Workcell API
+
+| Endpoint | Body / reply | Notes |
+|---|---|---|
+| `GET /healthz` | `{"ok": "yes"}` | no token needed |
+| `GET /status` | name, state, episode, last result, latched fault, run id, policy, split, runtime, tasks | |
+| `POST /episodes` | `StartEpisode` → `{"task_id", "policy"}` | 409 while an episode runs or a fault is latched |
+| `POST /operator` | `OperatorEvent` (`type`, `by`, `verdict`, `note`) → `{"fault", "state"}` | 400 for an unknown or malformed event |
+| `WS /events` | one JSON event per message | observations (JPEG), actions, chunks, safety, operator events, done |
+
+## Next
+
+- [Safety](safety.md): what the shield checks on a robot, and where it stops.
+- [Security](security.md): tokens and bind addresses before the workcell leaves loopback.
+- [Studio](studio.md): the other pages of the control plane.

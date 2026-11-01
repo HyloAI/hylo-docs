@@ -28,7 +28,7 @@ def write(path: str, text: str, source: Path | None = None) -> None:
 
 def missing(repo: str) -> str:
     return (f"!!! warning \"Not built\"\n    This page is generated from hylo-{repo}, which is not checked out next to "
-            f"this repository. Build the docs from the development workspace (see Developer Guide > Docs).\n")
+            f"this repository. Build the docs from the development workspace (see Getting started > Installation).\n")
 
 
 # ---------------------------------------------------------------- harness reference docs
@@ -91,7 +91,7 @@ def plugin_catalogue() -> None:
              "needs-hardware": '<span class="hylo-badge hylo-hw">needs hardware</span>'}
     lines = ["# Plugin catalogue", "",
              "Every plugin installed in the development workspace, with the contract version it implements, how far it "
-             "has been verified and its licences (`hylo plugins`; RFC-0005 part 4). Maturity is declared by each "
+             "has been verified and its licences (`hylo plugins`). Maturity is declared by each "
              "package and was set from recorded runs:", "",
              "- **implemented**: run end to end on its target (a real simulator or robot), with recorded runs;",
              "- **unverified**: tests pass, but not yet run end to end on its intended target;",

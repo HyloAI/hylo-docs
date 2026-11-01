@@ -1,110 +1,101 @@
 # Studio
 
-hylo-studio is the playground: one web UI over runs, campaigns, learning artifacts and workcells, and the
-control plane for robots. `hylo-playground` is the FastAPI backend (`hylo playground`); `web/` is the React front end,
-built into the package.
-
-The playground reads runs and campaigns through the harness's catalog, runs `hylo` commands as jobs (the same commands
-a person would type, with the same checks), and talks to workcells through the workcell API. It never sends
-actions to a robot.
+Studio is Hylo's web UI. It shows your runs, campaigns and artifacts, and it is the control plane for workcells.
+Start it with `hylo playground`. It runs the same `hylo` commands a person would type, with the same checks, and
+talks to workcells through the workcell API. It never sends actions to a robot.
 
 ![The runs page: every recorded run with its benchmark, split, success and episodes](../assets/figures/studio-runs.png){ .hylo-figure }
 
-## Starting it
+## Start Studio
+
+Build the web UI once first ([installation](../getting-started/installation.md)). Until then, Studio answers
+"frontend not built". Then start Studio from the workspace directory:
 
 ```bash
-cd studio/web && npm install --ignore-scripts && npm run build && cd ../..   # once; Node >= 18
-uv run hylo playground --repo bench                                          # http://127.0.0.1:8765
+uv run hylo playground --repo bench          # http://127.0.0.1:8765
 ```
 
 | Option | Default | Meaning |
 |---|---|---|
-| `--repo DIR` | `.` | the working directory: the UI shows its `examples/configs`, `examples/evolve` and `runs/`, and runs jobs in it (a bench checkout) |
+| `--repo DIR` | `.` | the working directory: Studio lists its `examples/configs` and `examples/evolve`, and runs jobs in it (for example a bench checkout) |
 | `--root DIR` | `runs` | the runs directory, relative to `--repo` |
-| `--host`, `--port` | `127.0.0.1`, `8765` | |
-| `--token SECRET` | none | require the token on every API call (`x-token` header or `?token=`; open the UI once with `?token=SECRET`) |
-| `--judge PATH_OR_ID` | `artifact:l10-trace-v2@54a1efadf00d34d8` when in the store | the success judge for progress curves; a path or a [store id](store.md) |
-| `--workcell NAME=URL[#TOKEN]` | none | a workcell service (repeatable) |
-| `--policy NAME=WS_URL[#TOKEN]` | none | a policy server endpoint (repeatable) |
-| `--role-token ROLE=TOKEN` | none | viewer / operator / approver tokens (repeatable) |
+| `--workcell NAME=URL[#TOKEN]` | none | a workcell to operate; repeatable |
+| `--policy NAME=WS_URL[#TOKEN]` | none | a policy server endpoint; repeatable |
 
-Development with hot reload: `uv run hylo-playground` and, in `studio/web`, `npm run dev` (Vite proxies `/api`).
+`hylo playground --help` lists the rest; tokens are under [access](#access).
 
 ## Pages
 
 | Page | What it shows and does |
 |---|---|
-| Overview | runs, campaigns and artifacts at a glance, the improvement cascade over every campaign |
+| Console | runs, campaigns and artifacts at a glance, with recent activity |
 | Live sandbox | one episode of any experiment config, streamed frame by frame |
-| Runs | every recorded run; per-task success; episode replay |
-| Compare | two runs paired on (task, seed) |
-| Self-improvement | campaigns, cycles, candidates, gate statistics, the ledger; approve or roll back |
-| Experience & learning | skills, lessons, action memories, sealed artifacts with provenance and calibration |
-| Jobs | `hylo run`, `hylo evolve run` and `hylo calibrate` in the background, with their logs |
 | Operator station | episodes on a workcell with a chosen policy server; reset, verdicts, stop, e-stop |
-
-### Runs and replay
-
-The runs page lists every run under the runs directory (benchmark, split, agent, success, episodes), filtered by
-split or text. Opening an episode replays it from its trace: camera frames, executed actions, chunk boundaries, safety
-interventions, and the success judge's estimate along the episode.
-
-![Episode replay: camera frames, actions, chunk boundaries and the judge's progress estimate](../assets/figures/studio-episode.png){ .hylo-figure }
-
-### Compare
-
-Two runs of the same benchmark split, paired on (task, seed): wins and losses, the one-sided exact McNemar p-value,
-per-task deltas, and side-by-side replays of the discordant pairs (where one run succeeded and the other failed).
-This is the same test as [`hylo bench compare`](../benchmarking/index.md#statistics) and the gate.
-
-### Self-improvement
-
-Every campaign under the runs directory: its cycles, the candidates with their hypotheses, the search_val and
-group-sequential gate statistics, vetoes, the promotion ledger and the active version
-([campaigns](campaigns.md)). A candidate that passed the gate and waits for approval can be approved here
-(`hylo evolve approve`); the active version can be rolled back with a reason (`hylo evolve rollback`). Both need the
-approver role.
-
-![A campaign: cycles, candidates and gate statistics](../assets/figures/studio-campaign.png){ .hylo-figure }
+| Runs & replays | every recorded run, per-task success, and episode replay |
+| A/B arena | two runs compared, paired on task and init state |
+| Self-improvement | campaigns: cycles, candidates, gate statistics, the promotion ledger; approve or roll back |
+| Experience | skill libraries, lesson books, action memories, and sealed artifacts with provenance and calibration |
+| Jobs | `hylo run`, `hylo evolve run` and `hylo calibrate` in the background, with their logs |
 
 ### Live sandbox
 
-Runs one episode of any experiment config (MuJoCo, LIBERO with SmolVLA, ...) through the unchanged kernel and
-SafetyShield, streamed as it happens. You choose the task and init state from the benchmark, change config
-overrides, and give the agent a different instruction (the environment's task and success check stay the same).
-Overrides of the protected scopes (safety, benchmark, trace, scoring) are refused. Environment and agent stay warm
-between episodes of the same configuration, since loading a VLA takes tens of seconds.
+Runs one episode of any experiment config through the episode loop and its safety shield, streamed as it happens.
+You choose the task and init state from the benchmark's splits, change config overrides, and give the agent a
+different instruction. The environment's task and success check stay the same. The environment and the agent stay
+loaded between episodes of the same config.
 
-Live episodes are saved under `runs/playground/live/<run_id>` with split `playground`, which no learner and no gate
-ever reads.
+The sandbox refuses overrides of `safety`, `benchmark`, `trace`, `scorers`, `evolution` and `schema_version`. This
+list differs from what campaigns protect: it does not include `env` ([safety](safety.md#what-campaigns-can-change)).
+Any other override is accepted, including `agent.type=module:attr`, which runs arbitrary code. That is why the
+sandbox needs the operator role.
 
-### Jobs
-
-Starts the CLI in the background in the `--repo` directory and follows its log (`runs/playground/jobs/<id>.log`).
-Jobs are subprocesses of the playground; there is no queue or scheduler yet (RFC-0005 part 6). The page offers
-evaluation, campaigns and judge calibration; the API (`POST /api/jobs`) also accepts `learn` jobs.
+Live episodes are saved under `runs/playground/live/<run_id>` with the split `playground`, which learners do not
+read by default.
 
 ### Operator station
 
-The control plane for workcells: pick a workcell (`--workcell`) and a policy server (`--policy`), start an episode
-on a benchmark task or with a free-form instruction, and follow the workcell's live stream. When the workcell waits,
-confirm the scene reset (`reset_done`) or judge the outcome (success, partial, failure); stop an episode, press the
-e-stop, clear a latched fault. See [deployment](deployment.md#operating-a-workcell) for what each event does.
+Operates a workcell (`--workcell`) with a policy server (`--policy`): start episodes, follow the live stream,
+confirm resets, give verdicts, stop, e-stop and clear faults. What each event does is in
+[deployment](deployment.md#step-4-run-and-operate-episodes), with a
+[bring-up without hardware](deployment.md#step-1-bring-up-without-hardware).
 
-```bash
-uv run hylo serve policy --agent '{"type": "bringup.wave", "params": {"amplitude": 12, "horizon": 15}}' --port 8002
-uv run hylo serve workcell --config deployments-template/workcells/sim_arm.yaml --port 8102
-uv run hylo playground --repo bench --workcell sim-arm=http://127.0.0.1:8102 --policy wave=ws://127.0.0.1:8002/hylo
-```
+### Runs & replays
 
-## Roles
+Lists every run under the runs directory with its benchmark, split, agent, success and episodes, filtered by split
+or text. Opening an episode replays it from its trace: camera frames, executed actions, chunk boundaries, safety
+interventions, and the success judge's progress estimate along the episode. The judge is set with `--judge`. By
+default it is the LIBERO-10 trace judge, if it is in Studio's runs directory.
 
-Without `--role-token` (and without `--token`) the local user has every role. With role tokens:
+![Episode replay: camera frames, actions, chunk boundaries and the judge's progress estimate](../assets/figures/studio-episode.png){ .hylo-figure }
 
-| Role | Can |
-|---|---|
-| viewer | read everything, and press the e-stop (stopping is never gated behind a higher role) |
-| operator | start episodes; reset, verdict, stop, clear a fault; the live sandbox; jobs |
-| approver | everything, plus approving and rolling back campaign versions |
+### A/B arena
 
-The server binds to 127.0.0.1 by default. Put it behind your own authentication before exposing it on a network.
+Two runs of the same split, paired on task and init state, with the same one-sided exact McNemar test as
+`hylo bench compare` ([compare two scorecards](../benchmarking/index.md#compare-two-scorecards)), plus
+side-by-side replays of the pairs where one run succeeded and the other failed.
+
+### Self-improvement
+
+Every campaign under the runs directory: its cycles, the candidates with their hypotheses, the gate statistics,
+vetoes, the promotion ledger and the active version ([campaigns](campaigns.md)). A candidate that passed the gate
+and waits for approval can be approved here, which runs `hylo evolve approve`. The active version can be rolled
+back with a reason, which runs `hylo evolve rollback`. Both need the approver role.
+
+![A campaign: cycles, candidates and gate statistics](../assets/figures/studio-campaign.png){ .hylo-figure }
+
+### Jobs
+
+Starts `hylo run`, `hylo evolve run` or `hylo calibrate` (and `hylo learn`, through `POST /api/jobs`) as a local
+subprocess in `--repo`, with its log in `runs/playground/jobs/<id>.log`. Jobs start as soon as you submit them;
+they are not queued.
+
+## Access
+
+Studio binds to `127.0.0.1` by default. Without `--token` or `--role-token`, anyone who can reach the port has every
+role, including approver. Roles, tokens and what each role can do are on the [security](security.md#studio-roles)
+page.
+
+## Next
+
+- [Deployment](deployment.md): bring up a workcell to operate from Studio.
+- [Campaigns](campaigns.md): what the Self-improvement page shows.

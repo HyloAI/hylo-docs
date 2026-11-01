@@ -1,6 +1,7 @@
 # Contracts
 
-Every plugin group's contract lives in hylo-core, so a plugin depends on hylo-core alone. What a plugin must provide, and the data that passes between the kernel, environments and agents. The
+Every plugin group's contract lives in hylo-core, so a plugin's contract comes from hylo-core alone. This page lists what a
+plugin must provide and the data that passes between the episode loop, environments and agents. The
 [plugin system](../harness/plugin-system.md) explains how plugins are registered; the
 [interfaces](../harness/interfaces/environment.md) explain the design behind each contract; the
 [plugin catalogue](../developer-guide/plugin-catalogue.md) lists what implements them.
@@ -76,6 +77,8 @@ Every plugin group's contract lives in hylo-core, so a plugin depends on hylo-co
       show_if_no_docstring: true
 
 ## Generators and campaign records
+
+The generator contract is the `Proposer` protocol (YAML key `proposer`).
 
 ::: hylo.core.improvement
     options:

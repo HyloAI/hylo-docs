@@ -55,7 +55,9 @@ def save(fig, name: str) -> Path:
 # ---------------------------------------------------------------- 8. leaderboard
 def leaderboard(store: Path) -> Path:
     cards = [json.loads(f.read_text()) for f in sorted((store / "policies/scorecards/mujoco-reach").glob("*.json"))]
-    cards.sort(key=lambda c: c["metrics"]["success_mean"])
+    # the table's order, best first, ties by name; reversed because barh draws the first bar at the bottom
+    cards.sort(key=lambda c: (-c["metrics"]["success_mean"], c["policy"]))
+    cards.reverse()
     fig, ax = plt.subplots(figsize=(8, 4.2))
     y = np.arange(len(cards))
     for i, c in enumerate(cards):

@@ -1,146 +1,142 @@
 # Installation
 
-Hylo is several git repositories, developed side by side and installed into one Python environment. The
-harness is the base; bench, serve, studio and plugins are leaves on top of it (see
-[repository structure](../design/repository-structure.md)). You need:
+This page sets up a workspace that can run the [quickstart](quickstart.md), and checks that it works.
 
-- Linux (the LIBERO setup assumes Ubuntu 24.04 for its user-space OSMesa install);
-- Python 3.10 or newer;
-- [uv](https://docs.astral.sh/uv/);
-- no GPU: everything here runs on CPU.
+You need Linux, Python 3.10 or newer and [uv](https://docs.astral.sh/uv/). No GPU is needed: everything on this page
+runs on CPU. The OSMesa install script, used for camera rendering without a GPU and for LIBERO, assumes Ubuntu 24.04
+on x86_64.
 
-![The Hylo repositories](../assets/diagrams/repositories.svg){ .hylo-figure }
+## Set up the workspace
 
-*The harness is the only base. Leaves never import each other; they cooperate through formats defined in hylo-core.*
-
-## The development workspace
-
-Check the repositories out next to each other in one directory, then run the harness's bootstrap script there:
+Clone the harness into a new directory and run its bootstrap script there:
 
 ```bash
 mkdir hylo && cd hylo
 git clone https://github.com/HyloAI/hylo-harness.git harness
 HYLO_GIT_BASE=https://github.com/HyloAI harness/dev/bootstrap.sh
-# clones bench, serve, studio, plugins and docs next to it, writes ./pyproject.toml (a uv workspace), runs `uv sync`
 ```
 
-`bootstrap.sh [DIR]` does three things:
+The script clones bench, serve, studio, plugins and docs next to the harness. It writes a `pyproject.toml` that makes
+this directory a uv workspace, and runs `uv sync`, which installs every package, editable, into `.venv`. The
+deployments template is cloned separately; see [deployment](../user-guide/deployment.md). Rerun the script after you
+add or remove a repository.
 
-1. For each repository listed in `harness/dev/repos.toml` that is missing in `DIR`, it clones
-   `$HYLO_GIT_BASE/hylo-<name>.git` when `HYLO_GIT_BASE` is set, and skips the repository otherwise.
-2. It writes `DIR/pyproject.toml` with `harness/dev/workspace.py`. That file makes every package of every present
-   code repository (`<repo>/packages/*`, `<repo>/adapters/*`) a workspace member.
-3. It runs `uv sync`, which installs all of them editable into `DIR/.venv`.
-
-The workspace directory is not a repository: its `pyproject.toml`, `uv.lock` and `.venv` are generated. Rerun
-`python harness/dev/workspace.py .` after adding or removing a repository; the boundary lint fails while the file is
-stale.
-
-The workspace has optional dependency groups:
+The workspace has three dependency groups:
 
 | Group | Installs | For |
 |---|---|---|
-| `dev` (default) | pytest, httpx | the tests |
-| `demo` | imageio, matplotlib, pillow | videos and figures from examples |
+| `dev` (installed by default) | pytest, httpx | the tests |
+| `demo` | imageio, imageio-ffmpeg, matplotlib, pillow | videos and figures from the examples |
 | `docs` | mkdocs-material, mkdocstrings, mkdocs-gen-files, mkdocs-glightbox | building this site |
 
 ```bash
 uv sync --group demo --group docs
 ```
 
-### A subset of the repositories
+## Register the run store
 
-The workspace covers whatever repositories are present, so you can work on the harness alone, or on the harness
-and one leaf. Tests that need another repository skip themselves; for example, the plugin scaffold test needs bench's
-MuJoCo environments.
-
-| Checkout | What you can run |
-|---|---|
-| `harness` | contracts, kernel, learners, campaigns and conformance on the test double (`testing.*` plugins) |
-| `harness` + `bench` | MuJoCo and LIBERO experiments, protocols, scorecards, leaderboards, the examples |
-| `harness` + `serve` | policy servers and workcells (a robot computer installs only `hylo-core` and serve) |
-| `harness` + `studio` | the playground and the control plane (rebuilding the web front end needs Node) |
-| `harness` + `plugins` | the example plugins, written the way a third party would |
-
-## MuJoCo
-
-MuJoCo comes with `hylo-env-mujoco` (in bench) and needs nothing else for experiments. Camera rendering (the
-table-reach vision variant, figures) needs an OpenGL backend. On a GPU machine set `MUJOCO_GL=egl`; otherwise install
-user-space OSMesa (next section) and set `MUJOCO_GL=osmesa`.
-
-## LIBERO and LeRobot policies
-
-LIBERO's dependencies (robosuite, its pinned MuJoCo, LeRobot with SmolVLA) conflict with the workspace. They live
-in a separate venv inside bench, and experiments reach them as out-of-process runtimes.
-
-=== "1. OSMesa (no root)"
-
-    ```bash
-    bench/scripts/install-osmesa-user.sh
-    ```
-
-    The script downloads Ubuntu 24.04's `libosmesa6` (and `libllvm20` if it is missing) with `apt-get download`
-    and unpacks the packages into `~/.local/mesa`; no root needed. Rendering then uses `MUJOCO_GL=osmesa`,
-    `PYOPENGL_PLATFORM=osmesa` and `LD_LIBRARY_PATH=~/.local/mesa/root/usr/lib/x86_64-linux-gnu`.
-
-=== "2. The LIBERO venv"
-
-    ```bash
-    bench/envs/libero/setup.sh
-    ```
-
-    The script:
-
-    - builds `bench/envs/libero/.venv` (Python 3.12, CPU) and installs LIBERO and `lerobot[smolvla]`;
-    - installs the harness packages it needs, editable, from the harness checkout next to bench (`HYLO_HARNESS`,
-      default `../harness`);
-    - downloads the LIBERO assets (`lerobot/libero-assets`, research use only) and writes a non-interactive LIBERO
-      config.
-
-=== "3. Runtimes"
-
-    At the end, `setup.sh` registers two runtimes in this machine's
-    [execution profile](../configuration/profiles.md):
-
-    | Runtime | What runs there | Environment |
-    |---|---|---|
-    | `libero-sim` | the LIBERO simulator (`env.remote: {runtime: libero-sim}`) | OSMesa variables, `LIBERO_CONFIG_PATH`, thread limits |
-    | `lerobot` | LeRobot policies (`agent: {type: remote, params: {runtime: lerobot}}`) | `HF_HOME=bench/envs/hf-home`, `HF_HUB_OFFLINE=1` |
-
-    ```bash
-    uv run hylo profile show
-    ```
-
-Experiment configs name these runtimes, never paths. So LIBERO experiments run from any directory, and where the venv
-lives never changes an experiment's digest
-([RFC-0005](../rfcs/RFC-0005-architecture-measurement-and-placement.md)).
-
-!!! note "Model weights"
-    The `lerobot` runtime sets `HF_HUB_OFFLINE=1`: policies load weights only from `bench/envs/hf-home`, and
-    `setup.sh` does not download any. Put a checkpoint into that cache once (for example `lerobot/smolvla_libero`,
-    with `HF_HOME=bench/envs/hf-home huggingface-cli download ...`) before running LIBERO configs. Weight licences
-    differ from the code's; see the [plugin catalogue](../developer-guide/plugin-catalogue.md).
-
-## The run and artifact store
-
-Runs and learned artifacts are found by id through this machine's store (see [store](../user-guide/store.md)).
-Register the directory your runs go to once:
+Register `bench/runs` as this machine's [store](../user-guide/store.md). The quickstart writes its runs there:
 
 ```bash
 uv run hylo store init bench/runs      # recorded as `store:` in ~/.config/hylo/profile.yaml
 uv run hylo store ls
 ```
 
-Without a registered store, `$HYLO_STORE` is used if it is set, and `./runs` relative to the working directory
-otherwise.
+`$HYLO_STORE`, when set, overrides the registered store. [Profiles](../configuration/profiles.md) has the full
+lookup order.
 
 ## Check the installation
 
 ```bash
-uv run hylo --help              # subcommands contributed by the installed packages
-uv run hylo plugins             # every plugin: contract version, maturity, licence
-uv run pytest                 # every present repository, plus the boundary lint (harness/dev)
+uv run hylo --help              # the subcommands of the installed packages
+uv run hylo plugins             # every plugin: group, name, contract version, maturity, licence
 ```
 
-`hylo --help` lists only the commands of installed packages: `hylo bench` comes from bench, `hylo serve` from serve and
-`hylo playground` from studio. Next: the [quickstart](quickstart.md).
+`hylo plugins` should list `mujoco.planar_reach` and `baseline.planar_ik`; the quickstart uses both. To run the
+tests, see [testing](../developer-guide/testing.md).
+
+## Optional: Studio's web UI
+
+Studio's web UI must be built once before `hylo playground` can show it. Without the build, Studio answers only
+"frontend not built". The build needs Node.js 18 or later:
+
+```bash
+cd studio/web && npm install --ignore-scripts && npm run build && cd ../..
+```
+
+## Optional: camera rendering
+
+MuJoCo comes with bench and needs nothing else for experiments. Camera rendering, used by the table-reach vision
+variant and by figures, needs an OpenGL backend. On a machine with a GPU, set `MUJOCO_GL=egl`.
+
+Without a GPU, install CPU-only OpenGL (OSMesa). This installs it into `~/.local/mesa` without root:
+
+```bash
+bench/scripts/install-osmesa-user.sh
+```
+
+Then set:
+
+```bash
+export MUJOCO_GL=osmesa
+export PYOPENGL_PLATFORM=osmesa
+export LD_LIBRARY_PATH=~/.local/mesa/root/usr/lib/x86_64-linux-gnu
+```
+
+## Optional: LIBERO and LeRobot
+
+LIBERO and LeRobot need package versions that conflict with the workspace, so they run in their own venv inside
+bench, through two named [runtimes](../configuration/profiles.md).
+
+1. Install OSMesa as in [camera rendering](#optional-camera-rendering). LIBERO renders with it.
+2. Build the LIBERO venv:
+
+    ```bash
+    bench/envs/libero/setup.sh
+    ```
+
+    The script builds `bench/envs/libero/.venv` (Python 3.12, CPU) with LIBERO and `lerobot[smolvla]`. It downloads
+    the LIBERO assets (`lerobot/libero-assets`, research use only) and writes a non-interactive LIBERO config.
+
+3. Check the two runtimes the script registered:
+
+    ```bash
+    uv run hylo profile show
+    ```
+
+    | Runtime | What runs there | Environment |
+    |---|---|---|
+    | `libero-sim` | the LIBERO simulator (`env.remote: {runtime: libero-sim}`) | OSMesa variables, `LIBERO_CONFIG_PATH`, thread limits |
+    | `lerobot` | LeRobot policies (`agent: {type: remote, params: {runtime: lerobot}}`) | `HF_HOME=bench/envs/hf-home`, `HF_HUB_OFFLINE=1` |
+
+4. Download model weights. The `lerobot` runtime runs offline and loads weights only from `bench/envs/hf-home`.
+   `setup.sh` downloads none. Put each checkpoint into that cache once. SmolVLA for LIBERO also needs its
+   vision-language backbone, `HuggingFaceTB/SmolVLM2-500M-Video-Instruct`:
+
+    ```bash
+    cd bench
+    HF_HOME=envs/hf-home envs/libero/.venv/bin/python -c "from huggingface_hub import snapshot_download; \
+        [snapshot_download(r) for r in ('lerobot/smolvla_libero', 'HuggingFaceTB/SmolVLM2-500M-Video-Instruct')]"
+    ```
+
+    Weight licences differ from the code's; the [plugin catalogue](../developer-guide/plugin-catalogue.md) lists
+    them.
+
+## Working on a subset of repositories
+
+The workspace covers whichever repositories are present; tests that need a missing one skip.
+
+| Checkout | What you can run |
+|---|---|
+| `harness` | contracts, the episode loop, learners and campaigns, on the `testing.*` test plugins |
+| `harness` + `bench` | MuJoCo and LIBERO experiments, protocols, scorecards, leaderboards, the examples |
+| `harness` + `serve` | policy servers and workcells |
+| `harness` + `studio` | Studio (building its web UI needs Node.js 18 or later) |
+| `harness` + `plugins` | the example plugins, written the way a third party would |
+
+## Next
+
+From here on, run commands from `bench/`, so runs and artifacts land in the store you registered:
+
+- [Quickstart](quickstart.md): one example through all four steps.
+- [Concepts](concepts.md): the words the other pages use.

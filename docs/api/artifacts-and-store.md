@@ -1,8 +1,7 @@
 # Artifacts and store
 
-Everything the system learns is a sealed, digest-pinned artifact with provenance
-([RFC-0004](../rfcs/RFC-0004-learning-pipeline.md)); runs and artifacts have store ids that configs reference
-instead of paths ([RFC-0005 part 2](../rfcs/RFC-0005-architecture-measurement-and-placement.md)). Scorecards and
+What Hylo learns is saved as an artifact: a directory with a content digest and a record of what it was built from,
+sealed unless marked mutable. Configs can refer to runs and artifacts by store id instead of path. Scorecards and
 active versions are the formats bench and serve exchange. User guides: [learning](../user-guide/learning.md),
 [the store](../user-guide/store.md), [benchmarking](../benchmarking/index.md),
 [deployment](../user-guide/deployment.md).

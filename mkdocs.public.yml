@@ -15,6 +15,7 @@ exclude_docs: |
   design/*
   !design/overview.md
   assets/figures/studio-*.png
+  developer-guide/docs.md
 hooks:
   - mkdocs/public_hook.py
 
@@ -52,11 +53,11 @@ nav:
       - developer-guide/testing.md
       - developer-guide/troubleshooting.md
       - developer-guide/versioning.md
-      - developer-guide/docs.md
       - Tutorials:
           - developer-guide/adding-a-policy.md
           - developer-guide/adding-an-environment.md
           - developer-guide/adding-a-learner.md
+          - developer-guide/adding-a-generator.md
       - Extending:
           - harness/extending.md
           - harness/plugin-system.md
@@ -86,6 +87,8 @@ nav:
               - hylo-core: api/packages/hylo-core.md
               - hylo-eval: api/packages/hylo-eval.md
               - hylo-agents: api/packages/hylo-agents.md
+              - hylo-instruments: api/packages/hylo-instruments.md
+              - hylo-reasoners: api/packages/hylo-reasoners.md
               - hylo-memory: api/packages/hylo-memory.md
               - hylo-learn: api/packages/hylo-learn.md
               - hylo-evolve: api/packages/hylo-evolve.md

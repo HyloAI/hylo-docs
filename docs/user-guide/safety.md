@@ -1,10 +1,21 @@
 # Safety
 
-Every action any agent proposes passes through the **safety shield** (`core.safety.SafetyShield`) before it reaches
-an environment, in benchmarks, campaigns and on robots alike. The kernel builds the shield from the environment's
-spec and the experiment's `safety:` config; agents never see or construct it, and nothing can bypass it.
+Whenever Hylo runs the episode loop (in `hylo run`, benchmarks, campaigns, the Studio live sandbox and workcells),
+every action passes through the **safety shield** before it reaches the environment. The episode loop builds the
+shield from the environment's spec and the experiment's `safety:` config. Agents never see or build it.
 
-## What the shield does
+The shield does not cover two cases:
+
+- When `hylo serve policy` answers an external openpi client on `/openpi`, Hylo only computes action chunks. The
+  client runs its own control loop and applies its own limits ([deployment](deployment.md#policy-server)).
+- A config can load any Python code by `module:attr`. The shield checks actions, not the code that produces them
+  ([security](security.md)).
+
+!!! warning "Not a certified safety function"
+    The shield is a software layer. On a real robot, keep the robot's own limits (for example LeRobot's
+    `max_relative_target` and torque limits) and a hardware e-stop within reach.
+
+## What the shield checks
 
 ```mermaid
 flowchart LR
@@ -16,27 +27,37 @@ flowchart LR
     F -. non-finite .-> X[safety_abort]
 ```
 
-- **Mandatory guards, first and last.** A finite check runs first: a NaN or infinite action aborts the episode. A
-  bounds clamp runs last: the action is clipped to the environment's action space, so no guard in between can push
-  an action out of bounds. Rotation dimensions (quaternions, rot6d) are never clamped per dimension: an
-  out-of-bounds rotation aborts instead.
-- **Environment guardrails.** An environment that declares a workspace (`EnvSpec.workspace`) gets a workspace
-  guard, always on: delta-position components that would move the controlled point further outside the workspace
-  are zeroed.
+- **Mandatory guards.** A NaN or infinite action aborts the episode. The bounds clamp runs last, so no guard can
+  push an action out of the environment's action space.
+- **Rotations.** If the action space uses quaternions or rot6d, the bounds check clamps nothing. Any out-of-bounds
+  dimension aborts the episode, even a gripper slightly over its limit, and the clip tolerance does not apply.
+- **Environment guardrail.** An environment that declares a workspace gets a workspace guard, always on. It zeroes
+  delta-position components that would move the controlled point further outside the workspace.
 - **Configured guards** run in between, in the order given.
 
-Every review is recorded in the trace (`safety.review`: proposed action, approved action, whether it was modified,
-reasons), so interventions can be counted, replayed and audited.
+Hold actions, which the episode loop executes when no policy action is ready, pass through the shield too. Every
+review is recorded in the trace as a `safety.review` event: the proposed and approved actions, whether the action
+was modified, and why.
 
 ## Interventions and aborts
 
-A guard that changes an action is a **safety intervention**: it is counted in the episode's
-`safety_interventions` score, and the rest of the agent's planned chunk is discarded, because the plan no longer
-matches what will happen. A bounds clip within `clip_tolerance` (default 0.05) is bookkeeping, not an
-intervention: policies routinely overshoot normalised bounds slightly (a gripper at 1.03).
+A guard that changes an action makes a **safety intervention**. The rest of the agent's planned chunk is discarded,
+because the plan no longer matches what will happen. A bounds clip within `clip_tolerance` (default 0.05) is not an
+intervention: it is recorded in the review, and the chunk is kept.
 
-On a real robot (`EnvSpec.capabilities.real_robot`), the tolerance is 0 and **every** intervention aborts the
-episode (`safety_abort`), and the kernel calls the environment's `stop()` so the arm brakes or holds.
+These events end the episode at once as `safety_abort`: a non-finite action, an out-of-bounds rotation, a hold
+under absolute control with no target to hold, an intervention on a real robot (below), and an operator stop or
+e-stop. A watchdog abort ends it as `error` ([episode statuses](experiments.md#what-a-run-contains)).
+
+The episode's `safety_interventions` score counts the modified actions, plus one if the episode ended in any of
+these aborts, the watchdog included. Campaigns compare this score in their safety veto
+([below](#what-campaigns-can-change)).
+
+An environment that declares itself a real robot (`real_robot` in its spec) changes the rules. The clip tolerance
+becomes 0, and **any** intervention ends the episode as `safety_abort`.
+
+After any abort, the watchdog included, the loop calls the environment's `stop()`. Its effect depends on the
+environment plugin. The LeRobot robot adapter commands the arm's current measured position.
 
 ## Configure guards
 
@@ -49,42 +70,62 @@ safety:
     - {type: keep_out, params: {state_key: eef_pos, low: [0.3, -0.1, 0.0], high: [0.5, 0.1, 0.3], action_dims: [0, 1, 2], margin: 0.02}}
 ```
 
-Built-in guards (`guards` plugin group):
+Built-in guards:
 
 | Guard | Params | Effect |
 |---|---|---|
-| `delta_limit` | `max_delta` (scalar or per dimension) | rate limit: each step's action stays within `max_delta` of the previous one |
+| `delta_limit` | `max_delta` (scalar or per dimension) | rate limit: each action stays within `max_delta` of the previous one |
 | `norm_limit` | `max_norm`, `dims` (default: all) | scales the selected dimensions down so their Euclidean norm stays within `max_norm` (a speed limit) |
-| `keep_out` | `state_key`, `low`, `high`, `action_dims`, `margin` | a box the controlled point must not enter: motion into or deeper into it is zeroed |
+| `keep_out` | `state_key`, `low`, `high`, `action_dims`, `margin` | when the next step would land inside the box (grown by `margin`), zeroes the delta components that move into it or deeper into it |
 | `workspace` | `state_key`, `low`, `high`, `action_dims` | the workspace guard, configured explicitly |
 
-Guard plugins from other packages work the same way. The plugins repository's `examples.slow_zone` slows the
-fingertip near a target:
+`keep_out` adds the action to the position in `state_key`. So it only works when the action is a delta of that
+position, in the same units. It does not protect a box under joint-space or absolute control, such as the SO-101
+template.
 
-```bash
-cd plugins && uv run hylo run examples/configs/mujoco_guarded.yaml
-```
+Guard plugins from other packages work the same way ([extending](../harness/extending.md)).
 
-Write your own with `hylo plugin new guard NAME` and check it with `hylo plugin check guard NAME`; see
-[extending](../harness/extending.md).
+## On a real robot
 
-## Safety in campaigns
+On a robot, three layers act, each with its own job:
 
-Improvement campaigns cannot weaken safety:
+| Layer | What it does |
+|---|---|
+| Safety shield | Reviews every action. Because the environment sets `real_robot`, any intervention aborts the episode. |
+| Episode loop | With `clock: wall`, holds the arm when the policy is late, and ends the episode as `error` after more than `max_hold_steps` holds in a row (the watchdog; `runtime.max_hold_steps` in a workcell config). |
+| Workcell | Gives the operator stop, a latched e-stop that blocks new episodes until cleared, reset confirmation and verdicts ([deployment](deployment.md#step-4-run-and-operate-episodes)). |
 
-- candidates may not patch the `safety` scope, or the benchmark, trace, scorers, environment or evolution settings
-  (`evolve.candidate.PROTECTED_PREFIXES`); such a candidate is rejected at stage 0;
-- the gate has a **safety veto**: a candidate whose mean safety interventions exceed the parent's by more than
-  `protocol.max_safety_increase` (default 1.0 per episode) is not promoted, whatever its success rate;
-- a **regression veto** refuses a candidate that loses more than `protocol.max_task_regression` (default 0.15) on any
-  task.
+!!! danger "Hold and watchdog need `clock: wall`"
+    On the default `virtual` clock, the loop blocks in each policy call and sends no commands while it waits. The
+    watchdog cannot fire during that wait. A stalled remote policy ends the episode only when its call times out
+    (600 s by default for a `remote.ws` policy), as `error`, without calling `stop()`. Set `clock: wall` on hardware
+    ([deployment](deployment.md#step-2-set-up-the-robot-computer)).
 
-See [campaigns](campaigns.md).
+The move to the home pose at the start of an episode does not pass through the shield. The LeRobot robot adapter
+interpolates to `home` in small steps and clips each step to the action box only. Confirm the reset only when the
+path to `home` is clear.
 
-## Safety on robots
-
-Workcells add an operator channel to the same loop: stop, a latched e-stop that blocks new episodes until cleared,
-reset confirmation and verdicts; a watchdog ends an episode after `timing.max_hold_steps` consecutive hold steps. A
-robot environment's spec sets `real_robot`, which switches the shield to abort on any intervention. Keep-out zones and
-limits for a cell belong in the lab's deployment repository. See [deployment](deployment.md) and
+Keep-out zones and limits for a cell belong in the lab's
 [deployments repository](../configuration/deployments-repo.md).
+
+## What campaigns can change
+
+A campaign proposes changes to an experiment config as patches. It rejects any candidate whose patch touches one of
+these top-level keys:
+
+`safety`, `benchmark`, `trace`, `scorers`, `env`, `evolution`, `schema_version`
+
+Everything else can change. In particular:
+
+- `agent` is not protected. A patch can replace the agent, including with any `module:attr`.
+- `timing` is not protected. A patch can raise `timing.max_hold_steps` and so loosen the watchdog.
+
+The gate's **safety veto** rejects a candidate whose mean safety interventions per episode exceed the parent's by
+more than `max_safety_increase`. The default, 1.0, lets a candidate need up to one more intervention per episode
+than its parent. Set it in the campaign's top-level `protocol:` block, which holds the gate settings
+([campaigns](campaigns.md#reference)).
+
+## Next
+
+- [Security](security.md): who can reach which service, and what a token allows.
+- [Deployment](deployment.md): bring a workcell up, first without hardware.

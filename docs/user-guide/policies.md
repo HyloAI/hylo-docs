@@ -1,13 +1,94 @@
 # Policies
 
-A **policy** is the model that turns an observation into actions. An **agent** is what the kernel runs; it holds a
-policy and decides how to use it: chunk by chunk, temporally ensembled, or steered by sampling several chunks and
-selecting one. Because the two are separate, any policy runs under any of these agents by configuration, and the
-policy never knows it is being steered, shadowed or scored.
+This page shows how to run your model in Hylo and which agent to wrap it in.
 
-## The policy contract
+## Policy and agent
 
-A policy is a `policies` plugin implementing `core.policy.ChunkPolicy`:
+A **policy** returns action chunks from an observation. An **agent** holds a policy and decides how to use its
+chunks ([concepts](../getting-started/concepts.md)). Any policy runs under any of the agents below.
+
+## Choose an agent
+
+| Agent | Runs the policy | Key params |
+|---|---|---|
+| `policy` | chunk by chunk, with seeded noise | `policy`, `execution_steps`, `seed_noise`, `noise_scale` |
+| `temporal_ensemble` | every step, exponentially weighted over overlapping chunks (as in ACT) | `policy`, `m` (weight decay; 0 = plain average) |
+| `steered` | draws `n_samples` seeded chunks per decision and executes one, with optional recovery rules | `sampler`, `steering` |
+
+=== "policy"
+
+    ```yaml
+    agent:
+      type: policy
+      params:
+        policy: {type: policy.bc, params: {path: "artifact:policy.bc"}}
+        execution_steps: 8
+    ```
+
+=== "temporal_ensemble"
+
+    ```yaml
+    agent:
+      type: temporal_ensemble
+      params:
+        policy: {type: policy.bc, params: {path: "artifact:policy.bc"}}
+        m: 0.01
+    ```
+
+=== "steered"
+
+    ```yaml
+    agent:
+      type: steered
+      params:
+        sampler: {type: policy.flow, params: {path: "artifact:policy.flow"}}
+        steering: {n_samples: 4, selector: medoid}
+    ```
+
+    `sampler` takes a policy spec, like `policy` in the other two agents.
+
+A policy returns chunks of `T` actions. `policy` and `steered` execute the first `execution_steps` of each chunk
+(default: the policy's `default_execution_steps()`, capped at `T`). `temporal_ensemble` asks at every step.
+
+Use `policy` to run a policy chunk by chunk. The other two fit these cases:
+
+- **`temporal_ensemble`** gives smoother motion from a deterministic chunk policy, at the price of one policy call
+  per step. It returns one action per call, so it works only with sync timing
+  ([experiments](experiments.md#sync-and-realtime-timing)).
+- **`steered`** suits stochastic policies (flow matching, diffusion), when you can afford `n_samples` calls per
+  decision. Everything in `steering` is data, so a [campaign](campaigns.md) can propose and gate changes to it.
+
+`steering` keys:
+
+| Key | Default | Meaning |
+|---|---|---|
+| `n_samples` | 1 | chunks drawn per decision (1 to 8; cost grows linearly on CPU) |
+| `selector` | `first` | `first`, `medoid`, or `gripper_vote_medoid` (keep the chunks that agree with the gripper majority, then take their medoid) |
+| `noise_scale` | 1.0 | scale of the initial noise |
+| `execution_steps` | the policy's | actions executed from each chunk |
+| `seed_noise` | true | derive the noise from seeds (see [below](#write-a-policy)) |
+| `rules` | `[]` | up to 4 recovery rules |
+
+A rule watches one feature and fires an action when the feature crosses a threshold:
+
+```yaml
+steering:
+  n_samples: 4
+  selector: gripper_vote_medoid
+  rules:
+    - {name: unstick, feature: still_steps, op: ">=", value: 20, action: resample, params: {noise_scale: 1.5}}
+    - {name: regrasp, feature: grasp_attempts, value: 3, action: backoff, params: {steps: 8, dz: 0.5}, max_fires: 1}
+```
+
+- Features: `still_steps`, `grasp_attempts`, `disagreement` (spread between samples), `steps`. `eef_key` and
+  `gripper_key` rename the state keys the first two read (default `eef_pos`, `gripper_qpos`).
+- Actions: `resample` (with `params.noise_scale`) and `backoff` (up along action dimension 2 and open the gripper;
+  end-effector delta control only, such as LIBERO).
+- `cooldown` (default 30 steps) and `max_fires` (default 3 per episode) limit firing.
+
+## Write a policy
+
+A policy is a `policies` plugin with four methods:
 
 ```python
 class ChunkPolicy(Protocol):
@@ -19,50 +100,22 @@ class ChunkPolicy(Protocol):
 ```
 
 Deterministic policies (regression, retrieval, scripted) ignore the seeds. Stochastic ones (diffusion, flow
-matching, sampled tokens) must derive their randomness from the seeds only. Agents derive the seeds from the task
-key, the chunk index and the sample index, so a candidate and its parent face the same noise on the same init state
-(common random numbers for paired tests), and every episode can be replayed.
+matching, sampled tokens) must take their randomness from the seeds only. Agents compute the seeds from the task,
+the chunk index and the sample index. So two agents compared on the same init state draw the same noise, which keeps
+paired comparisons fair.
 
-`hylo plugin check policy NAME` runs the conformance check on a registered policy (shape, finiteness, seed
-determinism); `hylo plugin new policy NAME` scaffolds one. See [extending](../harness/extending.md).
-
-## Agents that run a policy
-
-| Agent | Runs the policy | Key params |
-|---|---|---|
-| `policy` | chunk by chunk, seeded noise | `policy`, `execution_steps`, `seed_noise`, `noise_scale` |
-| `temporal_ensemble` | every step, exponentially weighted over overlapping chunks (ACT) | `policy`, `m` (weight decay; 0 = plain average) |
-| `steered` | `n_samples` seeded chunks per decision, one selected, optional recovery rules | `sampler`, `steering` |
-
-```yaml
-agent: {type: policy, params: {policy: {type: policy.bc, params: {path: "artifact:policy.bc"}}}}
-agent: {type: temporal_ensemble, params: {policy: {type: policy.bc, params: {path: "artifact:policy.bc"}}, m: 0.01}}
-agent:
-  type: steered
-  params:
-    sampler: {type: policy.flow, params: {path: "artifact:policy.flow"}}
-    steering: {n_samples: 4, selector: medoid}
+```bash
+uv run hylo plugin new policy NAME      # scaffold a policy package
+uv run hylo plugin check policy NAME    # conformance: shape, finiteness, seed determinism
 ```
 
-`steering` (`agents.steering.SteeringConfig`):
-
-| Key | Default | Meaning |
-|---|---|---|
-| `n_samples` | 1 | chunks drawn per decision (1 to 8; cost grows linearly on CPU) |
-| `selector` | `first` | `first`, `medoid`, or `gripper_vote_medoid` (keep the gripper-majority chunks, then the medoid) |
-| `noise_scale` | 1.0 | scale of the initial noise |
-| `execution_steps` | the policy's | actions executed from each chunk |
-| `seed_noise` | true | seeded noise (replayable, paired) |
-| `rules` | `[]` | up to 4 trigger rules: a feature (`still_steps`, `grasp_attempts`, `disagreement`, `steps`), a threshold and an action (`resample` with more noise, or `backoff`: move back and reopen the gripper), with `cooldown` and `max_fires` |
-
-Everything in `steering` is data, so a campaign can propose and gate steering changes as config patches
-([campaigns](campaigns.md)).
+The [adding a policy](../developer-guide/adding-a-policy.md) tutorial walks through one, and
+[extending](../harness/extending.md) lists what the check covers.
 
 ## Reference policies
 
-`hylo-policies` ships one small, weights-free implementation of each common policy family, in numpy only. They are
-trained from your own runs (development splits only, sealed as artifacts with provenance) and serve as baselines,
-for teaching, and for testing the stack end to end in seconds. They are not the published architectures at scale.
+`hylo-policies` ships one small, weights-free implementation of each common policy family, in numpy only. You train
+them from your own runs and they are sealed as artifacts. They are not the published architectures at scale.
 
 | Plugin | Family | Idea (reference) | Stochastic |
 |---|---|---|---|
@@ -72,10 +125,8 @@ for teaching, and for testing the stack end to end in seconds. They are not the 
 | `policy.tokens` | tokenized actions | each dimension binned, categorical heads, sampled (RT-1, OpenVLA-style) | yes |
 | `policy.mpc` | model-based planning | cross-entropy method over action sequences in a learned world model (MPC) | yes |
 
-Learners of the same names (`policy.knn`, `policy.bc`, `policy.flow`, `policy.tokens`) build `policy_params`
-artifacts from successful episodes; `world_model.state` builds the world model `policy.mpc` plans in. Common
-learner params: `chunk` (default 8), `seed`, `epochs`, `hidden`, `execution_steps`, `state_keys`, `statuses`
-(default `["success"]`), `max_episodes`.
+Learners of the same names build `policy_params` artifacts from successful episodes. `world_model.state` builds
+the world model that `policy.mpc` plans in ([learning](learning.md)).
 
 ### Train and score them on MuJoCo reach
 
@@ -99,39 +150,28 @@ learner params: `chunk` (default 8), `seed`, `epochs`, `hidden`, `execution_step
         --policy examples/configs/mujoco_policy_flow_steered.yaml
     ```
 
-    `mujoco_policy_flow_steered.yaml` references the sampler as `artifact:policy.flow`: without a digest, the one
-    artifact with that name in the store; the run's manifest pins the full id it used.
+    The example uses the name-only id `artifact:policy.flow`. Pin its digest before
+    [comparing runs](experiments.md#when-two-runs-are-comparable).
 
-![mujoco-reach leaderboard](../assets/figures/leaderboard-mujoco-reach.png){ .hylo-figure }
+Compare two scorecards with `hylo bench compare A.json B.json` (an exact paired McNemar test) before reading a
+difference into them. The results of `compare.py` are on the [leaderboard](../benchmarking/leaderboard.md).
 
-*`compare.py` on this project's workstation: 120 demonstration episodes from the search and search_val splits;
-the mujoco-reach protocol (100 held-out episodes on seeds never used for learning); 95% Wilson intervals.*
-
-| # | Policy | Success % | 95% CI | Mean steps |
-|---|---|---|---|---|
-| 1 | expert (IK controller) | 100.0 | 96.3–100.0 | 36 |
-| 2 | mpc (world model from expert and random-action runs) | 86.0 | 77.9–91.5 | 60 |
-| 3 | flow + steering, 4 samples | 84.0 | 75.6–89.9 | 54 |
-| 4 | bc + temporal ensemble | 83.0 | 74.5–89.1 | 56 |
-| 5 | flow | 83.0 | 74.5–89.1 | 56 |
-| 6 | bc | 71.0 | 61.5–79.0 | 68 |
-| 7 | tokens | 68.0 | 58.3–76.3 | 74 |
-| 8 | knn | 64.0 | 54.2–72.7 | 76 |
-
-Neighbouring rows overlap. Compare two scorecards with `hylo bench compare A.json B.json` (exact paired McNemar)
-before reading a difference into them: flow + steering against bc, for example, gives p = 0.005.
-
-## LeRobot and openpi policies
+## LeRobot and openpi
 
 === "LeRobot (SmolVLA, pi0, ...)"
 
-    The `hylo-policy-lerobot` adapter runs LeRobot policies on CPU in the `lerobot` runtime (installed by bench's
-    LIBERO setup). `lerobot` is both a policy and an agent; the factories wrap it:
+    The `hylo-policy-lerobot` adapter runs LeRobot policies on CPU, in the `lerobot` runtime that bench's LIBERO
+    setup installs. It registers `lerobot` twice:
+
+    - as a policy, for Hylo's agents (`policy: {type: lerobot, ...}`), with noise from Hylo's seeds;
+    - as an agent (`type: lerobot`), which runs chunk by chunk, LeRobot's way, with unseeded noise.
+
+    The factories below wrap the policy in an agent for you:
 
     | Agent | What it adds |
     |---|---|
     | `lerobot` | the policy, chunk by chunk |
-    | `lerobot.steered` | `SteeredAgent`: seeded noise, sample-and-select, recovery rules |
+    | `lerobot.steered` | the `steered` agent: seeded noise, sample-and-select, recovery rules |
     | `lerobot.critic_steered` | samples `n_samples` chunks and executes the one a learned chunk critic values most |
     | `lerobot.memory_steered` | starts flow sampling from an action retrieved from its own successes (action memory) |
     | `lerobot.noise_steered` | biases the initial noise towards noise that produced similar successful chunks |
@@ -145,24 +185,22 @@ before reading a difference into them: flow + steering against bc, for example, 
         params: {repo_id: lerobot/smolvla_libero, num_threads: 4, steering: {n_samples: 1, seed_noise: true}}
     ```
 
-    `LeRobotAgent` params include `repo_id`, `device` (`cpu`), `camera_map`, `state_keys`, `n_action_steps`,
-    `num_threads` and `action_semantics`.
 
 === "openpi"
 
-    `openpi` (`hylo-policy-openpi`) is a client for an openpi policy server over WebSocket (`url`, default
-    `ws://127.0.0.1:8000`, and an input `preset`, default `libero`). It is **unverified** here: no openpi server
-    and checkpoint have been run with it yet.
+    `openpi` (`hylo-policy-openpi`) is an agent that calls an openpi policy server over WebSocket. Its params are
+    `url` (default `ws://127.0.0.1:8000`) and an input `preset` (default `libero`). The
+    [plugin catalogue](../developer-guide/plugin-catalogue.md) says how far it is verified.
 
 ![SmolVLA on LIBERO-10](../assets/figures/libero-episode-strip.png){ .hylo-figure }
 
 *SmolVLA (`lerobot/smolvla_libero`) on a LIBERO-10 task, every 10th camera frame of one episode.*
 
-Weight licences differ per checkpoint: PaliGemma-based pi0 / pi0.5 checkpoints are under the Gemma Terms of Use. The
-[plugin catalogue](../developer-guide/plugin-catalogue.md) lists each plugin's maturity and licences.
+Weight licences differ per checkpoint: PaliGemma-based pi0 and pi0.5 checkpoints are under the Gemma Terms of Use.
+The [plugin catalogue](../developer-guide/plugin-catalogue.md) lists each plugin's maturity and licences.
 
-## Policies in other processes
+## Next
 
-A policy whose dependencies conflict with the workspace runs in its own runtime behind the `remote` agent, as
-above. A policy on another machine runs behind a policy server (`hylo serve policy`) and is reached with the
-`remote.ws` agent; see [deployment](deployment.md).
+- [Benchmarking](../benchmarking/index.md): score your agent under an evaluation protocol.
+- [Run a component in another process](experiments.md#run-a-component-in-another-process), or
+  [serve a policy to a robot](deployment.md#step-3-serve-your-policy).

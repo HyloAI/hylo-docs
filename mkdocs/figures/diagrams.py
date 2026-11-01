@@ -1,9 +1,14 @@
-"""The architecture diagrams of the docs site, as SVG (docs/assets/diagrams/*.svg).
+"""The diagrams of the docs site, as SVG (docs/assets/diagrams/*.svg).
 
     uv run python docs/mkdocs/figures/diagrams.py            # from the docs repository
 
 Each diagram is laid out by hand below (coordinates in a 960-unit-wide view box); this file only saves repeating the
 SVG boilerplate. Drawn on white: the site shows them on a light card in dark mode.
+
+Style rules, so the figures stay readable at page width:
+- short labels (five words at most), no subtitles under a box title, no legends, footnotes or code identifiers;
+- text at least 15px in the 960-wide view box;
+- one accent colour (TEAL) on neutral greys.
 """
 
 from __future__ import annotations
@@ -13,19 +18,17 @@ from pathlib import Path
 
 OUT = Path(__file__).resolve().parents[2] / "docs" / "assets" / "diagrams"
 FONT = "IBM Plex Sans, Helvetica, Arial, sans-serif"   # inside <img> the viewer's system font: leave room
-MONO = "IBM Plex Mono, Menlo, Consolas, monospace"
-TEAL, TEAL2, TEAL_BG = "#0d5c63", "#2a7f86", "#e6f2f3"
-ORANGE, ORANGE_BG = "#c2410c", "#fdeee6"
-INK, MUTED, LINE, PANEL = "#334155", "#64748b", "#cbd5e1", "#f1f5f9"
+TEAL, TEAL_BG, TEAL_SOFT = "#0d5c63", "#e3f0f1", "#b8d9dc"
+INK, MUTED, LINE, PANEL = "#1e293b", "#475569", "#94a3b8", "#f1f5f9"
+WHITE = "#ffffff"
 
 STYLE = f"""
   text {{ font-family: {FONT}; fill: {INK}; }}
-  .t {{ font-size: 13px; font-weight: 600; }}
-  .s {{ font-size: 11px; fill: {MUTED}; }}
-  .h {{ font-size: 15px; font-weight: 700; }}
-  .cap {{ font-size: 11px; font-weight: 600; letter-spacing: .06em; fill: {MUTED}; }}
-  .m {{ font-family: {MONO}; font-size: 11px; }}
-  .w {{ fill: #ffffff; }}
+  .n {{ font-size: 17px; font-weight: 600; }}
+  .e {{ font-size: 15px; fill: {MUTED}; paint-order: stroke; stroke: {WHITE}; stroke-width: 5px;
+        stroke-linejoin: round; }}
+  .h {{ font-size: 18px; font-weight: 700; }}
+  .g {{ font-size: 17px; font-weight: 700; fill: {TEAL}; }}
 """
 
 
@@ -37,489 +40,287 @@ class SVG:
     def add(self, s: str) -> None:
         self.parts.append(s)
 
-    def rect(self, x, y, w, h, fill="#fff", stroke=LINE, rx=8, dash=None, sw=1.2):
+    def rect(self, x, y, w, h, fill=WHITE, stroke=LINE, rx=10, dash=None, sw=1.5):
         d = f' stroke-dasharray="{dash}"' if dash else ""
         self.add(f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="{rx}" fill="{fill}" stroke="{stroke}" '
                  f'stroke-width="{sw}"{d}/>')
 
-    def text(self, x, y, s, cls="s", anchor="start", fill=None, weight=None, size=None):
-        extra = (f' fill="{fill}"' if fill else "") + (f' font-weight="{weight}"' if weight else "") + \
-                (f' font-size="{size}"' if size else "")
-        self.add(f'<text x="{x}" y="{y}" class="{cls}" text-anchor="{anchor}"{extra}>{escape(s)}</text>')
+    def text(self, x, y, s, cls="n", anchor="middle", fill=None):
+        f = f' style="fill:{fill}"' if fill else ""             # style: the class's fill would win
+        self.add(f'<text x="{x}" y="{y}" class="{cls}" text-anchor="{anchor}"{f}>{escape(s)}</text>')
 
-    def box(self, x, y, w, h, title, lines=(), *, fill="#fff", stroke=LINE, tfill=None, center=True, dash=None,
-            sw=1.2, lh=14, tsize=None):
-        self.rect(x, y, w, h, fill, stroke, dash=dash, sw=sw)
-        cx = x + w / 2 if center else x + 10
-        anchor = "middle" if center else "start"
-        n = len(lines)
-        top = y + h / 2 - (n * lh) / 2 + 4 if n else y + h / 2 + 5
-        self.text(cx, top, title, "t", anchor, fill=tfill, size=tsize)
-        for i, l in enumerate(lines):
-            self.text(cx, top + (i + 1) * lh, l, "s", anchor)
+    def node(self, x, y, w, h, label, *, accent=False, fill=None, stroke=None, dash=None, rx=10):
+        """A box with a centred label; '\\n' in the label breaks the line."""
+        self.rect(x, y, w, h, fill or (TEAL if accent else WHITE), stroke or (TEAL if accent else LINE),
+                  rx=rx, dash=dash)
+        lines = label.split("\n")
+        lh = 21
+        top = y + h / 2 - (len(lines) - 1) * lh / 2 + 6
+        for i, line in enumerate(lines):
+            self.text(x + w / 2, top + i * lh, line, "n", fill=WHITE if accent else None)
 
-    def line(self, pts, color=MUTED, arrow=True, dash=None, sw=1.5):
+    def arrow(self, pts, color=MUTED, dash=None, both=False, sw=2):
         d = "M" + " L".join(f"{x},{y}" for x, y in pts)
-        m = f' marker-end="url(#a-{color[1:]})"' if arrow else ""
+        self.path(d, color, dash, both, sw)
+
+    def path(self, d, color=MUTED, dash=None, both=False, sw=2, head=True):
+        m = f' marker-end="url(#a-{color[1:]})"' if head else ""
+        if both:
+            m += f' marker-start="url(#a-{color[1:]})"'
         ds = f' stroke-dasharray="{dash}"' if dash else ""
         self.add(f'<path d="{d}" fill="none" stroke="{color}" stroke-width="{sw}"{ds}{m}/>')
 
-    def curve(self, d, color=MUTED, arrow=True, dash=None, sw=1.5):
-        m = f' marker-end="url(#a-{color[1:]})"' if arrow else ""
-        ds = f' stroke-dasharray="{dash}"' if dash else ""
-        self.add(f'<path d="{d}" fill="none" stroke="{color}" stroke-width="{sw}"{ds}{m}/>')
+    def label(self, x, y, s, anchor="middle", fill=None):
+        """An edge label: grey, with a white halo so it stays legible over lines."""
+        self.text(x, y, s, "e", anchor, fill)
 
-    def chip(self, x, y, s, fill=TEAL_BG, stroke=TEAL2, color=TEAL, mono=False, w=None):
-        w = w or (len(s) * (6.6 if mono else 6.3) + 16)
-        self.rect(x, y, w, 22, fill, stroke, rx=11, sw=1)
-        self.text(x + w / 2, y + 15, s, "m" if mono else "s", "middle", fill=color, weight=None if mono else "600")
-        return w
+    def group(self, x1, x2, y, s, below=False):
+        """A stage name over (or under) a group of boxes: accent text and a thin accent rule."""
+        self.add(f'<line x1="{x1}" y1="{y}" x2="{x2}" y2="{y}" stroke="{TEAL}" stroke-width="2"/>')
+        self.text(x1, y + 24 if below else y - 10, s, "g", "start")
 
     def save(self, name: str) -> Path:
         markers = "".join(
-            f'<marker id="a-{c[1:]}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" '
+            f'<marker id="a-{c[1:]}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" '
             f'orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="{c}"/></marker>'
-            for c in (MUTED, TEAL, TEAL2, ORANGE, INK))
+            for c in (MUTED, TEAL, INK))
         svg = (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {self.w} {self.h}" width="{self.w}" '
                f'height="{self.h}" role="img" aria-labelledby="title desc">\n'
                f'<title id="title">{escape(self.title)}</title>\n<desc id="desc">{escape(self.desc)}</desc>\n'
                f'<defs><style>{STYLE}</style>{markers}</defs>\n'
-               f'<rect width="{self.w}" height="{self.h}" fill="#ffffff"/>\n' + "\n".join(self.parts) + "\n</svg>\n")
+               f'<rect width="{self.w}" height="{self.h}" fill="{WHITE}"/>\n' + "\n".join(self.parts) + "\n</svg>\n")
         OUT.mkdir(parents=True, exist_ok=True)
         p = OUT / f"{name}.svg"
         p.write_text(svg)
         return p
 
 
-# ---------------------------------------------------------------- 1. architecture
+# ---------------------------------------------------------------- 1. architecture: the data flow
 def architecture() -> Path:
-    s = SVG(960, 660, "Hylo architecture",
-            "Leaf repositories (bench, serve, studio, plugins) build on the harness packages, whose base is hylo-core; "
-            "adapters connect simulators, robots, policy stacks and LLMs.")
-    s.text(30, 30, "LEAF REPOSITORIES", "cap")
-    leaves = [("bench", ["protocols · scorecards", "leaderboards · suites"]),
-              ("serve", ["policy server", "workcell · robots"]),
-              ("studio", ["playground", "control plane · UI"]),
-              ("plugins", ["examples and", "community plugins"])]
-    for i, (n, l) in enumerate(leaves):
-        s.box(30 + i * 172, 42, 160, 66, n, l, fill="#fff", stroke=TEAL2, tfill=TEAL)
-    s.text(738, 30, "NO CODE", "cap")
-    s.box(738, 42, 192, 30, "docs", fill=PANEL, stroke=LINE, dash="4 3")
-    s.box(738, 78, 192, 30, "deployments-template", fill=PANEL, stroke=LINE, dash="4 3", tsize=12)
-    for i in range(4):
-        x = 110 + i * 172
-        s.line([(x, 110), (x, 142)], TEAL2)
-    s.text(738, 134, "↓ depend on the harness only", "s", fill=TEAL)
-
-    s.rect(20, 146, 920, 352, TEAL_BG, TEAL2, rx=12)
-    s.text(34, 168, "HYLO-HARNESS (THE BASE)", "cap", fill=TEAL)
-    pk = [("hylo-eval", ["experiments", "benchmarks"]), ("hylo-agents", ["policy runners", "steering"]),
-          ("hylo-policies", ["reference", "policies"]), ("hylo-memory", ["action bank", "lessons, skills"]),
-          ("hylo-learn", ["learners", "calibration"]), ("hylo-evolve", ["campaigns", "the gate"]),
-          ("hylo-catalog", ["queries over", "runs"]), ("cli", ["hylo-cli", "hylo commands"])]
-    for i, (n, l) in enumerate(pk):
-        s.box(34 + i * 113, 180, 105, 64, n, l, tsize=12)
-    s.rect(34, 258, 892, 96, "#ffffff", TEAL, rx=10, sw=1.6)
-    s.text(48, 282, "hylo-core", "h", fill=TEAL)
-    s.text(48, 300, "what every package shares (numpy + pydantic only)", "s")
-    chips = ["contracts", "EpisodeRunner", "SafetyShield", "registry", "plugin contracts", "traces",
-             "artifacts", "store ids", "profiles", "remote wire", "scorecards", "workcell API"]
-    x, y = 372, 266
-    for c in chips:
-        w = len(c) * 7 + 16
-        if x + w > 916:
-            x, y = 372, y + 28
-        s.chip(x, y, c, w=w)
-        x += w + 6
-    for i in range(8):
-        x = 86 + i * 113
-        s.line([(x, 246), (x, 256)], TEAL2)
-
-    s.text(34, 380, "ADAPTERS: plugins found by name through entry points", "cap", fill=TEAL)
-    ad = [("hylo-policy-lerobot", "harness"), ("hylo-policy-openpi", "harness"), ("hylo-reasoner-llm", "harness"),
-          ("hylo-proposer-llm", "harness"), ("hylo-data-video", "harness"), ("hylo-env-mujoco", "bench"),
-          ("hylo-env-libero", "bench"), ("hylo-env-lerobot-robot", "serve")]
-    for i, (n, repo) in enumerate(ad):
-        col, row = i % 4, i // 4
-        s.box(34 + col * 224, 390 + row * 52, 216, 44, n, [f"in hylo-{repo}"],
-              stroke=TEAL2 if repo == "harness" else LINE, tsize=12, lh=13)
-
-    s.line([(480, 500), (480, 528)], MUTED)
-    s.text(490, 520, "adapters wrap", "s")
-    s.text(30, 548, "OUTSIDE HYLO", "cap")
-    ext = [("LeRobot", ["SmolVLA, pi0/pi0.5", "robot drivers"]), ("openpi", ["policy server"]),
-           ("Ollama", ["LLMs and VLMs"]), ("datasets", ["videos, demos"]), ("MuJoCo", ["reach, table"]),
-           ("LIBERO", ["robosuite tasks"]), ("robot arms", ["SO-101, sim arm"])]
-    for i, (n, l) in enumerate(ext):
-        s.box(34 + i * 128, 558, 120, 58, n, l, fill=PANEL, stroke=LINE)
-    s.text(930, 646, "Arrows: depends on. hylo-core imports no other Hylo package.", "s", "end")
+    s = SVG(960, 440, "How data flows through Hylo",
+            "Run: an experiment produces a run with its traces. Measure: an evaluation protocol scores runs into a "
+            "scorecard. Improve: a learner turns runs into an artifact, which becomes a candidate, and the gate "
+            "decides. Deploy: the promoted active version runs on a workcell, whose episodes come back as runs.")
+    top, bot, h = 96, 296, 64
+    # Run and Measure
+    s.group(40, 490, 62, "Run")
+    s.group(580, 760, 62, "Measure")
+    s.node(40, top, 170, h, "Experiment")
+    s.node(300, top, 190, h, "Run and traces")
+    s.node(580, top, 180, h, "Scorecard")
+    s.arrow([(212, top + h / 2), (296, top + h / 2)])
+    s.arrow([(492, top + h / 2), (576, top + h / 2)])
+    # Improve and Deploy
+    xs, w = [26, 218, 410, 602, 794], 140
+    names = ["Artifact", "Candidate", "Gate", "Active\nversion", "Workcell"]
+    for x, n in zip(xs, names):
+        s.node(x, bot, w, h, n, accent=n == "Gate")
+    for a, b in zip(xs, xs[1:]):
+        s.arrow([(a + w + 2, bot + h / 2), (b - 4, bot + h / 2)])
+    s.group(26, 550, 392, "Improve", below=True)
+    s.group(602, 934, 392, "Deploy", below=True)
+    # runs feed learning; workcell episodes come back as runs
+    s.arrow([(350, top + h + 2), (350, 228), (96, 228), (96, bot - 4)], TEAL)
+    s.label(223, 220, "learn")
+    s.arrow([(864, bot - 2), (864, 228), (440, 228), (440, top + h + 4)], TEAL)
+    s.label(652, 220, "episodes become runs")
     return s.save("architecture")
 
 
 # ---------------------------------------------------------------- 2. repositories
 def repositories() -> Path:
-    s = SVG(960, 560, "Hylo repositories and how they depend on each other",
-            "bench, serve, studio and plugins depend only on the harness and never import each other; they cooperate "
-            "through formats defined in hylo-core. serve declares only hylo-core, so a robot computer installs little.")
-    leaves = [("hylo-bench", ["benchmark scoring", "LIBERO / MuJoCo suites"], "harness"),
-              ("hylo-serve", ["policy server · workcell", "robot computer side"], "hylo-core only"),
-              ("hylo-studio", ["playground", "control plane · UI"], "harness"),
-              ("hylo-plugins", ["examples, written as", "a third party would"], "harness")]
-    for i, (n, l, dep) in enumerate(leaves):
-        x = 30 + i * 230
-        s.box(x, 30, 210, 70, n, l, stroke=TEAL2, tfill=TEAL)
-        color = ORANGE if dep == "hylo-core only" else TEAL2
-        s.line([(x + 105, 102), (x + 105, 188)], color)
-        s.rect(x + 105 - 56, 132, 112, 22, "#fff", color, rx=11, sw=1)
-        s.text(x + 105, 147, dep, "s", "middle", fill=color, weight="600")
-    for i in range(3):
-        x = 240 + i * 230
-        s.text(x + 10, 70, "✕", "t", "middle", fill=ORANGE, size=16)
-    s.text(480, 120, "leaves never import each other", "s", "middle", fill=ORANGE, weight="600")
-
-    s.rect(30, 190, 900, 210, TEAL_BG, TEAL2, rx=12)
-    s.text(50, 218, "hylo-harness", "h", fill=TEAL)
-    s.text(272, 218, "the base: core, eval, agents, memory, learn, evolve, catalog, policies, adapters, hylo", "s")
-    s.rect(50, 234, 860, 150, "#fff", TEAL, rx=10, sw=1.4)
-    s.text(66, 256, "FORMATS IN HYLO-CORE: THE ONLY WAY THE REPOSITORIES TALK TO EACH OTHER", "cap", fill=TEAL)
-    fm = [("registry names", "envs, agents, policies … by name"), ("traces", "every episode, event by event"),
-          ("artifacts + store ids", "artifact:<name>@<digest>"), ("active.json", "what a policy server deploys"),
-          ("scorecards", "hylo.scorecard/v0.1"), ("wire protocol", "msgpack-numpy over websockets"),
-          ("workcell API", "hylo.workcell/v0.1 over HTTP"), ("hylo subcommands", "each package adds its own")]
-    for i, (a, b) in enumerate(fm):
-        col, row = i % 4, i // 4
-        x, y = 66 + col * 210, 270 + row * 54
-        s.chip(x, y, a, w=196)
-        s.text(x + 98, y + 38, b, "s", "middle")
-
-    s.text(30, 440, "NO IMPORTABLE CODE", "cap")
-    s.box(30, 452, 260, 62, "hylo-docs", ["this site: guides, design, RFCs,", "research, generated references"],
-          fill=PANEL, dash="4 3")
-    s.box(310, 452, 290, 62, "<lab>-deployments (template)", ["serve's workcell configs, calibration,",
-                                                               "safety limits: per lab, private"],
-          fill=PANEL, dash="4 3")
-    s.box(620, 452, 140, 62, "site", ["planned"], fill="#fff", dash="2 4")
-    s.text(930, 540, "harness/dev/repos.toml; checked by harness/dev/test_boundaries.py", "s", "end")
+    s = SVG(960, 440, "Hylo repositories and how they depend on each other",
+            "bench, serve, studio and plugins each depend only on the harness and never on each other. serve depends "
+            "on hylo-core alone, so a robot computer installs little. docs and the deployments template hold no code.")
+    leaves = ["hylo-bench", "hylo-serve", "hylo-studio", "hylo-plugins"]
+    xs, w = [40, 262, 484, 706], 200
+    for x, n in zip(xs, leaves):
+        s.node(x, 36, w, 60, n)
+    s.rect(40, 170, 866, 150, TEAL_BG, TEAL, rx=14)
+    s.text(62, 204, "hylo-harness", "h", "start", fill=TEAL)
+    s.node(262, 232, 200, 60, "hylo-core", accent=True)
+    s.node(560, 232, 320, 60, "Packages and adapters")
+    s.arrow([(558, 262), (466, 262)])
+    for x, n in zip(xs, leaves):
+        cx = x + w / 2
+        if n == "hylo-serve":
+            s.arrow([(cx, 98), (cx, 228)], TEAL)
+            s.label(cx + 12, 150, "hylo-core only", "start", fill=TEAL)
+        else:
+            s.arrow([(cx, 98), (cx, 166)])
+    s.text(40, 386, "No code", "h", "start", fill=MUTED)
+    s.node(160, 356, 200, 50, "hylo-docs", fill=PANEL, dash="5 4")
+    s.node(390, 356, 280, 50, "Deployments template", fill=PANEL, dash="5 4")
     return s.save("repositories")
 
 
 # ---------------------------------------------------------------- 3. episode loop
 def episode_loop() -> Path:
-    s = SVG(960, 664, "One episode loop, two timings",
-            "core.kernel.EpisodeRunner in sync mode (the world waits for each policy call) and realtime mode (policy "
-            "calls overlap execution, stale actions are dropped, a hold action fills an empty queue).")
-    x0, cw = 150, 36                                  # step grid
+    s = SVG(960, 420, "One episode loop, two timings",
+            "In sync mode the world waits while the policy computes each chunk. In realtime mode the robot keeps "
+            "moving: the next chunk is computed while the current one runs, and the robot holds until the first "
+            "chunk arrives.")
+    x0, cw, rh = 170, 42, 34                      # 18 steps, 34-high rows
 
-    def axis(y, n, label):
-        s.line([(x0, y), (x0 + n * cw + 10, y)], MUTED)
-        for i in range(n + 1):
-            s.add(f'<line x1="{x0 + i * cw}" y1="{y - 3}" x2="{x0 + i * cw}" y2="{y + 3}" stroke="{MUTED}"/>')
-            if i % 2 == 0:
-                s.text(x0 + i * cw, y + 16, str(i), "s", "middle")
-        s.text(x0 + n * cw + 16, y + 4, label, "s")
-
-    def cell(i, y, label, fill, stroke, color=INK, dash=None, w=1):
-        s.rect(x0 + i * cw + 2, y, cw * w - 4, 26, fill, stroke, rx=5, dash=dash, sw=1)
-        if label:
-            s.text(x0 + i * cw + cw * w / 2, y + 17, label, "s", "middle", fill=color, weight="600")
-
-    # sync
-    s.text(30, 34, "SYNC", "h", fill=TEAL)
-    s.text(90, 34, "(default): the world waits for every policy call; a chunk runs execution_steps actions", "s")
-    s.text(30, 76, "policy", "t")
-    s.text(30, 116, "robot", "t")
-    for k, start in enumerate((0, 6, 12)):
-        cell(start, 58, f"act(o{start - 2 * k if k else 0})" if False else "policy call", TEAL_BG, TEAL2, TEAL, w=2)
-        s.rect(x0 + start * cw + 2, 98, 2 * cw - 4, 26, "#fff", LINE, rx=5, dash="3 3", sw=1)
-        s.text(x0 + start * cw + cw, 115, "world waits", "s", "middle")
-        for j in range(4):
-            if start + 2 + j < 18:
-                cell(start + 2 + j, 98, f"a{j}", "#fff", TEAL2, TEAL)
-    axis(150, 18, "wall time")
-    s.text(30, 190, "Benchmarks score the policy alone: latency never changes an outcome.", "s")
-
-    # realtime
-    yb = 232
-    s.text(30, yb, "REALTIME", "h", fill=ORANGE)
-    s.text(118, yb, "the robot keeps its control rate; the next chunk is computed while the current one runs", "s")
-    s.text(30, yb + 44, "policy", "t")
-    s.text(30, yb + 84, "chunks", "t")
-    s.text(30, yb + 154, "executed", "t")
-    s.text(30, yb + 194, "shield", "t")
-    s.text(30, yb + 226, "trace", "t")
-    calls = [(0, 3), (5, 8), (10, 13), (15, 18)]
-    for k, (req, arr) in enumerate(calls):
-        s.rect(x0 + req * cw + 2, yb + 26, (arr - req) * cw - 4, 26, TEAL_BG, TEAL2, rx=5, sw=1)
-        s.text(x0 + (req + arr) * cw / 2, yb + 43, f"chunk {k + 1} (o{req})", "s", "middle", fill=TEAL, weight="600")
-        row = yb + 66 + (k % 2) * 34                  # chunks overlap in time: alternate rows
-        for j in range(8):
-            i = req + j
-            if i >= 18:
-                break
-            if arr >= 18:                              # not arrived within the picture
-                cell(i, row, "", "#fff", LINE, dash="2 3")
-                continue
-            stale = i < arr
-            cell(i, row, "" if stale else f"{k + 1}·{j}", "#fff" if stale else TEAL_BG, LINE if stale else TEAL2,
-                 TEAL, dash="2 3" if stale else None)
-            if stale:
-                xx = x0 + i * cw
-                s.add(f'<line x1="{xx + 8}" y1="{row + 6}" x2="{xx + cw - 8}" y2="{row + 20}" stroke="{ORANGE}" '
-                      f'stroke-width="1.3"/>')
-        if arr < 18:
-            s.line([(x0 + arr * cw, yb + 54), (x0 + arr * cw, row - 2)], TEAL2)
-    executed = ["hold"] * 3 + [f"1·{j}" for j in range(3, 8)] + [f"2·{j}" for j in range(3, 8)] + \
-        [f"3·{j}" for j in range(3, 8)]
-    for i, e in enumerate(executed[:18]):
-        if e == "hold":
-            cell(i, yb + 136, "hold", ORANGE_BG, ORANGE, ORANGE)
+    def block(a, b, y, label="", kind="act"):
+        x, w = x0 + a * cw + 2, (b - a) * cw - 4
+        if kind == "policy":
+            s.rect(x, y, w, rh, TEAL, TEAL, rx=6)
+        elif kind == "wait":
+            s.rect(x, y, w, rh, WHITE, LINE, rx=6, dash="4 4")
+        elif kind == "hold":
+            s.rect(x, y, w, rh, PANEL, LINE, rx=6)
         else:
-            cell(i, yb + 136, e, "#fff", TEAL2, TEAL)
-    for i in range(18):
-        xx = x0 + i * cw + cw / 2
-        s.add(f'<path d="M{xx - 6},{yb + 176} L{xx + 6},{yb + 176} L{xx + 6},{yb + 184} L{xx},{yb + 190} '
-              f'L{xx - 6},{yb + 184} z" fill="{ORANGE_BG}" stroke="{ORANGE}" stroke-width="1"/>')
-        s.add(f'<circle cx="{xx}" cy="{yb + 222}" r="3.5" fill="{TEAL2}"/>')
-    axis(yb + 252, 18, "robot steps")
-    notes = [("aligned merge", "chunk 2 is computed from o5 and arrives at step 8: its actions 0–2 went stale while it "
-              "was computed and are dropped"),
-             ("refill", "the next chunk is requested when ≤ refill_steps actions remain, earlier if recent latency "
-              "says so"),
-             ("hold, watchdog", "an empty queue executes the hold action; more than max_hold_steps holds in a row "
-              "abort"),
-             ("clock", "virtual: latency measured or fixed (latency_s), deterministic, for benchmarks; wall: a worker "
-              "thread, on robots")]
-    for i, (a_, b_) in enumerate(notes):
-        y = yb + 292 + i * 26
-        s.text(30, y, a_, "t", fill=ORANGE if i == 2 else TEAL)
-        s.text(160, y, b_, "s")
-    s.text(930, 650, "k·j = action j of chunk k. Every executed action passes the SafetyShield; every step is traced "
-           "(both modes).", "s", "end")
+            s.rect(x, y, w, rh, TEAL_BG, TEAL, rx=6)
+        if label:
+            s.text(x + w / 2, y + rh / 2 + 6, label, "e" if kind == "wait" else "n",
+                   fill=MUTED if kind in ("wait", "hold") else None)
+
+    def lane(y, title, calls, robot):
+        s.text(30, y, title, "h", "start")
+        py, ry = y + 22, y + 82
+        s.text(30, py + rh / 2 + 6, "Policy", "n", "start", fill=MUTED)
+        s.text(30, ry + rh / 2 + 6, "Robot", "n", "start", fill=MUTED)
+        for a, b in calls:
+            block(a, b, py, kind="policy")
+            if b < 18:
+                s.arrow([(x0 + b * cw, py + rh + 2), (x0 + b * cw, ry - 4)], TEAL)
+        for a, b, label, kind in robot:
+            block(a, b, ry, label, kind)
+
+    lane(36, "Sync: the world waits", [(0, 2), (6, 8), (12, 14)],
+         [(0, 2, "waits", "wait"), (2, 6, "chunk 1", "act"), (6, 8, "", "wait"), (8, 12, "chunk 2", "act"),
+          (12, 14, "", "wait"), (14, 18, "chunk 3", "act")])
+    lane(210, "Realtime: the robot keeps moving", [(0, 3), (4, 7), (8, 11), (12, 15)],
+         [(0, 3, "hold", "hold"), (3, 7, "chunk 1", "act"), (7, 11, "chunk 2", "act"), (11, 15, "chunk 3", "act"),
+          (15, 18, "chunk 4", "act")])
+    s.arrow([(x0, 380), (x0 + 18 * cw + 10, 380)])
+    s.label(x0 + 18 * cw + 6, 404, "time", "end")
     return s.save("episode-loop")
 
 
 # ---------------------------------------------------------------- 4. improvement loop
 def improvement_loop() -> Path:
-    s = SVG(960, 600, "One improvement cycle",
-            "A campaign cycle: diagnose the parent, propose candidates, check them (stage 0), select on search_val "
-            "(stages 1-2), confirm on the gate split with sequential looks (stage 3), report on held-out data, "
-            "approve and promote.")
-    W, H = 196, 108
-    top = [("parent", ["the registry's active version"], TEAL),
-           ("diagnosis", ["parent on search:", "failure buckets, traces"], TEAL),
-           ("generators", ["config patches, learned", "artifacts (store ids)"], TEAL),
-           ("stage 0", ["protected scope · schema", "provenance: no gate/heldout", "store ids verified",
-                        "unknown provenance refused", "novelty · opt. prescreen"], ORANGE)]
-    for i, (t, l, c) in enumerate(top):
-        x = 50 + i * 228
-        s.box(x, 40, W, H if i < 3 else 128, t, l, stroke=c, tfill=c, fill=ORANGE_BG if c == ORANGE else "#fff")
-        if i < 3:
-            s.line([(x + W + 2, 94), (x + 226, 94)], TEAL2)
-    bot = [("stages 1–2", ["search_val, paired with", "the parent; stage 1 drops", "clearly worse ones early"], TEAL),
-           ("stage 3: the gate", ["gate, then gate_r1 … looks", "Holm at the spent α", "vetoes: task regression,",
-                                  "more safety interventions"], ORANGE),
-           ("held-out report", ["heldout split, the winner", "only; never used", "for selection"], TEAL),
-           ("approval", ["auto, or manual:", "pending_approval.json", "hylo evolve approve"], ORANGE)]
-    yb = 250
-    for i, (t, l, c) in enumerate(reversed(bot)):
-        x = 50 + i * 228
-        s.box(x, yb, W, 120, t, l, stroke=c, tfill=c, fill=ORANGE_BG if c == ORANGE else "#fff")
-    # stage0 -> stages 1-2 (rightmost bottom)
-    s.line([(832, 170), (832, 246)], TEAL2)
-    for i in range(3):
-        x = 50 + (3 - i) * 228
-        s.line([(x - 2, yb + 60), (x - 30, yb + 60)], TEAL2)
-    s.box(50, 430, 424, 70, "promotion", ["registry ledger · ACTIVE · active.json → hylo serve policy --campaign"],
-          stroke=TEAL, tfill=TEAL, fill=TEAL_BG)
-    s.line([(148, yb + 122), (148, 428)], TEAL)
-    s.box(506, 430, 196, 70, "hylo evolve rollback", ["restores the previous", "active version"], stroke=ORANGE, tfill=ORANGE)
-    s.line([(504, 465), (476, 465)], ORANGE)
-    s.curve("M48,465 C20,465 20,94 46,94", TEAL, sw=1.6)
-    s.add(f'<text x="16" y="280" class="s" text-anchor="middle" fill="{TEAL}" font-weight="600" '
-          f'transform="rotate(-90 16 280)">next cycle</text>')
-    # verdicts
-    s.text(730, 448, "VERDICTS IN archive.jsonl", "cap")
-    for i, (v, c) in enumerate([("rejected", ORANGE), ("archived", MUTED), ("gated_fail", ORANGE),
-                                ("gate_passed → promoted", TEAL)]):
-        s.text(730, 466 + i * 16, v, "m", fill=c)
-    s.text(50, 548, "Every candidate is archived with its stages. Only the top finalists of stages 1–2 (more wins than "
-           "losses against the parent) reach the gate split.", "s")
-    s.text(50, 566, "Generators and learners read only search / search_val (the split guard refuses gate and held-out "
-           "data at build time and again at stage 0).", "s")
+    s = SVG(960, 380, "One improvement cycle",
+            "A campaign cycle: start from the parent, diagnose its failures, generate candidates, screen them, "
+            "confirm the best at the gate, approve, and promote; the promoted version is the next cycle's parent. "
+            "Every candidate is archived, and generators can read the archive.")
+    w, h, top, bot = 150, 64, 40, 270
+    cx = [150, 370, 590, 810]
+    for c, n in zip(cx, ["Parent", "Diagnose", "Generate", "Screen"]):
+        s.node(c - w / 2, top, w, h, n)
+    for c, n in zip(cx[1:], ["Promote", "Approve", "Gate"]):
+        s.node(c - w / 2, bot, w, h, n, accent=n == "Gate")
+    for a, b in zip(cx, cx[1:]):
+        s.arrow([(a + w / 2 + 2, top + h / 2), (b - w / 2 - 4, top + h / 2)], TEAL)
+        if a > cx[0]:
+            s.arrow([(b - w / 2 - 2, bot + h / 2), (a + w / 2 + 4, bot + h / 2)], TEAL)
+    s.arrow([(810, top + h + 2), (810, bot - 4)], TEAL)                          # screen -> gate
+    s.arrow([(cx[1] - w / 2 - 2, bot + h / 2), (150, bot + h / 2), (150, top + h + 4)], TEAL)   # promote -> parent
+    s.label(162, 192, "next cycle", "start", fill=TEAL)
+    # the archive: every verdict is kept, generators read it
+    s.node(530, 166, 120, 46, "Archive", fill=PANEL)
+    s.arrow([(734, bot - 2), (654, 198)], MUTED, dash="5 4")
+    s.arrow([(590, 164), (590, top + h + 4)], MUTED, dash="5 4")
+    s.label(602, 140, "past results", "start")
     return s.save("improvement-loop")
 
 
 # ---------------------------------------------------------------- 5. splits
 def splits() -> Path:
-    s = SVG(960, 470, "RFC-0002 splits of the init states",
-            "50 LIBERO init states split by rsi bounds (20, 30, 40): search 0-19, search_val 20-29, gate 30-39, "
-            "heldout 40-49, and which part of the system may read each.")
-    x0, cw, y = 150, 15.6, 52
-    parts = [("search", 0, 20, TEAL2, "#d5eaec"), ("search_val", 20, 30, TEAL, "#b9dcdf"),
-             ("gate", 30, 40, ORANGE, "#fbd9c7"), ("heldout", 40, 50, INK, "#e2e8f0")]
-    s.text(30, 30, "LIBERO-10 TASK: 50 OFFICIAL INIT STATES, protocol: rsi, bounds (20, 30, 40)", "cap")
-    for name, a, b, stroke, fill in parts:
-        for i in range(a, b):
-            s.rect(x0 + i * cw, y, cw - 2, 30, fill, stroke, rx=3, sw=.8)
-        s.text(x0 + (a + b) / 2 * cw, y + 50, name, "t", "middle", fill=stroke)
-        s.text(x0 + (a + b) / 2 * cw, y + 66, f"states {a}–{b - 1}", "s", "middle")
-    for i in (0, 10, 20, 30, 40, 49):
-        s.text(x0 + i * cw + cw / 2 - 1, y - 6, str(i), "s", "middle")
-    s.text(30, y + 20, "init state", "t")
-    s.text(30, 148, "Replicates reuse an init state with new policy noise (seed + r·50); gate_looks > 1 adds gate_r1, "
-           "gate_r2 … (replicates of the gate states) for sequential looks.", "s")
-
-    rows = [("diagnosis of the parent", ["read", "—", "—", "—"]),
-            ("generators, learners, judges", ["read", "read", "refused", "refused"]),
-            ("selection (stages 1–2)", ["—", "read", "—", "—"]),
-            ("the gate (stage 3)", ["—", "—", "read", "—"]),
-            ("report after the gate", ["—", "—", "—", "read"])]
-    ty = 176
-    s.text(30, ty, "WHO MAY READ IT", "cap")
-    for j, (name, *_rest) in enumerate(parts):
-        a, b = parts[j][1], parts[j][2]
-        s.text(x0 + (a + b) / 2 * cw, ty, name, "t", "middle", fill=parts[j][3])
-    for r, (who, cells) in enumerate(rows):
-        yy = ty + 14 + r * 40
-        s.rect(20, yy, 920, 34, PANEL if r % 2 == 0 else "#fff", "none", rx=4)
-        s.text(30, yy + 22, who, "t")
-        for j, c in enumerate(cells):
-            a, b = parts[j][1], parts[j][2]
-            cx = x0 + (a + b) / 2 * cw
-            if c == "read":
-                s.chip(cx - 26, yy + 6, "read", w=52)
-            elif c == "refused":
-                s.chip(cx - 34, yy + 6, "refused", fill=ORANGE_BG, stroke=ORANGE, color=ORANGE, w=68)
-            else:
-                s.text(cx, yy + 22, "—", "s", "middle")
-    s.text(30, 404, "The split guard (core.artifact) refuses gate and held-out runs when an artifact is built, the "
-           "seal refuses them in provenance, and the gate re-checks", "s")
-    s.text(30, 420, "every artifact a candidate references. Held-out numbers are reported, never used to choose.", "s")
-    s.text(930, 452, "hylo.eval.benchmark.rsi_splits", "m", "end", fill=MUTED)
+    s = SVG(960, 216, "The four splits and who reads each",
+            "A benchmark's episodes are split four ways: search (40 percent) is read by diagnosis and generators; "
+            "search_val (20 percent) by screening and learners; gate (20 percent) by the gate; heldout (20 percent) "
+            "only for the report to the approver.")
+    x, y, h, unit = 40, 40, 60, 176
+    bands = [("search", 2, TEAL_BG, None, "Diagnosis and\ngenerators"),
+             ("search_val", 1, TEAL_BG, None, "Screening and\nlearners"),
+             ("gate", 1, TEAL, WHITE, "The gate"),
+             ("heldout", 1, PANEL, None, "Report to\nthe approver")]
+    for name, n, fill, color, reader in bands:
+        w = n * unit
+        s.rect(x + 2, y, w - 4, h, fill, TEAL if fill != PANEL else LINE, rx=8)
+        s.text(x + w / 2, y + h / 2 + 6, name, "n", fill=color)
+        s.arrow([(x + w / 2, y + h + 4), (x + w / 2, y + h + 40)])
+        for i, line in enumerate(reader.split("\n")):
+            s.text(x + w / 2, y + h + 66 + i * 22, line, "n")
+        x += w
     return s.save("splits")
 
 
 # ---------------------------------------------------------------- 6. store
 def store() -> Path:
-    s = SVG(960, 600, "The run and artifact store",
-            "Runs and sealed artifacts get ids; configs reference ids that the registry resolves to this machine's "
-            "paths; the index records provenance and referrers; deletion is refused while referred to; stores sync "
-            "between machines.")
-    s.rect(20, 20, 580, 500, TEAL_BG, TEAL2, rx=12)
-    s.text(36, 44, "ONE STORE (the profile's store: …/runs)", "cap", fill=TEAL)
-    runs = ["run:rsi-l10-parent-search-…31f1e5", "run:libero10-steered-…9b8983", "run:libero10-steered-…d528f7"]
-    for i, r in enumerate(runs):
-        s.rect(36, 60 + i * 38, 270, 28, "#fff", TEAL2, rx=6, sw=1)
-        s.text(46, 79 + i * 38, r, "m", fill=TEAL)
-    s.rect(380, 84, 204, 56, "#fff", TEAL, rx=8, sw=1.6)
-    s.text(392, 106, "artifact:l10-trace-v2", "m", fill=TEAL, weight="600")
-    s.text(392, 124, "@54a1efadf00d34d8", "m", fill=TEAL)
-    for i in range(3):
-        s.line([(308, 74 + i * 38), (376, 112)], TEAL2)
-    s.text(392, 76, "provenance: built from", "s")
-    s.rect(36, 186, 270, 46, "#fff", LINE, rx=6, sw=1)
-    s.text(46, 206, "campaign:evolve/…", "m")
-    s.text(46, 223, "archive.jsonl, registry ledger", "s")
-    s.curve("M308,209 C370,209 420,190 430,144", ORANGE, dash="4 3")
-    s.text(440, 190, "refers to", "s", fill=ORANGE, weight="600")
-    s.text(440, 206, "(ids in candidate patches)", "s", fill=ORANGE)
+    s = SVG(960, 400, "The run and artifact store",
+            "In one store, every run and artifact has an id. An artifact records the runs it was built from and "
+            "campaigns refer to runs and artifacts. A config, outside the store, names an artifact by id. "
+            "Between machines, the workstation pulls runs from the robot computer and pushes artifacts to the GPU box.")
+    s.rect(20, 20, 560, 270, TEAL_BG, TEAL, rx=14)
+    s.text(42, 56, "One store", "h", "start", fill=TEAL)
+    # runs as a small stack
+    s.rect(64, 76, 170, 60, WHITE, LINE, rx=10)
+    s.rect(57, 83, 170, 60, WHITE, LINE, rx=10)
+    s.node(50, 90, 170, 60, "Runs")
+    s.node(360, 90, 180, 60, "Artifact")
+    s.node(50, 206, 170, 60, "Campaign")
+    s.arrow([(358, 120), (238, 120)])
+    s.label(298, 108, "built from")
+    s.arrow([(135, 204), (135, 154)])
+    s.label(147, 186, "refers to", "start")
+    s.arrow([(222, 214), (358, 152)])
+    # a config is not in the store: it names an artifact by id
+    s.node(360, 326, 180, 60, "Config")
+    s.arrow([(450, 324), (450, 154)])
+    s.label(462, 240, "names by id", "start")
 
-    s.text(36, 266, "A CONFIG NAMES CONTENT, NOT A PLACE", "cap", fill=TEAL)
-    s.rect(36, 276, 548, 30, "#fff", LINE, rx=6, sw=1)
-    s.text(48, 296, 'judge: {path: "artifact:l10-trace-v2@54a1efad"}', "m")
-    s.line([(120, 308), (120, 334)], TEAL2)
-    s.text(132, 322, "digest taken over the id; registry.build then resolves it", "s")
-    s.rect(36, 338, 548, 30, "#fff", TEAL2, rx=6, sw=1)
-    s.text(48, 358, "/home/you/…/runs/judges/l10-trace-v2  (pinned in the run)", "m", fill=TEAL)
-
-    s.rect(36, 392, 548, 110, ORANGE_BG, ORANGE, rx=8, sw=1.2)
-    s.text(48, 414, "hylo store rm run:rsi-l10-parent-search-…", "m", fill=ORANGE, weight="600")
-    s.text(48, 434, "refused: referred to by artifact:l10-trace-v2@… and 3 more", "s")
-    s.text(48, 456, "hylo store rm … --force --reason \"…\"", "m", fill=ORANGE)
-    s.text(48, 476, "deletes and appends a tombstone: a later lookup of the id says", "s")
-    s.text(48, 492, "when and why it was removed, instead of \"not found\"", "s")
-
-    s.text(624, 44, "BETWEEN MACHINES (rsync over ssh)", "cap")
-    ms = [("robot computer", ["workcell episodes"], 60), ("workstation", ["the main store"], 230),
-          ("GPU box", ["policy server, training"], 400)]
-    for n, l, y in ms:
-        s.box(640, y, 290, 70, n, l, stroke=INK)
-    s.line([(720, 132), (720, 226)], TEAL)                     # robot -> workstation
-    s.text(728, 176, "pull: runs", "s", fill=TEAL, weight="600")
-    s.line([(876, 226), (876, 132)], ORANGE)
-    s.text(868, 194, "push: artifacts", "s", "end", fill=ORANGE, weight="600")
-    s.line([(720, 396), (720, 302)], TEAL)                     # GPU box -> workstation
-    s.text(728, 346, "pull: runs, artifacts", "s", fill=TEAL, weight="600")
-    s.line([(876, 302), (876, 396)], ORANGE)
-    s.text(868, 364, "push: artifacts", "s", "end", fill=ORANGE, weight="600")
-    notes = ["(run on the workstation)", "hylo store pull robot:/path/runs", "hylo store push robot:/path/runs artifact:…",
-             "Sealed artifacts are never re-copied or", "overwritten; the same path holding something",
-             "else is a conflict: nothing is copied."]
-    for i, t in enumerate(notes):
-        s.text(624, 482 + i * 17, t, "m" if i in (1, 2) else "s", fill=INK if i in (1, 2) else MUTED)
-    s.text(36, 548, "ids: run:<run_id> · artifact:<name>@<digest> (a prefix of ≥ 8 hex characters works)", "s")
-    s.text(36, 566, "index: <store>/.hylo-store/index.json, a cache rebuilt by walking the tree on a miss", "s")
-    s.text(930, 596, "hylo.core.store · hylo store", "m", "end", fill=MUTED)
+    s.text(620, 56, "Between machines", "h", "start", fill=TEAL)
+    mx, mw, mh = 640, 280, 60
+    s.node(mx, 90, mw, mh, "Robot computer", fill=PANEL)
+    s.node(mx, 200, mw, mh, "Workstation", fill=PANEL, stroke=TEAL)
+    s.node(mx, 310, mw, mh, "GPU box", fill=PANEL)
+    s.arrow([(780, 152), (780, 196)], TEAL)
+    s.label(792, 180, "pull runs", "start")
+    s.arrow([(780, 262), (780, 306)], TEAL)
+    s.label(792, 290, "push artifacts", "start")
     return s.save("store")
 
 
 # ---------------------------------------------------------------- 7. deployment
 def deployment() -> Path:
-    s = SVG(960, 644, "Deployment topology",
-            "The workstation runs studio's control plane, campaigns and the main store; the robot computer runs the "
-            "workcell, its safety shield and the robot adapter; a GPU box serves the policy.")
+    s = SVG(960, 510, "Deployment topology",
+            "The workstation runs Studio and holds the store. The robot computer runs the workcell, with the episode "
+            "loop and the safety shield, and drives the robot arm. A GPU box runs the policy server, which serves the "
+            "promoted version. Studio talks to the workcell over HTTP, the workcell to the policy server over a "
+            "WebSocket, and the workcell's runs are copied to the store.")
 
-    def machine(x, y, w, h, name, sub):
-        s.rect(x, y, w, h, PANEL, INK, rx=12, sw=1.2)
-        s.text(x + 14, y + 22, name, "h")
-        s.text(x + 14, y + 38, sub, "s")
+    def machine(x, y, w, h, name):
+        s.rect(x, y, w, h, PANEL, LINE, rx=14)
+        s.text(x + 20, y + 32, name, "h", "start")
 
-    s.box(36, 12, 248, 44, "operator's browser", ["studio UI: start, watch, stop, label"], tsize=12, lh=13)
+    machine(20, 80, 270, 260, "Workstation")
+    s.node(45, 130, 220, 60, "Store")
+    s.node(45, 240, 220, 60, "Studio")
 
-    machine(20, 70, 280, 330, "Workstation", "studio, campaigns, the main store")
-    s.box(36, 118, 248, 62, "hylo playground :8765", ["control plane, run explorer,", "live sandbox, campaigns"],
-          stroke=TEAL2, tfill=TEAL)
-    s.box(36, 194, 248, 54, "hylo evolve · hylo bench", ["campaigns, the gate, scorecards"], stroke=TEAL2, tfill=TEAL)
-    s.box(36, 262, 248, 54, "store", ["runs and artifacts by id"], stroke=TEAL2, tfill=TEAL)
-    s.box(36, 330, 248, 50, "active.json", ["the promoted version"], stroke=ORANGE, tfill=ORANGE)
+    machine(345, 80, 270, 260, "Robot computer")
+    s.rect(370, 125, 220, 195, WHITE, TEAL, rx=10)
+    s.text(480, 154, "Workcell", "n", fill=TEAL)
+    s.node(390, 172, 180, 52, "Episode loop", fill=TEAL_BG, stroke=TEAL)
+    s.node(390, 240, 180, 52, "Safety shield", fill=TEAL_BG, stroke=TEAL)
 
-    machine(330, 70, 300, 380, "Robot computer", "installs hylo-core + hylo-serve only")
-    s.box(346, 118, 268, 52, "hylo serve workcell :8101", ["workcell API, hylo.workcell/v0.1"], stroke=TEAL2, tfill=TEAL)
-    s.box(346, 182, 268, 56, "EpisodeRunner", ["core.kernel: realtime timing, wall clock"], stroke=TEAL2, tfill=TEAL)
-    s.box(346, 250, 268, 56, "SafetyShield", ["guards, workspace, keep-out,", "latched e-stop, watchdog"],
-          stroke=ORANGE, tfill=ORANGE, fill=ORANGE_BG)
-    s.box(346, 318, 268, 44, "lerobot.robot", ["robot adapter (LeRobot Robot)"], stroke=INK, lh=13)
-    s.box(346, 374, 268, 56, "operator channel", ["stop, e-stop, clear fault,", "reset done, verdict"], stroke=INK)
-    s.line([(480, 452), (480, 488)], INK)
-    s.text(488, 476, "joint targets", "s")
-    s.box(385, 490, 190, 50, "robot arm", ["SO-101, or the simulated arm"], stroke=INK, lh=13)
+    machine(670, 80, 270, 140, "GPU box")
+    s.node(695, 130, 220, 60, "Policy server")
 
-    machine(660, 70, 280, 220, "GPU box", "inference")
-    s.box(676, 118, 248, 70, "hylo serve policy :8001", ["websocket /wc, msgpack-numpy", "(or the openpi protocol)"],
-          stroke=TEAL2, tfill=TEAL)
-    s.box(676, 200, 248, 54, "policy weights", ["e.g. lerobot/smolvla_libero"])
+    s.node(380, 420, 200, 60, "Robot arm", fill=PANEL, stroke=INK)
 
-    s.line([(262, 58), (262, 114)], INK)                                    # browser -> control plane
-    s.text(292, 40, "HTTP :8765", "s", fill=INK, weight="600")
-    s.line([(286, 144), (342, 144)], TEAL)                                  # control plane -> workcell
-    s.text(314, 134, "HTTP", "s", "middle", fill=TEAL, weight="600")
-    s.line([(616, 210), (644, 210), (644, 152), (672, 152)], TEAL)          # runner -> policy server
-    s.line([(330, 289), (288, 289)], TEAL2, dash="5 4")                     # store pull
-    s.line([(160, 382), (160, 590), (924, 590), (924, 294)], ORANGE, dash="5 4")
-    s.text(600, 582, "hylo serve policy --campaign DIR serves the active version", "s", "middle", fill=ORANGE)
-
-    s.text(660, 330, "LINKS", "cap")
-    legend = [(TEAL, None, "HTTP workcell API"),
-              (TEAL, None, "websocket: obs → chunk"),
-              (TEAL2, "5 4", "hylo store pull: runs"),
-              (ORANGE, "5 4", "promoted version")]
-    for i, (c, d, t) in enumerate(legend):
-        y = 352 + i * 22
-        s.line([(660, y), (700, y)], c, arrow=False, dash=d, sw=2)
-        s.text(710, y + 4, t, "s")
-    s.text(20, 616, "Workcell API: /status /episodes /operator /events. Ports as in the examples: policy 8001 (8002 "
-           "for the bring-up wave), workcells", "s")
-    s.text(20, 632, "8101 / 8102, playground 8765. Tokens are passed with --token, never in configs.", "s")
+    s.arrow([(368, 160), (269, 160)], TEAL)                 # workcell -> store
+    s.label(318, 148, "runs")
+    s.arrow([(267, 270), (366, 270)], TEAL)                 # studio -> workcell
+    s.label(318, 258, "HTTP")
+    s.arrow([(594, 160), (691, 160)], TEAL, both=True)      # workcell <-> policy server
+    s.label(642, 148, "WebSocket")
+    s.arrow([(480, 322), (480, 416)], INK)                  # workcell -> arm
+    s.label(492, 380, "actions", "start")
+    s.arrow([(230, 128), (230, 44), (850, 44), (850, 126)], TEAL, dash="6 5")    # store -> policy server
+    s.label(540, 36, "promoted version")
     return s.save("deployment")
 
 

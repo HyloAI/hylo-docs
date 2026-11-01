@@ -1,136 +1,174 @@
 # Learning
 
-Everything Hylo learns comes from recorded runs and becomes a sealed **artifact**: a directory with an
-`artifact.json` manifest (`hylo.artifact/v0.1`) that records what it is, a content digest, and its provenance (the
-builder, its parameters, and the runs and data it was built from). The trace store is the single source of truth;
-artifacts are derived from it ([RFC-0004](../rfcs/RFC-0004-learning-pipeline.md)).
+A learner turns recorded runs into an **artifact**: a sealed directory whose manifest (`artifact.json`) records what
+it is, a digest of its content, and where it came from: the learner, its parameters, and the runs it read. External
+data enters as runs too, so every artifact traces back to runs.
 
-## Artifact kinds and roles
+## Train an artifact
 
-| Role | Kinds | Changes | Trusted when |
-|---|---|---|---|
-| `behaviour` | `action_memory`, `value_model`, `noise_policy`, `policy_weights`, `policy_params` | what the robot does | the gate promotes a candidate that uses it |
-| `instrument` | `success_judge`, `progress_model`, `world_model` | what is measured or labelled | it is calibrated against ground truth |
-| `proposal` | `lesson_book`, `skill_library` | only what generators propose | outcome votes curate it |
-| `data` | `dataset` | what learners can read | its labels come from the source or a calibrated judge |
+A learner job is a JSON file. Commands on this page run from `bench/`, so runs and artifacts land in the store you
+registered during [installation](../getting-started/installation.md).
 
-The gate's verdict never makes an instrument trustworthy, and calibration never activates a behaviour artifact:
-the two trust paths are separate.
-
-## The split guard
-
-![RFC-0002 splits](../assets/diagrams/splits.svg){ .hylo-figure }
-
-*Learners read only the development splits. Gate and held-out runs are refused when a job starts, refused again when
-an artifact is sealed, and checked again by the gate for every artifact a candidate references.*
-
-- `TrainJob.splits` defaults to `("search", "search_val")`; asking for a `gate*` or `heldout*` split raises
-  `SplitLeak` before anything is read.
-- Learners collect inputs with `development_runs()`, which skips other splits when scanning a directory and refuses
-  them when given an explicit list.
-- `write_manifest` refuses to seal an artifact with a gate or held-out source.
-- Runs produced inside a learned model (world-model pre-screening) are never treated as training data unless a job
-  asks for the `synthetic` split.
-- Ingested external data has split `external:<name>` and is read only when a job includes `external`.
-
-## Run a learner job
-
-A job names a `learners` plugin, its inputs, where to seal the artifact, and parameters:
-
-```json title="bench/examples/policies/jobs/flow.json"
+```json title="examples/policies/jobs/flow.json"
 {"learner": "policy.flow", "inputs": ["runs/policies/demos"], "out": "runs/policies/artifacts/flow",
  "params": {"chunk": 8, "epochs": 300, "integration_steps": 10}}
 ```
 
+Record demonstrations on a development split, then run the job:
+
 ```bash
 cd bench
+uv run hylo run examples/configs/mujoco_reach.yaml --split search \
+    --output runs/policies/demos --set benchmark.params.protocol=rsi
 uv run hylo learn examples/policies/jobs/flow.json
-uv run hylo learn job.json --python bench/envs/libero/.venv/bin/python     # in another venv
+```
+
+```json title="Output"
+{
+  "out": "runs/policies/artifacts/flow",
+  "kind": "policy_params",
+  "role": "behaviour",
+  "digest": "218d7147b2d05110",
+  "splits": ["search"],
+  "metrics": {"episodes": 80, "samples": 2858, "obs_dim": 8, "chunk": 8, "action_dim": 2,
+              "train_flow_mse": 0.128}
+}
 ```
 
 | Field | Meaning |
 |---|---|
-| `learner` | a `learners` plugin name or `module:attr` |
+| `learner` | a `learners` plugin name, or `module:attr` |
 | `inputs` | run directories, directories to search for runs, or store ids (`run:<id>`) |
 | `out` | the artifact directory this job seals |
-| `splits` | splits it may read (default `search`, `search_val`) |
+| `splits` | the splits it may read (default `search`, `search_val`) |
 | `params` | the learner's parameters |
 
-A job is resumable: if `out` already holds a verified artifact sealed by the same job (the job digest covers
-everything but `out`), it is not run again. `--python` runs the learner with another interpreter
-(`python -m hylo.learn.jobs`), for learners whose dependencies live in a runtime's venv.
+A finished job is not run again: if `out` already holds an artifact sealed by the same job, `hylo learn` skips it.
+A job that stopped halfway starts over.
 
-Learners that ship (see the [plugin catalogue](../developer-guide/plugin-catalogue.md) for maturity):
+Use `--python` when the learner's dependencies live in another venv, such as LIBERO's:
+
+```bash
+uv run hylo learn my-job.json --python envs/libero/.venv/bin/python
+```
+
+## Check and use it
+
+```bash
+uv run hylo artifact runs/policies/artifacts/flow     # check the digest and sources, print the manifest
+uv run hylo store ref runs/policies/artifacts/flow    # its store id: artifact:policy.flow@218d7147b2d05110
+```
+
+`hylo artifact` fails if the content no longer matches the digest or a source is a gate or held-out run.
+`hylo store ref` needs the directory to be inside this machine's [store](store.md).
+
+Configs name the artifact by its store id:
+
+```yaml
+sampler: {type: policy.flow, params: {path: "artifact:policy.flow@218d7147b2d05110"}}
+```
+
+Keep the `@digest` ([why](store.md#use-ids-in-configs)).
+
+<a id="the-split-guard"></a>
+
+## Which runs a learner may read
+
+By default a learner reads only `search` and `search_val` runs. It reads `synthetic` runs (produced inside a learned
+model) and `external` runs ([ingested data](#bring-in-external-data)) only when the job lists them in `splits`.
+
+Gate and held-out runs are refused three times: when the job starts (asking for them fails, and a directory scan
+skips them), when the artifact is sealed, and in a campaign's stage-0 checks, for every artifact a candidate
+references. Who else reads which split: [campaign splits](campaigns.md#splits).
+
+## Artifact roles
+
+| Role | Kinds | Changes | Trusted when |
+|---|---|---|---|
+| `behaviour` | `action_memory`, `value_model`, `noise_policy`, `policy_weights`, `policy_params` | what the robot does | the gate promotes a candidate that uses it |
+| `instrument` | `success_judge`, `progress_model`, `world_model` | what is measured or labelled | it is calibrated against known outcomes |
+| `proposal` | `lesson_book`, `skill_library` | only what generators propose | campaign outcomes, including gate results, curate it: lessons cited by promoted candidates gain credit, those cited by refuted ones lose it |
+| `data` | `dataset` | what learners can read | its labels come from the source or a calibrated judge |
+
+The two trust paths are separate. A gate verdict never makes an instrument trusted, and calibration never activates
+a behaviour artifact.
+
+A **mutable** artifact keeps changing after it is sealed, such as a lesson book a campaign is curating. Its digest is
+not enforced: `hylo artifact` and the stage-0 checks do not compare its content with the manifest.
+
+## Label data without a simulator
+
+A success judge (an `instrument`) labels episodes from their traces when no simulator can, on a robot or in external
+data. Train one with `judge.trace`, then calibrate it on simulator runs:
+
+```json title="judge-job.json"
+{"learner": "judge.trace", "inputs": ["runs/libero10"], "out": "runs/judges/l10-trace",
+ "params": {"cameras": ["agentview", "wrist"]}}
+```
+
+```bash
+uv run hylo learn judge-job.json
+uv run hylo calibrate --judge '{"type": "judge.trace", "params": {"path": "artifact:l10-trace@<digest>"}}' \
+    --runs RUN_DIR [RUN_DIR ...] --artifact artifact:l10-trace@<digest>
+```
+
+Calibration reads `search` and `search_val` runs by default (`--splits`) and compares the judge's scores with the
+simulator's outcomes. It reports AUC, Brier score, expected calibration error, and the lowest threshold that reaches
+the target precision (`--target-precision`, default 0.95), with the recall there.
+
+The judge is `ready` to label when all three hold:
+
+- at least 50 episodes were scored;
+- the target precision is reachable;
+- the recall at that threshold is at least 0.3.
+
+With `--artifact`, runs the judge was trained on are left out, and the report is stored in the judge's manifest,
+where `hylo label` reads it.
+
+## Bring in external data
+
+Demonstrations, videos and other robots' logs enter as ordinary runs with split `external:<name>`. Each is sealed as
+a `data` artifact that records its origin and licence. Data sources are `datasources` plugins.
+
+```json title="spec.json"
+{"source": {"type": "video.frames", "params": {"root": "data/kitchen-videos"}},
+ "name": "kitchen-videos", "licence": "CC-BY-4.0", "out": "runs/external",
+ "image_every": 1, "assume_success": false}
+```
+
+```bash
+uv run hylo ingest spec.json                       # --python VENV_PYTHON if the source needs another venv
+uv run hylo label RUN_DIR --judge artifact:l10-trace@<digest>
+uv run hylo contamination EXTERNAL_RUN_DIR --protected PROTECTED_RUNS_DIR
+```
+
+`assume_success: true` labels every episode a success on the source's authority. Otherwise an episode is a success
+only if the source says so.
+
+`hylo label` refuses a judge that is not `ready` and labels only ingested runs the judge was not trained on.
+Episodes scoring at or above the calibrated threshold are labelled successes. The rest stay unlabelled, never
+failures. `--threshold` can raise the threshold but not lower it. Labels are written into the run's `evallog.json`,
+each marked `by: judge:<digest>`. No new artifact is made.
+
+`hylo contamination` compares each external episode's initial state with the gate and held-out episodes of the same
+task under `--protected` (default `runs`). It prints a report and exits with code 3 when it finds a match. It does
+not block anything. Do not use matching external data to build anything gated on those states.
+
+## Learners that ship
 
 | Learner | Builds |
 |---|---|
 | `policy.knn`, `policy.bc`, `policy.flow`, `policy.tokens` | reference policies ([policies](policies.md)) |
-| `world_model.state` | a state world model (for `policy.mpc` and world-model pre-screening) |
+| `world_model.state` | a state world model, for `policy.mpc` and world-model pre-screening |
 | `critic.chunk_value` | a chunk critic for critic steering |
 | `judge.trace` | a success judge from traces |
 | `lerobot.action_memory`, `lerobot.noise_prior` | action memories and noise priors for LeRobot steering |
-| `lerobot.expert_iteration` | fine-tuned LeRobot weights from successful episodes (unverified: smoke run only) |
+| `lerobot.expert_iteration` | fine-tuned LeRobot weights from successful episodes |
 
-Online learners (policy search that acts while it learns, for example the plugins repository's `examples.cem`) use
-the same jobs; see [extending](../harness/extending.md).
+How far each is tested: [plugin catalogue](../developer-guide/plugin-catalogue.md). To write your own:
+[adding a learner](../developer-guide/adding-a-learner.md).
 
-## Inspect and reference an artifact
+## Next
 
-```bash
-uv run hylo artifact runs/policies/artifacts/flow     # verify (digest intact, no gate / held-out sources), print the manifest
-uv run hylo store ref runs/policies/artifacts/flow    # its store id: artifact:policy.flow@<digest>
-```
-
-Configs reference artifacts by store id, never by path:
-
-```yaml
-sampler: {type: policy.flow, params: {path: "artifact:policy.flow@8d782faf2668f0bd"}}
-```
-
-See [store](store.md) for ids, deletion protection and moving artifacts between machines.
-
-## Success judges and calibration
-
-A success judge (`instruments` group) labels an episode from its trace when no simulator says whether it succeeded:
-on a robot, or for external data. A judge is trusted only after calibration on runs whose outcome is known.
-
-```bash
-uv run hylo learn judge-job.json                                       # learner judge.trace -> a success_judge artifact
-uv run hylo calibrate --judge '{"type": "judge.trace", "params": {"path": "artifact:l10-trace-v2@54a1efadf00d34d8"}}' \
-    --runs RUN_DIR [RUN_DIR ...] --artifact JUDGE_DIR      # JUDGE_DIR: the judge's artifact directory
-```
-
-Calibration reads development splits by default (`--splits`) and compares the judge's scores with the simulator's
-outcomes. It reports AUC, Brier score, expected calibration error, and the lowest threshold that reaches the target
-precision (`--target-precision`, default 0.95) with the recall there. The judge is `ready` to label when enough
-episodes were scored (at least 50), the target precision is reachable, and the recall at that threshold is at least 0.3. With
-`--artifact`, the judge's own training runs are excluded and the report is stored in the judge's manifest.
-
-| Judge (LIBERO-10) | AUC | Precision / recall at the 0.95-precision threshold | Ready to label |
-|---|---|---|---|
-| `judge.trace` | 0.93 | 0.95 / 0.55 (threshold 0.994) | yes |
-| `judge.vlm` | 0.61 | 1.00 / 0.13 (threshold 0.95) | no |
-
-*From this project's experiment record
-([success judges on LIBERO-10](../research/experiments/2026-10-31-success-judges-libero10.md)).*
-
-## External data
-
-Demonstrations, videos and other robots' logs enter as ordinary runs with split `external:<name>`, sealed as `data`
-artifacts that record origin and licence:
-
-```bash
-uv run hylo ingest spec.json          # {"source": {"type", "params"}, "name", "licence", "out", "image_every", "assume_success"}
-uv run hylo label RUN_DIR --judge bench/runs/judges/l10-trace-v2     # label unlabelled episodes with a ready judge
-uv run hylo contamination EXTERNAL_RUN --protected bench/runs/rsi-libero10/runs
-```
-
-- `hylo label` labels only ingested runs, only with a `ready` judge, at no less than its calibrated threshold, and
-  never runs the judge was built from. An episode below the threshold stays unlabelled; a low score is never called
-  a failure.
-- `hylo contamination` compares each external episode's initial state with the initial states of protected (gate and
-  held-out) episodes of the same task. External data that reproduces protected init states must not be used to build
-  anything that is then gated on them.
-
-Data sources are `datasources` plugins: `video.frames` and `video.files` (hylo-data-video) and `lerobot.dataset`
-(hylo-policy-lerobot, unverified here: dataset downloads have not been approved yet).
+- Use these artifacts in a [campaign](campaigns.md).
+- Keep and move them with the [store](store.md).

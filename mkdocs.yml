@@ -147,6 +147,7 @@ nav:
           - developer-guide/adding-a-policy.md
           - developer-guide/adding-an-environment.md
           - developer-guide/adding-a-learner.md
+          - developer-guide/adding-a-generator.md
       - Extending:
           - harness/extending.md
           - harness/plugin-system.md

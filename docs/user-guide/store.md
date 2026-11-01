@@ -1,95 +1,86 @@
 # Run and artifact store
 
-Runs and artifacts are referenced by **id**, not by path. A store is a directory tree on one machine in which every
-run and every sealed artifact has a global id; configs name ids, and each machine resolves them to its own paths
-([RFC-0005](../rfcs/RFC-0005-architecture-measurement-and-placement.md), part 2). The store also refuses to delete
-anything that something else still refers to, and copies runs and artifacts between machines.
+Configs name runs and artifacts by **id**, not by path, so the same config works on every machine. Each machine has
+one **store**: a directory tree that maps ids to local paths. It protects entries that other entries still name from
+deletion, and copies entries between machines.
 
 ![Store ids, references and sync](../assets/diagrams/store.svg){ .hylo-figure }
 
-*Ids name content; the index records what each artifact was built from and what each campaign refers to; push and
-pull copy entries between machines.*
-
 ## Set up the store
 
+Installation registers `bench/runs` as the store, and commands on this page run from `bench/`:
+
 ```bash
-uv run hylo store init bench/runs          # this machine's store, recorded in the profile
-uv run hylo store where
+cd bench
+uv run hylo store init runs                # make this directory the store, recorded in the profile
+uv run hylo store where                    # the store in use
 uv run hylo store ls                       # every run and artifact, by id
 uv run hylo store ls --kind artifact --json
 ```
 
-The store root is, in order: `--root` on the command line, `$HYLO_STORE`, `store:` in this machine's
-[execution profile](../configuration/profiles.md), and otherwise `./runs` relative to the working directory.
+`--root DIR` selects another store for one command. [Profiles](../configuration/profiles.md#store) gives the lookup
+order.
+
+Workcell `output_dir` and campaign `out_dir` are relative to the working directory. Make the directory they write to
+your store root, or a directory inside it.
 
 ## Ids
 
 | Id | Names |
 |---|---|
-| `run:<run_id>` | a run (a directory with `evallog.json`); run ids already end in a random suffix |
+| `run:<run_id>` | a run (a directory with `evallog.json`); run ids end in a random suffix, so they are unique across machines |
 | `artifact:<name>@<digest>` | a sealed artifact (a directory with `artifact.json`): its manifest name and content digest |
 | `artifact:<name>@<prefix>` | the same, with a digest prefix of at least 8 hex characters |
 | `artifact:<name>` | allowed only while exactly one artifact has that name |
 
 ```bash
-uv run hylo store ref bench/runs/judges/l10-trace-v2     # -> artifact:l10-trace-v2@54a1efadf00d34d8
-uv run hylo store show artifact:l10-trace-v2             # entry, path on this machine, what it was built from, referrers
+uv run hylo store ref runs/policies/artifacts/flow      # -> artifact:policy.flow@218d7147b2d05110
+uv run hylo store show artifact:policy.flow             # entry, local path, what it was built from, referrers
 ```
 
-An id that is not found lists the ids with the same name; an ambiguous one lists the candidates; an id that was
-removed says when and why.
+An id that does not resolve says why: not found, ambiguous, or removed
+([messages](../developer-guide/troubleshooting.md#the-store)).
 
-## Reference artifacts in configs
+## Use ids in configs
 
 ```yaml
-agent:
-  type: remote
-  params:
-    ref: lerobot.noise_steered
-    runtime: lerobot
-    params:
-      repo_id: lerobot/smolvla_libero
-      memory: {type: action_bank, params: {path: "artifact:l10-noise-search-v1@2687768fc5102b06", frozen: true}}
+sampler: {type: policy.flow, params: {path: "artifact:policy.flow@218d7147b2d05110"}}
 ```
 
-- The experiment digest is taken over the id, so it pins the artifact's content, not where it is.
-- The registry replaces ids with this machine's paths when it builds a component, after the digest was taken. A
-  plugin still receives a path; nothing in a plugin changes.
-- The run's `manifest.json` records every id the config used, with the full id and the path it resolved to
-  (`artifacts:`), so a name-only id is pinned after the fact.
-- Learner job inputs accept run ids (`"inputs": ["run:<run_id>"]`).
-- The gate resolves ids in candidate patches, checks that the content still has the referenced digest, and refuses
-  behaviour artifacts whose provenance is unknown. Generators that seal artifacts (`learn`, `critic.chunk_value`) put
-  ids, not paths, into candidates.
-
-## The index and what refers to what
-
-`<root>/.hylo-store/index.json` is a cache, rebuilt by walking the tree whenever an id is not found (`hylo store index`
-rebuilds it explicitly). Besides ids and paths it records references:
-
-- an artifact refers to what it was built from (its provenance: runs and other artifacts);
-- a campaign (`campaign:<path>`) refers to every run and artifact its archive or promotion ledger names: by id, by a
-  path inside an entry, or by a run id appearing in a path recorded on another machine.
+- An id with a digest pins the artifact's content in the experiment digest. A name-only id does not: if the
+  artifact is replaced, the experiment digest stays the same. Pin with `@digest` whenever runs must be
+  [comparable](experiments.md#when-two-runs-are-comparable).
+- Ids become this machine's paths only when a component is built, after the digest is taken. A plugin still
+  receives a path.
+- The run's `manifest.json` records every id the config used, with the full id and the local path (`artifacts:`).
+  A name-only id is pinned there, after the fact.
 
 ## Delete safely
 
 ```bash
 uv run hylo store rm run:<run_id>
-uv run hylo store rm artifact:old-critic@1a2b3c4d --force --reason "superseded by l10-v2"
+uv run hylo store rm artifact:old-critic@1a2b3c4d --force --reason "superseded"
 ```
 
-`hylo store rm` refuses while anything refers to the entry, and lists what does. `--force` deletes anyway. Either way a
-tombstone in `<root>/.hylo-store/tombstones.jsonl` records what was removed, when, why and what referred to it, so a
-later lookup of that id says it was removed instead of "not found".
+`hylo store rm` refuses while another entry refers to the one you delete, and lists what does. These references
+count:
+
+- an artifact refers to the runs and artifacts it was built from;
+- a campaign refers to every run and artifact its archive or promotion ledger names.
+
+The store knows only the references in its index. A config file or a script that names an id does not protect it.
+
+`--force` deletes anyway. Either way a tombstone in `<root>/.hylo-store/tombstones.jsonl` records what was removed,
+when, why, and what referred to it. A later lookup of that id says it was removed instead of "not found".
 
 !!! warning
-    Do not delete run directories by hand: an artifact's provenance or a campaign's archive may still name them.
+    Do not delete run directories by hand. An artifact's provenance or a campaign's archive may still name them.
 
-## Move runs and artifacts between machines
+## Copy between machines
 
 ```bash
 uv run hylo store pull robot-host:/home/lab/runs                        # runs recorded on the robot computer
-uv run hylo store push gpu-box:/data/runs artifact:l10-trace-v2@54a1efad --with-sources
+uv run hylo store push gpu-box:/data/runs artifact:policy.flow@218d7147 --with-sources
 uv run hylo store push /mnt/backup/runs --dry-run                       # what would be copied
 ```
 
@@ -97,28 +88,37 @@ uv run hylo store push /mnt/backup/runs --dry-run                       # what w
 |---|---|
 | `LOCATION` | `PATH` or `HOST:PATH` (ssh and rsync) |
 | `IDS ...` | what to copy (default: everything) |
-| `--with-sources` | also what the selected artifacts were built from |
+| `--with-sources` | also copy what the selected artifacts were built from |
 | `--dry-run` | print the plan |
-| `--remote-wc` | the `hylo` command on the other machine (default `hylo`) |
+| `--remote-command` | the `hylo` command on the other machine (default `hylo`) |
 
-The other side is listed with its own `hylo store ls --json`, so `hylo` must be installed there. Sealed artifacts are
-never re-copied or overwritten. The same path holding a different entry on the other side is a conflict, and then
-nothing is copied. Runs and mutable artifacts (such as lesson books) are brought up to date.
+The other side is listed with its own `hylo store ls --json`, so `hylo` must be on the remote machine's
+non-interactive ssh `PATH`. In a uv workspace it usually is not: pass, for example,
+`--remote-command 'uv run --project /path/to/workspace hylo'`.
 
-!!! note "Not yet"
-    Sync has been tested between two local stores only, not yet over ssh. Studio shows ids but still walks
-    directories for its listings, and workcell `output_dir` and campaign `out_dir` are still relative to the working
-    directory: register the directory they write to as the store.
+Sealed artifacts are never copied again or overwritten. If the same path holds a different entry on the other side,
+that is a conflict, and nothing is copied. Runs and [mutable artifacts](learning.md#artifact-roles), such as lesson
+books, are brought up to date.
+
+Push and pull have been tested between local stores. Transfers over ssh have not been tested.
 
 ## Adopt older directories
 
-Artifacts built before manifests existed can be sealed in place, with the runs they were built from:
+An artifact built before manifests existed can be sealed in place, with the runs it was built from:
 
 ```bash
-uv run hylo store adopt bench/runs/memory/l10-search-v1 --kind action_memory --role behaviour \
-    --source run:rsi-l10-parent-search-10507bae9c9e95b3-31f1e5
+uv run hylo store adopt runs/memory/my-action-memory --kind action_memory --role behaviour \
+    --source run:<run_id>
 ```
 
+`--source` can be repeated. The sources are recorded as you state them. Hylo refuses a gate or held-out source, but
+it cannot check that your list is complete.
+
 Without any `--source`, the provenance is recorded as unknown. Such an artifact can still be used in experiments,
-but the gate refuses it as a behaviour artifact in a candidate, because a leak of gate or held-out data cannot be
-ruled out.
+but a campaign refuses it at stage 0 as a behaviour artifact in a candidate, because a leak of gate or held-out data
+cannot be ruled out.
+
+## Next
+
+- Score agents under a fixed protocol: [benchmarking](../benchmarking/index.md).
+- Train artifacts from stored runs: [learning](learning.md).

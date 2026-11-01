@@ -1,9 +1,8 @@
 # Configuration
 
-What an experiment measures, where its components run on one machine, and how plugins are found. The
-[experiment config schema](../harness/experiment-schema.md) documents the YAML format;
-[execution profiles](../configuration/profiles.md) and the [plugin catalogue](../developer-guide/plugin-catalogue.md)
-the other two from the user's side.
+What an experiment measures, where its components run on one machine, and how plugins are found. For the YAML side,
+see the [experiment config schema](../harness/experiment-schema.md) and [execution profiles](../configuration/profiles.md);
+for how plugins are found, see the [plugin system](../harness/plugin-system.md).
 
 ## Experiment configs
 

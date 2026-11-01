@@ -1,78 +1,40 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 600" width="960" height="600" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 380" width="960" height="380" role="img" aria-labelledby="title desc">
 <title id="title">One improvement cycle</title>
-<desc id="desc">A campaign cycle: diagnose the parent, propose candidates, check them (stage 0), select on search_val (stages 1-2), confirm on the gate split with sequential looks (stage 3), report on held-out data, approve and promote.</desc>
+<desc id="desc">A campaign cycle: start from the parent, diagnose its failures, generate candidates, screen them, confirm the best at the gate, approve, and promote; the promoted version is the next cycle&#x27;s parent. Every candidate is archived, and generators can read the archive.</desc>
 <defs><style>
-  text { font-family: IBM Plex Sans, Helvetica, Arial, sans-serif; fill: #334155; }
-  .t { font-size: 13px; font-weight: 600; }
-  .s { font-size: 11px; fill: #64748b; }
-  .h { font-size: 15px; font-weight: 700; }
-  .cap { font-size: 11px; font-weight: 600; letter-spacing: .06em; fill: #64748b; }
-  .m { font-family: IBM Plex Mono, Menlo, Consolas, monospace; font-size: 11px; }
-  .w { fill: #ffffff; }
-</style><marker id="a-64748b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#64748b"/></marker><marker id="a-0d5c63" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#0d5c63"/></marker><marker id="a-2a7f86" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2a7f86"/></marker><marker id="a-c2410c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#c2410c"/></marker><marker id="a-334155" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#334155"/></marker></defs>
-<rect width="960" height="600" fill="#ffffff"/>
-<rect x="50" y="40" width="196" height="108" rx="8" fill="#fff" stroke="#0d5c63" stroke-width="1.2"/>
-<text x="148.0" y="91.0" class="t" text-anchor="middle" fill="#0d5c63">parent</text>
-<text x="148.0" y="105.0" class="s" text-anchor="middle">the registry&#x27;s active version</text>
-<path d="M248,94 L276,94" fill="none" stroke="#2a7f86" stroke-width="1.5" marker-end="url(#a-2a7f86)"/>
-<rect x="278" y="40" width="196" height="108" rx="8" fill="#fff" stroke="#0d5c63" stroke-width="1.2"/>
-<text x="376.0" y="84.0" class="t" text-anchor="middle" fill="#0d5c63">diagnosis</text>
-<text x="376.0" y="98.0" class="s" text-anchor="middle">parent on search:</text>
-<text x="376.0" y="112.0" class="s" text-anchor="middle">failure buckets, traces</text>
-<path d="M476,94 L504,94" fill="none" stroke="#2a7f86" stroke-width="1.5" marker-end="url(#a-2a7f86)"/>
-<rect x="506" y="40" width="196" height="108" rx="8" fill="#fff" stroke="#0d5c63" stroke-width="1.2"/>
-<text x="604.0" y="84.0" class="t" text-anchor="middle" fill="#0d5c63">generators</text>
-<text x="604.0" y="98.0" class="s" text-anchor="middle">config patches, learned</text>
-<text x="604.0" y="112.0" class="s" text-anchor="middle">artifacts (store ids)</text>
-<path d="M704,94 L732,94" fill="none" stroke="#2a7f86" stroke-width="1.5" marker-end="url(#a-2a7f86)"/>
-<rect x="734" y="40" width="196" height="128" rx="8" fill="#fdeee6" stroke="#c2410c" stroke-width="1.2"/>
-<text x="832.0" y="73.0" class="t" text-anchor="middle" fill="#c2410c">stage 0</text>
-<text x="832.0" y="87.0" class="s" text-anchor="middle">protected scope · schema</text>
-<text x="832.0" y="101.0" class="s" text-anchor="middle">provenance: no gate/heldout</text>
-<text x="832.0" y="115.0" class="s" text-anchor="middle">store ids verified</text>
-<text x="832.0" y="129.0" class="s" text-anchor="middle">unknown provenance refused</text>
-<text x="832.0" y="143.0" class="s" text-anchor="middle">novelty · opt. prescreen</text>
-<rect x="50" y="250" width="196" height="120" rx="8" fill="#fdeee6" stroke="#c2410c" stroke-width="1.2"/>
-<text x="148.0" y="293.0" class="t" text-anchor="middle" fill="#c2410c">approval</text>
-<text x="148.0" y="307.0" class="s" text-anchor="middle">auto, or manual:</text>
-<text x="148.0" y="321.0" class="s" text-anchor="middle">pending_approval.json</text>
-<text x="148.0" y="335.0" class="s" text-anchor="middle">hylo evolve approve</text>
-<rect x="278" y="250" width="196" height="120" rx="8" fill="#fff" stroke="#0d5c63" stroke-width="1.2"/>
-<text x="376.0" y="293.0" class="t" text-anchor="middle" fill="#0d5c63">held-out report</text>
-<text x="376.0" y="307.0" class="s" text-anchor="middle">heldout split, the winner</text>
-<text x="376.0" y="321.0" class="s" text-anchor="middle">only; never used</text>
-<text x="376.0" y="335.0" class="s" text-anchor="middle">for selection</text>
-<rect x="506" y="250" width="196" height="120" rx="8" fill="#fdeee6" stroke="#c2410c" stroke-width="1.2"/>
-<text x="604.0" y="286.0" class="t" text-anchor="middle" fill="#c2410c">stage 3: the gate</text>
-<text x="604.0" y="300.0" class="s" text-anchor="middle">gate, then gate_r1 … looks</text>
-<text x="604.0" y="314.0" class="s" text-anchor="middle">Holm at the spent α</text>
-<text x="604.0" y="328.0" class="s" text-anchor="middle">vetoes: task regression,</text>
-<text x="604.0" y="342.0" class="s" text-anchor="middle">more safety interventions</text>
-<rect x="734" y="250" width="196" height="120" rx="8" fill="#fff" stroke="#0d5c63" stroke-width="1.2"/>
-<text x="832.0" y="293.0" class="t" text-anchor="middle" fill="#0d5c63">stages 1–2</text>
-<text x="832.0" y="307.0" class="s" text-anchor="middle">search_val, paired with</text>
-<text x="832.0" y="321.0" class="s" text-anchor="middle">the parent; stage 1 drops</text>
-<text x="832.0" y="335.0" class="s" text-anchor="middle">clearly worse ones early</text>
-<path d="M832,170 L832,246" fill="none" stroke="#2a7f86" stroke-width="1.5" marker-end="url(#a-2a7f86)"/>
-<path d="M732,310 L704,310" fill="none" stroke="#2a7f86" stroke-width="1.5" marker-end="url(#a-2a7f86)"/>
-<path d="M504,310 L476,310" fill="none" stroke="#2a7f86" stroke-width="1.5" marker-end="url(#a-2a7f86)"/>
-<path d="M276,310 L248,310" fill="none" stroke="#2a7f86" stroke-width="1.5" marker-end="url(#a-2a7f86)"/>
-<rect x="50" y="430" width="424" height="70" rx="8" fill="#e6f2f3" stroke="#0d5c63" stroke-width="1.2"/>
-<text x="262.0" y="462.0" class="t" text-anchor="middle" fill="#0d5c63">promotion</text>
-<text x="262.0" y="476.0" class="s" text-anchor="middle">registry ledger · ACTIVE · active.json → hylo serve policy --campaign</text>
-<path d="M148,372 L148,428" fill="none" stroke="#0d5c63" stroke-width="1.5" marker-end="url(#a-0d5c63)"/>
-<rect x="506" y="430" width="196" height="70" rx="8" fill="#fff" stroke="#c2410c" stroke-width="1.2"/>
-<text x="604.0" y="455.0" class="t" text-anchor="middle" fill="#c2410c">hylo evolve rollback</text>
-<text x="604.0" y="469.0" class="s" text-anchor="middle">restores the previous</text>
-<text x="604.0" y="483.0" class="s" text-anchor="middle">active version</text>
-<path d="M504,465 L476,465" fill="none" stroke="#c2410c" stroke-width="1.5" marker-end="url(#a-c2410c)"/>
-<path d="M48,465 C20,465 20,94 46,94" fill="none" stroke="#0d5c63" stroke-width="1.6" marker-end="url(#a-0d5c63)"/>
-<text x="16" y="280" class="s" text-anchor="middle" fill="#0d5c63" font-weight="600" transform="rotate(-90 16 280)">next cycle</text>
-<text x="730" y="448" class="cap" text-anchor="start">VERDICTS IN archive.jsonl</text>
-<text x="730" y="466" class="m" text-anchor="start" fill="#c2410c">rejected</text>
-<text x="730" y="482" class="m" text-anchor="start" fill="#64748b">archived</text>
-<text x="730" y="498" class="m" text-anchor="start" fill="#c2410c">gated_fail</text>
-<text x="730" y="514" class="m" text-anchor="start" fill="#0d5c63">gate_passed → promoted</text>
-<text x="50" y="548" class="s" text-anchor="start">Every candidate is archived with its stages. Only the top finalists of stages 1–2 (more wins than losses against the parent) reach the gate split.</text>
-<text x="50" y="566" class="s" text-anchor="start">Generators and learners read only search / search_val (the split guard refuses gate and held-out data at build time and again at stage 0).</text>
+  text { font-family: IBM Plex Sans, Helvetica, Arial, sans-serif; fill: #1e293b; }
+  .n { font-size: 17px; font-weight: 600; }
+  .e { font-size: 15px; fill: #475569; paint-order: stroke; stroke: #ffffff; stroke-width: 5px;
+        stroke-linejoin: round; }
+  .h { font-size: 18px; font-weight: 700; }
+  .g { font-size: 17px; font-weight: 700; fill: #0d5c63; }
+</style><marker id="a-475569" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#475569"/></marker><marker id="a-0d5c63" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#0d5c63"/></marker><marker id="a-1e293b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1e293b"/></marker></defs>
+<rect width="960" height="380" fill="#ffffff"/>
+<rect x="75.0" y="40" width="150" height="64" rx="10" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/>
+<text x="150.0" y="78.0" class="n" text-anchor="middle">Parent</text>
+<rect x="295.0" y="40" width="150" height="64" rx="10" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/>
+<text x="370.0" y="78.0" class="n" text-anchor="middle">Diagnose</text>
+<rect x="515.0" y="40" width="150" height="64" rx="10" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/>
+<text x="590.0" y="78.0" class="n" text-anchor="middle">Generate</text>
+<rect x="735.0" y="40" width="150" height="64" rx="10" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/>
+<text x="810.0" y="78.0" class="n" text-anchor="middle">Screen</text>
+<rect x="295.0" y="270" width="150" height="64" rx="10" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/>
+<text x="370.0" y="308.0" class="n" text-anchor="middle">Promote</text>
+<rect x="515.0" y="270" width="150" height="64" rx="10" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/>
+<text x="590.0" y="308.0" class="n" text-anchor="middle">Approve</text>
+<rect x="735.0" y="270" width="150" height="64" rx="10" fill="#0d5c63" stroke="#0d5c63" stroke-width="1.5"/>
+<text x="810.0" y="308.0" class="n" text-anchor="middle" style="fill:#ffffff">Gate</text>
+<path d="M227.0,72.0 L291.0,72.0" fill="none" stroke="#0d5c63" stroke-width="2" marker-end="url(#a-0d5c63)"/>
+<path d="M447.0,72.0 L511.0,72.0" fill="none" stroke="#0d5c63" stroke-width="2" marker-end="url(#a-0d5c63)"/>
+<path d="M513.0,302.0 L449.0,302.0" fill="none" stroke="#0d5c63" stroke-width="2" marker-end="url(#a-0d5c63)"/>
+<path d="M667.0,72.0 L731.0,72.0" fill="none" stroke="#0d5c63" stroke-width="2" marker-end="url(#a-0d5c63)"/>
+<path d="M733.0,302.0 L669.0,302.0" fill="none" stroke="#0d5c63" stroke-width="2" marker-end="url(#a-0d5c63)"/>
+<path d="M810,106 L810,266" fill="none" stroke="#0d5c63" stroke-width="2" marker-end="url(#a-0d5c63)"/>
+<path d="M293.0,302.0 L150,302.0 L150,108" fill="none" stroke="#0d5c63" stroke-width="2" marker-end="url(#a-0d5c63)"/>
+<text x="162" y="192" class="e" text-anchor="start" style="fill:#0d5c63">next cycle</text>
+<rect x="530" y="166" width="120" height="46" rx="10" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.5"/>
+<text x="590.0" y="195.0" class="n" text-anchor="middle">Archive</text>
+<path d="M734,268 L654,198" fill="none" stroke="#475569" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#a-475569)"/>
+<path d="M590,164 L590,108" fill="none" stroke="#475569" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#a-475569)"/>
+<text x="602" y="140" class="e" text-anchor="start">past results</text>
 </svg>

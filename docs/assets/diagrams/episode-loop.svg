@@ -1,267 +1,55 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 664" width="960" height="664" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 420" width="960" height="420" role="img" aria-labelledby="title desc">
 <title id="title">One episode loop, two timings</title>
-<desc id="desc">core.kernel.EpisodeRunner in sync mode (the world waits for each policy call) and realtime mode (policy calls overlap execution, stale actions are dropped, a hold action fills an empty queue).</desc>
+<desc id="desc">In sync mode the world waits while the policy computes each chunk. In realtime mode the robot keeps moving: the next chunk is computed while the current one runs, and the robot holds until the first chunk arrives.</desc>
 <defs><style>
-  text { font-family: IBM Plex Sans, Helvetica, Arial, sans-serif; fill: #334155; }
-  .t { font-size: 13px; font-weight: 600; }
-  .s { font-size: 11px; fill: #64748b; }
-  .h { font-size: 15px; font-weight: 700; }
-  .cap { font-size: 11px; font-weight: 600; letter-spacing: .06em; fill: #64748b; }
-  .m { font-family: IBM Plex Mono, Menlo, Consolas, monospace; font-size: 11px; }
-  .w { fill: #ffffff; }
-</style><marker id="a-64748b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#64748b"/></marker><marker id="a-0d5c63" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#0d5c63"/></marker><marker id="a-2a7f86" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2a7f86"/></marker><marker id="a-c2410c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#c2410c"/></marker><marker id="a-334155" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#334155"/></marker></defs>
-<rect width="960" height="664" fill="#ffffff"/>
-<text x="30" y="34" class="h" text-anchor="start" fill="#0d5c63">SYNC</text>
-<text x="90" y="34" class="s" text-anchor="start">(default): the world waits for every policy call; a chunk runs execution_steps actions</text>
-<text x="30" y="76" class="t" text-anchor="start">policy</text>
-<text x="30" y="116" class="t" text-anchor="start">robot</text>
-<rect x="152" y="58" width="68" height="26" rx="5" fill="#e6f2f3" stroke="#2a7f86" stroke-width="1"/>
-<text x="186.0" y="75" class="s" text-anchor="middle" fill="#0d5c63" font-weight="600">policy call</text>
-<rect x="152" y="98" width="68" height="26" rx="5" fill="#fff" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="3 3"/>
-<text x="186" y="115" class="s" text-anchor="middle">world waits</text>
-<rect x="224" y="98" width="32" height="26" rx="5" fill="#fff" stroke="#2a7f86" stroke-width="1"/>
-<text x="240.0" y="115" class="s" text-anchor="middle" fill="#0d5c63" font-weight="600">a0</text>
-<rect x="260" y="98" width="32" height="26" rx="5" fill="#fff" stroke="#2a7f86" stroke-width="1"/>
-<text x="276.0" y="115" class="s" text-anchor="middle" fill="#0d5c63" font-weight="600">a1</text>
-<rect x="296" y="98" width="32" height="26" rx="5" fill="#fff" stroke="#2a7f86" stroke-width="1"/>
-<text x="312.0" y="115" class="s" text-anchor="middle" fill="#0d5c63" font-weight="600">a2</text>
-<rect x="332" y="98" width="32" height="26" rx="5" fill="#fff" stroke="#2a7f86" stroke-width="1"/>
-<text x="348.0" y="115" class="s" text-anchor="middle" fill="#0d5c63" font-weight="600">a3</text>
-<rect x="368" y="58" width="68" height="26" rx="5" fill="#e6f2f3" stroke="#2a7f86" stroke-width="1"/>
-<text x="402.0" y="75" class="s" text-anchor="middle" fill="#0d5c63" font-weight="600">policy call</text>
-<rect x="368" y="98" width="68" height="26" rx="5" fill="#fff" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="3 3"/>
-<text x="402" y="115" class="s" text-anchor="middle">world waits</text>
-<rect x="440" y="98" width="32" height="26" rx="5" fill="#fff" stroke="#2a7f86" stroke-width="1"/>
-<text x="456.0" y="115" class="s" text-anchor="middle" fill="#0d5c63" font-weight="600">a0</text>
-<rect x="476" y="98" width="32" height="26" rx="5" fill="#fff" stroke="#2a7f86" stroke-width="1"/>
-<text x="492.0" y="115" class="s" text-anchor="middle" fill="#0d5c63" font-weight="600">a1</text>
-<rect x="512" y="98" width="32" height="26" rx="5" fill="#fff" stroke="#2a7f86" stroke-width="1"/>
-<text x="528.0" y="115" class="s" text-anchor="middle" fill="#0d5c63" font-weight="600">a2</text>
-<rect x="548" y="98" width="32" height="26" rx="5" fill="#fff" stroke="#2a7f86" stroke-width="1"/>
-<text x="564.0" y="115" class="s" text-anchor="middle" fill="#0d5c63" font-weight="600">a3</text>
-<rect x="584" y="58" width="68" height="26" rx="5" fill="#e6f2f3" stroke="#2a7f86" stroke-width="1"/>
-<text x="618.0" y="75" class="s" text-anchor="middle" fill="#0d5c63" font-weight="600">policy call</text>
-<rect x="584" y="98" width="68" height="26" rx="5" fill="#fff" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="3 3"/>
-<text x="618" y="115" class="s" text-anchor="middle">world waits</text>
-<rect x="656" y="98" width="32" height="26" rx="5" fill="#fff" stroke="#2a7f86" stroke-width="1"/>
-<text x="672.0" y="115" class="s" text-anchor="middle" fill="#0d5c63" font-weight="600">a0</text>
-<rect x="692" y="98" width="32" height="26" rx="5" fill="#fff" stroke="#2a7f86" stroke-width="1"/>
-<text x="708.0" y="115" class="s" text-anchor="middle" fill="#0d5c63" font-weight="600">a1</text>
-<rect x="728" y="98" width="32" height="26" rx="5" fill="#fff" stroke="#2a7f86" stroke-width="1"/>
-<text x="744.0" y="115" class="s" text-anchor="middle" fill="#0d5c63" font-weight="600">a2</text>
-<rect x="764" y="98" width="32" height="26" rx="5" fill="#fff" stroke="#2a7f86" stroke-width="1"/>
-<text x="780.0" y="115" class="s" text-anchor="middle" fill="#0d5c63" font-weight="600">a3</text>
-<path d="M150,150 L808,150" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#a-64748b)"/>
-<line x1="150" y1="147" x2="150" y2="153" stroke="#64748b"/>
-<text x="150" y="166" class="s" text-anchor="middle">0</text>
-<line x1="186" y1="147" x2="186" y2="153" stroke="#64748b"/>
-<line x1="222" y1="147" x2="222" y2="153" stroke="#64748b"/>
-<text x="222" y="166" class="s" text-anchor="middle">2</text>
-<line x1="258" y1="147" x2="258" y2="153" stroke="#64748b"/>
-<line x1="294" y1="147" x2="294" y2="153" stroke="#64748b"/>
-<text x="294" y="166" class="s" text-anchor="middle">4</text>
-<line x1="330" y1="147" x2="330" y2="153" stroke="#64748b"/>
-<line x1="366" y1="147" x2="366" y2="153" stroke="#64748b"/>
-<text x="366" y="166" class="s" text-anchor="middle">6</text>
-<line x1="402" y1="147" x2="402" y2="153" stroke="#64748b"/>
-<line x1="438" y1="147" x2="438" y2="153" stroke="#64748b"/>
-<text x="438" y="166" class="s" text-anchor="middle">8</text>
-<line x1="474" y1="147" x2="474" y2="153" stroke="#64748b"/>
-<line x1="510" y1="147" x2="510" y2="153" stroke="#64748b"/>
-<text x="510" y="166" class="s" text-anchor="middle">10</text>
-<line x1="546" y1="147" x2="546" y2="153" stroke="#64748b"/>
-<line x1="582" y1="147" x2="582" y2="153" stroke="#64748b"/>
-<text x="582" y="166" class="s" text-anchor="middle">12</text>
-<line x1="618" y1="147" x2="618" y2="153" stroke="#64748b"/>
-<line x1="654" y1="147" x2="654" y2="153" stroke="#64748b"/>
-<text x="654" y="166" class="s" text-anchor="middle">14</text>
-<line x1="690" y1="147" x2="690" y2="153" stroke="#64748b"/>
-<line x1="726" y1="147" x2="726" y2="153" stroke="#64748b"/>
-<text x="726" y="166" class="s" text-anchor="middle">16</text>
-<line x1="762" y1="147" x2="762" y2="153" stroke="#64748b"/>
-<line x1="798" y1="147" x2="798" y2="153" stroke="#64748b"/>
-<text x="798" y="166" class="s" text-anchor="middle">18</text>
-<text x="814" y="154" class="s" text-anchor="start">wall time</text>
-<text x="30" y="190" class="s" text-anchor="start">Benchmarks score the policy alone: latency never changes an outcome.</text>
-<text x="30" y="232" class="h" text-anchor="start" fill="#c2410c">REALTIME</text>
-<text x="118" y="232" class="s" text-anchor="start">the robot keeps its control rate; the next chunk is computed while the current one runs</text>
-<text x="30" y="276" class="t" text-anchor="start">policy</text>
-<text x="30" y="316" class="t" text-anchor="start">chunks</text>
-<text x="30" y="386" class="t" text-anchor="start">executed</text>
-<text x="30" y="426" class="t" text-anchor="start">shield</text>
-<text x="30" y="458" class="t" text-anchor="start">trace</text>
-<rect x="152" y="258" width="104" height="26" rx="5" fill="#e6f2f3" stroke="#2a7f86" stroke-width="1"/>
-<text x="204.0" y="275" class="s" text-anchor="middle" fill="#0d5c63" font-weight="600">chunk 1 (o0)</text>
-<rect x="152" y="298" width="32" height="26" rx="5" fill="#fff" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="2 3"/>
-<line x1="158" y1="304" x2="178" y2="318" stroke="#c2410c" stroke-width="1.3"/>
-<rect x="188" y="298" width="32" height="26" rx="5" fill="#fff" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="2 3"/>
-<line x1="194" y1="304" x2="214" y2="318" stroke="#c2410c" stroke-width="1.3"/>
-<rect x="224" y="298" width="32" height="26" rx="5" fill="#fff" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="2 3"/>
-<line x1="230" y1="304" x2="250" y2="318" stroke="#c2410c" stroke-width="1.3"/>
-<rect x="260" y="298" width="32" height="26" rx="5" fill="#e6f2f3" stroke="#2a7f86" stroke-width="1"/>
-<text x="276.0" y="315" class="s" text-anchor="middle" fill="#0d5c63" font-weight="600">1·3</text>
-<rect x="296" y="298" width="32" height="26" rx="5" fill="#e6f2f3" stroke="#2a7f86" stroke-width="1"/>
-<text x="312.0" y="315" class="s" text-anchor="middle" fill="#0d5c63" font-weight="600">1·4</text>
-<rect x="332" y="298" width="32" height="26" rx="5" fill="#e6f2f3" stroke="#2a7f86" stroke-width="1"/>
-<text x="348.0" y="315" class="s" text-anchor="middle" fill="#0d5c63" font-weight="600">1·5</text>
-<rect x="368" y="298" width="32" height="26" rx="5" fill="#e6f2f3" stroke="#2a7f86" stroke-width="1"/>
-<text x="384.0" y="315" class="s" text-anchor="middle" fill="#0d5c63" font-weight="600">1·6</text>
-<rect x="404" y="298" width="32" height="26" rx="5" fill="#e6f2f3" stroke="#2a7f86" stroke-width="1"/>
-<text x="420.0" y="315" class="s" text-anchor="middle" fill="#0d5c63" font-weight="600">1·7</text>
-<path d="M258,286 L258,296" fill="none" stroke="#2a7f86" stroke-width="1.5" marker-end="url(#a-2a7f86)"/>
-<rect x="332" y="258" width="104" height="26" rx="5" fill="#e6f2f3" stroke="#2a7f86" stroke-width="1"/>
-<text x="384.0" y="275" class="s" text-anchor="middle" fill="#0d5c63" font-weight="600">chunk 2 (o5)</text>
-<rect x="332" y="332" width="32" height="26" rx="5" fill="#fff" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="2 3"/>
-<line x1="338" y1="338" x2="358" y2="352" stroke="#c2410c" stroke-width="1.3"/>
-<rect x="368" y="332" width="32" height="26" rx="5" fill="#fff" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="2 3"/>
-<line x1="374" y1="338" x2="394" y2="352" stroke="#c2410c" stroke-width="1.3"/>
-<rect x="404" y="332" width="32" height="26" rx="5" fill="#fff" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="2 3"/>
-<line x1="410" y1="338" x2="430" y2="352" stroke="#c2410c" stroke-width="1.3"/>
-<rect x="440" y="332" width="32" height="26" rx="5" fill="#e6f2f3" stroke="#2a7f86" stroke-width="1"/>
-<text x="456.0" y="349" class="s" text-anchor="middle" fill="#0d5c63" font-weight="600">2·3</text>
-<rect x="476" y="332" width="32" height="26" rx="5" fill="#e6f2f3" stroke="#2a7f86" stroke-width="1"/>
-<text x="492.0" y="349" class="s" text-anchor="middle" fill="#0d5c63" font-weight="600">2·4</text>
-<rect x="512" y="332" width="32" height="26" rx="5" fill="#e6f2f3" stroke="#2a7f86" stroke-width="1"/>
-<text x="528.0" y="349" class="s" text-anchor="middle" fill="#0d5c63" font-weight="600">2·5</text>
-<rect x="548" y="332" width="32" height="26" rx="5" fill="#e6f2f3" stroke="#2a7f86" stroke-width="1"/>
-<text x="564.0" y="349" class="s" text-anchor="middle" fill="#0d5c63" font-weight="600">2·6</text>
-<rect x="584" y="332" width="32" height="26" rx="5" fill="#e6f2f3" stroke="#2a7f86" stroke-width="1"/>
-<text x="600.0" y="349" class="s" text-anchor="middle" fill="#0d5c63" font-weight="600">2·7</text>
-<path d="M438,286 L438,330" fill="none" stroke="#2a7f86" stroke-width="1.5" marker-end="url(#a-2a7f86)"/>
-<rect x="512" y="258" width="104" height="26" rx="5" fill="#e6f2f3" stroke="#2a7f86" stroke-width="1"/>
-<text x="564.0" y="275" class="s" text-anchor="middle" fill="#0d5c63" font-weight="600">chunk 3 (o10)</text>
-<rect x="512" y="298" width="32" height="26" rx="5" fill="#fff" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="2 3"/>
-<line x1="518" y1="304" x2="538" y2="318" stroke="#c2410c" stroke-width="1.3"/>
-<rect x="548" y="298" width="32" height="26" rx="5" fill="#fff" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="2 3"/>
-<line x1="554" y1="304" x2="574" y2="318" stroke="#c2410c" stroke-width="1.3"/>
-<rect x="584" y="298" width="32" height="26" rx="5" fill="#fff" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="2 3"/>
-<line x1="590" y1="304" x2="610" y2="318" stroke="#c2410c" stroke-width="1.3"/>
-<rect x="620" y="298" width="32" height="26" rx="5" fill="#e6f2f3" stroke="#2a7f86" stroke-width="1"/>
-<text x="636.0" y="315" class="s" text-anchor="middle" fill="#0d5c63" font-weight="600">3·3</text>
-<rect x="656" y="298" width="32" height="26" rx="5" fill="#e6f2f3" stroke="#2a7f86" stroke-width="1"/>
-<text x="672.0" y="315" class="s" text-anchor="middle" fill="#0d5c63" font-weight="600">3·4</text>
-<rect x="692" y="298" width="32" height="26" rx="5" fill="#e6f2f3" stroke="#2a7f86" stroke-width="1"/>
-<text x="708.0" y="315" class="s" text-anchor="middle" fill="#0d5c63" font-weight="600">3·5</text>
-<rect x="728" y="298" width="32" height="26" rx="5" fill="#e6f2f3" stroke="#2a7f86" stroke-width="1"/>
-<text x="744.0" y="315" class="s" text-anchor="middle" fill="#0d5c63" font-weight="600">3·6</text>
-<rect x="764" y="298" width="32" height="26" rx="5" fill="#e6f2f3" stroke="#2a7f86" stroke-width="1"/>
-<text x="780.0" y="315" class="s" text-anchor="middle" fill="#0d5c63" font-weight="600">3·7</text>
-<path d="M618,286 L618,296" fill="none" stroke="#2a7f86" stroke-width="1.5" marker-end="url(#a-2a7f86)"/>
-<rect x="692" y="258" width="104" height="26" rx="5" fill="#e6f2f3" stroke="#2a7f86" stroke-width="1"/>
-<text x="744.0" y="275" class="s" text-anchor="middle" fill="#0d5c63" font-weight="600">chunk 4 (o15)</text>
-<rect x="692" y="332" width="32" height="26" rx="5" fill="#fff" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="2 3"/>
-<rect x="728" y="332" width="32" height="26" rx="5" fill="#fff" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="2 3"/>
-<rect x="764" y="332" width="32" height="26" rx="5" fill="#fff" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="2 3"/>
-<rect x="152" y="368" width="32" height="26" rx="5" fill="#fdeee6" stroke="#c2410c" stroke-width="1"/>
-<text x="168.0" y="385" class="s" text-anchor="middle" fill="#c2410c" font-weight="600">hold</text>
-<rect x="188" y="368" width="32" height="26" rx="5" fill="#fdeee6" stroke="#c2410c" stroke-width="1"/>
-<text x="204.0" y="385" class="s" text-anchor="middle" fill="#c2410c" font-weight="600">hold</text>
-<rect x="224" y="368" width="32" height="26" rx="5" fill="#fdeee6" stroke="#c2410c" stroke-width="1"/>
-<text x="240.0" y="385" class="s" text-anchor="middle" fill="#c2410c" font-weight="600">hold</text>
-<rect x="260" y="368" width="32" height="26" rx="5" fill="#fff" stroke="#2a7f86" stroke-width="1"/>
-<text x="276.0" y="385" class="s" text-anchor="middle" fill="#0d5c63" font-weight="600">1·3</text>
-<rect x="296" y="368" width="32" height="26" rx="5" fill="#fff" stroke="#2a7f86" stroke-width="1"/>
-<text x="312.0" y="385" class="s" text-anchor="middle" fill="#0d5c63" font-weight="600">1·4</text>
-<rect x="332" y="368" width="32" height="26" rx="5" fill="#fff" stroke="#2a7f86" stroke-width="1"/>
-<text x="348.0" y="385" class="s" text-anchor="middle" fill="#0d5c63" font-weight="600">1·5</text>
-<rect x="368" y="368" width="32" height="26" rx="5" fill="#fff" stroke="#2a7f86" stroke-width="1"/>
-<text x="384.0" y="385" class="s" text-anchor="middle" fill="#0d5c63" font-weight="600">1·6</text>
-<rect x="404" y="368" width="32" height="26" rx="5" fill="#fff" stroke="#2a7f86" stroke-width="1"/>
-<text x="420.0" y="385" class="s" text-anchor="middle" fill="#0d5c63" font-weight="600">1·7</text>
-<rect x="440" y="368" width="32" height="26" rx="5" fill="#fff" stroke="#2a7f86" stroke-width="1"/>
-<text x="456.0" y="385" class="s" text-anchor="middle" fill="#0d5c63" font-weight="600">2·3</text>
-<rect x="476" y="368" width="32" height="26" rx="5" fill="#fff" stroke="#2a7f86" stroke-width="1"/>
-<text x="492.0" y="385" class="s" text-anchor="middle" fill="#0d5c63" font-weight="600">2·4</text>
-<rect x="512" y="368" width="32" height="26" rx="5" fill="#fff" stroke="#2a7f86" stroke-width="1"/>
-<text x="528.0" y="385" class="s" text-anchor="middle" fill="#0d5c63" font-weight="600">2·5</text>
-<rect x="548" y="368" width="32" height="26" rx="5" fill="#fff" stroke="#2a7f86" stroke-width="1"/>
-<text x="564.0" y="385" class="s" text-anchor="middle" fill="#0d5c63" font-weight="600">2·6</text>
-<rect x="584" y="368" width="32" height="26" rx="5" fill="#fff" stroke="#2a7f86" stroke-width="1"/>
-<text x="600.0" y="385" class="s" text-anchor="middle" fill="#0d5c63" font-weight="600">2·7</text>
-<rect x="620" y="368" width="32" height="26" rx="5" fill="#fff" stroke="#2a7f86" stroke-width="1"/>
-<text x="636.0" y="385" class="s" text-anchor="middle" fill="#0d5c63" font-weight="600">3·3</text>
-<rect x="656" y="368" width="32" height="26" rx="5" fill="#fff" stroke="#2a7f86" stroke-width="1"/>
-<text x="672.0" y="385" class="s" text-anchor="middle" fill="#0d5c63" font-weight="600">3·4</text>
-<rect x="692" y="368" width="32" height="26" rx="5" fill="#fff" stroke="#2a7f86" stroke-width="1"/>
-<text x="708.0" y="385" class="s" text-anchor="middle" fill="#0d5c63" font-weight="600">3·5</text>
-<rect x="728" y="368" width="32" height="26" rx="5" fill="#fff" stroke="#2a7f86" stroke-width="1"/>
-<text x="744.0" y="385" class="s" text-anchor="middle" fill="#0d5c63" font-weight="600">3·6</text>
-<rect x="764" y="368" width="32" height="26" rx="5" fill="#fff" stroke="#2a7f86" stroke-width="1"/>
-<text x="780.0" y="385" class="s" text-anchor="middle" fill="#0d5c63" font-weight="600">3·7</text>
-<path d="M162.0,408 L174.0,408 L174.0,416 L168.0,422 L162.0,416 z" fill="#fdeee6" stroke="#c2410c" stroke-width="1"/>
-<circle cx="168.0" cy="454" r="3.5" fill="#2a7f86"/>
-<path d="M198.0,408 L210.0,408 L210.0,416 L204.0,422 L198.0,416 z" fill="#fdeee6" stroke="#c2410c" stroke-width="1"/>
-<circle cx="204.0" cy="454" r="3.5" fill="#2a7f86"/>
-<path d="M234.0,408 L246.0,408 L246.0,416 L240.0,422 L234.0,416 z" fill="#fdeee6" stroke="#c2410c" stroke-width="1"/>
-<circle cx="240.0" cy="454" r="3.5" fill="#2a7f86"/>
-<path d="M270.0,408 L282.0,408 L282.0,416 L276.0,422 L270.0,416 z" fill="#fdeee6" stroke="#c2410c" stroke-width="1"/>
-<circle cx="276.0" cy="454" r="3.5" fill="#2a7f86"/>
-<path d="M306.0,408 L318.0,408 L318.0,416 L312.0,422 L306.0,416 z" fill="#fdeee6" stroke="#c2410c" stroke-width="1"/>
-<circle cx="312.0" cy="454" r="3.5" fill="#2a7f86"/>
-<path d="M342.0,408 L354.0,408 L354.0,416 L348.0,422 L342.0,416 z" fill="#fdeee6" stroke="#c2410c" stroke-width="1"/>
-<circle cx="348.0" cy="454" r="3.5" fill="#2a7f86"/>
-<path d="M378.0,408 L390.0,408 L390.0,416 L384.0,422 L378.0,416 z" fill="#fdeee6" stroke="#c2410c" stroke-width="1"/>
-<circle cx="384.0" cy="454" r="3.5" fill="#2a7f86"/>
-<path d="M414.0,408 L426.0,408 L426.0,416 L420.0,422 L414.0,416 z" fill="#fdeee6" stroke="#c2410c" stroke-width="1"/>
-<circle cx="420.0" cy="454" r="3.5" fill="#2a7f86"/>
-<path d="M450.0,408 L462.0,408 L462.0,416 L456.0,422 L450.0,416 z" fill="#fdeee6" stroke="#c2410c" stroke-width="1"/>
-<circle cx="456.0" cy="454" r="3.5" fill="#2a7f86"/>
-<path d="M486.0,408 L498.0,408 L498.0,416 L492.0,422 L486.0,416 z" fill="#fdeee6" stroke="#c2410c" stroke-width="1"/>
-<circle cx="492.0" cy="454" r="3.5" fill="#2a7f86"/>
-<path d="M522.0,408 L534.0,408 L534.0,416 L528.0,422 L522.0,416 z" fill="#fdeee6" stroke="#c2410c" stroke-width="1"/>
-<circle cx="528.0" cy="454" r="3.5" fill="#2a7f86"/>
-<path d="M558.0,408 L570.0,408 L570.0,416 L564.0,422 L558.0,416 z" fill="#fdeee6" stroke="#c2410c" stroke-width="1"/>
-<circle cx="564.0" cy="454" r="3.5" fill="#2a7f86"/>
-<path d="M594.0,408 L606.0,408 L606.0,416 L600.0,422 L594.0,416 z" fill="#fdeee6" stroke="#c2410c" stroke-width="1"/>
-<circle cx="600.0" cy="454" r="3.5" fill="#2a7f86"/>
-<path d="M630.0,408 L642.0,408 L642.0,416 L636.0,422 L630.0,416 z" fill="#fdeee6" stroke="#c2410c" stroke-width="1"/>
-<circle cx="636.0" cy="454" r="3.5" fill="#2a7f86"/>
-<path d="M666.0,408 L678.0,408 L678.0,416 L672.0,422 L666.0,416 z" fill="#fdeee6" stroke="#c2410c" stroke-width="1"/>
-<circle cx="672.0" cy="454" r="3.5" fill="#2a7f86"/>
-<path d="M702.0,408 L714.0,408 L714.0,416 L708.0,422 L702.0,416 z" fill="#fdeee6" stroke="#c2410c" stroke-width="1"/>
-<circle cx="708.0" cy="454" r="3.5" fill="#2a7f86"/>
-<path d="M738.0,408 L750.0,408 L750.0,416 L744.0,422 L738.0,416 z" fill="#fdeee6" stroke="#c2410c" stroke-width="1"/>
-<circle cx="744.0" cy="454" r="3.5" fill="#2a7f86"/>
-<path d="M774.0,408 L786.0,408 L786.0,416 L780.0,422 L774.0,416 z" fill="#fdeee6" stroke="#c2410c" stroke-width="1"/>
-<circle cx="780.0" cy="454" r="3.5" fill="#2a7f86"/>
-<path d="M150,484 L808,484" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#a-64748b)"/>
-<line x1="150" y1="481" x2="150" y2="487" stroke="#64748b"/>
-<text x="150" y="500" class="s" text-anchor="middle">0</text>
-<line x1="186" y1="481" x2="186" y2="487" stroke="#64748b"/>
-<line x1="222" y1="481" x2="222" y2="487" stroke="#64748b"/>
-<text x="222" y="500" class="s" text-anchor="middle">2</text>
-<line x1="258" y1="481" x2="258" y2="487" stroke="#64748b"/>
-<line x1="294" y1="481" x2="294" y2="487" stroke="#64748b"/>
-<text x="294" y="500" class="s" text-anchor="middle">4</text>
-<line x1="330" y1="481" x2="330" y2="487" stroke="#64748b"/>
-<line x1="366" y1="481" x2="366" y2="487" stroke="#64748b"/>
-<text x="366" y="500" class="s" text-anchor="middle">6</text>
-<line x1="402" y1="481" x2="402" y2="487" stroke="#64748b"/>
-<line x1="438" y1="481" x2="438" y2="487" stroke="#64748b"/>
-<text x="438" y="500" class="s" text-anchor="middle">8</text>
-<line x1="474" y1="481" x2="474" y2="487" stroke="#64748b"/>
-<line x1="510" y1="481" x2="510" y2="487" stroke="#64748b"/>
-<text x="510" y="500" class="s" text-anchor="middle">10</text>
-<line x1="546" y1="481" x2="546" y2="487" stroke="#64748b"/>
-<line x1="582" y1="481" x2="582" y2="487" stroke="#64748b"/>
-<text x="582" y="500" class="s" text-anchor="middle">12</text>
-<line x1="618" y1="481" x2="618" y2="487" stroke="#64748b"/>
-<line x1="654" y1="481" x2="654" y2="487" stroke="#64748b"/>
-<text x="654" y="500" class="s" text-anchor="middle">14</text>
-<line x1="690" y1="481" x2="690" y2="487" stroke="#64748b"/>
-<line x1="726" y1="481" x2="726" y2="487" stroke="#64748b"/>
-<text x="726" y="500" class="s" text-anchor="middle">16</text>
-<line x1="762" y1="481" x2="762" y2="487" stroke="#64748b"/>
-<line x1="798" y1="481" x2="798" y2="487" stroke="#64748b"/>
-<text x="798" y="500" class="s" text-anchor="middle">18</text>
-<text x="814" y="488" class="s" text-anchor="start">robot steps</text>
-<text x="30" y="524" class="t" text-anchor="start" fill="#0d5c63">aligned merge</text>
-<text x="160" y="524" class="s" text-anchor="start">chunk 2 is computed from o5 and arrives at step 8: its actions 0–2 went stale while it was computed and are dropped</text>
-<text x="30" y="550" class="t" text-anchor="start" fill="#0d5c63">refill</text>
-<text x="160" y="550" class="s" text-anchor="start">the next chunk is requested when ≤ refill_steps actions remain, earlier if recent latency says so</text>
-<text x="30" y="576" class="t" text-anchor="start" fill="#c2410c">hold, watchdog</text>
-<text x="160" y="576" class="s" text-anchor="start">an empty queue executes the hold action; more than max_hold_steps holds in a row abort</text>
-<text x="30" y="602" class="t" text-anchor="start" fill="#0d5c63">clock</text>
-<text x="160" y="602" class="s" text-anchor="start">virtual: latency measured or fixed (latency_s), deterministic, for benchmarks; wall: a worker thread, on robots</text>
-<text x="930" y="650" class="s" text-anchor="end">k·j = action j of chunk k. Every executed action passes the SafetyShield; every step is traced (both modes).</text>
+  text { font-family: IBM Plex Sans, Helvetica, Arial, sans-serif; fill: #1e293b; }
+  .n { font-size: 17px; font-weight: 600; }
+  .e { font-size: 15px; fill: #475569; paint-order: stroke; stroke: #ffffff; stroke-width: 5px;
+        stroke-linejoin: round; }
+  .h { font-size: 18px; font-weight: 700; }
+  .g { font-size: 17px; font-weight: 700; fill: #0d5c63; }
+</style><marker id="a-475569" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#475569"/></marker><marker id="a-0d5c63" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#0d5c63"/></marker><marker id="a-1e293b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1e293b"/></marker></defs>
+<rect width="960" height="420" fill="#ffffff"/>
+<text x="30" y="36" class="h" text-anchor="start">Sync: the world waits</text>
+<text x="30" y="81.0" class="n" text-anchor="start" style="fill:#475569">Policy</text>
+<text x="30" y="141.0" class="n" text-anchor="start" style="fill:#475569">Robot</text>
+<rect x="172" y="58" width="80" height="34" rx="6" fill="#0d5c63" stroke="#0d5c63" stroke-width="1.5"/>
+<path d="M254,94 L254,114" fill="none" stroke="#0d5c63" stroke-width="2" marker-end="url(#a-0d5c63)"/>
+<rect x="424" y="58" width="80" height="34" rx="6" fill="#0d5c63" stroke="#0d5c63" stroke-width="1.5"/>
+<path d="M506,94 L506,114" fill="none" stroke="#0d5c63" stroke-width="2" marker-end="url(#a-0d5c63)"/>
+<rect x="676" y="58" width="80" height="34" rx="6" fill="#0d5c63" stroke="#0d5c63" stroke-width="1.5"/>
+<path d="M758,94 L758,114" fill="none" stroke="#0d5c63" stroke-width="2" marker-end="url(#a-0d5c63)"/>
+<rect x="172" y="118" width="80" height="34" rx="6" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4 4"/>
+<text x="212.0" y="141.0" class="e" text-anchor="middle" style="fill:#475569">waits</text>
+<rect x="256" y="118" width="164" height="34" rx="6" fill="#e3f0f1" stroke="#0d5c63" stroke-width="1.5"/>
+<text x="338.0" y="141.0" class="n" text-anchor="middle">chunk 1</text>
+<rect x="424" y="118" width="80" height="34" rx="6" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4 4"/>
+<rect x="508" y="118" width="164" height="34" rx="6" fill="#e3f0f1" stroke="#0d5c63" stroke-width="1.5"/>
+<text x="590.0" y="141.0" class="n" text-anchor="middle">chunk 2</text>
+<rect x="676" y="118" width="80" height="34" rx="6" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4 4"/>
+<rect x="760" y="118" width="164" height="34" rx="6" fill="#e3f0f1" stroke="#0d5c63" stroke-width="1.5"/>
+<text x="842.0" y="141.0" class="n" text-anchor="middle">chunk 3</text>
+<text x="30" y="210" class="h" text-anchor="start">Realtime: the robot keeps moving</text>
+<text x="30" y="255.0" class="n" text-anchor="start" style="fill:#475569">Policy</text>
+<text x="30" y="315.0" class="n" text-anchor="start" style="fill:#475569">Robot</text>
+<rect x="172" y="232" width="122" height="34" rx="6" fill="#0d5c63" stroke="#0d5c63" stroke-width="1.5"/>
+<path d="M296,268 L296,288" fill="none" stroke="#0d5c63" stroke-width="2" marker-end="url(#a-0d5c63)"/>
+<rect x="340" y="232" width="122" height="34" rx="6" fill="#0d5c63" stroke="#0d5c63" stroke-width="1.5"/>
+<path d="M464,268 L464,288" fill="none" stroke="#0d5c63" stroke-width="2" marker-end="url(#a-0d5c63)"/>
+<rect x="508" y="232" width="122" height="34" rx="6" fill="#0d5c63" stroke="#0d5c63" stroke-width="1.5"/>
+<path d="M632,268 L632,288" fill="none" stroke="#0d5c63" stroke-width="2" marker-end="url(#a-0d5c63)"/>
+<rect x="676" y="232" width="122" height="34" rx="6" fill="#0d5c63" stroke="#0d5c63" stroke-width="1.5"/>
+<path d="M800,268 L800,288" fill="none" stroke="#0d5c63" stroke-width="2" marker-end="url(#a-0d5c63)"/>
+<rect x="172" y="292" width="122" height="34" rx="6" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.5"/>
+<text x="233.0" y="315.0" class="n" text-anchor="middle" style="fill:#475569">hold</text>
+<rect x="298" y="292" width="164" height="34" rx="6" fill="#e3f0f1" stroke="#0d5c63" stroke-width="1.5"/>
+<text x="380.0" y="315.0" class="n" text-anchor="middle">chunk 1</text>
+<rect x="466" y="292" width="164" height="34" rx="6" fill="#e3f0f1" stroke="#0d5c63" stroke-width="1.5"/>
+<text x="548.0" y="315.0" class="n" text-anchor="middle">chunk 2</text>
+<rect x="634" y="292" width="164" height="34" rx="6" fill="#e3f0f1" stroke="#0d5c63" stroke-width="1.5"/>
+<text x="716.0" y="315.0" class="n" text-anchor="middle">chunk 3</text>
+<rect x="802" y="292" width="122" height="34" rx="6" fill="#e3f0f1" stroke="#0d5c63" stroke-width="1.5"/>
+<text x="863.0" y="315.0" class="n" text-anchor="middle">chunk 4</text>
+<path d="M170,380 L936,380" fill="none" stroke="#475569" stroke-width="2" marker-end="url(#a-475569)"/>
+<text x="932" y="404" class="e" text-anchor="end">time</text>
 </svg>
