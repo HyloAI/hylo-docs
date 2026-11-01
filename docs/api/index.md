@@ -12,8 +12,12 @@ harness is an implementation behind them.
 | [Artifacts and store](artifacts-and-store.md) | `core.artifact`, `core.store`, `core.scorecard`, `core.deployment` | sealed artifacts and the split guard, store ids, scorecards, active versions |
 | [Formats and schemas](formats.md) | (generated) | every versioned format and its JSON Schema |
 
-Pages are generated from the docstrings and type annotations of the harness checked out next to this repository
+Pages are generated from the docstrings and type annotations of the code checked out next to this repository
 (mkdocstrings). Names that start with an underscore are left out.
+
+Beyond the core contracts, [Packages](packages/index.md) has one page per package of every repository (21 packages:
+the harness and its adapters, bench, serve, studio, plugins), with its modules, classes and functions, signatures
+included, and the plugins it registers. Depend on the core contracts; read the rest to understand, extend or debug.
 
 !!! tip "Contracts are pydantic models or protocols"
     Data contracts (`EnvSpec`, `Observation`, `ActionChunk`, `ExperimentConfig`, ...) are frozen pydantic models:

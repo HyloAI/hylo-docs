@@ -1,6 +1,6 @@
 """Pages generated at build time from the code repositories checked out next to this one (the development workspace,
-harness/dev/bootstrap.sh): the harness reference docs, the CLI reference, the plugin catalogue, the example index and
-the format schemas. Run by mkdocs-gen-files; a repository that is not checked out gives a page that says so.
+harness/dev/bootstrap.sh): the harness reference docs, the CLI reference, the plugin catalogue, the example index,
+the format schemas and the API reference of every package. Run by mkdocs-gen-files; a repository that is not checked out gives a page that says so.
 """
 
 from __future__ import annotations
@@ -190,7 +190,97 @@ def formats() -> None:
     write("api/formats.md", "\n".join(lines) + "\n")
 
 
+# ---------------------------------------------------------------- API reference, one page per package
+PACKAGES = {  # repository -> package directories, in the order of the nav
+    "harness": ["packages/wc-core", "packages/wc-eval", "packages/wc-agents", "packages/wc-memory", "packages/wc-learn",
+                "packages/wc-evolve", "packages/wc-catalog", "packages/wc-policies", "packages/worldcurrent-cli",
+                "adapters/wc-policy-lerobot", "adapters/wc-policy-openpi", "adapters/wc-reasoner-llm",
+                "adapters/wc-proposer-llm", "adapters/wc-data-video"],
+    "bench": ["packages/wc-bench", "adapters/wc-env-mujoco", "adapters/wc-env-libero"],
+    "serve": ["packages/wc-serve", "adapters/wc-env-lerobot-robot"],
+    "studio": ["packages/wc-playground"],
+    "plugins": ["packages/wc-plugin-examples"],
+}
+SKIP_MODULE = re.compile(r"(^|\.)(_[^.]+|tests?|static|__main__)(\.|$)")
+
+
+def _modules(src: Path) -> list[str]:
+    out = []
+    for f in sorted(src.rglob("*.py")):
+        rel = f.relative_to(src).with_suffix("")
+        parts = list(rel.parts[:-1]) if rel.name == "__init__" else list(rel.parts)
+        name = ".".join(parts)
+        if name and not SKIP_MODULE.search(name):
+            out.append(name)
+    return sorted(set(out))
+
+
+def _first_line(src: Path, module: str) -> str:
+    f = src.joinpath(*module.split("."))
+    f = f / "__init__.py" if f.is_dir() else f.with_suffix(".py")
+    m = re.match(r'\s*(?:#.*\n\s*)*(?:from __future__.*\n\s*)?[rRbB]?("""|\'\'\')(.*?)(\n|\1)', f.read_text())
+    return m.group(2).strip().rstrip(".") if m else ""
+
+
+def _curated() -> dict[str, str]:
+    """Modules the hand-written core pages already render: {module: page}, so they are rendered once."""
+    out = {}
+    for page in sorted((DOCS_REPO / "docs" / "api").glob("*.md")):
+        for m in re.findall(r"^::: ([\w.]+)", page.read_text(), re.M):
+            out[m] = page.name
+    return out
+
+
+def package_api() -> None:
+    import tomllib
+
+    curated = _curated()
+
+    index = ["# Packages", "",
+             "The API of every worldcurrent package, generated from its docstrings and type annotations (mkdocstrings). "
+             "Plugins and leaf repositories should depend on the [core contracts](../index.md) only; the rest is "
+             "documented so that it can be read, extended and debugged. Members whose names start with an underscore "
+             "are left out.", ""]
+    for repo, dirs in PACKAGES.items():
+        index += [f"## worldcurrent-{repo}", "", "| Package | What it is | Modules |", "|---|---|---|"]
+        for d in dirs:
+            root = WORKSPACE / repo / d
+            dist = Path(d).name
+            if not (root / "pyproject.toml").exists():
+                write(f"api/packages/{dist}.md", f"# {dist}\n\n{missing(repo)}")
+                index.append(f"| [{dist}]({dist}.md) | not checked out | - |")
+                continue
+            proj = tomllib.loads((root / "pyproject.toml").read_text())["project"]
+            src = root / "src"
+            mods = _modules(src)
+            lines = [f"# {dist}", "", proj.get("description", ""), "",
+                     f"Repository worldcurrent-{repo}, `{d}`. Licence: {proj.get('license', '-')}. "
+                     f"Depends on: {', '.join(f'`{x}`' for x in proj.get('dependencies', [])) or 'nothing'}.", ""]
+            eps = proj.get("entry-points", {})
+            plug = [(g.removeprefix("worldcurrent."), n, v) for g, items in eps.items()
+                    if g.startswith("worldcurrent.") and g not in ("worldcurrent.meta",) for n, v in items.items()]
+            if plug:
+                lines += ["??? info \"Registered entry points\"", "", "    | Group | Name | Object |", "    |---|---|---|",
+                          *[f"    | {g} | `{n}` | `{v}` |" for g, n, v in sorted(plug)], ""]
+            lines += ["| Module | Summary |", "|---|---|",
+                      *[f"| [`{m}`](#{m.replace('.', '')}) | {_first_line(src, m)} |" for m in mods], ""]
+            for m in mods:
+                if m in curated:
+                    lines += [f"## `{m}` {{ #{m.replace('.', '')} }}", "",
+                              f"A core contract: documented in [{curated[m][:-3].replace('-', ' ')}](../{curated[m]}#{m}).", ""]
+                    continue
+                lines += [f"## `{m}` {{ #{m.replace('.', '')} }}", "", f"::: {m}", "    options:",
+                          "      show_root_heading: false", "      heading_level: 3", "      show_submodules: false",
+                          "      members_order: source", "      show_if_no_docstring: true", ""]
+            write(f"api/packages/{dist}.md", "\n".join(lines))
+            summary = proj.get("description", "").split(":")[-1].strip()
+            index.append(f"| [{dist}]({dist}.md) | {summary} | {len(mods)} |")
+        index.append("")
+    write("api/packages/index.md", "\n".join(index))
+
+
 harness_docs()
+package_api()
 cli_reference()
 plugin_catalogue()
 examples()

@@ -55,8 +55,24 @@ plugins:
             - ../harness/packages/wc-core/src
             - ../harness/packages/wc-eval/src
             - ../harness/packages/wc-agents/src
+            - ../harness/packages/wc-memory/src
             - ../harness/packages/wc-learn/src
             - ../harness/packages/wc-evolve/src
+            - ../harness/packages/wc-catalog/src
+            - ../harness/packages/wc-policies/src
+            - ../harness/packages/worldcurrent-cli/src
+            - ../harness/adapters/wc-policy-lerobot/src
+            - ../harness/adapters/wc-policy-openpi/src
+            - ../harness/adapters/wc-reasoner-llm/src
+            - ../harness/adapters/wc-proposer-llm/src
+            - ../harness/adapters/wc-data-video/src
+            - ../bench/packages/wc-bench/src
+            - ../bench/adapters/wc-env-mujoco/src
+            - ../bench/adapters/wc-env-libero/src
+            - ../serve/packages/wc-serve/src
+            - ../serve/adapters/wc-env-lerobot-robot/src
+            - ../studio/packages/wc-playground/src
+            - ../plugins/packages/wc-plugin-examples/src
           options:
             show_source: false
             show_root_heading: true
@@ -102,6 +118,7 @@ nav:
           - user-guide/experiments.md
           - user-guide/policies.md
           - user-guide/safety.md
+          - user-guide/security.md
       - Learning and improvement:
           - user-guide/learning.md
           - user-guide/campaigns.md
@@ -120,7 +137,14 @@ nav:
       - benchmarking/leaderboard.md
   - Developer Guide:
       - developer-guide/contributing.md
+      - developer-guide/testing.md
+      - developer-guide/troubleshooting.md
+      - developer-guide/versioning.md
       - developer-guide/docs.md
+      - Tutorials:
+          - developer-guide/adding-a-policy.md
+          - developer-guide/adding-an-environment.md
+          - developer-guide/adding-a-learner.md
       - Extending:
           - harness/extending.md
           - harness/plugin-system.md
@@ -199,9 +223,39 @@ nav:
           - research/projects/rsi-sica.md
   - API Reference:
       - api/index.md
-      - api/contracts.md
-      - api/kernel.md
-      - api/config.md
-      - api/artifacts-and-store.md
-      - api/formats.md
+      - Core contracts:
+          - api/contracts.md
+          - api/kernel.md
+          - api/config.md
+          - api/artifacts-and-store.md
+          - api/formats.md
+      - Packages:
+          - api/packages/index.md
+          - Harness:
+              - wc-core: api/packages/wc-core.md
+              - wc-eval: api/packages/wc-eval.md
+              - wc-agents: api/packages/wc-agents.md
+              - wc-memory: api/packages/wc-memory.md
+              - wc-learn: api/packages/wc-learn.md
+              - wc-evolve: api/packages/wc-evolve.md
+              - wc-catalog: api/packages/wc-catalog.md
+              - wc-policies: api/packages/wc-policies.md
+              - worldcurrent-cli: api/packages/worldcurrent-cli.md
+          - Harness adapters:
+              - wc-policy-lerobot: api/packages/wc-policy-lerobot.md
+              - wc-policy-openpi: api/packages/wc-policy-openpi.md
+              - wc-reasoner-llm: api/packages/wc-reasoner-llm.md
+              - wc-proposer-llm: api/packages/wc-proposer-llm.md
+              - wc-data-video: api/packages/wc-data-video.md
+          - Bench:
+              - wc-bench: api/packages/wc-bench.md
+              - wc-env-mujoco: api/packages/wc-env-mujoco.md
+              - wc-env-libero: api/packages/wc-env-libero.md
+          - Serve:
+              - wc-serve: api/packages/wc-serve.md
+              - wc-env-lerobot-robot: api/packages/wc-env-lerobot-robot.md
+          - Studio:
+              - wc-playground: api/packages/wc-playground.md
+          - Plugins:
+              - wc-plugin-examples: api/packages/wc-plugin-examples.md
   - CLI Reference: cli/index.md
