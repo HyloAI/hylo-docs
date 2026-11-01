@@ -4,3 +4,5 @@ references/*/*.err
 
 .venv/
 __pycache__/
+
+site/

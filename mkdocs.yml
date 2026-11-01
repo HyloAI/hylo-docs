@@ -1,0 +1,207 @@
+site_name: worldcurrent
+site_description: Evaluation, learning, gated self-improvement and deployment for robot policies, behind one set of contracts.
+docs_dir: docs
+site_dir: site
+edit_uri: ""
+exclude_docs: |
+  *.inc.md
+
+theme:
+  name: material
+  logo: assets/logo.svg
+  favicon: assets/logo.svg
+  palette:
+    - media: "(prefers-color-scheme)"
+      toggle: {icon: material/brightness-auto, name: Switch to light mode}
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: custom
+      accent: custom
+      toggle: {icon: material/brightness-7, name: Switch to dark mode}
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: custom
+      accent: custom
+      toggle: {icon: material/brightness-4, name: Switch to system preference}
+  font:
+    text: IBM Plex Sans
+    code: IBM Plex Mono
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.indexes
+    - navigation.path
+    - navigation.top
+    - content.code.copy
+    - content.tabs.link
+    - search.highlight
+    - search.share
+    - toc.follow
+
+extra_css:
+  - assets/stylesheets/extra.css
+
+plugins:
+  - search
+  - glightbox
+  - gen-files:
+      scripts:
+        - mkdocs/gen_pages.py
+  - mkdocstrings:
+      handlers:
+        python:
+          paths:
+            - ../harness/packages/wc-core/src
+            - ../harness/packages/wc-eval/src
+            - ../harness/packages/wc-agents/src
+            - ../harness/packages/wc-learn/src
+            - ../harness/packages/wc-evolve/src
+          options:
+            show_source: false
+            show_root_heading: true
+            show_root_full_path: false
+            members_order: source
+            docstring_style: google
+            separate_signature: true
+            show_signature_annotations: true
+            filters: ["!^_"]
+            merge_init_into_class: true
+
+markdown_extensions:
+  - attr_list
+  - def_list
+  - md_in_html
+  - tables
+  - admonition
+  - footnotes
+  - pymdownx.details
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.tabbed: {alternate_style: true}
+  - pymdownx.highlight: {anchor_linenums: true}
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - toc: {permalink: true}
+
+nav:
+  - Home: index.md
+  - User Guide:
+      - Getting started:
+          - getting-started/installation.md
+          - getting-started/quickstart.md
+          - getting-started/concepts.md
+          - getting-started/examples.md
+      - Running:
+          - user-guide/experiments.md
+          - user-guide/policies.md
+          - user-guide/safety.md
+      - Learning and improvement:
+          - user-guide/learning.md
+          - user-guide/campaigns.md
+          - user-guide/store.md
+      - Deployment:
+          - user-guide/deployment.md
+          - user-guide/studio.md
+      - Configuration:
+          - configuration/profiles.md
+          - configuration/environment-variables.md
+          - configuration/deployments-repo.md
+          - Experiment config schema: harness/experiment-schema.md
+  - Benchmarking:
+      - benchmarking/index.md
+      - benchmarking/protocols.md
+      - benchmarking/leaderboard.md
+  - Developer Guide:
+      - developer-guide/contributing.md
+      - developer-guide/docs.md
+      - Extending:
+          - harness/extending.md
+          - harness/plugin-system.md
+          - developer-guide/plugin-catalogue.md
+      - Interfaces:
+          - harness/interfaces/environment.md
+          - harness/interfaces/agent.md
+          - harness/interfaces/reasoner.md
+          - harness/interfaces/memory.md
+          - harness/interfaces/benchmark.md
+          - harness/interfaces/improvement.md
+      - Internals:
+          - harness/execution-lifecycle.md
+          - harness/dependency-graph.md
+  - Design:
+      - design/overview.md
+      - design/architecture.md
+      - design/repository-structure.md
+      - design/mvp-v0.1.md
+      - design/roadmap.md
+      - design/roadmap/v0.1-plan.md
+      - RFCs:
+          - rfcs/index.md
+          - rfcs/RFC-0001.md
+          - rfcs/RFC-0002-physical-rsi.md
+          - rfcs/RFC-0003-experience-memory-skills.md
+          - rfcs/RFC-0004-learning-pipeline.md
+          - rfcs/RFC-0005-architecture-measurement-and-placement.md
+  - Research:
+      - research/index.md
+      - EXECUTIVE-SUMMARY.md
+      - Experiments:
+          - research/experiments/2026-10-30-libero10-rsi-cycle1.md
+          - research/experiments/2026-10-30-experience-memory-libero10.md
+          - research/experiments/2026-10-31-rfc0004-w1-w4.md
+          - research/experiments/2026-10-31-success-judges-libero10.md
+      - Comparisons:
+          - research/comparisons/technology-gap-analysis.md
+          - research/comparisons/harness-comparison.md
+          - research/comparisons/simulator-comparison.md
+          - research/comparisons/benchmark-comparison.md
+          - research/comparisons/agent-policy-comparison.md
+          - research/comparisons/memory-comparison.md
+          - research/comparisons/rsi-comparison.md
+          - research/comparisons/rsi-frameworks-deep-dive.md
+          - research/comparisons/license-matrix.md
+      - research/architecture/concept-map.md
+      - Projects:
+          - research/projects/vla-evaluation-harness.md
+          - research/projects/inspect-robots.md
+          - research/projects/rpent.md
+          - research/projects/xpolicylab.md
+          - research/projects/mujoco.md
+          - research/projects/maniskill.md
+          - research/projects/libero.md
+          - research/projects/robocasa.md
+          - research/projects/lerobot.md
+          - research/projects/openpi.md
+          - research/projects/langgraph.md
+          - research/projects/dspy.md
+          - research/projects/memory-landscape.md
+          - research/projects/memory-experience.md
+          - research/projects/learning-from-video.md
+          - research/projects/zetta-embodiment.md
+          - research/projects/agent-lightning.md
+          - research/projects/rsi-vla-steering.md
+          - research/projects/rsi-simplevla-rl.md
+          - research/projects/rsi-rlinf.md
+          - research/projects/rsi-eureka.md
+          - research/projects/rsi-voyager.md
+          - research/projects/rsi-adas.md
+          - research/projects/rsi-dgm.md
+          - research/projects/rsi-gepa.md
+          - research/projects/rsi-openevolve.md
+          - research/projects/rsi-shinkaevolve.md
+          - research/projects/rsi-sica.md
+  - API Reference:
+      - api/index.md
+      - api/contracts.md
+      - api/kernel.md
+      - api/config.md
+      - api/artifacts-and-store.md
+      - api/formats.md
+  - CLI Reference: cli/index.md
