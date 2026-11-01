@@ -54,17 +54,22 @@ research notes or internal design pages, linked or not.
 
 ## Images
 
-- `docs/assets/diagrams/*.svg`: architecture and flow diagrams, drawn on a white background. Regenerate them with
-  `uv run python docs/mkdocs/figures/diagrams.py`.
-- `docs/assets/figures/*.png`: charts made from recorded runs (`mkdocs/figures/make_figures.py`) and Studio
-  screenshots (`mkdocs/figures/screenshots.py`). The public site leaves out the Studio screenshots.
-- Reference them with the `hylo-figure` class, which gives them a light card in dark mode, and an italic caption:
+- `docs/assets/diagrams/<name>-{light,dark}.svg`: architecture and flow diagrams, each in a light and a dark
+  version, in the same style as the README figures. Edit `mkdocs/figures/diagrams.py`, not the SVGs, and regenerate
+  them from the workspace with
+  `uv run --no-project --with fonttools --with uharfbuzz --with pillow python docs/mkdocs/figures/diagrams.py`.
+  Reference both versions; the page shows the one for the current colour scheme:
 
 ```markdown
-![The improvement loop](../assets/diagrams/improvement-loop.svg){ .hylo-figure }
+![The improvement loop](../assets/diagrams/improvement-loop-light.svg){ .hylo-diagram .only-light }
+![The improvement loop](../assets/diagrams/improvement-loop-dark.svg){ .hylo-diagram .only-dark }
 
 *One campaign cycle: diagnose, propose, screen, gate, approve.*
 ```
+
+- `docs/assets/figures/*.png`: charts made from recorded runs (`mkdocs/figures/make_figures.py`) and Studio
+  screenshots (`mkdocs/figures/screenshots.py`). The public site leaves out the Studio screenshots. Reference them
+  with the `hylo-figure` class, which gives them a light card in dark mode.
 
 Small flows that change often can be Mermaid diagrams in a `mermaid` code block instead.
 

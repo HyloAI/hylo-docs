@@ -193,11 +193,11 @@ class Doc:
         self.add(f'<path d="{d}" fill="none" stroke="{col}" stroke-width="{sw}" stroke-linecap="round" '
                  f'stroke-linejoin="round"{ds}{m}/>')
 
-    def label(self, x, y, s, anchor="middle", fill="muted", size=14, face="m") -> None:
-        """An edge label on a background-coloured plate, so it stays legible over lines."""
+    def label(self, x, y, s, anchor="middle", fill="muted", size=14, face="m", plate="bg") -> None:
+        """An edge label on a plate in the colour behind it, so it stays legible over lines."""
         w = measure(s, face, size)
         x0 = x - (w / 2 if anchor == "middle" else w if anchor == "end" else 0)
-        self.rect(x0 - 6, y - size + 1, w + 12, size + 8, "bg", rx=6)
+        self.rect(x0 - 6, y - size + 1, w + 12, size + 8, plate, rx=6)
         self.text(x0, y + 2, s, face, size, fill)
 
     def pill(self, x, y, s, *, face="mono", size=14, h=28, fill="sunk", stroke=None, color="ink", padx=12,

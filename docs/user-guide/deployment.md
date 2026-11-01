@@ -12,7 +12,8 @@ Two services and a control plane split the work:
 - **Studio** (`hylo playground`) is the control plane. It starts episodes and relays operator input over HTTP. It
   never sends actions.
 
-![Deployment topology: Studio and the store on the workstation; the workcell, with the episode loop and the safety shield, on the robot computer; the policy server on a GPU box](../assets/diagrams/deployment.svg){ .hylo-figure }
+![Deployment topology: Studio and the store on the workstation; the workcell, with the episode loop and the safety shield, on the robot computer; the policy server on a GPU box](../assets/diagrams/deployment-light.svg){ .hylo-diagram .only-light }
+![Deployment topology: Studio and the store on the workstation; the workcell, with the episode loop and the safety shield, on the robot computer; the policy server on a GPU box](../assets/diagrams/deployment-dark.svg){ .hylo-diagram .only-dark }
 
 *The workcell's runs are copied to the store on the workstation.*
 

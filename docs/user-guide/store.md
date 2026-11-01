@@ -4,7 +4,8 @@ Configs name runs and artifacts by **id**, not by path, so the same config works
 one **store**: a directory tree that maps ids to local paths. It protects entries that other entries still name from
 deletion, and copies entries between machines.
 
-![Store ids, references and sync](../assets/diagrams/store.svg){ .hylo-figure }
+![Store ids, references and sync](../assets/diagrams/store-light.svg){ .hylo-diagram .only-light }
+![Store ids, references and sync](../assets/diagrams/store-dark.svg){ .hylo-diagram .only-dark }
 
 ## Set up the store
 

@@ -110,7 +110,8 @@ each check covers is in [extending](../harness/extending.md).
 
 ## Timing: sync and realtime
 
-![Sync: the world waits for each policy call. Realtime: the robot keeps moving while the next chunk is computed.](../assets/diagrams/episode-loop.svg){ .hylo-figure }
+![Sync: the world waits for each policy call. Realtime: the robot keeps moving while the next chunk is computed.](../assets/diagrams/episode-loop-light.svg){ .hylo-diagram .only-light }
+![Sync: the world waits for each policy call. Realtime: the robot keeps moving while the next chunk is computed.](../assets/diagrams/episode-loop-dark.svg){ .hylo-diagram .only-dark }
 
 One episode loop runs every episode, in benchmarks and on robots. In `sync` mode (the default) the world waits for
 each policy call. In `realtime` mode the robot keeps executing while the next chunk is computed. Actions for steps

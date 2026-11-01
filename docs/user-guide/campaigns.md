@@ -5,7 +5,8 @@ config changes and promotes at most one, only if a paired test against the curre
 states not used for selection confirms it. Promotion is automatic by default. Set `approval: manual` for anything
 that will run on hardware.
 
-![One campaign cycle: parent, diagnose, generate, screen, gate, approve, promote; the archive feeds past results to the generator](../assets/diagrams/improvement-loop.svg){ .hylo-figure }
+![One campaign cycle: parent, diagnose, generate, screen, gate, approve, promote; the archive feeds past results to the generator](../assets/diagrams/improvement-loop-light.svg){ .hylo-diagram .only-light }
+![One campaign cycle: parent, diagnose, generate, screen, gate, approve, promote; the archive feeds past results to the generator](../assets/diagrams/improvement-loop-dark.svg){ .hylo-diagram .only-dark }
 
 *One cycle. The promoted candidate is the next cycle's parent.*
 

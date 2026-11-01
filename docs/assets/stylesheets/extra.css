@@ -28,7 +28,12 @@
 .hylo-warn { color: var(--hylo-warn); }
 .hylo-hw { color: var(--hylo-hw); }
 
-/* diagrams and figures are drawn on white; in dark mode they sit on a light card */
+/* diagrams come in a light and a dark version; show the one for the current scheme */
+.md-typeset img.hylo-diagram { display: block; width: 100%; margin: 1.2em auto; }
+[data-md-color-scheme="default"] .md-typeset img.only-dark,
+[data-md-color-scheme="slate"] .md-typeset img.only-light { display: none; }
+
+/* charts and screenshots are drawn on white; in dark mode they sit on a light card */
 .md-typeset img.hylo-figure, .md-typeset figure img {
   background: var(--hylo-figure-bg);
   border-radius: 6px;

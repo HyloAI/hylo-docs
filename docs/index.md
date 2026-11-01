@@ -19,6 +19,9 @@ under fixed protocols, improves them through gated campaigns, and deploys the pr
 
 ## What you do with Hylo
 
+![Run, measure, improve through a gate, deploy; episodes on the robot come back as runs](assets/diagrams/hylo-loop-light.svg){ .hylo-diagram .only-light }
+![Run, measure, improve through a gate, deploy; episodes on the robot come back as runs](assets/diagrams/hylo-loop-dark.svg){ .hylo-diagram .only-dark }
+
 <div class="grid cards" markdown>
 
 -   **Run**
@@ -61,6 +64,13 @@ under fixed protocols, improves them through gated campaigns, and deploys the pr
 
 [Studio](user-guide/studio.md) is one UI over all four steps: browse runs, replay episodes, compare policies, follow
 campaigns and operate workcells. Start it with `hylo playground`.
+
+## The stack
+
+Six layers, from the kernel at the base to the workbench on top, and the repositories that implement them.
+
+![The six layers of the Hylo stack and the repositories that implement them](assets/diagrams/stack-light.svg){ .hylo-diagram .only-light }
+![The six layers of the Hylo stack and the repositories that implement them](assets/diagrams/stack-dark.svg){ .hylo-diagram .only-dark }
 
 ## Where next
 

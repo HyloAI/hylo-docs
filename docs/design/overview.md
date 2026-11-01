@@ -5,7 +5,8 @@ This page shows how Run → Measure → Improve → Deploy connect inside Hylo, 
 
 ## From runs to deployed versions
 
-![Data flow: an experiment produces a run and traces, which give a scorecard; learners turn runs into artifacts, which candidates use; the gate decides, the active version goes to a workcell, and its episodes become runs](../assets/diagrams/architecture.svg){ .hylo-figure }
+![Data flow: an experiment produces a run and traces, which give a scorecard; learners turn runs into artifacts, which candidates use; the gate decides, the active version goes to a workcell, and its episodes become runs](../assets/diagrams/architecture-light.svg){ .hylo-diagram .only-light }
+![Data flow: an experiment produces a run and traces, which give a scorecard; learners turn runs into artifacts, which candidates use; the gate decides, the active version goes to a workcell, and its episodes become runs](../assets/diagrams/architecture-dark.svg){ .hylo-diagram .only-dark }
 
 *Run, Measure, Improve and Deploy as one loop: the workcell's episodes become new runs.*
 
@@ -59,7 +60,8 @@ does not by itself predict the result on a robot.
 
 ## Packages and repositories
 
-![The repositories: bench, serve, studio and plugins build on hylo-harness; serve needs hylo-core only; docs and the deployments template hold no code](../assets/diagrams/repositories.svg){ .hylo-figure }
+![The repositories: bench, serve, studio and plugins build on hylo-harness; serve needs hylo-core only; docs and the deployments template hold no code](../assets/diagrams/repositories-light.svg){ .hylo-diagram .only-light }
+![The repositories: bench, serve, studio and plugins build on hylo-harness; serve needs hylo-core only; docs and the deployments template hold no code](../assets/diagrams/repositories-dark.svg){ .hylo-diagram .only-dark }
 
 *The harness is the base, and the leaf repositories depend on it only.*
 
