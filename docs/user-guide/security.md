@@ -37,7 +37,7 @@ machine.
    installed and from which package.
 5. **Know what manual approval protects.** It controls promotion, not execution: by the time a candidate waits
    for approval, the campaign has already run its config, including any `module:attr` its patch names. The protected keys
-   ([safety](safety.md#what-campaigns-can-change)) do not restrict which components a patch names.
+   ([safety](safety.md#safety-in-campaigns)) do not restrict which components a patch names.
 6. **Check how third-party checkpoints are loaded.** Hylo's own formats are JSON, `.npy` and `.npz`. Hylo never
    unpickles them and refuses object dtypes. A learner or adapter that loads third-party checkpoints follows that
    library's rules, for example PyTorch's `torch.load`.

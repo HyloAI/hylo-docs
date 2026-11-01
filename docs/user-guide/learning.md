@@ -4,7 +4,7 @@ A learner turns recorded runs into an **artifact**: a sealed directory whose man
 it is, a digest of its content, and where it came from: the learner, its parameters, and the runs it read. External
 data enters as runs too, so every artifact traces back to runs.
 
-## Train an artifact
+## Run a learner job
 
 A learner job is a JSON file. Commands on this page run from `bench/`, so runs and artifacts land in the store you
 registered during [installation](../getting-started/installation.md).
@@ -52,7 +52,7 @@ Use `--python` when the learner's dependencies live in another venv, such as LIB
 uv run hylo learn my-job.json --python envs/libero/.venv/bin/python
 ```
 
-## Check and use it
+## Inspect and reference an artifact
 
 ```bash
 uv run hylo artifact runs/policies/artifacts/flow     # check the digest and sources, print the manifest
@@ -68,14 +68,12 @@ Configs name the artifact by its store id:
 sampler: {type: policy.flow, params: {path: "artifact:policy.flow@218d7147b2d05110"}}
 ```
 
-Keep the `@digest` ([why](store.md#use-ids-in-configs)).
+Keep the `@digest` ([why](store.md#reference-artifacts-in-configs)).
 
-<a id="the-split-guard"></a>
-
-## Which runs a learner may read
+## The split guard
 
 By default a learner reads only `search` and `search_val` runs. It reads `synthetic` runs (produced inside a learned
-model) and `external` runs ([ingested data](#bring-in-external-data)) only when the job lists them in `splits`.
+model) and `external` runs ([ingested data](#external-data)) only when the job lists them in `splits`.
 
 Gate and held-out runs are refused three times: when the job starts (asking for them fails, and a directory scan
 skips them), when the artifact is sealed, and in a campaign's stage-0 checks, for every artifact a candidate
@@ -96,7 +94,7 @@ a behaviour artifact.
 A **mutable** artifact keeps changing after it is sealed, such as a lesson book a campaign is curating. Its digest is
 not enforced: `hylo artifact` and the stage-0 checks do not compare its content with the manifest.
 
-## Label data without a simulator
+## Success judges and calibration
 
 A success judge (an `instrument`) labels episodes from their traces when no simulator can, on a robot or in external
 data. Train one with `judge.trace`, then calibrate it on simulator runs:
@@ -125,7 +123,7 @@ The judge is `ready` to label when all three hold:
 With `--artifact`, runs the judge was trained on are left out, and the report is stored in the judge's manifest,
 where `hylo label` reads it.
 
-## Bring in external data
+## External data
 
 Demonstrations, videos and other robots' logs enter as ordinary runs with split `external:<name>`. Each is sealed as
 a `data` artifact that records its origin and licence. Data sources are `datasources` plugins.
@@ -154,7 +152,7 @@ each marked `by: judge:<digest>`. No new artifact is made.
 task under `--protected` (default `runs`). It prints a report and exits with code 3 when it finds a match. It does
 not block anything. Do not use matching external data to build anything gated on those states.
 
-## Learners that ship
+## Built-in learners
 
 | Learner | Builds |
 |---|---|

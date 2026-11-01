@@ -41,7 +41,7 @@ uv run hylo store show artifact:policy.flow             # entry, local path, wha
 An id that does not resolve says why: not found, ambiguous, or removed
 ([messages](../developer-guide/troubleshooting.md#the-store)).
 
-## Use ids in configs
+## Reference artifacts in configs
 
 ```yaml
 sampler: {type: policy.flow, params: {path: "artifact:policy.flow@218d7147b2d05110"}}
@@ -49,7 +49,7 @@ sampler: {type: policy.flow, params: {path: "artifact:policy.flow@218d7147b2d051
 
 - An id with a digest pins the artifact's content in the experiment digest. A name-only id does not: if the
   artifact is replaced, the experiment digest stays the same. Pin with `@digest` whenever runs must be
-  [comparable](experiments.md#when-two-runs-are-comparable).
+  [comparable](experiments.md#what-is-measured-the-digest).
 - Ids become this machine's paths only when a component is built, after the digest is taken. A plugin still
   receives a path.
 - The run's `manifest.json` records every id the config used, with the full id and the local path (`artifacts:`).
@@ -76,7 +76,7 @@ when, why, and what referred to it. A later lookup of that id says it was remove
 !!! warning
     Do not delete run directories by hand. An artifact's provenance or a campaign's archive may still name them.
 
-## Copy between machines
+## Move runs and artifacts between machines
 
 ```bash
 uv run hylo store pull robot-host:/home/lab/runs                        # runs recorded on the robot computer

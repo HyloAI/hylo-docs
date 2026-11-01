@@ -46,7 +46,7 @@ ran the quickstart, `status` shows its result and `run` continues the same campa
 *Example output. In cycle 1, `kp: 0.04` passes the gate at the first look (26 wins, 0 losses, p = 1.5e-8). Cycle 2
 finds nothing better and the campaign stops.*
 
-## Read the result
+## Results
 
 `hylo evolve status` prints the campaign state, the active version and its lineage, the combined patch, any pending
 approval, and the archive size. `stopped` says why the campaign ended: `all cycles done`,
@@ -67,9 +67,7 @@ Archive verdicts: `rejected` (stage 0 or 1), `archived` (not sent to the gate), 
 (confirmed, not promoted, for example while waiting for approval) and `promoted`. Ids and paths in the archive and
 ledger protect the runs and artifacts they name from deletion ([store](store.md)).
 
-<a id="the-cascade-and-the-gate"></a>
-
-## What one cycle does
+## The cascade and the gate
 
 The parent runs on `search`, and its failures are sorted into buckets. The generator returns up to `max_candidates`
 config patches, each with a hypothesis. The cascade (stages 0 to 2) screens them, and the gate (stage 3) confirms the
@@ -87,7 +85,7 @@ Then, with `approval: auto`, the candidate becomes the active version and the ne
 `approval: manual` the campaign stops and waits. Candidates and parent share seeds and policy noise, so every
 comparison is paired.
 
-Candidates may not change the [protected settings](safety.md#what-campaigns-can-change). Timing and agent code are
+Candidates may not change the [protected settings](safety.md#safety-in-campaigns). Timing and agent code are
 not protected.
 
 ## Splits
@@ -103,7 +101,7 @@ A campaign needs four disjoint splits, which the `rsi` split scheme provides.
 
 LIBERO's boundaries are `rsi_bounds` (default `[20, 30, 40]`). On MuJoCo reach every seed runs on both tasks.
 
-### Who reads which split
+### Split access
 
 | Split | Runs read by | Results visible to |
 |---|---|---|
@@ -115,7 +113,7 @@ LIBERO's boundaries are `rsi_bounds` (default `[20, 30, 40]`). On MuJoCo reach e
 The gate reuses its init states every cycle, so after cycle 1 generators have seen gate results on them. The
 `experience` generator and lesson books use these results on purpose.
 
-### Two held-out sets
+### Held-out sets
 
 | Benchmark | Held-out scored by the protocol | Held-out a campaign reports on |
 |---|---|---|
@@ -167,7 +165,7 @@ The target is the campaign config or the campaign directory.
   report says how often and how far it would have acted differently. Run it before trying a candidate on a robot.
   The candidate may change only `agent.*` keys.
 
-## Example: LIBERO-10
+## LIBERO-10 campaigns
 
 `examples/evolve/` has three campaigns on frozen SmolVLA in LIBERO-10: `libero10_steering.yaml` (rule-based
 steering), `libero10_llm.yaml` (an LLM proposes steering) and `libero10_selftrain.yaml` (expert iteration, manual

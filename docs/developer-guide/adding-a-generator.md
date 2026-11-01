@@ -14,7 +14,7 @@ uv run hylo plugin new generator my-gain --dir plugins/packages
 
 This creates `plugins/packages/hylo-plugin-my-gain` with the module `wc_my_gain`. Add `license = "Apache-2.0"` (or
 your licence) under `[project]` in its `pyproject.toml`. Then add it to the workspace and install it, as in
-[adding a policy](adding-a-policy.md#1-create-and-install-the-package). From here on, run commands from `bench/`:
+[adding a policy](adding-a-policy.md#1-scaffold-the-package). From here on, run commands from `bench/`:
 
 ```bash
 uv run python harness/dev/workspace.py
@@ -62,7 +62,7 @@ What `propose()` receives:
   ([what generators see](../user-guide/campaigns.md#splits)).
 
 Each `Candidate` is a `patch` of dotted config paths, a `rationale`, the `parent_id` and the `generator` name. A patch
-may not touch the [protected settings](../user-guide/safety.md#what-campaigns-can-change).
+may not touch the [protected settings](../user-guide/safety.md#safety-in-campaigns).
 
 ## 3. Check it
 
@@ -116,7 +116,7 @@ uv run hylo evolve run gain_campaign.yaml
 
 `runs/evolve/mujoco-reach-my-gain/archive.jsonl` has one entry per candidate. `kp: 0.08` (factor 4) passed the gate
 and was `promoted`. `kp: 0.2` (factor 10) succeeded on `search_val` but was `archived` without entering the gate
-([read the result](../user-guide/campaigns.md#read-the-result)).
+([read the result](../user-guide/campaigns.md#results)).
 
 ## Next
 

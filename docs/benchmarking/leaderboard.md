@@ -3,7 +3,7 @@
 A leaderboard is every scorecard of one evaluation protocol (name, version and digest), ranked by success. There is
 no server: scorecards are JSON files, and `hylo bench leaderboard` collects them from directories.
 
-## Put agents on a board
+## Running policies
 
 Commands on this page run from `bench/`. `--policy` takes an agent spec, in one of three forms: JSON, an experiment
 config YAML (its agent is used), or a plugin name.
@@ -38,7 +38,7 @@ config YAML (its agent is used), or a plugin name.
 
 Use digest-pinned [store ids](../user-guide/store.md) for artifacts so the scorecard names the exact weights.
 
-## Rank and compare
+## Ranking and comparing
 
 ```bash
 uv run hylo bench leaderboard                          # ./scorecards
@@ -61,9 +61,9 @@ episodes, mean steps. `compare` prints the paired result:
 ```
 
 `candidate_wins` and `parent_wins` count episodes only the candidate or only the baseline solved (the key name is
-shared with campaigns). The test is explained in [compare two scorecards](index.md#compare-two-scorecards).
+shared with campaigns). The test is explained in [compare two scorecards](index.md#statistics).
 
-## Example: the reference policies
+## The reference-policy leaderboard
 
 `examples/policies/compare.py` records demonstrations from the IK controller and random-action runs on the campaign
 `search` and `search_val` seeds (30000–30059, disjoint from the protocol's 20000–20049). It trains one

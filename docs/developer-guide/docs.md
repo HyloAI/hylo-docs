@@ -1,8 +1,8 @@
-# Writing docs
+# Docs
 
 How to build this site and how to write its pages. The reader is whoever maintains hylo-docs.
 
-## Build
+## Building
 
 From the development workspace (the repositories side by side, see
 [installation](../getting-started/installation.md)):
@@ -24,7 +24,7 @@ warning instead, and `--strict` still passes. Before publishing, check that no p
 grep -rl 'admonition-title">Not built' docs/site-public/ || echo "all generated pages built"
 ```
 
-## Where each page comes from
+## Generated pages
 
 The navigation is explicit in `mkdocs.yml`: a page appears only once it is listed there.
 
@@ -43,7 +43,7 @@ The navigation is explicit in `mkdocs.yml`: a page appears only once it is liste
 from the code's docstrings, which therefore appear on the public site verbatim. Docstrings follow the same writing
 rules as pages.
 
-## Public vs internal site
+## Public and internal site
 
 `mkdocs.yml` builds everything. `mkdocs.public.yml` builds the public site: it leaves out `rfcs/`, `research/`, the
 strategy summary and `design/` except `design/overview.md`.
@@ -160,7 +160,7 @@ Each fact lives on one page. Other pages give one sentence and a link.
   elsewhere (the workspace directory, a deployments repository) says so before its first command block.
 - Every page in Getting started, the User Guide and Benchmarking ends with a short `## Next`.
 
-### Never in user pages
+### Not in user pages
 
 - RFC numbers and internal work-item names;
 - dated experiment records, "first reading", "not yet conclusive";

@@ -7,7 +7,7 @@ A policy is the model inside an agent; built-in agents decide how its chunks run
 If your decision logic is more than drawing chunks from one model, write an [agent](../harness/interfaces/agent.md)
 instead (`hylo plugin new agent NAME`).
 
-## 1. Create and install the package
+## 1. Scaffold the package
 
 From the workspace root, create the package in `plugins/packages/`:
 
@@ -42,7 +42,7 @@ A package in `plugins/packages/` is a workspace member, so every `uv sync` keeps
 the `uv pip install -e` hint that `hylo plugin new` prints: the next `uv sync` removes a package installed that way.
 From here on, run commands from `bench/`. `META` and maturity: [extending Hylo](../harness/extending.md).
 
-## 2. Write the policy
+## 2. The contract
 
 A policy provides four methods and inherits from nothing ([contracts](../api/contracts.md)). The generated policy
 drives the planar arm with two-link inverse kinematics plus seeded noise. These are the methods you change:
@@ -152,13 +152,13 @@ uv run hylo run my_reacher.yaml
 ```
 
 The policy never knows which agent runs it. `temporal_ensemble` and `steered` take the same policy
-([choose an agent](../user-guide/policies.md#choose-an-agent)):
+([choose an agent](../user-guide/policies.md#agents-that-run-a-policy)):
 
 ```yaml
 agent: {type: steered, params: {sampler: {type: my-reacher, params: {noise: 0.2}}, steering: {n_samples: 4, selector: medoid}}}
 ```
 
-## 5. Score it
+## 5. Score it on the leaderboard
 
 An [evaluation protocol](../benchmarking/protocols.md) fixes everything except the agent being scored. Score the agent
 that runs your policy, and the planar IK baseline, under the `mujoco-reach` protocol:
@@ -191,7 +191,7 @@ uv run hylo bench compare scorecards/mujoco-reach/my-reacher.json scorecards/muj
 }
 ```
 
-No episode separates the two, so `p_value` is 1.0 ([compare two scorecards](../benchmarking/index.md#compare-two-scorecards)).
+No episode separates the two, so `p_value` is 1.0 ([compare two scorecards](../benchmarking/index.md#statistics)).
 
 ## Variants
 

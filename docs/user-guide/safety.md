@@ -15,7 +15,7 @@ The shield does not cover two cases:
     The shield is a software layer. On a real robot, keep the robot's own limits (for example LeRobot's
     `max_relative_target` and torque limits) and a hardware e-stop within reach.
 
-## What the shield checks
+## What the shield does
 
 ```mermaid
 flowchart LR
@@ -47,11 +47,11 @@ intervention: it is recorded in the review, and the chunk is kept.
 
 These events end the episode at once as `safety_abort`: a non-finite action, an out-of-bounds rotation, a hold
 under absolute control with no target to hold, an intervention on a real robot (below), and an operator stop or
-e-stop. A watchdog abort ends it as `error` ([episode statuses](experiments.md#what-a-run-contains)).
+e-stop. A watchdog abort ends it as `error` ([episode statuses](experiments.md#runs-and-traces)).
 
 The episode's `safety_interventions` score counts the modified actions, plus one if the episode ended in any of
 these aborts, the watchdog included. Campaigns compare this score in their safety veto
-([below](#what-campaigns-can-change)).
+([below](#safety-in-campaigns)).
 
 An environment that declares itself a real robot (`real_robot` in its spec) changes the rules. The clip tolerance
 becomes 0, and **any** intervention ends the episode as `safety_abort`.
@@ -85,7 +85,7 @@ template.
 
 Guard plugins from other packages work the same way ([extending](../harness/extending.md)).
 
-## On a real robot
+## Safety on robots
 
 On a robot, three layers act, each with its own job:
 
@@ -93,13 +93,13 @@ On a robot, three layers act, each with its own job:
 |---|---|
 | Safety shield | Reviews every action. Because the environment sets `real_robot`, any intervention aborts the episode. |
 | Episode loop | With `clock: wall`, holds the arm when the policy is late, and ends the episode as `error` after more than `max_hold_steps` holds in a row (the watchdog; `runtime.max_hold_steps` in a workcell config). |
-| Workcell | Gives the operator stop, a latched e-stop that blocks new episodes until cleared, reset confirmation and verdicts ([deployment](deployment.md#step-4-run-and-operate-episodes)). |
+| Workcell | Gives the operator stop, a latched e-stop that blocks new episodes until cleared, reset confirmation and verdicts ([deployment](deployment.md#4-operating-a-workcell)). |
 
 !!! danger "Hold and watchdog need `clock: wall`"
     On the default `virtual` clock, the loop blocks in each policy call and sends no commands while it waits. The
     watchdog cannot fire during that wait. A stalled remote policy ends the episode only when its call times out
     (600 s by default for a `remote.ws` policy), as `error`, without calling `stop()`. Set `clock: wall` on hardware
-    ([deployment](deployment.md#step-2-set-up-the-robot-computer)).
+    ([deployment](deployment.md#2-the-robot-computer)).
 
 The move to the home pose at the start of an episode does not pass through the shield. The LeRobot robot adapter
 interpolates to `home` in small steps and clips each step to the action box only. Confirm the reset only when the
@@ -108,7 +108,7 @@ path to `home` is clear.
 Keep-out zones and limits for a cell belong in the lab's
 [deployments repository](../configuration/deployments-repo.md).
 
-## What campaigns can change
+## Safety in campaigns
 
 A campaign proposes changes to an experiment config as patches. It rejects any candidate whose patch touches one of
 these top-level keys:

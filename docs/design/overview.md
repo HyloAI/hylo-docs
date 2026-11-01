@@ -3,7 +3,7 @@
 This page shows how Run → Measure → Improve → Deploy connect inside Hylo, and what checks each hand-off.
 [Concepts](../getting-started/concepts.md) defines the terms.
 
-## From a run to a deployed version
+## From runs to deployed versions
 
 ![Data flow: an experiment produces a run and traces, which give a scorecard; learners turn runs into artifacts, which candidates use; the gate decides, the active version goes to a workcell, and its episodes become runs](../assets/diagrams/architecture.svg){ .hylo-figure }
 
@@ -35,7 +35,7 @@ This page shows how Run → Measure → Improve → Deploy connect inside Hylo, 
 One episode loop runs every episode: in evaluation, in Studio's live sandbox and in a workcell next to a robot. It
 passes every action through the safety shield, and every step emits events that a trace store writes per episode.
 Replay, scoring, judges, learners and Studio all read these traces. Timing (`sync` by default, or `realtime`) is
-part of what an experiment measures ([timing](../user-guide/experiments.md#sync-and-realtime-timing)). Realtime
+part of what an experiment measures ([timing](../user-guide/experiments.md#timing-sync-and-realtime)). Realtime
 uses a deterministic virtual clock by default; on hardware, set `clock: wall`
 ([deployment](../user-guide/deployment.md)).
 
@@ -45,7 +45,7 @@ uses a deterministic virtual clock by default; on hardware, set `clock: wall`
    reasoners and world models live inside agents. Any simulator, robot or policy stack plugs in as a plugin.
 2. **Every action passes the safety shield.** Agents cannot bypass it, and campaign candidates may not change the
    safety settings. Overrides you write into a campaign config yourself are not checked
-   ([what is protected](../user-guide/safety.md#what-campaigns-can-change)).
+   ([what is protected](../user-guide/safety.md#safety-in-campaigns)).
 3. **Scoring reads traces only.** A scorer sees what happened, never the agent's internals.
 
 ## Measurement vs placement
@@ -54,7 +54,7 @@ An experiment's identity is what it measures. Configs name runtimes and store id
 resolves them ([profiles](../configuration/profiles.md), [store](../user-guide/store.md)). So an experiment has the
 same digest on every machine; the one placement detail that is hashed is a `remote.ws` URL. The digest does not
 cover code versions or unpinned artifacts
-([when two runs are comparable](../user-guide/experiments.md#when-two-runs-are-comparable)). A result in simulation
+([when two runs are comparable](../user-guide/experiments.md#what-is-measured-the-digest)). A result in simulation
 does not by itself predict the result on a robot.
 
 ## Packages and repositories
@@ -90,7 +90,7 @@ Leaves never import each other, and serve's packages depend on `hylo-core` alone
 [formats](../api/formats.md) defined in `hylo-core`: traces, artifact manifests, store ids, scorecards, `active.json`
 and the workcell API. A boundary lint enforces this ([contributing](../developer-guide/contributing.md)).
 
-## Design decisions
+## Key decisions
 
 | Decision | Why |
 |---|---|

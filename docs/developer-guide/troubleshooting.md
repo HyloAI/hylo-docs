@@ -5,16 +5,16 @@ Commands run from `bench/` unless an entry says otherwise.
 
 | Message starts with | Section |
 |---|---|
-| `... pyproject.toml is stale`, `AssertionError: run python harness/dev/workspace.py`, `ModuleNotFoundError`, `ValidationError ... extra_forbidden` | [Installing and setting up](#installing-and-setting-up) |
-| `KeyError: "runtime '...' is not in ...` | [Installing and setting up](#installing-and-setting-up) |
-| `EnvironmentFault`, `KeyError: "no ... plugin named`, `IncompatibleComponents`, `watchdog:` | [Running an experiment](#running-an-experiment) |
-| `ValueError: overrides ...`, `ValueError: different protocols`, `KeyError: "unknown protocol` | [Benchmarks and scorecards](#benchmarks-and-scorecards) |
-| `SplitLeak`, `... content digest ... != manifest`, a candidate `rejected` at stage 0 | [Learning and campaigns](#learning-and-campaigns) |
+| `... pyproject.toml is stale`, `AssertionError: run python harness/dev/workspace.py`, `ModuleNotFoundError`, `ValidationError ... extra_forbidden` | [Installing and setting up](#install-and-workspace) |
+| `KeyError: "runtime '...' is not in ...` | [Installing and setting up](#install-and-workspace) |
+| `EnvironmentFault`, `KeyError: "no ... plugin named`, `IncompatibleComponents`, `watchdog:` | [Running an experiment](#experiments-and-the-episode-loop) |
+| `ValueError: overrides ...`, `ValueError: different protocols`, `KeyError: "unknown protocol` | [Benchmarks and scorecards](#benchmarks) |
+| `SplitLeak`, `... content digest ... != manifest`, a candidate `rejected` at stage 0 | [Learning and campaigns](#artifacts-and-campaigns) |
 | `artifact:... not found`, `... is referred to by`, `sync refused`, `rsync` | [The store](#the-store) |
-| `[Errno 98] ... address already in use`, HTTP 401 or 409 from a workcell | [Serving and workcells](#serving-and-workcells) |
-| `IncompatiblePlugin`, `cannot build ...`, `warning: ... declares no contract version` | [Writing plugins](#writing-plugins) |
+| `[Errno 98] ... address already in use`, HTTP 401 or 409 from a workcell | [Serving and workcells](#serve-and-studio) |
+| `IncompatiblePlugin`, `cannot build ...`, `warning: ... declares no contract version` | [Writing plugins](#plugins) |
 
-## Installing and setting up
+## Install and workspace
 
 ??? question "`.../pyproject.toml is stale: run python harness/dev/workspace.py .` or `AssertionError: run python harness/dev/workspace.py`"
     **Cause:** the workspace file no longer matches the repositories present. A repository or package was added or
@@ -52,7 +52,7 @@ Commands run from `bench/` unless an entry says otherwise.
 
     **Check:** `uv run hylo profile show` lists the runtime. See [execution profiles](../configuration/profiles.md).
 
-## Running an experiment
+## Experiments and the episode loop
 
 ??? question "`EnvironmentFault: env server exited with code 1`, after a traceback"
     **Cause:** a remote environment's process (`env.remote`) died before it answered. Its own traceback is printed
@@ -82,7 +82,7 @@ Commands run from `bench/` unless an entry says otherwise.
     **Fix:** check the spelling against `uv run hylo plugins` (`--all` adds the test doubles). A plugin package you
     installed with `uv pip install -e PATH` is removed by the next `uv sync`, because it is not a workspace member:
     put it under `plugins/packages/` and make it a member
-    ([adding a policy, step 1](adding-a-policy.md#1-create-and-install-the-package)). If `HYLO_NO_PLUGIN_AUTOLOAD=1` is set,
+    ([adding a policy, step 1](adding-a-policy.md#1-scaffold-the-package)). If `HYLO_NO_PLUGIN_AUTOLOAD=1` is set,
     installed plugins are not loaded at all: unset it.
 
 ??? question "`IncompatibleComponents: action dim: agent 7 != env 2`"
@@ -94,18 +94,18 @@ Commands run from `bench/` unless an entry says otherwise.
     `uv run hylo conformance CONFIG --agent` shows both specs.
 
 ??? question "Episodes end with `error`, `safety_abort` or `infra_invalid` instead of success or failure"
-    **Cause:** see [episode statuses](../user-guide/experiments.md#what-a-run-contains). `error` and `infra_invalid`
+    **Cause:** see [episode statuses](../user-guide/experiments.md#runs-and-traces). `error` and `infra_invalid`
     episodes are left out of the metrics, and `error` includes the agent's own exceptions and timeouts, so check
     these counts before reading the score.
 
-    **Fix:** read the episode's `termination_reason` ([reading a run](#reading-a-run)).
+    **Fix:** read the episode's `termination_reason` ([reading a run](#inspecting-a-run)).
 
 ??? question "`watchdog: no new actions for N steps` in realtime runs"
     **Cause:** in realtime timing the action queue ran empty for more than `max_hold_steps` (default 100)
     consecutive steps. The policy is too slow for `control_hz`, or it stopped answering.
 
     **Fix:** compare `latency_s` or the measured latency with `refill_steps`, or raise `max_hold_steps` for slow
-    policies on a simulator ([timing](../user-guide/experiments.md#sync-and-realtime-timing)).
+    policies on a simulator ([timing](../user-guide/experiments.md#timing-sync-and-realtime)).
 
 ??? question "`no target to hold for absolute control (the environment must provide hold_action)`"
     **Cause:** a realtime episode with absolute actions needs the environment's `hold_action` to know what "hold
@@ -113,7 +113,7 @@ Commands run from `bench/` unless an entry says otherwise.
 
     **Fix:** implement `hold_action` in the environment, or use delta actions.
 
-## Benchmarks and scorecards
+## Benchmarks
 
 ??? question "`ValueError: overrides ['agent.params.kp'] would change what the protocol measures; only env.remote.*, workers`"
     **Cause:** `hylo bench run --set` may change how a protocol runs, never what it measures.
@@ -129,7 +129,7 @@ Commands run from `bench/` unless an entry says otherwise.
 ??? question "`KeyError: "unknown protocol 'nope'; built in: libero-10, libero-10-heldout, libero-10-heldout-realtime, mujoco-reach"`"
     **Fix:** use a built-in name (`uv run hylo bench list`) or a path to a protocol YAML.
 
-## Learning and campaigns
+## Artifacts and campaigns
 
 ??? question "`.../b/gain: content digest ca22895f89be761f != manifest 7c0e3c577ceeacab (modified after sealing)`"
     **Cause:** a file in a sealed artifact changed after `artifact.json` was written, so it is no longer what its id
@@ -151,7 +151,7 @@ Commands run from `bench/` unless an entry says otherwise.
     and `refusing to seal <dir>: source <run> is a 'gate' run` (at sealing).
 
     **Fix:** build from development splits (`search`, `search_val`) only. See
-    [which runs a learner may read](../user-guide/learning.md#which-runs-a-learner-may-read).
+    [which runs a learner may read](../user-guide/learning.md#the-split-guard).
 
 A candidate rejected by the stage-0 checks is recorded in the campaign archive with the reason:
 
@@ -162,7 +162,7 @@ A candidate rejected by the stage-0 checks is recorded in the campaign archive w
     **Fix:** rebuild the artifact with a learner, or adopt it again with `--source` for each run it was built from.
 
 ??? question "`candidate <id> touches protected scope '<path>'` or `duplicate of an archived candidate`"
-    **Cause:** the generator proposed a change to a [protected path](../user-guide/safety.md#what-campaigns-can-change),
+    **Cause:** the generator proposed a change to a [protected path](../user-guide/safety.md#safety-in-campaigns),
     or a patch the archive already holds.
 
     **Fix:** none needed: the stage-0 checks are working.
@@ -222,7 +222,7 @@ A candidate rejected by the stage-0 checks is recorded in the campaign archive w
 
     **Fix:** remove `<store>/.hylo-store/index.json` and run `hylo store index`.
 
-## Serving and workcells
+## Serve and studio
 
 ??? question "`ERROR:    [Errno 98] error while attempting to bind on address ('127.0.0.1', 8765): address already in use`"
     **Cause:** another process holds the port. The message comes from uvicorn.
@@ -249,14 +249,14 @@ A candidate rejected by the stage-0 checks is recorded in the campaign archive w
     **Fix:** send `Authorization: Bearer <token>` to a workcell (and `?token=` on `/events`). Studio takes the
     `x-token` header or `?token=`. See [security](../user-guide/security.md).
 
-## Writing plugins
+## Plugins
 
 ??? question "`IncompatiblePlugin: policies plugin 'x' (pkg 1.2.0) implements hylo.policy/v1.0; this core implements hylo.policy/v0.1`"
     **Cause:** the plugin declares a contract version this core cannot run: another major version, or a newer minor
     one.
 
     **Fix:** install a plugin version written for this core, or upgrade the harness. See
-    [versioning](versioning.md#plugin-contracts).
+    [versioning](versioning.md#contract-versions).
 
 ??? question "`cannot build policy 'policy.knn': TypeError: KNNPolicy.__init__() missing 1 required positional argument: 'path'`"
     **Cause:** `hylo plugin check` builds the plugin with `--params` (JSON), and this plugin needs a parameter.
@@ -268,11 +268,11 @@ A candidate rejected by the stage-0 checks is recorded in the campaign archive w
     **Cause:** the package has no `hylo.meta` declaration, or the declaration lacks maturity or licence. The plugin
     still loads.
 
-    **Fix:** add the declaration ([extending](../harness/extending.md), [versioning](versioning.md#plugin-contracts)).
+    **Fix:** add the declaration ([extending](../harness/extending.md), [versioning](versioning.md#contract-versions)).
 
-## Reading a run
+## Inspecting a run
 
-[Experiments](../user-guide/experiments.md#what-a-run-contains) lists the files of a run directory.
+[Experiments](../user-guide/experiments.md#runs-and-traces) lists the files of a run directory.
 
 ```bash
 uv run hylo trace runs/<run_dir>                        # aggregate results, status counts, episode ids
@@ -283,7 +283,7 @@ The `episode.end` event carries `status` and `termination_reason`. The `terminat
 apart: `max_steps`, `terminated`, `truncated`, `sim_error`, or the text of the error that ended the episode. An
 `error` event carries `phase` and `message`.
 
-## Filing a bug report
+## Collecting a bug report
 
 Include:
 

@@ -6,7 +6,7 @@ The scorecards of one protocol form a **leaderboard**, and any two can be compar
 
 The agent is passed as `--policy`. Despite the flag's name, it takes an agent spec.
 
-## Score an agent
+## Scoring
 
 Commands on this page run from `bench/`.
 
@@ -38,9 +38,7 @@ uv run hylo bench run mujoco-reach --name ik-0.3 \
 `--out` sets `OUT`; the default is the working directory. All options are in the
 [CLI reference](../cli/index.md#hylo-bench).
 
-<a id="statistics"></a>
-
-## Compare two scorecards
+## Statistics
 
 ```bash
 uv run hylo bench compare scorecards/mujoco-reach/ik-0.3.json scorecards/mujoco-reach/ik-0.02.json
@@ -61,12 +59,12 @@ uv run hylo bench compare scorecards/mujoco-reach/ik-0.3.json scorecards/mujoco-
 episode either side abstained on is dropped). A one-sided exact McNemar test on the pairs where exactly one agent
 succeeded (`candidate_wins`, `parent_wins`) asks whether the candidate wins more often. Two agents whose
 intervals overlap can still differ clearly this way
-([example](leaderboard.md#example-the-reference-policies)). Scorecards with different protocol digests are refused.
+([example](leaderboard.md#the-reference-policy-leaderboard)). Scorecards with different protocol digests are refused.
 
 The success interval is the 95% Wilson score interval, which stays inside [0, 1]: 100 successes in 100 episodes give
 [96.3%, 100%].
 
-## What a scorecard holds
+## Scorecards
 
 A scorecard is a self-contained JSON file:
 
@@ -81,7 +79,7 @@ A scorecard is a self-contained JSON file:
 | `run_dir`, `config_digest`, `code` | the run it came from on this machine, its config digest, and the git commit and package versions that ran |
 | `notes`, `created_at` | free text (`--notes`), and when it was written |
 
-## Protocols and experiments
+## Protocols vs experiments
 
 An [experiment config](../user-guide/experiments.md) says what to run: benchmark and split, environment, agent,
 safety, trace, timing. A protocol is an experiment with the agent left out:

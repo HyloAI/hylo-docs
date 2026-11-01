@@ -35,7 +35,7 @@ bench, plugins and the CLI templates run MuJoCo episodes. The LIBERO test starts
 
 | Test | Skips unless | To enable |
 |---|---|---|
-| `hylo-env-libero`: `test_remote_libero_episode_runs_end_to_end` | the `libero-sim` runtime is in the profile (or `bench/envs/libero/.venv` exists), and user-space OSMesa is installed | `bench/scripts/install-osmesa-user.sh`, then `bench/envs/libero/setup.sh` ([installation](../getting-started/installation.md#optional-libero-and-lerobot)) |
+| `hylo-env-libero`: `test_remote_libero_episode_runs_end_to_end` | the `libero-sim` runtime is in the profile (or `bench/envs/libero/.venv` exists), and user-space OSMesa is installed | `bench/scripts/install-osmesa-user.sh`, then `bench/envs/libero/setup.sh` ([installation](../getting-started/installation.md#libero-and-lerobot-policies)) |
 | `hylo-env-mujoco`: `test_vision_variant_adds_camera_images_only_while_visible` | `MUJOCO_GL` is `egl` or `osmesa` | `MUJOCO_GL=osmesa PYOPENGL_PLATFORM=osmesa LD_LIBRARY_PATH=~/.local/mesa/root/usr/lib/x86_64-linux-gnu uv run pytest bench/adapters/hylo-env-mujoco` |
 | `hylo-reasoner-llm`: the live LLM chooser test | `HYLO_TEST_LLM=1` | a local Ollama server with the configured model, then `HYLO_TEST_LLM=1 uv run pytest harness/adapters/hylo-reasoner-llm` |
 | `hylo-cli`: the policy and agent template tests | `hylo.envs.mujoco` is importable | check out hylo-bench next to the harness |
@@ -43,7 +43,7 @@ bench, plugins and the CLI templates run MuJoCo episodes. The LIBERO test starts
 | `hylo-playground`: the control-plane test with a real workcell | `hylo.serve` is importable (a fake workcell is used otherwise) | hylo-serve |
 | `hylo-playground`: `test_playground.py` | `httpx` is importable | the workspace's `dev` dependency group, which `uv sync` installs |
 
-## Writing tests for a new package
+## Tests for a new package
 
 1. Put tests in `<package>/tests/`, importing the package by its installed name.
 2. Call the conformance check for each plugin the package registers (see below). The `hylo plugin new` templates
@@ -100,7 +100,7 @@ def test_conformance():
         env.close()
 ```
 
-## Conformance checks
+## Conformance kits
 
 Every contract has a check that a plugin's own tests call. The checks live in `hylo.testing.conformance` (hylo-core),
 `hylo.eval.conformance`, `hylo.learn.conformance` and `hylo.evolve.conformance`. The CLI runs the same checks on any
@@ -142,7 +142,7 @@ name a config whose benchmark has those splits (on MuJoCo: `benchmark: {..., par
 `.toml`, `.ts`, `.tsx`, `.json`) in the code repositories. It does not read shell scripts, hylo-docs or the
 deployments template.
 
-## Where tests live
+## Layout
 
 | Where | What |
 |---|---|

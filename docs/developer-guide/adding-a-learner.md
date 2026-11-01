@@ -6,7 +6,7 @@ candidate that uses it. A learner turns recorded runs into an artifact. For succ
 
 You need the [development workspace](../getting-started/installation.md) with hylo-bench.
 
-## 1. Create and install the package
+## 1. Scaffold the package
 
 From the workspace root, create the package in `plugins/packages/`:
 
@@ -16,7 +16,7 @@ uv run hylo plugin new learner my-recap --dir plugins/packages
 
 This creates `plugins/packages/hylo-plugin-my-recap` with the module `wc_my_recap`. Add `license = "Apache-2.0"` (or
 your licence) under `[project]` in its `pyproject.toml`. Then add it to the workspace and install it, as in
-[adding a policy](adding-a-policy.md#1-create-and-install-the-package). From here on, run commands from `bench/`:
+[adding a policy](adding-a-policy.md#1-scaffold-the-package). From here on, run commands from `bench/`:
 
 ```bash
 uv run python harness/dev/workspace.py
@@ -36,7 +36,7 @@ uv run hylo run examples/configs/mujoco_reach.yaml --split search --output runs/
     --set benchmark.params.protocol=rsi
 ```
 
-## 2. Write fit()
+## 2. The contract
 
 A learner has a `name` and one method, `fit(job) -> ArtifactManifest`. This example groups development runs by the
 agent's gain and seals an artifact that records the gain with the highest success rate:
@@ -78,7 +78,7 @@ Three rules:
 
 Read inputs with `development_runs`
 :   `development_runs(job.inputs, job.splits)` returns `(run_dir, SourceRef)` pairs for development runs only
-    ([which runs a learner may read](../user-guide/learning.md#which-runs-a-learner-may-read)).
+    ([which runs a learner may read](../user-guide/learning.md#the-split-guard)).
 
 Write your files, then seal
 :   Write everything into `job.out` and call `write_manifest` last. The manifest records a content digest over the
@@ -109,7 +109,7 @@ step 5's job. The generated test in `tests/` runs the same check under pytest.
 
 ## 4. Run a job
 
-A job names the learner, inputs, output and params ([train an artifact](../user-guide/learning.md#train-an-artifact)):
+A job names the learner, inputs, output and params ([train an artifact](../user-guide/learning.md#run-a-learner-job)):
 
 ```json title="recap.json"
 {"learner": "my-recap", "inputs": ["runs/demos"], "out": "runs/artifacts/recap"}
@@ -151,7 +151,7 @@ uv run hylo store ref runs/artifacts/recap
 artifact:recap@e3d96ccc61cef0ae
 ```
 
-Configs reference artifacts by this id; keep the `@digest` ([use ids in configs](../user-guide/store.md#use-ids-in-configs)).
+Configs reference artifacts by this id; keep the `@digest` ([use ids in configs](../user-guide/store.md#reference-artifacts-in-configs)).
 
 ## 5. Use it in a campaign
 
@@ -208,7 +208,7 @@ The learner read `runs/demos` and the parent's `search` and `search_val` runs fr
 generator reads both development splits ([splits](../user-guide/campaigns.md#splits)). It found `kp: 0.3` best, so the
 candidate's patch is `{"agent.params.kp": 0.3}`. It passed the gate and was promoted. The archive entry in
 `runs/evolve/mujoco-reach-recap/archive.jsonl` links the verdict to the generator `learn.my-recap@0.1` and the sealed
-artifact ([read the result](../user-guide/campaigns.md#read-the-result)).
+artifact ([read the result](../user-guide/campaigns.md#results)).
 
 ## Variants
 

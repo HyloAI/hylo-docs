@@ -6,7 +6,7 @@ You need Linux, Python 3.10 or newer and [uv](https://docs.astral.sh/uv/). No GP
 runs on CPU. The OSMesa install script, used for camera rendering without a GPU and for LIBERO, assumes Ubuntu 24.04
 on x86_64.
 
-## Set up the workspace
+## The development workspace
 
 Clone the harness into a new directory and run its bootstrap script there:
 
@@ -33,7 +33,7 @@ The workspace has three dependency groups:
 uv sync --group demo --group docs
 ```
 
-## Register the run store
+## The run and artifact store
 
 Register `bench/runs` as this machine's [store](../user-guide/store.md). The quickstart writes its runs there:
 
@@ -55,7 +55,7 @@ uv run hylo plugins             # every plugin: group, name, contract version, m
 `hylo plugins` should list `mujoco.planar_reach` and `baseline.planar_ik`; the quickstart uses both. To run the
 tests, see [testing](../developer-guide/testing.md).
 
-## Optional: Studio's web UI
+## Studio web UI
 
 Studio's web UI must be built once before `hylo playground` can show it. Without the build, Studio answers only
 "frontend not built". The build needs Node.js 18 or later:
@@ -64,7 +64,7 @@ Studio's web UI must be built once before `hylo playground` can show it. Without
 cd studio/web && npm install --ignore-scripts && npm run build && cd ../..
 ```
 
-## Optional: camera rendering
+## Camera rendering
 
 MuJoCo comes with bench and needs nothing else for experiments. Camera rendering, used by the table-reach vision
 variant and by figures, needs an OpenGL backend. On a machine with a GPU, set `MUJOCO_GL=egl`.
@@ -83,12 +83,12 @@ export PYOPENGL_PLATFORM=osmesa
 export LD_LIBRARY_PATH=~/.local/mesa/root/usr/lib/x86_64-linux-gnu
 ```
 
-## Optional: LIBERO and LeRobot
+## LIBERO and LeRobot policies
 
 LIBERO and LeRobot need package versions that conflict with the workspace, so they run in their own venv inside
 bench, through two named [runtimes](../configuration/profiles.md).
 
-1. Install OSMesa as in [camera rendering](#optional-camera-rendering). LIBERO renders with it.
+1. Install OSMesa as in [camera rendering](#camera-rendering). LIBERO renders with it.
 2. Build the LIBERO venv:
 
     ```bash
@@ -122,7 +122,7 @@ bench, through two named [runtimes](../configuration/profiles.md).
     Weight licences differ from the code's; the [plugin catalogue](../developer-guide/plugin-catalogue.md) lists
     them.
 
-## Working on a subset of repositories
+## A subset of the repositories
 
 The workspace covers whichever repositories are present; tests that need a missing one skip.
 

@@ -3,7 +3,7 @@
 Anything that depends only on the machine (interpreters, renderers, model caches, the store) goes in its execution
 profile, not in the experiment config.
 
-## Configure this machine
+## Commands
 
 ```bash
 uv run hylo profile show                         # the profile and where it is
@@ -19,7 +19,7 @@ resolving symlinks, so the interpreter stays in its venv.
 `bench/envs/libero/setup.sh` builds the LIBERO and LeRobot venv and registers two runtimes, `libero-sim` and
 `lerobot`, with the paths of the bench checkout it ran in. Run it again to re-register them.
 
-## The profile file
+## Profile file
 
 Each machine has one profile: `~/.config/hylo/profile.yaml`, or wherever `$HYLO_PROFILE` points. A machine without a
 profile has no runtimes.

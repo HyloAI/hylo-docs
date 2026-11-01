@@ -185,7 +185,7 @@ class SliderPolicy:
 ```
 
 Add the package to the workspace and install it, as in
-[adding a policy](adding-a-policy.md#1-create-and-install-the-package). From here on, run commands from `bench/`:
+[adding a policy](adding-a-policy.md#1-scaffold-the-package). From here on, run commands from `bench/`:
 
 ```bash
 uv run python harness/dev/workspace.py
@@ -251,7 +251,7 @@ uv run hylo run slider.yaml
 }
 ```
 
-## 6. Score it under an evaluation protocol
+## 6. A protocol in bench
 
 An [evaluation protocol](../benchmarking/protocols.md) fixes everything except the agent being scored:
 
@@ -298,7 +298,7 @@ Ten episodes give a wide interval. The built-in protocols use 100 (MuJoCo reach)
     ```
 
     Install hylo-core and your package into that venv. A subprocess is not part of the `config_digest`
-    ([when two runs are comparable](../user-guide/experiments.md#when-two-runs-are-comparable)).
+    ([when two runs are comparable](../user-guide/experiments.md#what-is-measured-the-digest)).
 
 === "WebSocket, another machine"
 

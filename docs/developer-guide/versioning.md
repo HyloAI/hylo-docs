@@ -11,7 +11,7 @@ This page lists what carries a version or a digest, and what changes it.
 
 Until the first release, contracts and formats may change without a deprecation period.
 
-## Plugin contracts
+## Contract versions
 
 Every plugin group is a contract with a version, named `hylo.<name>/v0.1` after the group in the singular
 (`envs` is `hylo.env/v0.1`, `gate_tests` is `hylo.gate_test/v0.1`). All are at v0.1. The
@@ -38,7 +38,7 @@ The plugin registry checks the declaration before it imports an entry point, and
 mismatch. A plugin without a declaration still loads and is listed as undeclared, and `hylo plugin check` warns.
 `module:attr` references are not checked, because there is no package to ask.
 
-## File and message formats
+## Format schema versions
 
 Files read through a Hylo contract (experiment configs, profiles, protocols, artifact manifests, scorecards, the
 store index, campaign configs) carry their schema version. They are refused when the version or a key is unknown,
@@ -74,7 +74,7 @@ SHA-256, truncated to 16 hex characters.
 
 | Digest | Over | Left out |
 |---|---|---|
-| Experiment (`config_digest`) | what the experiment measures ([rules](../user-guide/experiments.md#when-two-runs-are-comparable)) | where results go, workers, placement |
+| Experiment (`config_digest`) | what the experiment measures ([rules](../user-guide/experiments.md#what-is-measured-the-digest)) | where results go, workers, placement |
 | Benchmark | id, version, every task's digest, the splits | |
 | Task | the whole task spec | |
 | Protocol | the protocol definition ([rules](../benchmarking/protocols.md#the-digest)) | description, workers, requirements, placement |
@@ -102,7 +102,7 @@ the same definitions get now, because the schema id is part of what is hashed. T
 before placement (`env.remote`) was left out of the digest. To compare with such a run, run the older agent again.
 Artifact content digests did not change, so older store ids still resolve.
 
-## Package versions
+## Package versions and releases
 
 There are 23 packages, all at `0.1.0.dev0`. Nothing is released to PyPI, and the repositories have no tags. Install
 from the GitHub repositories (`https://github.com/HyloAI/hylo-<name>`), as

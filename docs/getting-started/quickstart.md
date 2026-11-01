@@ -57,7 +57,7 @@ The weak gain also halves the success rate (`"success_mean": 0.5`). Step 3 start
 ### Read the traces
 
 Use the `run_dir` printed above to read a run. Its last six characters are random, so yours differs
-([what a run contains](../user-guide/experiments.md#what-a-run-contains)):
+([what a run contains](../user-guide/experiments.md#runs-and-traces)):
 
 ```bash
 uv run hylo trace <run_dir>                  # the metrics, then every episode id
@@ -80,7 +80,7 @@ Counter({'observation': 31, 'agent.chunk': 30, 'safety.review': 30, 'action': 30
 }
 ```
 
-## 2. Measure it under an evaluation protocol
+## 2. Score a policy under a protocol
 
 An evaluation protocol fixes everything except the agent being scored. `mujoco-reach` is 100 episodes: a fixed and
 a random target, 50 held-out seeds each.
@@ -130,7 +130,7 @@ episode the other loses, so p = 1.0:
 
 More in [benchmarking](../benchmarking/index.md).
 
-## 3. Improve it with a campaign
+## 3. Improve a policy with a campaign
 
 A campaign tries changes to a config and keeps one only if it beats the current version on episodes it was not
 chosen on. Here the IK controller starts with the weak gain from step 1 (`kp: 0.02`), and a rule-based generator
@@ -199,7 +199,7 @@ Among other fields, the status shows the active version and the change it makes 
 The campaign writes its active version to `runs/evolve/mujoco-reach-gain/active.json`, which step 4 serves.
 `hylo evolve rollback` would undo the promotion ([campaigns](../user-guide/campaigns.md)); keep it for now.
 
-## 4. Deploy: serve the promoted version
+## 4. Serve the promoted version
 
 A policy server serves a campaign's active version and follows later promotions and rollbacks. It needs no
 hardware:
@@ -214,10 +214,10 @@ uv run hylo serve policy --campaign runs/evolve/mujoco-reach-gain      # port 80
 
 A workcell next to a robot connects to this server; see [Deployment](../user-guide/deployment.md).
 
-## Optional: look at it in Studio
+## 5. Look at it in Studio
 
 Studio shows the runs, episodes and campaigns from the steps above. Build its web UI once
-([installation](installation.md#optional-studios-web-ui)), then start it from `bench/`:
+([installation](installation.md#studio-web-ui)), then start it from `bench/`:
 
 ```bash
 uv run hylo playground          # http://127.0.0.1:8765

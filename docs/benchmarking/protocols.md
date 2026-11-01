@@ -19,7 +19,7 @@ uv run hylo bench list        # names, versions and current digests
 
 **mujoco-reach.** A planar two-link arm reaching a fixed and a random target, 50 seeds each. It takes a few seconds
 per agent on a CPU and is deterministic. Campaigns never use these seeds
-([two held-out sets](../user-guide/campaigns.md#two-held-out-sets)).
+([two held-out sets](../user-guide/campaigns.md#held-out-sets)).
 
 ![The MuJoCo planar reach scene and the table scene of the examples](../assets/figures/mujoco-scenes.png){ .hylo-figure }
 
@@ -29,14 +29,14 @@ Campaigns tune on init states 0–39, so for a policy a campaign improved, repor
 **libero-10-heldout.** Only init states 40–49, the campaigns' held-out split
 ([splits](../user-guide/campaigns.md#splits)).
 
-**libero-10-heldout-realtime.** The same 100 episodes in [realtime timing](../user-guide/experiments.md#sync-and-realtime-timing)
+**libero-10-heldout-realtime.** The same 100 episodes in [realtime timing](../user-guide/experiments.md#timing-sync-and-realtime)
 with a fixed 0.5 s latency on a virtual clock, so the score does not depend on the machine. The gap to
 `libero-10-heldout` shows what that delay costs a policy.
 
 The LIBERO protocols need the `libero-sim` runtime
-([installation](../getting-started/installation.md#optional-libero-and-lerobot)).
+([installation](../getting-started/installation.md#libero-and-lerobot-policies)).
 
-## What a protocol contains
+## Fields
 
 | Field | In digest | Meaning |
 |---|---|---|
@@ -67,9 +67,7 @@ protocol edited without a new version therefore starts a new board instead of mi
 `hylo bench run --set` accepts only keys outside the digest: `env.remote.*`, `workers` and `output_dir`. Anything
 else is refused, because the scorecard would no longer belong to the protocol.
 
-<a id="writing-a-protocol"></a>
-
-## Write your own
+## Writing a protocol
 
 Copy a built-in protocol and change what you measure:
 

@@ -68,7 +68,7 @@ templates keep the token in `HYLO_TOKEN`. [Security](../user-guide/security.md) 
 | `TOKENIZERS_PARALLELISM` | tokenizers | `false`: no fork warnings in worker processes |
 | `TORCHDYNAMO_DISABLE` | torch | `1`: no `torch.compile` |
 
-## For contributors
+## Development
 
 | Variable | Read by | Meaning | Default |
 |---|---|---|---|

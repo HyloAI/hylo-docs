@@ -16,12 +16,12 @@ Two services and a control plane split the work:
 
 *The workcell's runs are copied to the store on the workstation.*
 
-With `clock: wall` ([step 2](#step-2-set-up-the-robot-computer)), the workcell handles a slow network on its own: if
+With `clock: wall` ([step 2](#2-the-robot-computer)), the workcell handles a slow network on its own: if
 the policy server is slow, the arm holds its position, and if it stops answering, the watchdog ends the episode. An
 e-stop stays latched in the workcell until an operator clears it. Where these layers stop is on the
-[safety](safety.md#on-a-real-robot) page.
+[safety](safety.md#safety-on-robots) page.
 
-## Step 1: bring up without hardware
+## 1. Bring-up without hardware
 
 Clone the deployments template next to the other repositories, once. Studio's web UI also needs a one-time build
 ([installation](../getting-started/installation.md)).
@@ -68,7 +68,7 @@ After the verdict, `/status` is back to `idle` and reports the episode:
 
 The episode is in `runs/workcell/workcell-sim-arm/`.
 
-## Step 2: set up the robot computer
+## 2. The robot computer
 
 The robot computer needs:
 
@@ -101,7 +101,7 @@ safety shield is not a certified safety function ([safety](safety.md)).
 
 The LeRobot robot adapter has run only with the simulated arm ([plugin catalogue](../developer-guide/plugin-catalogue.md)).
 
-## Step 3: serve your policy
+## 3. Serving a policy
 
 On the GPU machine, serve the agent of an experiment config, or the promoted version of a campaign:
 
@@ -120,7 +120,7 @@ uv run hylo serve policy --campaign bench/runs/evolve/libero10-steering --host 0
 The workcell config points at the server with `policy: {url: "ws://gpu-box:8000/hylo", protocol: hylo}`. Give the
 token per episode rather than in that config ([security](security.md)).
 
-## Step 4: run and operate episodes
+## 4. Operating a workcell
 
 Start the workcell on the robot computer, and point Studio at it and at the policy server:
 
@@ -161,7 +161,7 @@ Operator events go to `POST /operator`:
 Studio's Operator station sends these events. Every Studio role can press the e-stop; the other events need the
 operator role ([security](security.md#studio-roles)).
 
-## Step 5: bring the episodes home
+## 5. Recorded episodes
 
 All episodes of a workcell go into one run, `<output_dir>/workcell-<name>/`. Unlike `hylo run`, which writes a new
 run each time, the workcell appends a trace per episode and updates `evallog.json` after each one. Replay, judges and Studio work on it like any run. Episodes get the split `deployment`, which no learner reads
@@ -169,7 +169,7 @@ unless asked.
 
 The operator's verdict becomes the episode's label (`labels.success.by: operator:<by>`); `partial` counts as
 `failure`. A workcell run scores `unlabeled`, `safety_abort` and `error` episodes differently from `hylo run`
-([episode statuses](experiments.md#what-a-run-contains)).
+([episode statuses](experiments.md#runs-and-traces)).
 
 To bring the runs to the workstation, make the workcell's output directory the robot computer's
 [store](store.md) and pull from it:
@@ -222,12 +222,12 @@ connect, when the prompt changes, or when the client sends `{"reset": true}`.
 | `output_dir` | `runs/workcell` | where the run is written, relative to the working directory |
 
 The workcell's `runtime:` block holds the episode loop's timing. It takes the keys of an experiment's
-[`timing:`](experiments.md#sync-and-realtime-timing), with these differences:
+[`timing:`](experiments.md#timing-sync-and-realtime), with these differences:
 
 | Key | Workcell default | Meaning |
 |---|---|---|
 | `mode` | `realtime` | experiments default to `sync` |
-| `clock` | `virtual` | set `wall` on hardware ([step 2](#step-2-set-up-the-robot-computer)) |
+| `clock` | `virtual` | set `wall` on hardware ([step 2](#2-the-robot-computer)) |
 | `require_reset_confirm` | `false` | wait for the operator's `reset_done` before the move to home |
 | `verdict_timeout_s` | `0` | how long to wait for a verdict when the environment cannot judge success |
 | `record_privileged` | `true` | store privileged state, when the environment has any |

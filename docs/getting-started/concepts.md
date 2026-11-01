@@ -44,12 +44,12 @@ Safety shield { #safety-shield }
 
 Timing { #timing }
 :   Whether the world waits for the policy (`sync`, the default) or keeps moving while it computes (`realtime`).
-    See [timing](../user-guide/experiments.md#sync-and-realtime-timing).
+    See [timing](../user-guide/experiments.md#timing-sync-and-realtime).
 
 Digest { #digest }
 :   A short hash of what an experiment measures. Where results go and where components run are left out, except a
     `remote.ws` URL, which is hashed. Code versions are not in it. See
-    [when two runs are comparable](../user-guide/experiments.md#when-two-runs-are-comparable).
+    [when two runs are comparable](../user-guide/experiments.md#what-is-measured-the-digest).
 
 ## Measure
 
@@ -110,7 +110,7 @@ Policy server { #policy-server }
 :   Serves an agent over the network, usually from a GPU machine (`hylo serve policy`). With `--campaign` it
     follows the active version. A workcell asks it for actions.
 
-## Where things run and are stored
+## Placement and storage
 
 Store id { #store-id }
 :   The name of a run or artifact in the store: `run:<run_id>` or `artifact:<name>@<digest>`. Each machine

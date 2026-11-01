@@ -3,7 +3,7 @@
 An experiment is one config file: a benchmark split, an environment, an agent, and optional safety, trace, timing
 and seed settings. `hylo run` evaluates it and writes a run.
 
-## Run an experiment
+## Run a config
 
 Commands on this page run from `bench/`, so runs land in the store registered during
 [installation](../getting-started/installation.md):
@@ -36,7 +36,7 @@ uv run hylo run examples/configs/mujoco_reach.yaml
 | `--set KEY=VALUE` | dotted-path override, value parsed as YAML; repeatable (`--set agent.params.kp=0.1 --set workers=8`) |
 | `--output DIR` | where the run directory goes (default: the config's `output_dir`, `runs`) |
 
-## What a run contains
+## Runs and traces
 
 A run directory is named `<name>-<split>-<digest>-<6 hex>` and contains:
 
@@ -88,7 +88,7 @@ output_dir: runs
 | `agent` | required | yes, except placement | `{type, params}`; `type` is a plugin name or `module:attr` |
 | `safety` | `{}` | yes | extra guards and limits ([safety](safety.md)) |
 | `trace` | `record_privileged: true`, `image_every: 1` | yes | store privileged simulator state; keep camera images every N steps (0 = never) |
-| `timing` | sync | yes | [sync or realtime](#sync-and-realtime-timing) |
+| `timing` | sync | yes | [sync or realtime](#timing-sync-and-realtime) |
 | `seed` | 0 | yes | |
 | `tags` | `()` | yes | free labels |
 | `workers` | 1 | no | parallel episode workers, each with its own environment and agent |
@@ -108,7 +108,7 @@ uv run hylo conformance examples/configs/mujoco_reach.yaml --agent    # and the 
 long `spec()` may take, which matters for remote environments. `--split` and `--set` work as in `hylo run`. What
 each check covers is in [extending](../harness/extending.md).
 
-## Sync and realtime timing
+## Timing: sync and realtime
 
 ![Sync: the world waits for each policy call. Realtime: the robot keeps moving while the next chunk is computed.](../assets/diagrams/episode-loop.svg){ .hylo-figure }
 
@@ -144,7 +144,7 @@ An agent that returns one action per call, such as `baseline.planar_ik` or `temp
 realtime mode with any latency: each action arrives after its step has passed, so the arm only holds until the
 watchdog ends the episode.
 
-## Run a component in another process
+## Where components run
 
 An environment or an agent can run in another process, with another interpreter. Name a **runtime** from this
 machine's [execution profile](../configuration/profiles.md), so the config stays the same on every machine:
@@ -185,7 +185,7 @@ The config then uses `{type: remote.ws, params: {url: "ws://host:8770"}}` as the
 connection gets its own component instance. `--token-env` names an environment variable that holds the token
 ([security](security.md)).
 
-## When two runs are comparable
+## What is measured: the digest
 
 The **config digest** is a short hash of everything the experiment measures. Left out are where results go
 (`output_dir`), parallelism (`workers`), and where components run: `env.remote`, and a `remote` agent's `runtime`,

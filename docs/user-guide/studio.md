@@ -6,7 +6,7 @@ talks to workcells through the workcell API. It never sends actions to a robot.
 
 ![The runs page: every recorded run with its benchmark, split, success and episodes](../assets/figures/studio-runs.png){ .hylo-figure }
 
-## Start Studio
+## Starting it
 
 Build the web UI once first ([installation](../getting-started/installation.md)). Until then, Studio answers
 "frontend not built". Then start Studio from the workspace directory:
@@ -22,7 +22,7 @@ uv run hylo playground --repo bench          # http://127.0.0.1:8765
 | `--workcell NAME=URL[#TOKEN]` | none | a workcell to operate; repeatable |
 | `--policy NAME=WS_URL[#TOKEN]` | none | a policy server endpoint; repeatable |
 
-`hylo playground --help` lists the rest; tokens are under [access](#access).
+`hylo playground --help` lists the rest; tokens are under [access](#roles).
 
 ## Pages
 
@@ -45,7 +45,7 @@ different instruction. The environment's task and success check stay the same. T
 loaded between episodes of the same config.
 
 The sandbox refuses overrides of `safety`, `benchmark`, `trace`, `scorers`, `evolution` and `schema_version`. This
-list differs from what campaigns protect: it does not include `env` ([safety](safety.md#what-campaigns-can-change)).
+list differs from what campaigns protect: it does not include `env` ([safety](safety.md#safety-in-campaigns)).
 Any other override is accepted, including `agent.type=module:attr`, which runs arbitrary code. That is why the
 sandbox needs the operator role.
 
@@ -56,8 +56,8 @@ read by default.
 
 Operates a workcell (`--workcell`) with a policy server (`--policy`): start episodes, follow the live stream,
 confirm resets, give verdicts, stop, e-stop and clear faults. What each event does is in
-[deployment](deployment.md#step-4-run-and-operate-episodes), with a
-[bring-up without hardware](deployment.md#step-1-bring-up-without-hardware).
+[deployment](deployment.md#4-operating-a-workcell), with a
+[bring-up without hardware](deployment.md#1-bring-up-without-hardware).
 
 ### Runs & replays
 
@@ -71,7 +71,7 @@ default it is the LIBERO-10 trace judge, if it is in Studio's runs directory.
 ### A/B arena
 
 Two runs of the same split, paired on task and init state, with the same one-sided exact McNemar test as
-`hylo bench compare` ([compare two scorecards](../benchmarking/index.md#compare-two-scorecards)), plus
+`hylo bench compare` ([compare two scorecards](../benchmarking/index.md#statistics)), plus
 side-by-side replays of the pairs where one run succeeded and the other failed.
 
 ### Self-improvement
@@ -89,7 +89,7 @@ Starts `hylo run`, `hylo evolve run` or `hylo calibrate` (and `hylo learn`, thro
 subprocess in `--repo`, with its log in `runs/playground/jobs/<id>.log`. Jobs start as soon as you submit them;
 they are not queued.
 
-## Access
+## Roles
 
 Studio binds to `127.0.0.1` by default. Without `--token` or `--role-token`, anyone who can reach the port has every
 role, including approver. Roles, tokens and what each role can do are on the [security](security.md#studio-roles)

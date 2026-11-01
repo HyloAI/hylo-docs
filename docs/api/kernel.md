@@ -1,11 +1,11 @@
-# Episode loop
+# Kernel
 
 `EpisodeRunner` is the one episode loop; evaluation, Studio's live sandbox and the workcell all use it. It runs an
 environment and an agent through the safety shield, in sync or realtime
-[timing](../user-guide/experiments.md#sync-and-realtime-timing). Events go to an `EventBus`; a `TraceStore` writes them
+[timing](../user-guide/experiments.md#timing-sync-and-realtime). Events go to an `EventBus`; a `TraceStore` writes them
 to the run's trace. See also the [execution lifecycle](../harness/execution-lifecycle.md).
 
-## Runner
+## Episode loop
 
 ::: hylo.core.kernel
     options:

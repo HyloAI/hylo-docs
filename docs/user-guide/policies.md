@@ -7,7 +7,7 @@ This page shows how to run your model in Hylo and which agent to wrap it in.
 A **policy** returns action chunks from an observation. An **agent** holds a policy and decides how to use its
 chunks ([concepts](../getting-started/concepts.md)). Any policy runs under any of the agents below.
 
-## Choose an agent
+## Agents that run a policy
 
 | Agent | Runs the policy | Key params |
 |---|---|---|
@@ -54,7 +54,7 @@ Use `policy` to run a policy chunk by chunk. The other two fit these cases:
 
 - **`temporal_ensemble`** gives smoother motion from a deterministic chunk policy, at the price of one policy call
   per step. It returns one action per call, so it works only with sync timing
-  ([experiments](experiments.md#sync-and-realtime-timing)).
+  ([experiments](experiments.md#timing-sync-and-realtime)).
 - **`steered`** suits stochastic policies (flow matching, diffusion), when you can afford `n_samples` calls per
   decision. Everything in `steering` is data, so a [campaign](campaigns.md) can propose and gate changes to it.
 
@@ -66,7 +66,7 @@ Use `policy` to run a policy chunk by chunk. The other two fit these cases:
 | `selector` | `first` | `first`, `medoid`, or `gripper_vote_medoid` (keep the chunks that agree with the gripper majority, then take their medoid) |
 | `noise_scale` | 1.0 | scale of the initial noise |
 | `execution_steps` | the policy's | actions executed from each chunk |
-| `seed_noise` | true | derive the noise from seeds (see [below](#write-a-policy)) |
+| `seed_noise` | true | derive the noise from seeds (see [below](#the-policy-contract)) |
 | `rules` | `[]` | up to 4 recovery rules |
 
 A rule watches one feature and fires an action when the feature crosses a threshold:
@@ -86,7 +86,7 @@ steering:
   end-effector delta control only, such as LIBERO).
 - `cooldown` (default 30 steps) and `max_fires` (default 3 per episode) limit firing.
 
-## Write a policy
+## The policy contract
 
 A policy is a `policies` plugin with four methods:
 
@@ -151,12 +151,12 @@ the world model that `policy.mpc` plans in ([learning](learning.md)).
     ```
 
     The example uses the name-only id `artifact:policy.flow`. Pin its digest before
-    [comparing runs](experiments.md#when-two-runs-are-comparable).
+    [comparing runs](experiments.md#what-is-measured-the-digest).
 
 Compare two scorecards with `hylo bench compare A.json B.json` (an exact paired McNemar test) before reading a
 difference into them. The results of `compare.py` are on the [leaderboard](../benchmarking/leaderboard.md).
 
-## LeRobot and openpi
+## LeRobot and openpi policies
 
 === "LeRobot (SmolVLA, pi0, ...)"
 
@@ -202,5 +202,5 @@ The [plugin catalogue](../developer-guide/plugin-catalogue.md) lists each plugin
 ## Next
 
 - [Benchmarking](../benchmarking/index.md): score your agent under an evaluation protocol.
-- [Run a component in another process](experiments.md#run-a-component-in-another-process), or
-  [serve a policy to a robot](deployment.md#step-3-serve-your-policy).
+- [Run a component in another process](experiments.md#where-components-run), or
+  [serve a policy to a robot](deployment.md#3-serving-a-policy).

@@ -4,7 +4,7 @@ A lab's robot setup (robot names, network addresses, joint limits, safety limits
 private `<lab>-deployments` repository created from the deployments template. The repository holds YAML only; every
 environment, agent and guard it names comes from an installed Hylo package.
 
-## Create it
+## Setup
 
 ```bash
 git clone https://github.com/HyloAI/hylo-deployments-template.git mylab-deployments
@@ -22,9 +22,9 @@ git remote set-url origin <your lab's private repository>
 ```
 
 Add one workcell file per robot or simulator. Set up the robot computer first
-([deployment, step 2](../user-guide/deployment.md#step-2-set-up-the-robot-computer)).
+([deployment, step 2](../user-guide/deployment.md#2-the-robot-computer)).
 
-## A workcell file
+## A workcell config
 
 The template for a real arm:
 
@@ -64,17 +64,17 @@ output_dir: runs/workcell
 | motor calibration | LeRobot's own calibration, keyed by the robot `id` (`arm1`) | made with LeRobot's tools on the robot computer; Hylo does not store it |
 | joint limits (the action box) | `env.params.action_low`, `action_high` | in the robot's units (degrees, gripper 0-100); required for a real robot |
 | per-step limit in the robot | `env.params.robot.params.max_relative_target` | LeRobot clamps each commanded change; keep it |
-| home pose | `env.params.home`, `home_steps` | reset moves there by interpolation; each step is clipped to the action box only and does not pass through the safety shield ([safety](../user-guide/safety.md#on-a-real-robot)) |
+| home pose | `env.params.home`, `home_steps` | reset moves there by interpolation; each step is clipped to the action box only and does not pass through the safety shield ([safety](../user-guide/safety.md#safety-on-robots)) |
 | cameras | `env.params.cameras` | robot camera name to observation name (`agentview`, `wrist`) |
 | control rate | `env.params.control_hz` | the wall-clock loop rate |
 
-## Safety settings
+## Safety limits
 
 `safety:` can only add guards or tighten limits. The action box itself comes from `action_low` and `action_high` in
 this file, so review changes there as safety changes. [Safety](../user-guide/safety.md#configure-guards) describes
 every guard.
 
-## What stays out
+## Machine-specific settings
 
 | Keep out of the repository | Put it here instead |
 |---|---|
@@ -82,7 +82,7 @@ every guard.
 | interpreter paths, environment variables | the robot computer's [execution profile](profiles.md) |
 | motor calibration | LeRobot's calibration files on the robot computer |
 
-## Start it
+## Starting a workcell
 
 From the deployments repository:
 

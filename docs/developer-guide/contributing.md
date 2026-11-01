@@ -3,7 +3,7 @@
 The rules for changing code in the Hylo repositories, and how to commit. [Architecture](../design/overview.md) shows
 how the repositories fit together.
 
-## Set up the workspace
+## The development workspace
 
 Follow [installation](../getting-started/installation.md): it checks the repositories out side by side and installs
 every package editable into one venv. After you add or remove a package, regenerate the workspace file from the
@@ -41,12 +41,12 @@ enforces these rules:
    under `hylo.meta` ([plugin system](../harness/plugin-system.md), [plugin catalogue](plugin-catalogue.md)).
 3. Add its module prefix to `OWNER` and its allowed dependencies to `ALLOWED` in `harness/dev/test_boundaries.py`.
 4. Regenerate the workspace file (above) and run `uv sync`.
-5. Write its tests as described in [testing](testing.md#writing-tests-for-a-new-package), and run them.
+5. Write its tests as described in [testing](testing.md#tests-for-a-new-package), and run them.
 
 A plugin outside the Hylo repositories is a package of its own. `uv run hylo plugin new <group> <name>` scaffolds
 one that passes its conformance check as generated ([extending](../harness/extending.md)).
 
-## Before you commit
+## Commits
 
 - Run the tests and the boundary lint ([testing](testing.md)). Both must pass.
 - One logical change per commit, in the repository it belongs to.
