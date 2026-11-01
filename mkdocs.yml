@@ -1,5 +1,5 @@
 site_name: Hylo
-site_description: Evaluation, learning, gated self-improvement and deployment for robot policies, behind one set of contracts.
+site_description: "The stack for physical AI: real-time running, cognition, evaluation and evolution, built on one execution kernel."
 docs_dir: docs
 site_dir: site
 edit_uri: ""
@@ -24,8 +24,8 @@ theme:
       accent: custom
       toggle: {icon: material/brightness-4, name: Switch to system preference}
   font:
-    text: IBM Plex Sans
-    code: IBM Plex Mono
+    text: Inter
+    code: JetBrains Mono
   features:
     - navigation.tabs
     - navigation.tabs.sticky

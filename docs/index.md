@@ -6,10 +6,10 @@ hide:
 
 <div class="hylo-hero" markdown>
 
-# Hylo
+# The stack for physical AI
 
-<p class="hylo-tagline">Evaluate robot policies, learn from what they did, improve them behind a statistical gate, and run
-the approved version on a robot, with one set of contracts from simulation to hardware.</p>
+<p class="hylo-tagline">From real-time running to cognition, evaluation and evolution, Hylo builds every layer of
+physical AI on one execution kernel. These pages show how to use each layer and how to extend it.</p>
 
 [Get started](getting-started/installation.md){ .md-button .md-button--primary }
 [Quickstart](getting-started/quickstart.md){ .md-button }
@@ -17,67 +17,73 @@ the approved version on a robot, with one set of contracts from simulation to ha
 
 </div>
 
-![Hylo layers: simulators, robots and models reach the harness through adapters; bench, serve, studio and plugins build on the harness](assets/diagrams/architecture.svg){ .hylo-figure }
+## The Hylo stack
 
-## What it does
+Six layers, top to bottom, all built on one execution kernel. Each card names where the layer lives and where to
+read about it.
 
-<div class="grid cards" markdown>
+<div class="grid cards hylo-stack" markdown>
 
--   **Measure**
-
-    ---
-
-    An experiment config says what is measured; where it runs is a property of the machine. Every episode is
-    traced step by step, and a digest identifies the experiment on any computer.
-
-    [Experiments →](user-guide/experiments.md)
-
--   **Benchmark**
+-   **6 · Workbench**
 
     ---
 
-    Protocols fix the episodes, seeds and timing; scorecards carry Wilson intervals; leaderboards compare
-    policies, and pairs are tested with McNemar.
+    Run tasks, replay every episode and approve releases in one workspace.
+    *Hylo Studio* (hylo-studio).
 
-    [Benchmarking →](benchmarking/index.md)
+    [Studio →](user-guide/studio.md)
 
--   **Run any policy**
+-   **5 · Evolution**
 
     ---
 
-    One chunk-policy contract covers retrieval, behaviour cloning, flow matching, tokenized actions and
-    model-based planning, plus SmolVLA and pi0 through LeRobot and openpi.
+    Turn experience into stronger versions, each one tested before release. Learners turn development runs into
+    sealed artifacts; campaigns compare candidates with the current version on separate episodes and promote
+    what passes, after a person approves. *Learn, Evolve* (hylo-learn, hylo-evolve).
+
+    [Learning →](user-guide/learning.md) · [Campaigns →](user-guide/campaigns.md)
+
+-   **4 · Evaluation**
+
+    ---
+
+    Measure every policy against the same standard. Protocols fix the episodes, seeds and timing; scorecards
+    carry Wilson intervals; leaderboards compare policies. *Hylo Bench, Eval* (hylo-bench, hylo-eval).
+
+    [Benchmarking →](benchmarking/index.md) · [Experiments →](user-guide/experiments.md)
+
+-   **3 · Cognition**
+
+    ---
+
+    Use what the robot has seen and done to choose its next step: policies of every family, steered by memory,
+    critics, skills, planners and success judges. *Memory, Agents, Policies* (hylo-memory, hylo-agents,
+    hylo-policies).
 
     [Policies →](user-guide/policies.md)
 
--   **Learn**
+-   **2 · Runtime**
 
     ---
 
-    Learners turn development runs into sealed, digest-pinned artifacts: critics, memories, world models,
-    success judges. Gate and held-out data can never be read.
+    Run policies on robots in real time, within the safety limits you set. A workcell runs the same episode loop
+    as the benchmark, behind the SafetyShield and an operator channel. *Hylo Serve* (hylo-serve).
 
-    [Learning →](user-guide/learning.md)
+    [Deployment →](user-guide/deployment.md) · [Safety →](user-guide/safety.md)
 
--   **Improve, behind a gate**
-
-    ---
-
-    Campaigns propose candidates, screen them, and promote only what passes a sequential paired test on
-    episodes no learner has seen, after a person approves.
-
-    [Campaigns →](user-guide/campaigns.md)
-
--   **Deploy**
+-   **1 · Kernel**
 
     ---
 
-    A workcell runs the same episode loop as the benchmark, in real time, behind the SafetyShield and an
-    operator channel; a policy server serves the approved version.
+    One execution kernel connects models, simulators and robots through versioned plugin contracts, and keeps
+    every run in one store. *Hylo Core, Plugins* (hylo-core, hylo-plugins).
 
-    [Deployment →](user-guide/deployment.md)
+    [Concepts →](getting-started/concepts.md) · [Store →](user-guide/store.md)
 
 </div>
+
+![How the repositories fit together: simulators, robots and models reach the kernel through adapters; bench, serve, studio and plugins build on the harness](assets/diagrams/architecture.svg){ .hylo-figure }
+
 
 ## Results recorded so far
 
@@ -93,15 +99,15 @@ says which parts have run end to end and which have not.
 
 ## The repositories
 
-| Repository | What it holds |
-|---|---|
-| **hylo-harness** | the base: contracts and episode kernel, evaluation, agents, memory, learning, campaigns, the run catalog and store, adapters to policy stacks and LLMs, the `hylo` command |
-| **hylo-bench** | protocols, scorecards and leaderboards; the MuJoCo and LIBERO suites and their setup |
-| **hylo-serve** | policy server, workcell, real-time runner, operator channel, robot adapters |
-| **hylo-studio** | the playground: run explorer, live sandbox, campaigns, the control plane for workcells |
-| **hylo-plugins** | example and community plugins, written the way a third party would |
-| **hylo-docs** | this site: design, RFCs, research notes and experiment records |
-| **deployments-template** | template for a lab's private configuration: workcells, calibration, safety limits |
+| Repository | Layers | What it holds |
+|---|---|---|
+| **hylo-harness** | kernel, cognition, evaluation, evolution | contracts and the execution kernel, the evaluation engine, agents, memory, learning, campaigns, the run catalog and store, adapters to policy stacks and LLMs, the `hylo` command |
+| **hylo-bench** | evaluation | protocols, scorecards and leaderboards; the MuJoCo and LIBERO suites and their setup |
+| **hylo-serve** | runtime | policy server, workcell, real-time runner, operator channel, robot adapters |
+| **hylo-studio** | workbench | run explorer, live sandbox, campaigns and approvals, the control plane for workcells |
+| **hylo-plugins** | kernel | example and community plugins, written the way a third party would |
+| **hylo-deployments-template** | runtime | template for a lab's private configuration: workcells, calibration, safety limits |
+| **hylo-docs** | | this site |
 
 Every leaf builds on the harness alone and cooperates with the others through formats defined in `hylo-core`
 ([repository structure](design/repository-structure.md)).

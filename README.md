@@ -1,7 +1,7 @@
 # hylo-docs
 
-The Hylo documentation site: user guide, benchmarking, developer guide, design and RFCs, research notes and
-experiment records, API and CLI reference. Built with MkDocs Material, the way vLLM builds its docs.
+Documentation for [Hylo](https://hyloai.github.io/), the stack for physical AI: user guide, benchmarking, developer
+guide, design and RFCs, research notes and experiment records, API and CLI reference. Built with MkDocs Material.
 
 ```bash
 # from the development workspace (the repositories side by side; hylo-harness: dev/bootstrap.sh)

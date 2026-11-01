@@ -1,20 +1,23 @@
-/* Hylo palette: deep current teal, with a warm signal colour for what needs attention */
+/* Hylo palette, shared with hyloai.github.io: graphite, warm white, one cinnabar accent */
 :root, [data-md-color-scheme="default"] {
-  --md-primary-fg-color: #0d5c63;
-  --md-primary-fg-color--light: #2a7f86;
-  --md-primary-fg-color--dark: #08434a;
-  --md-accent-fg-color: #c2410c;
+  --md-primary-fg-color: #171c22;
+  --md-primary-fg-color--light: #3a4048;
+  --md-primary-fg-color--dark: #0e1115;
+  --md-accent-fg-color: #c8442d;
+  --md-typeset-a-color: #b23a25;
+  --md-default-bg-color: #fbfaf7;
   --hylo-ok: #15803d;
   --hylo-warn: #b45309;
   --hylo-hw: #6d28d9;
   --hylo-figure-bg: #ffffff;
 }
 [data-md-color-scheme="slate"] {
-  --md-primary-fg-color: #0f6b73;
-  --md-primary-fg-color--light: #3c9aa1;
-  --md-primary-fg-color--dark: #0a4b51;
-  --md-accent-fg-color: #fb923c;
-  --md-default-bg-color: #12181b;
+  --md-primary-fg-color: #1a1d21;
+  --md-primary-fg-color--light: #e8664d;
+  --md-primary-fg-color--dark: #0e1115;
+  --md-accent-fg-color: #e8664d;
+  --md-typeset-a-color: #ef7a62;
+  --md-default-bg-color: #121416;
   --hylo-ok: #4ade80;
   --hylo-warn: #fbbf24;
   --hylo-hw: #c4b5fd;
@@ -36,7 +39,9 @@
 
 /* home page */
 .hylo-hero { padding: 1.2rem 0 .4rem; }
-.hylo-hero h1 { margin-bottom: .3rem; font-weight: 700; letter-spacing: -.01em; }
+.hylo-hero h1 { margin-bottom: .3rem; font-weight: 800; letter-spacing: -.02em; color: var(--md-default-fg-color); }
+.md-typeset .md-button--primary { background: #c8442d; border-color: #c8442d; color: #fff; }
+.md-typeset .md-button--primary:hover { background: #b23a25; border-color: #b23a25; }
 .hylo-hero p.hylo-tagline { font-size: 1.05rem; max-width: 40rem; color: var(--md-default-fg-color--light); }
 .md-typeset .grid.cards > ul > li { border-radius: 8px; }
 .md-typeset table:not([class]) { font-size: .72rem; }

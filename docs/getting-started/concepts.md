@@ -8,6 +8,11 @@ meanings.
 *Contracts and the kernel in hylo-core; evaluation, agents, memory, learning and campaigns on top; adapters connect
 simulators, robots and policy stacks; the leaf repositories use all of it through the same formats.*
 
+Hylo is organised as a stack of six layers, all built on one execution kernel: **kernel** (hylo-core, plugins),
+**runtime** (hylo-serve), **cognition** (hylo-agents, hylo-memory, hylo-policies), **evaluation** (hylo-eval,
+hylo-bench), **evolution** (hylo-learn, hylo-evolve) and **workbench** (hylo-studio). The terms below belong to
+these layers; the [home page](../index.md#the-hylo-stack) has one card per layer.
+
 ## Running
 
 Experiment config
