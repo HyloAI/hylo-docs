@@ -228,9 +228,6 @@ class Doc:
             self.text(tx, ty + 6 + (i + 1) * lh - 3, s, sface, ssize, scol, anchor=align,
                       opacity=0.85 if kind in ("accent", "kernel") else None)
 
-    def caps(self, x, y, s, fill="muted", size=12.5, anchor="start") -> float:
-        return self.text(x, y, s.upper(), "monob", size, fill, anchor=anchor, track=0.12)
-
     def card(self) -> None:
         """The figure's own background: a rounded card in the page colour."""
         self.add(f'<rect x="0.75" y="0.75" width="{self.w - 1.5}" height="{self.h - 1.5}" rx="20" '
@@ -260,6 +257,7 @@ class Doc:
 
 def _rounded_path(pts, r) -> str:
     """A polyline with rounded corners."""
+    pts = [q for i, q in enumerate(pts) if i == 0 or q != pts[i - 1]]
     if len(pts) < 3 or not r:
         return "M" + " L".join(f"{x:.1f},{y:.1f}" for x, y in pts)
     out = [f"M{pts[0][0]:.1f},{pts[0][1]:.1f}"]
@@ -294,8 +292,6 @@ class Repo:
     word: tuple[str, str]          # wordmark: (quiet prefix, name)
     tagline: str
     layers: set[str]
-    chips: list[str]
-    layer_chip: str = ""
     figures: list = field(default_factory=list)          # diagram functions
     copies: dict = field(default_factory=dict)           # asset name -> (source in docs figures, crop box or None)
 
@@ -343,22 +339,17 @@ def banner(T: dict, r: Repo) -> Doc:
             f"Banner of {''.join(r.word)}, part of Hylo, the stack for physical AI. The six layers of the stack, "
             f"from Workbench on top to Kernel at the base; highlighted: {', '.join(sorted(r.layers)) or 'all'}.")
     d.defs.append(f'<clipPath id="cardclip"><rect width="{W}" height="{H}" rx="28"/></clipPath>')
-    d.defs.append(f'<radialGradient id="glow" cx="0.78" cy="0.5" r="0.55"><stop offset="0" '
-                  f'stop-color="{T["accent"]}" stop-opacity="0.16"/><stop offset="1" stop-color="{T["accent"]}" '
-                  f'stop-opacity="0"/></radialGradient>')
-    d.defs.append('<linearGradient id="wavefade" x1="0" y1="0" x2="1" y2="0"><stop offset="0.38" stop-color="#fff" '
-                  'stop-opacity="0"/><stop offset="0.75" stop-color="#fff" stop-opacity="1"/></linearGradient>'
+    d.defs.append('<linearGradient id="wavefade" x1="0" y1="0" x2="1" y2="0"><stop offset="0.45" stop-color="#fff" '
+                  'stop-opacity="0"/><stop offset="0.8" stop-color="#fff" stop-opacity="1"/></linearGradient>'
                   f'<mask id="wavemask"><rect width="{W}" height="{H}" fill="url(#wavefade)"/></mask>')
     d.add('<g clip-path="url(#cardclip)">')
     d.rect(0, 0, W, H, "bg", rx=0)
-    d.rect(0, 0, W, H, "url(#glow)", rx=0)
-    # the logo's waves as a texture on the right
-    waves = []
+    waves = []                                      # the logo's waves as a faint texture on the right
     for i in range(16):
         y = 18 + i * 26
         seg = "".join("c21-21 45 21 66 0" if j == 0 else "s45 21 66 0" for j in range(12))
         waves.append(f'<path d="M420 {y}{seg}"/>')
-    d.add(f'<g mask="url(#wavemask)" fill="none" stroke="{T["line2"]}" stroke-width="1.6" opacity="0.55">'
+    d.add(f'<g mask="url(#wavemask)" fill="none" stroke="{T["line2"]}" stroke-width="1.4" opacity="0.45">'
           + "".join(waves) + "</g>")
     d.add("</g>")
     d.add(f'<rect x="0.75" y="0.75" width="{W - 1.5}" height="{H - 1.5}" rx="28" fill="none" '
@@ -369,174 +360,133 @@ def banner(T: dict, r: Repo) -> Doc:
     stack_glyph(d, 950, 44, lit)
 
     x = 72
-    d.logo(x, 62, 50)
-    d.text(x + 66, 62 + 31, "HYLO  ·  THE STACK FOR PHYSICAL AI", "mono", 14.5, "muted", track=0.14)
+    d.logo(x, 84, 52)
+    if r.key != "org-profile":
+        d.text(x + 68, 84 + 35, "Hylo", "b", 26, "ink")
     pre, name = r.word
     size = 92.0
-    maxw = 700
-    while measure(pre + name, "dx", size) > maxw:
+    while measure(pre + name, "dx", size) > 700:
         size -= 2
-    base = 200
+    base = 236
     wpre = d.text(x - size * 0.04, base, pre, "dx", size, "faint") if pre else 0
     d.text(x - size * 0.04 + wpre, base, name, "dx", size, "ink")
-    rows = wrap(r.tagline, "m", 25, 640)
-    d.lines(x, base + 52, rows, 34, face="m", size=25, fill="muted")
-    cy = H - 74
-    cx = x
-    if r.layer_chip:
-        cx += d.pill(cx, cy, r.layer_chip, face="monob", size=13.5, h=34, fill="accent", color="accent_ink",
-                     padx=16, track=0.1) + 10
-    for chip in r.chips:
-        cx += d.pill(cx, cy, chip, face="sb", size=15.5, h=34, fill="surface", stroke="line2", color="ink",
-                     padx=15) + 10
+    d.lines(x, base + 54, wrap(r.tagline, "m", 26, 640), 36, face="m", size=26, fill="muted")
     return d
 
 
 def stack_map(T: dict, r: Repo) -> Doc:
-    W, rh, gap, top = 960, 54, 8, 22
+    W, rh, gap, top = 960, 58, 8, 20
     H = top * 2 + len(LAYERS) * (rh + gap) - gap
     d = Doc(W, H, T, "The Hylo stack", "Six layers, top to bottom, and the repositories that implement each: "
             + "; ".join(f"{n}: {', '.join(p for _, p in rs)}" for n, _, rs in LAYERS)
             + f". This repository: {''.join(r.word)}.")
     d.card()
-    for i, (name, desc, repos) in enumerate(LAYERS):
+    for i, (name, _, repos) in enumerate(LAYERS):
         y = top + i * (rh + gap)
         here = any(k == r.key for k, _ in repos)
         d.rect(20, y, W - 40, rh, "accent_soft" if here else "surface", "accent" if here else "line", rx=12,
                sw=1.5 if here else 1.2)
-        d.text(46, y + rh / 2 + 6.5, name, "b", 18.5, "accent" if here else "ink")
-        d.text(178, y + rh / 2 + 5.5, desc, "r", 15.5, "muted")
-        px = W - 40
-        for k, p in reversed(repos):
+        d.text(48, y + rh / 2 + 7, name, "b", 20, "accent" if here else "ink")
+        px = W - 46
+        for k, _ in reversed(repos):
             mine = k == r.key
-            w = measure(p, "mono", 13.5) + 24
-            px -= w
-            d.pill(px, y + (rh - 30) / 2, p, face="mono", size=13.5, h=30,
-                   fill="accent" if mine else "sunk", color="accent_ink" if mine else "ink",
-                   stroke=None if mine else "line2")
-            px -= 8
+            label = k if k != "deployments-template" else "deployments"
+            px -= d.pill(px, y + (rh - 34) / 2, label, face="sb", size=16.5, h=34, padx=16, anchor="end",
+                         fill="accent" if mine else "sunk", color="accent_ink" if mine else "ink",
+                         stroke=None if mine else "line2") + 10
     return d
 
 
 # ---------------------------------------------------------------- diagrams
 def harness_architecture(T: dict) -> Doc:
-    W, H = 960, 626
+    W, H = 960, 520
     d = Doc(W, H, T, "Packages of hylo-harness",
             "The packages of hylo-harness by layer. Interface: cli. Evolution: evolve and learn. Evaluation: eval and "
             "catalog. Cognition: agents, memory, policies, instruments and reasoners. All build on hylo-core, the "
-            "kernel: contracts, the episode kernel, the SafetyShield, traces, the plugin registry, remote protocols, "
-            "the store and the conformance kit. Adapters to LeRobot, openpi, LLMs and video plug into the registry "
-            "through entry points.")
+            "kernel: contracts, the episode kernel, the SafetyShield, the plugin registry and the store. Adapters to "
+            "LeRobot, openpi and LLMs plug into the registry through entry points.")
     d.card()
-    x0, x1, bh, g = 196, 932, 64, 12
+    x0, x1, bh, g = 176, 932, 60, 12
 
-    def row(y, label, items, lab_col="accent", kind="plain"):
-        d.caps(40, y + bh / 2 + 5, label, lab_col)
+    def row(y, label, items, kind="plain"):
+        d.text(40, y + bh / 2 + 6, label, "sb", 17, "muted")
         n = len(items)
         w = (x1 - x0 - g * (n - 1)) / n
-        for j, (t, s) in enumerate(items):
-            d.box(x0 + j * (w + g), y, w, bh, t, s, kind=kind)
+        for j, t in enumerate(items):
+            d.box(x0 + j * (w + g), y, w, bh, t, kind=kind, tface="mono", tsize=17)
 
-    row(28, "Interface", [("cli", "hylo run · evolve · learn · calibrate · plugin · store")], "muted")
-    row(110, "Evolution", [("evolve", "campaigns · cascade · gate · registry"),
-                           ("learn", "learners · judge calibration · ingestion")])
-    row(192, "Evaluation", [("eval", "splits · scorers · paired statistics"),
-                            ("catalog", "queries over runs and campaigns")])
-    row(274, "Cognition", [("agents", "steering · skills"), ("memory", "banks · lessons"),
-                           ("policies", "kNN · BC · flow"), ("instruments", "judges · critics"),
-                           ("reasoners", "rules · choosers")])
-    # the kernel slab
-    ky, kh = 360, 150
-    d.caps(40, ky + 34, "Kernel", "accent")
+    row(28, "Interface", ["cli"])
+    row(100, "Evolution", ["evolve", "learn"])
+    row(172, "Evaluation", ["eval", "catalog"])
+    row(244, "Cognition", ["agents", "memory", "policies", "instruments", "reasoners"])
+    ky, kh = 326, 106
+    d.text(40, ky + 40, "Kernel", "sb", 17, "accent")
     d.rect(x0, ky, x1 - x0, kh, "kernel", rx=16)
-    d.text(x0 + 24, ky + 40, "core", "dx", 28, "kernel_ink")
-    d.text(x0 + 100, ky + 39, "contracts and the execution kernel: every package builds on it", "r", 15,
-           "kernel_ink", opacity=0.72)
-    chips = [["contracts", "episode kernel", "SafetyShield", "traces and events", "plugin registry"],
-             ["remote protocols", "store and artifacts", "split guard", "conformance kit"]]
-    for j, rowchips in enumerate(chips):
-        cx = x0 + 24
-        for c in rowchips:
-            cx += d.pill(cx, ky + 62 + j * 40, c, face="mono", size=13.5, h=30, fill="kernel",
-                         stroke=mix(T["kernel"], T["kernel_ink"], 0.35), color="kernel_ink") + 8
-    # adapters
-    ay = 548
-    d.caps(40, ay + bh / 2 - 4, "Adapters", "muted")
-    d.text(40, ay + bh / 2 + 15, "entry points", "r", 13.5, "faint")
-    names = ["policy-lerobot", "policy-openpi", "reasoner-llm", "proposer-llm", "data-video"]
-    n = len(names)
-    w = (x1 - x0 - g * (n - 1)) / n
+    d.text(x0 + 26, ky + 44, "core", "dx", 30, "kernel_ink")
+    cx = x0 + 26
+    for c in ["contracts", "episode kernel", "SafetyShield", "plugin registry", "store"]:
+        cx += d.pill(cx, ky + 60, c, face="m", size=15.5, h=32, fill="kernel", padx=14,
+                     stroke=mix(T["kernel"], T["kernel_ink"], 0.35), color="kernel_ink") + 10
+    ay = 456
+    d.text(40, ay + 30, "Adapters", "sb", 17, "muted")
+    names = ["lerobot", "openpi", "llm"]
+    w = (x1 - x0 - g * 2) / 3
     for j, t in enumerate(names):
         x = x0 + j * (w + g)
-        d.box(x, ay, w, bh - 10, t, kind="ghost", tface="mono", tsize=14.5)
+        d.box(x, ay, w, 46, t, kind="ghost", tface="mono", tsize=16)
         d.arrow([(x + w / 2, ay - 2), (x + w / 2, ky + kh + 6)], "faint", 1.6)
     return d
 
 
 def improvement_loop(T: dict) -> Doc:
-    W, H = 960, 330
+    W, H = 960, 250
     d = Doc(W, H, T, "Run, measure, improve, deploy",
-            "The Hylo loop. Run: an experiment becomes a run, every step traced (hylo run). Measure: a fixed "
-            "protocol scores runs into a scorecard (hylo bench). Improve: a candidate must win a paired gate on "
-            "episodes it never saw (hylo evolve). Deploy: the promoted version runs on the robot, inside safety "
-            "limits (hylo serve). Episodes on the robot come back as runs.")
+            "The Hylo loop. Run (hylo run), measure (hylo bench), improve through a gate (hylo evolve), deploy "
+            "(hylo serve). Episodes on the robot come back as runs.")
     d.card()
-    stages = [("01", "Run", "hylo run", "An experiment becomes a run, with every step traced."),
-              ("02", "Measure", "hylo bench", "A fixed protocol scores runs into a scorecard."),
-              ("03", "Improve", "hylo evolve", "A candidate must win a paired gate on episodes it never saw."),
-              ("04", "Deploy", "hylo serve", "The promoted version runs on the robot, inside safety limits.")]
-    w, h, y, g = 207, 214, 24, 22
+    stages = [("Run", "hylo run"), ("Measure", "hylo bench"), ("Improve", "hylo evolve"), ("Deploy", "hylo serve")]
+    w, h, y, g = 196, 128, 32, 36
     x0 = (W - 4 * w - 3 * g) / 2
-    for i, (num, name, cmd, text) in enumerate(stages):
+    for i, (name, cmd) in enumerate(stages):
         x = x0 + i * (w + g)
         gate = name == "Improve"
         d.rect(x, y, w, h, "accent_soft" if gate else "surface", "accent" if gate else "line2", rx=16,
                sw=2 if gate else 1.5)
-        d.text(x + 20, y + 34, num, "monob", 14, "accent")
-        if gate:
-            d.pill(x + w - 16, y + 15, "GATE", face="monob", size=12, h=24, fill="accent", color="accent_ink",
-                   padx=10, track=0.12, anchor="end")
-        d.text(x + 20, y + 78, name, "dx", 32, "ink")
-        d.pill(x + 20, y + 94, cmd, face="mono", size=14, h=28, fill="sunk", stroke="line2", color="ink")
-        d.lines(x + 20, y + 152, wrap(text, "r", 15.5, w - 40), 21, face="r", size=15.5, fill="muted")
+        d.text(x + w / 2, y + 60, name, "dx", 32, "accent" if gate else "ink", anchor="middle")
+        d.text(x + w / 2, y + 96, cmd, "mono", 16, "muted", anchor="middle")
         if i < 3:
-            ax = x + w
-            d.arrow([(ax + 3, y + 108), (ax + g - 3, y + 108)], "accent", 2.2)
-    # the way back
-    xa, xb, yb = x0 + 3 * (w + g) + w / 2, x0 + w / 2, y + h + 46
+            d.arrow([(x + w + 6, y + h / 2), (x + w + g - 6, y + h / 2)], "accent", 2.2)
+    xa, xb, yb = x0 + 3 * (w + g) + w / 2, x0 + w / 2, y + h + 50
     d.arrow([(xa, y + h + 3), (xa, yb), (xb, yb), (xb, y + h + 6)], "accent", 2, dash="7 6", rounded=16)
-    d.label((xa + xb) / 2, yb + 5, "episodes on the robot come back as runs", fill="accent", size=15)
+    d.label((xa + xb) / 2, yb + 6, "episodes come back as runs", fill="accent", size=16)
     return d
 
 
 def bench_flow(T: dict) -> Doc:
-    W, H = 960, 330
+    W, H = 960, 280
     d = Doc(W, H, T, "From protocol to leaderboard",
             "A policy and a protocol (benchmark, split, environment, safety limits, seed) go into hylo bench run, "
-            "which writes runs with traces and a scorecard. Scorecards with the same protocol digest are comparable: "
-            "they rank on a leaderboard and compare episode by episode.")
+            "which writes runs with traces and a scorecard. Scorecards with the same protocol are comparable: they "
+            "rank on a leaderboard and compare episode by episode.")
     d.card()
-    d.box(28, 34, 196, 76, "Policy", "any agent config")
-    d.box(28, 138, 196, 120, "Protocol", ["benchmark · split", "environment", "safety limits · seed"], kind="plain")
-    d.pill(126, 270, "digest", face="monob", size=12.5, h=26, fill="accent_soft", stroke="accent", color="accent",
-           anchor="middle", track=0.06)
-    d.box(296, 128, 200, 84, "hylo bench run", "parallel workers", kind="accent", tface="mono", tsize=17)
-    d.box(568, 34, 176, 76, "Runs", "every step traced")
-    d.box(568, 168, 176, 100, "Scorecard", ["success, 95% interval", "per task, per episode"], kind="soft")
-    d.box(780, 120, 152, 66, "Leaderboard", "best first")
-    d.box(780, 222, 152, 66, "Compare", "episode by episode")
-    d.arrow([(226, 72), (258, 72), (258, 152), (292, 152)], "muted")
-    d.arrow([(226, 198), (258, 198), (258, 188), (292, 188)], "muted")
-    d.arrow([(498, 150), (530, 150), (530, 72), (564, 72)], "accent")
-    d.arrow([(498, 190), (530, 190), (530, 218), (564, 218)], "accent")
-    d.arrow([(746, 200), (762, 200), (762, 153), (776, 153)], "muted")
-    d.arrow([(746, 236), (762, 236), (762, 255), (776, 255)], "muted")
-    d.text(W / 2, H - 22, "Same protocol digest, comparable scorecards.", "m", 15, "faint", anchor="middle")
+    d.box(28, 52, 190, 70, "Policy", tsize=18)
+    d.box(28, 158, 190, 70, "Protocol", tsize=18)
+    d.box(290, 105, 210, 70, "hylo bench run", kind="accent", tface="mono", tsize=17)
+    d.box(572, 52, 170, 70, "Runs", tsize=18)
+    d.box(572, 158, 170, 70, "Scorecard", kind="soft", tsize=18)
+    d.box(790, 116, 142, 58, "Leaderboard", tsize=17)
+    d.box(790, 194, 142, 58, "Compare", tsize=17)
+    d.arrow([(220, 87), (254, 87), (254, 128), (286, 128)], "muted")
+    d.arrow([(220, 193), (254, 193), (254, 152), (286, 152)], "muted")
+    d.arrow([(502, 128), (536, 128), (536, 87), (568, 87)], "accent")
+    d.arrow([(502, 152), (536, 152), (536, 193), (568, 193)], "accent")
+    d.arrow([(744, 182), (766, 182), (766, 145), (786, 145)], "muted")
+    d.arrow([(744, 204), (766, 204), (766, 223), (786, 223)], "muted")
     return d
 
 
 def serve_topology(T: dict) -> Doc:
-    W, H = 960, 560
+    W, H = 960, 520
     d = Doc(W, H, T, "Deployment with hylo-serve",
             "Three machines. The workstation runs Studio and holds the store. The robot computer runs hylo serve "
             "workcell: a real-time runner, the SafetyShield, the operator channel and the robot adapter, which drives "
@@ -545,170 +495,118 @@ def serve_topology(T: dict) -> Doc:
             "store.")
     d.card()
 
-    def machine(x, y, w, h, name, sub):
+    def machine(x, y, w, h, name):
         d.rect(x, y, w, h, "sunk", "line2", rx=16)
-        d.text(x + 20, y + 32, name, "b", 17.5, "ink")
-        d.text(x + 20 + measure(name, "b", 17.5) + 10, y + 32, sub, "mono", 13, "faint")
+        d.text(x + 20, y + 34, name, "b", 18, "ink")
 
-    machine(24, 70, 236, 300, "Workstation", "")
-    d.box(46, 128, 192, 70, "Studio", "control plane")
-    d.box(46, 270, 192, 70, "Store", "runs · artifacts")
-    machine(300, 70, 360, 400, "Robot computer", "")
-    d.rect(320, 116, 320, 336, "surface", "accent", rx=14, sw=1.8)
-    d.text(340, 146, "hylo serve workcell", "mono", 15.5, "accent")
-    items = [("Real-time runner", "chunk merging · hold · watchdog", "soft"),
-             ("SafetyShield", "limits · keep-out zones", "accent"),
-             ("Operator channel", "e-stop · reset · verdicts", "soft"),
-             ("Robot adapter", "LeRobot Robot interface", "soft")]
-    for i, (t, s, k) in enumerate(items):
-        d.box(340, 162 + i * 70, 280, 60, t, s, kind=k, tsize=16, ssize=13.5)
-    machine(700, 70, 236, 210, "GPU box", "")
-    d.box(722, 128, 192, 92, "hylo serve policy", ["/hylo · /openpi", "one session at a time"], kind="plain",
-          tface="mono", tsize=15)
-    d.box(380, 494, 200, 50, "Robot arm", None, kind="kernel", tsize=16)
-    d.text(596, 525, "SO-100/101 · Koch · sim arm", "r", 14, "faint")
-    # wires
-    d.arrow([(240, 163), (316, 163)], "accent", 2)
-    d.label(278, 150, "HTTP", size=13.5)
-    d.arrow([(316, 300), (242, 300)], "muted", 2)
-    d.label(278, 288, "runs", size=13.5)
-    d.arrow([(644, 174), (718, 174)], "accent", 2, both=True)
-    d.label(681, 160, "WebSocket", size=13.5)
-    d.arrow([(480, 454), (480, 490)], "ink", 2.2)
-    d.arrow([(110, 70 - 2), (110, 40), (818, 40), (818, 124)], "accent", 1.8, dash="6 5", rounded=12)
-    d.label(464, 45, "the promoted version (active.json)", fill="accent", size=14)
+    machine(24, 70, 236, 280, "Workstation")
+    d.box(46, 130, 192, 60, "Studio", tsize=17)
+    d.box(46, 266, 192, 60, "Store", tsize=17)
+    machine(292, 70, 336, 360, "Robot computer")
+    d.rect(310, 116, 300, 296, "surface", "accent", rx=14, sw=1.8)
+    d.text(328, 148, "hylo serve workcell", "mono", 16, "accent")
+    items = [("Real-time runner", "soft"), ("SafetyShield", "accent"), ("Operator channel", "soft"),
+             ("Robot adapter", "soft")]
+    for i, (t, k) in enumerate(items):
+        d.box(328, 166 + i * 60, 264, 50, t, kind=k, tsize=16.5)
+    machine(682, 70, 254, 180, "GPU box")
+    d.box(702, 130, 214, 60, "hylo serve policy", tface="mono", tsize=15.5)
+    d.box(360, 456, 200, 48, "Robot arm", kind="kernel", tsize=17)
+    d.arrow([(240, 160), (306, 160)], "accent", 2)
+    d.label(273, 146, "HTTP", size=15)
+    d.arrow([(306, 296), (242, 296)], "muted", 2)
+    d.label(273, 282, "runs", size=15)
+    d.arrow([(614, 160), (698, 160)], "accent", 2, both=True)
+    d.label(656, 146, "WebSocket", size=15)
+    d.arrow([(460, 414), (460, 452)], "ink", 2.2)
+    d.arrow([(110, 68), (110, 40), (809, 40), (809, 126)], "accent", 1.8, dash="6 5", rounded=12)
+    d.label(460, 46, "promoted version", fill="accent", size=15)
     return d
 
 
 def plugin_flow(T: dict) -> Doc:
-    W, H = 960, 400
+    W, H = 960, 340
     d = Doc(W, H, T, "How a plugin reaches Hylo",
             "A plugin package declares entry points in its pyproject.toml, for example a guard named "
-            "examples.slow_zone. The plugin registry in hylo-core finds it by name, with its contract version and "
-            "maturity, and experiment configs use it by that name in hylo run and hylo evolve. This repository holds "
-            "five example plugins: a guard, a gate test, an online learner and two policies.")
+            "examples.slow_zone. The plugin registry in hylo-core finds it by name, and experiment configs use it by "
+            "that name. This repository holds five example plugins: a guard, a gate test, an online learner and two "
+            "policies.")
     d.card()
-    d.text(28, 46, "pyproject.toml", "mono", 13.5, "faint")
-    d.rect(28, 58, 410, 128, "kernel", rx=14)
-    code = [('[project.entry-points."hylo.guards"]', 0.75), ('"examples.slow_zone" =', 1.0),
+    d.rect(28, 32, 420, 128, "kernel", rx=14)
+    code = [('[project.entry-points."hylo.guards"]', 0.7), ('"examples.slow_zone" =', 1.0),
             ('    "hylo_examples.guards:SlowZoneGuard"', 1.0)]
     for i, (line, op) in enumerate(code):
-        d.text(48, 96 + i * 30, line, "mono", 14.5, "kernel_ink", opacity=op)
-    d.box(500, 72, 186, 100, "Plugin registry", ["hylo-core", "contract · maturity"], kind="accent")
-    d.rect(744, 58, 190, 128, "surface", "line2", rx=14)
-    d.text(764, 90, "experiment.yaml", "mono", 13, "faint")
-    d.text(764, 124, "type:", "mono", 14.5, "muted")
-    d.text(764, 148, "examples.slow_zone", "monob", 14, "accent")
-    d.text(764, 172, "hylo run · hylo evolve", "r", 13, "faint")
-    d.arrow([(440, 122), (496, 122)], "accent", 2.2)
-    d.label(468, 108, "entry point", size=12.5)
-    d.arrow([(688, 122), (740, 122)], "accent", 2.2)
-    d.label(714, 108, "by name", size=12.5)
-    d.caps(28, 238, "In this repository", "muted")
-    cards = [("guard", "examples.slow_zone", "slows the fingertip near the target"),
-             ("gate test", "examples.min_effect", "a gate on steps, not success"),
-             ("learner", "examples.cem", "online CEM as a candidate generator"),
-             ("policy", "examples.ik_reacher", "an IK reacher"),
-             ("policy", "examples.mixture", "a steered mixture of two")]
-    g, x0 = 10, 28
+        d.text(48, 72 + i * 30, line, "mono", 15, "kernel_ink", opacity=op)
+    d.box(508, 61, 180, 70, "Plugin registry", kind="accent", tsize=17)
+    d.rect(746, 32, 186, 128, "surface", "line2", rx=14)
+    d.text(766, 82, "type:", "mono", 15, "muted")
+    d.text(766, 112, "examples.slow_zone", "monob", 14.5, "accent")
+    d.arrow([(450, 96), (504, 96)], "accent", 2.2)
+    d.arrow([(690, 96), (742, 96)], "accent", 2.2)
+    cards = [("guard", "slow_zone"), ("gate test", "min_effect"), ("learner", "cem"), ("policy", "ik_reacher"),
+             ("policy", "mixture")]
+    g, x0 = 12, 28
     w = (W - 56 - g * 4) / 5
-    for i, (kind, name, text) in enumerate(cards):
+    for i, (kind, name) in enumerate(cards):
         x = x0 + i * (w + g)
-        d.rect(x, 254, w, 122, "surface", "line2", rx=14)
-        d.pill(x + 14, 268, kind, face="monob", size=11.5, h=22, fill="accent_soft", stroke="accent",
-               color="accent", padx=9, track=0.06)
-        d.text(x + 14, 318, name, "mono", 13, "ink")
-        d.lines(x + 14, 342, wrap(text, "r", 13.5, w - 26), 18, face="r", size=13.5, fill="muted")
+        d.rect(x, 200, w, 108, "surface", "line2", rx=14)
+        d.text(x + w / 2, 244, kind, "sb", 17, "ink", anchor="middle")
+        d.text(x + w / 2, 276, name, "mono", 15, "accent", anchor="middle")
     return d
 
 
 def deployments_sync(T: dict) -> Doc:
-    W, H = 960, 380
+    W, H = 960, 360
     d = Doc(W, H, T, "Configs name runtimes; runs travel through the store",
             "On the robot computer, a workcell config names a runtime (remote: runtime robot); the machine's "
             "execution profile resolves it to a venv and environment variables. hylo serve workcell records "
             "episodes as runs in the robot's store. The workstation pulls runs it does not have, and pushes "
             "artifacts such as a judge or a memory back. Sealed artifacts are never overwritten.")
     d.card()
-    d.rect(24, 24, 470, 332, "sunk", "line2", rx=16)
-    d.text(44, 56, "Robot computer", "b", 17.5, "ink")
-    d.rect(44, 76, 210, 98, "kernel", rx=12)
-    d.text(60, 102, "workcells/so101.yaml", "mono", 13.5, "kernel_ink", opacity=0.7)
-    d.text(60, 130, "remote:", "mono", 14, "kernel_ink")
-    d.text(76, 154, "{runtime: robot}", "mono", 14, "kernel_ink")
-    d.box(290, 76, 184, 98, "Execution profile", ["runtime → venv", "and environment"], tsize=16)
-    d.box(44, 230, 210, 92, "hylo serve workcell", ["calibration · limits", "keep-out zones"], kind="soft",
-          tface="mono", tsize=14.5)
-    d.box(290, 230, 184, 92, "Store", ["runs/workcell", "sealed artifacts"], tsize=16)
-    d.arrow([(256, 125), (286, 125)], "muted")
-    d.arrow([(149, 176), (149, 226)], "muted")
-    d.arrow([(382, 176), (382, 198), (200, 198), (200, 226)], "muted", dash="5 4")
-    d.arrow([(256, 276), (286, 276)], "accent")
-    d.rect(686, 24, 250, 332, "sunk", "line2", rx=16)
-    d.text(706, 56, "Workstation", "b", 17.5, "ink")
-    d.box(706, 76, 210, 98, "Studio · campaigns", ["learn, evaluate, gate"], tsize=16)
-    d.box(706, 230, 210, 92, "Store", ["all runs", "artifacts by id"], tsize=16)
-    d.arrow([(476, 252), (702, 252)], "accent", 2.2)
-    d.label(589, 240, "hylo store pull: runs", fill="accent", size=13.5)
-    d.arrow([(702, 302), (476, 302)], "accent", 2.2)
-    d.label(589, 290, "hylo store push: artifact", fill="accent", size=13.5)
-    d.arrow([(811, 228), (811, 178)], "muted")
+    d.rect(24, 24, 470, 312, "sunk", "line2", rx=16)
+    d.text(44, 58, "Robot computer", "b", 18, "ink")
+    d.rect(44, 80, 210, 88, "kernel", rx=12)
+    d.text(64, 116, "remote:", "mono", 15, "kernel_ink")
+    d.text(80, 144, "{runtime: robot}", "mono", 15, "kernel_ink")
+    d.box(290, 80, 184, 88, "Execution profile", tsize=16.5)
+    d.box(44, 228, 210, 80, "hylo serve workcell", kind="soft", tface="mono", tsize=15)
+    d.box(290, 228, 184, 80, "Store", tsize=17)
+    d.arrow([(256, 124), (286, 124)], "muted")
+    d.arrow([(149, 170), (149, 224)], "muted")
+    d.arrow([(382, 170), (382, 196), (200, 196), (200, 224)], "muted", dash="5 4")
+    d.arrow([(256, 268), (286, 268)], "accent")
+    d.rect(686, 24, 250, 312, "sunk", "line2", rx=16)
+    d.text(706, 58, "Workstation", "b", 18, "ink")
+    d.box(706, 80, 210, 88, "Studio", tsize=17)
+    d.box(706, 228, 210, 80, "Store", tsize=17)
+    d.arrow([(476, 250), (702, 250)], "accent", 2.2)
+    d.label(589, 238, "pull runs", fill="accent", size=15)
+    d.arrow([(702, 290), (476, 290)], "accent", 2.2)
+    d.label(589, 278, "push artifacts", fill="accent", size=15)
+    d.arrow([(811, 226), (811, 172)], "muted")
     return d
 
 
 def studio_plane(T: dict) -> Doc:
-    W, H = 960, 340
+    W, H = 960, 300
     d = Doc(W, H, T, "The studio control plane",
             "The browser connects with a role (viewer, operator or approver; the e-stop is open to every role) to "
-            "hylo playground, a FastAPI control plane with a React front end. It starts episodes on workcells "
-            "through the workcell API, runs hylo commands as jobs, and reads runs and campaigns through the "
-            "harness's catalog. It never sends actions.")
+            "hylo playground, the control plane. It starts episodes on workcells, runs hylo commands as jobs, and "
+            "reads runs and campaigns through the harness's catalog. It never sends actions.")
     d.card()
-    d.rect(28, 34, 236, 250, "sunk", "line2", rx=16)
-    d.text(48, 66, "Browser", "b", 17.5, "ink")
-    roles = ["viewer", "operator", "approver"]
-    for i, role in enumerate(roles):
-        d.pill(48 + i * 18, 88 + i * 42, role, face="mono", size=14, h=32,
+    d.rect(28, 28, 236, 244, "sunk", "line2", rx=16)
+    d.text(48, 64, "Browser", "b", 18, "ink")
+    for i, role in enumerate(["viewer", "operator", "approver"]):
+        d.pill(48 + i * 18, 92 + i * 52, role, face="mono", size=15, h=36, padx=14,
                fill="accent" if role == "approver" else "surface", stroke=None if role == "approver" else "line2",
                color="accent_ink" if role == "approver" else "ink")
-    d.text(48, 238, "e-stop: every role", "sb", 14.5, "accent")
-    d.text(48, 260, "viewer < operator < approver", "r", 14, "muted")
-    d.box(330, 104, 250, 110, "hylo playground", ["FastAPI control plane", "React front end"], kind="accent",
-          tface="mono", tsize=17)
-    rows = [("Workcells", "start episodes · operator input"), ("Jobs", "hylo commands, logged"),
-            ("Catalog", "runs · campaigns · artifacts")]
-    for i, (t, s) in enumerate(rows):
-        y = 34 + i * 86
-        d.box(648, y, 284, 70, t, s, tsize=16.5)
-        d.arrow([(582, 159), (614, 159), (614, y + 35), (644, y + 35)], "accent" if i == 0 else "muted",
-                both=False, rounded=12)
-    d.arrow([(266, 159), (326, 159)], "accent", 2.2)
-    d.text(W / 2, H - 22, "The control plane never sends actions: the workcell runs the episode.", "m", 15,
-           "faint", anchor="middle")
-    return d
-
-
-def docs_map(T: dict) -> Doc:
-    W, H = 960, 338
-    d = Doc(W, H, T, "What is in hylo-docs",
-            "Eight sections: getting started, user guide, configuration, benchmarking, developer guide, design and "
-            "RFCs, research, and the API and CLI reference.")
-    d.card()
-    cards = [("Getting started", "install, concepts, first run"), ("User guide", "run, evolve, deploy, studio"),
-             ("Configuration", "experiments, profiles, workcells"), ("Benchmarking", "protocols, leaderboards"),
-             ("Developer guide", "plugins, testing, layering"), ("Design and RFCs", "architecture, roadmap"),
-             ("Research", "experiment records, notes"), ("Reference", "API and CLI, generated")]
-    g, cw, ch = 14, (W - 56 - 3 * 14) / 4, 134
-    for i, (t, s) in enumerate(cards):
-        x, y = 28 + (i % 4) * (cw + g), 28 + (i // 4) * (ch + g)
-        public = t not in ("Design and RFCs", "Research")
-        d.rect(x, y, cw, ch, "surface", "line2", rx=14)
-        d.text(x + 18, y + 36, f"{i + 1:02d}", "monob", 13.5, "accent")
-        d.text(x + 18, y + 72, t, "b", 18.5, "ink")
-        d.lines(x + 18, y + 98, wrap(s, "r", 14.5, cw - 36), 19, face="r", size=14.5, fill="muted")
-        if not public:
-            d.pill(x + cw - 14, y + 18, "internal", face="mono", size=11.5, h=22, fill="sunk", stroke="line2",
-                   color="muted", padx=8, anchor="end")
+    d.box(330, 110, 250, 80, "hylo playground", kind="accent", tface="mono", tsize=17)
+    for i, t in enumerate(["Workcells", "Jobs", "Catalog"]):
+        y = 28 + i * 88
+        d.box(648, y, 284, 68, t, tsize=17)
+        d.arrow([(582, 150), (614, 150), (614, y + 34), (644, y + 34)], "accent" if i == 0 else "muted",
+                rounded=12)
+    d.arrow([(266, 150), (326, 150)], "accent", 2.2)
     return d
 
 
@@ -716,35 +614,31 @@ def docs_map(T: dict) -> Doc:
 REPOS = [
     Repo("harness", ("hylo-", "harness"),
          "The kernel and the shared layers on it: cognition, evaluation and evolution.",
-         {"Kernel", "Cognition", "Evaluation", "Evolution"}, ["Contracts", "Agents and memory", "Gated campaigns"],
-         "KERNEL + 3 LAYERS", [("architecture", harness_architecture), ("loop", improvement_loop)],
+         {"Kernel", "Cognition", "Evaluation", "Evolution"},
+         [("architecture", harness_architecture), ("loop", improvement_loop)],
          {"campaign-mujoco-reach-gain.png": ("campaign-mujoco-reach-gain.png", None)}),
     Repo("bench", ("hylo-", "bench"), "Run a policy under a fixed protocol, get a scorecard, rank it on a leaderboard.",
-         {"Evaluation"}, ["LIBERO", "MuJoCo", "Scorecards"], "EVALUATION LAYER", [("flow", bench_flow)],
+         {"Evaluation"}, [("flow", bench_flow)],
          {"leaderboard-mujoco-reach.png": ("leaderboard-mujoco-reach.png", None),
           "libero-episode-strip.png": ("libero-episode-strip.png", None),
           "mujoco-scenes.png": ("mujoco-scenes.png", None)}),
     Repo("serve", ("hylo-", "serve"), "Policies on robots in real time, within the safety limits you set.",
-         {"Runtime"}, ["Policy server", "Workcell", "SafetyShield"], "RUNTIME LAYER", [("topology", serve_topology)]),
+         {"Runtime"}, [("topology", serve_topology)]),
     Repo("studio", ("hylo-", "studio"), "One workbench to run tasks, replay every episode and approve releases.",
-         {"Workbench"}, ["Control plane", "Replays", "Campaigns"], "WORKBENCH LAYER",
-         [("control-plane", studio_plane)],
+         {"Workbench"}, [("control-plane", studio_plane)],
          {"studio-episode.png": ("studio-episode.png", "sidebar"),
           "studio-campaign.png": ("studio-campaign.png", "sidebar"),
           "studio-runs.png": ("studio-runs.png", "sidebar")}),
     Repo("plugins", ("hylo-", "plugins"),
          "Extend the kernel from outside: policies, environments, learners, guards and gate tests.",
-         {"Kernel"}, ["Entry points", "Templates", "Examples"], "KERNEL LAYER", [("flow", plugin_flow)]),
+         {"Kernel"}, [("flow", plugin_flow)]),
     Repo("deployments-template", ("<lab>", "-deployments"),
          "Your lab's private configs: workcells, calibration, safety limits and keep-out zones.",
-         {"Runtime"}, ["Template", "Workcells", "Store sync"], "RUNTIME LAYER", [("sync", deployments_sync)]),
+         {"Runtime"}, [("sync", deployments_sync)]),
     Repo("docs", ("hylo-", "docs"), "Guides, benchmarking, design, RFCs and experiment records for the Hylo stack.",
-         set(), ["MkDocs Material", "Guides", "RFCs"], "DOCUMENTATION", [("map", docs_map)]),
-    Repo("site", ("hyloai", ".github.io"), "The Hylo website, in English and Chinese. Plain HTML, no build step.",
-         set(), ["Website", "Bilingual"], "WEBSITE"),
-    Repo("org-profile", ("", "Hylo"),
-         "The stack for physical AI: from real-time running to evolution, every layer on one execution kernel.",
-         set(), ["Open source", "Apache-2.0"], "SIX LAYERS · ONE KERNEL", [("loop", improvement_loop)]),
+         set()),
+    Repo("site", ("hyloai", ".github.io"), "The Hylo website. Plain HTML, no build step.", set()),
+    Repo("org-profile", ("", "Hylo"), "The stack for physical AI: every layer on one execution kernel.", set(), [("loop", improvement_loop)]),
 ]
 
 

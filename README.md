@@ -21,13 +21,6 @@
 Documentation for [Hylo](https://hyloai.github.io/), the stack for physical AI: user guide, benchmarking, developer
 guide, design and RFCs, research notes and experiment records, API and CLI reference. Built with MkDocs Material.
 
-<p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset=".github/assets/map-dark.svg">
-    <img src=".github/assets/map-light.svg" width="100%" alt="Eight sections: getting started, user guide, configuration, benchmarking, developer guide, design and RFCs (internal), research (internal), reference">
-  </picture>
-</p>
-
 ```bash
 # from the development workspace (the repositories side by side; hylo-harness: dev/bootstrap.sh)
 uv sync --group docs
