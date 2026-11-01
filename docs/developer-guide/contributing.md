@@ -11,9 +11,9 @@ Hylo is several repositories developed together: the harness (the base) and the 
 Check the repositories out side by side in one directory, under their short names, and bootstrap:
 
 ```bash
-mkdir Hylo && cd Hylo
-git clone <base>/hylo-harness.git harness            # and bench, serve, studio, plugins, docs as needed
-harness/dev/bootstrap.sh                                      # or: HYLO_GIT_BASE=<base> harness/dev/bootstrap.sh
+mkdir hylo && cd hylo
+git clone https://github.com/HyloAI/hylo-harness.git harness
+HYLO_GIT_BASE=https://github.com/HyloAI harness/dev/bootstrap.sh   # clones bench, serve, studio, plugins, docs
 ```
 
 `bootstrap.sh` clones missing repositories when `HYLO_GIT_BASE` is set (`$HYLO_GIT_BASE/hylo-<name>.git`),

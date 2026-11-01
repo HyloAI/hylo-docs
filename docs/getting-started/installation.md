@@ -18,9 +18,10 @@ harness is the base; bench, serve, studio and plugins are leaves on top of it (s
 Check the repositories out next to each other in one directory, then run the harness's bootstrap script there:
 
 ```bash
-mkdir Hylo && cd Hylo
-# clone or copy harness/ (required) and any of bench/ serve/ studio/ plugins/ docs/ deployments-template/
-harness/dev/bootstrap.sh          # writes ./pyproject.toml (a uv workspace) and runs `uv sync`
+mkdir hylo && cd hylo
+git clone https://github.com/HyloAI/hylo-harness.git harness
+HYLO_GIT_BASE=https://github.com/HyloAI harness/dev/bootstrap.sh
+# clones bench, serve, studio, plugins and docs next to it, writes ./pyproject.toml (a uv workspace), runs `uv sync`
 ```
 
 `bootstrap.sh [DIR]` does three things:

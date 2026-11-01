@@ -20,3 +20,7 @@ uv run mkdocs build -f docs/mkdocs.yml --strict # what CI would run; output in d
 
 Generated pages need the code repositories checked out next to this one; without them the build still succeeds and
 those pages say what is missing.
+
+## License
+
+Apache License 2.0 (see [LICENSE](LICENSE)). Copyright 2026 Hylo AI.
