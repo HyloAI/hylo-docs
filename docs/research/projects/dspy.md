@@ -1,4 +1,4 @@
-# DSPy Source-Level Architecture Study (worldcurrent Reasoning / Improvement Layer Selection)
+# DSPy Source-Level Architecture Study (Hylo Reasoning / Improvement Layer Selection)
 
 - Repository: `references/reasoning/dspy` (stanfordnlp/dspy @ `25162c4`, 2026-10-29, `pyproject.toml` version 3.4.1, MIT)
 - Method: purely static reading (read / grep / `python3 -I` parsing `uv.lock`); **nothing was installed or run, and no LLM was called**.
@@ -25,7 +25,7 @@ DSPy is a framework for "**writing LM calls as program modules with typed signat
 | Multimodal | `dspy.Image`, `Audio`, `File`, `BoundingBox` (normalized coordinates) | \[Implemented\] `DS/adapters/types/image.py:29`, `DS/adapters/types/bounding_box.py:8` |
 | Callbacks / tracing | `BaseCallback` covers module/lm/adapter/tool/evaluate/compile events | \[Implemented\] `DS/utils/callback.py:25-312` |
 
-One-line verdict: **DSPy's most valuable parts are its optimizers (especially GEPA / MIPROv2) and the abstraction "program parameters = serializable JSON state"; it is a strong candidate for "Candidate Generation" in worldcurrent's RSI. Its Module/Adapter as an online inference runtime is optional.**
+One-line verdict: **DSPy's most valuable parts are its optimizers (especially GEPA / MIPROv2) and the abstraction "program parameters = serializable JSON state"; it is a strong candidate for "Candidate Generation" in Hylo's RSI. Its Module/Adapter as an online inference runtime is optional.**
 
 ---
 
@@ -191,7 +191,7 @@ The core of BootstrapFewShot is simpler: the teacher program runs on the trainse
 
 ## 5. Extension Points and Plugin Mechanism
 
-| Extension point | Mechanism | Significance for worldcurrent |
+| Extension point | Mechanism | Significance for Hylo |
 |---|---|---|
 | Custom Engine | Any object implementing `complete(Request)->Response` passed into `BaseLM(engine=...)` (`DS/clients/base_lm.py:87-134`) \[Implemented\] | **Plug our own reasoning model / VLM / local service into DSPy without going through LiteLLM** |
 | Custom BaseLM subclass | Override dump_state/load_state (`DS/clients/base_lm.py:223-308`) \[Implemented\] | Can record the model version into program.json |
@@ -252,10 +252,10 @@ The core of BootstrapFewShot is simpler: the teacher program runs on the trainse
 
 | Component | Reuse approach |
 |---|---|
-| GEPA (+ DspyAdapter) | As one implementation of worldcurrent's `CandidateGenerator`, optimizing the planner prompt / planner code (Flex) |
+| GEPA (+ DspyAdapter) | As one implementation of Hylo's `CandidateGenerator`, optimizing the planner prompt / planner code (Flex) |
 | MIPROv2 | Baseline generator for joint instruction + demo search |
 | BootstrapFewShot / SIMBA | Automatically extract demos from successful episodes, and summarize rules from failures (`DS/teleprompt/simba_utils.py:73-170`) |
-| `Predict.dump_state` JSON format | Use directly as the versioned format for "prompt program artifacts", stored in the worldcurrent artifact registry |
+| `Predict.dump_state` JSON format | Use directly as the versioned format for "prompt program artifacts", stored in the Hylo artifact registry |
 | Engine protocol | Wrap our Reasoner model service as an Engine, so DSPy optimization calls the same backend |
 | Signature / Pydantic output types | Declare the planner's structured outputs (SkillCall, Subgoal, BoundingBox) |
 | ALFWorld EnvPool pattern | Borrow as a reference implementation for "SimPool + metric" |
@@ -325,7 +325,7 @@ Should not be handed to DSPy: online high-frequency control, long-term memory st
 
 ---
 
-## 12. Mapping to worldcurrent Reasoner / Memory / Improvement Interfaces
+## 12. Mapping to Hylo Reasoner / Memory / Improvement Interfaces
 
 **(d) DSPy as the Candidate Generation engine for RSI**: yes, and GEPA is recommended as the primary with MIPROv2 as the control. The optimized object = the planner's DSPy program (the instructions + demos of each `Predict`, plus the source code of `Flex` submodules). How the robot success metric is plugged in:
 
@@ -343,11 +343,11 @@ class SimRolloutMetric:                       # implements the GEPAFeedbackMetri
                               "collisions": -result.n_collisions})
 ```
 
-Key points: (1) the program's `forward` only produces the plan, and the rollout happens in the metric (or the program calls sim tools internally and the metric reads the result); (2) use the `seed`/`task_spec` fields to fix randomness, otherwise Pareto comparisons are noisy; (3) the budget is counted in number of rollouts; set `max_metric_calls`, and `num_threads` = SimPool size; (4) the artifacts `program.json` + metric report go into worldcurrent's artifact registry, and the Gate (offline regression + safety checks) decides whether to promote.
+Key points: (1) the program's `forward` only produces the plan, and the rollout happens in the metric (or the program calls sim tools internally and the metric reads the result); (2) use the `seed`/`task_spec` fields to fix randomness, otherwise Pareto comparisons are noisy; (3) the budget is counted in number of rollouts; set `max_metric_calls`, and `num_threads` = SimPool size; (4) the artifacts `program.json` + metric report go into Hylo's artifact registry, and the Gate (offline regression + safety checks) decides whether to promote.
 
 **Reasoner mapping**: a DSPy program can serve as one implementation of `Reasoner` (`DSPyReasoner`), calling our own reasoning model / VLM through a custom `Engine`; but online inference can also do without DSPy — simply export the optimization results (instructions/demos) into our own prompt templates, avoiding a runtime dependency.
 
-**Memory mapping**: DSPy has no long-term memory storage; `demos` can be viewed as a "programmatic curated selection of episodic memory", which can be retrieved by worldcurrent Memory and injected at runtime (the `KNNFewShot` idea, `DS/teleprompt/knn_fewshot.py`).
+**Memory mapping**: DSPy has no long-term memory storage; `demos` can be viewed as a "programmatic curated selection of episodic memory", which can be retrieved by Hylo Memory and injected at runtime (the `KNNFewShot` idea, `DS/teleprompt/knn_fewshot.py`).
 
 **Improvement interface**:
 
@@ -355,7 +355,7 @@ Key points: (1) the program's `forward` only produces the plan, and the rollout 
 class CandidateGenerator(Protocol):
     def propose(self, base: ProgramArtifact, trainset, valset, metric: Metric, budget: Budget) -> list[ProgramArtifact]: ...
 
-class DSPyGEPAGenerator(CandidateGenerator):   # optional adapter package worldcurrent-improve-dspy
+class DSPyGEPAGenerator(CandidateGenerator):   # optional adapter package hylo-improve-dspy
     # base.load → dspy.Module; GEPA(metric=SimRolloutMetric(...), reflection_lm=..., max_metric_calls=B).compile(...)
     # returns dump_state() of each Pareto-front candidate in detailed_results → ProgramArtifact(json, parent_id, metrics)
 ```

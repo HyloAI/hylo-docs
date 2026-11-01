@@ -62,7 +62,7 @@ CPU-seconds and LLM tokens.
 | Step | Content | Exit criterion |
 |---|---|---|
 | 1 | Seeded noise in `LeRobotAgent` (replayable rollouts); `SampleSelectAgent` wrapper (N chunks, gripper vote, medoid; skip when samples agree); runtime triggers (stall, grasp attempts, sample disagreement) with resample-and-back-off recovery | Same init state + same noise seed reproduces the episode; latency and success measured on the weakest tasks |
-| 2 | Evaluation protocol of §4 in `wc-evolve` (splits, CRN replicates, cascade, Holm, archive) | One full cycle on libero_spatial or libero_10 with L0/L1 candidates, held-out reported |
+| 2 | Evaluation protocol of §4 in `hylo-evolve` (splits, CRN replicates, cascade, Holm, archive) | One full cycle on libero_spatial or libero_10 with L0/L1 candidates, held-out reported |
 | 3 | LLM proposer (local qwen3.5) for L1 rules and GEPA-style reflection for L2 prompts, with hypothesis ledger | Proposed candidates beat rule-generated ones at equal budget, or not (both are results) |
 | 4 | L3: chunk value critic from traces; DSRL-SAC noise policy for 2–3 tasks | Gate passed on held-out-clean protocol |
 | 5 | L4: GRPO on SmolVLA action expert with KL; RECAP offline; pi0.5 once the PaliGemma tokenizer is authorised | One `policy_ref` candidate through the same gate |

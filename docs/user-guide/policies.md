@@ -23,8 +23,8 @@ matching, sampled tokens) must derive their randomness from the seeds only. Agen
 key, the chunk index and the sample index, so a candidate and its parent face the same noise on the same init state
 (common random numbers for paired tests), and every episode can be replayed.
 
-`wc plugin check policy NAME` runs the conformance check on a registered policy (shape, finiteness, seed
-determinism); `wc plugin new policy NAME` scaffolds one. See [extending](../harness/extending.md).
+`hylo plugin check policy NAME` runs the conformance check on a registered policy (shape, finiteness, seed
+determinism); `hylo plugin new policy NAME` scaffolds one. See [extending](../harness/extending.md).
 
 ## Agents that run a policy
 
@@ -60,7 +60,7 @@ Everything in `steering` is data, so a campaign can propose and gate steering ch
 
 ## Reference policies
 
-`wc-policies` ships one small, weights-free implementation of each common policy family, in numpy only. They are
+`hylo-policies` ships one small, weights-free implementation of each common policy family, in numpy only. They are
 trained from your own runs (development splits only, sealed as artifacts with provenance) and serve as baselines,
 for teaching, and for testing the stack end to end in seconds. They are not the published architectures at scale.
 
@@ -90,12 +90,12 @@ learner params: `chunk` (default 8), `seed`, `epochs`, `hidden`, `execution_step
 
     ```bash
     cd bench
-    uv run wc run examples/configs/mujoco_reach.yaml --split search --output runs/policies/demos \
+    uv run hylo run examples/configs/mujoco_reach.yaml --split search --output runs/policies/demos \
         --set benchmark.params.protocol=rsi                    # demonstrations, from a development split
-    uv run wc learn examples/policies/jobs/flow.json           # a sealed policy_params artifact
-    uv run wc store ls --kind artifact                         # its id: artifact:policy.flow@<digest>
-    uv run wc run examples/configs/mujoco_policy_flow_steered.yaml
-    uv run wc bench run mujoco-reach --name flow-steered \
+    uv run hylo learn examples/policies/jobs/flow.json           # a sealed policy_params artifact
+    uv run hylo store ls --kind artifact                         # its id: artifact:policy.flow@<digest>
+    uv run hylo run examples/configs/mujoco_policy_flow_steered.yaml
+    uv run hylo bench run mujoco-reach --name flow-steered \
         --policy examples/configs/mujoco_policy_flow_steered.yaml
     ```
 
@@ -118,14 +118,14 @@ the mujoco-reach protocol (100 held-out episodes on seeds never used for learnin
 | 7 | tokens | 68.0 | 58.3–76.3 | 74 |
 | 8 | knn | 64.0 | 54.2–72.7 | 76 |
 
-Neighbouring rows overlap. Compare two scorecards with `wc bench compare A.json B.json` (exact paired McNemar)
+Neighbouring rows overlap. Compare two scorecards with `hylo bench compare A.json B.json` (exact paired McNemar)
 before reading a difference into them: flow + steering against bc, for example, gives p = 0.005.
 
 ## LeRobot and openpi policies
 
 === "LeRobot (SmolVLA, pi0, ...)"
 
-    The `wc-policy-lerobot` adapter runs LeRobot policies on CPU in the `lerobot` runtime (installed by bench's
+    The `hylo-policy-lerobot` adapter runs LeRobot policies on CPU in the `lerobot` runtime (installed by bench's
     LIBERO setup). `lerobot` is both a policy and an agent; the factories wrap it:
 
     | Agent | What it adds |
@@ -150,7 +150,7 @@ before reading a difference into them: flow + steering against bc, for example, 
 
 === "openpi"
 
-    `openpi` (`wc-policy-openpi`) is a client for an openpi policy server over WebSocket (`url`, default
+    `openpi` (`hylo-policy-openpi`) is a client for an openpi policy server over WebSocket (`url`, default
     `ws://127.0.0.1:8000`, and an input `preset`, default `libero`). It is **unverified** here: no openpi server
     and checkpoint have been run with it yet.
 
@@ -164,5 +164,5 @@ Weight licences differ per checkpoint: PaliGemma-based pi0 / pi0.5 checkpoints a
 ## Policies in other processes
 
 A policy whose dependencies conflict with the workspace runs in its own runtime behind the `remote` agent, as
-above. A policy on another machine runs behind a policy server (`wc serve policy`) and is reached with the
+above. A policy on another machine runs behind a policy server (`hylo serve policy`) and is reached with the
 `remote.ws` agent; see [deployment](deployment.md).

@@ -1,10 +1,10 @@
-# worldcurrent-docs
+# hylo-docs
 
-The worldcurrent documentation site: user guide, benchmarking, developer guide, design and RFCs, research notes and
+The Hylo documentation site: user guide, benchmarking, developer guide, design and RFCs, research notes and
 experiment records, API and CLI reference. Built with MkDocs Material, the way vLLM builds its docs.
 
 ```bash
-# from the development workspace (the repositories side by side; worldcurrent-harness: dev/bootstrap.sh)
+# from the development workspace (the repositories side by side; hylo-harness: dev/bootstrap.sh)
 uv sync --group docs
 uv run mkdocs serve -f docs/mkdocs.yml          # http://127.0.0.1:8000, reloads on edits
 uv run mkdocs build -f docs/mkdocs.yml --strict # what CI would run; output in docs/site/

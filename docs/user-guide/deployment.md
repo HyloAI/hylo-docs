@@ -1,10 +1,10 @@
 # Deployment
 
-worldcurrent-serve runs policies next to robots. Two services split the work:
+hylo-serve runs policies next to robots. Two services split the work:
 
-- a **policy server** (`wc serve policy`) runs an agent, usually on a GPU machine, and answers observations with
+- a **policy server** (`hylo serve policy`) runs an agent, usually on a GPU machine, and answers observations with
   action chunks;
-- a **workcell** (`wc serve workcell`) runs next to the robot or simulator. It owns the environment, the
+- a **workcell** (`hylo serve workcell`) runs next to the robot or simulator. It owns the environment, the
   SafetyShield, the episode loop and the trace, and reaches the policy over the network.
 
 Safety never depends on the network: if the policy server is slow the arm holds, if it stops answering the
@@ -16,14 +16,14 @@ watchdog aborts the episode, and an e-stop is latched in the workcell until an o
 *Who talks to whom: the control plane calls the workcell API; the workcell calls the policy server; episodes are
 recorded where the robot is and copied to the workstation through the store.*
 
-serve's packages depend on `wc-core` only, so a robot computer installs nothing else.
+serve's packages depend on `hylo-core` only, so a robot computer installs nothing else.
 
 ## Policy server
 
 ```bash
-uv run wc serve policy --agent '{"type": "bringup.wave", "params": {"amplitude": 12, "horizon": 15}}' --port 8002
-uv run wc serve policy --config bench/examples/configs/libero10_steered.yaml --port 8001   # the config's agent
-uv run wc serve policy --campaign runs/evolve/libero10-steering --port 8001               # a campaign's active version
+uv run hylo serve policy --agent '{"type": "bringup.wave", "params": {"amplitude": 12, "horizon": 15}}' --port 8002
+uv run hylo serve policy --config bench/examples/configs/libero10_steered.yaml --port 8001   # the config's agent
+uv run hylo serve policy --campaign runs/evolve/libero10-steering --port 8001               # a campaign's active version
 ```
 
 | Option | Default | Meaning |
@@ -38,7 +38,7 @@ One WebSocket server speaks two protocols, chosen by path:
 
 | Path | Protocol | Clients |
 |---|---|---|
-| `/wc` | the worldcurrent agent protocol (JSON): spec, reset, act, on_step, on_episode_end | workcells, `remote.ws` agents |
+| `/hylo` | the Hylo agent protocol (JSON): spec, reset, act, on_step, on_episode_end | workcells, `remote.ws` agents |
 | `/openpi` | openpi's protocol (msgpack-numpy): metadata, then observation dict in, `{"actions": (H, A)}` out | openpi clients (DROID, RoboArena, openpi's examples) |
 | `/healthz`, `/meta` | HTTP | liveness; the served agent's spec as JSON |
 
@@ -46,7 +46,7 @@ One WebSocket server speaks two protocols, chosen by path:
   not compatible with it (`core.compat`: action space, control mode, cameras, state keys).
 - One session at a time: a robot talks to one policy, and a second client is refused (close code 1013). The agent
   is built once and reused across sessions.
-- With `--campaign`, the server follows the campaign's `active.json` (`wc.active/v0.1`,
+- With `--campaign`, the server follows the campaign's `active.json` (`hylo.active/v0.1`,
   [campaigns](campaigns.md)): when a promotion or a rollback changes the active version, it rebuilds the agent
   between sessions, never during one.
 - openpi has no reset message: the agent is reset on connect, when the prompt changes, or when the client sends
@@ -55,12 +55,12 @@ One WebSocket server speaks two protocols, chosen by path:
 ## Workcells
 
 ```bash
-uv run wc serve workcell --config deployments-template/workcells/sim_arm.yaml --port 8102
-uv run wc serve workcell --config workcells/so101.yaml --host 0.0.0.0 --port 8100 --token $WC_TOKEN
+uv run hylo serve workcell --config deployments-template/workcells/sim_arm.yaml --port 8102
+uv run hylo serve workcell --config workcells/so101.yaml --host 0.0.0.0 --port 8100 --token $HYLO_TOKEN
 ```
 
 `--config` (required), `--host` (default `127.0.0.1`), `--port` (default `8100`), `--token`. A workcell config
-(`worldcurrent.serve.workcell.WorkcellConfig`) lives in your lab's [deployments repository](../configuration/deployments-repo.md):
+(`hylo.serve.workcell.WorkcellConfig`) lives in your lab's [deployments repository](../configuration/deployments-repo.md):
 
 ```yaml
 name: sim-libero10
@@ -70,7 +70,7 @@ env:
 benchmark:                               # optional: named tasks and init states
   type: libero
   params: {suite: libero_10, n_validation: 10, n_heldout: 0}
-policy: {url: ws://127.0.0.1:8001/wc, protocol: wc}
+policy: {url: ws://127.0.0.1:8001/hylo, protocol: hylo}
 runtime: {clock: virtual, refill_steps: 10, max_hold_steps: 200}
 image_every: 10
 split: deployment
@@ -82,7 +82,7 @@ output_dir: runs/workcell
 | `name` | (required) | the workcell's name; its run is `<output_dir>/workcell-<name>` |
 | `env` | (required) | any environment plugin, local or in another venv (`remote`) |
 | `benchmark` | none | a benchmark whose tasks can be started by `task_id`; without it, free-form instructions only |
-| `policy` | none | default policy endpoint: `url`, `protocol` (`wc` or `openpi`), `token`, `params` |
+| `policy` | none | default policy endpoint: `url`, `protocol` (`hylo` or `openpi`), `token`, `params` |
 | `runtime` | realtime, wall clock | the episode loop's timing (below), plus `image_every` and `record_privileged` |
 | `safety` | `{}` | SafetyShield config: `max_delta`, `guards` ([safety](safety.md)) |
 | `image_every` | `10` | keep every n-th frame in the trace (every frame is streamed live) |
@@ -127,7 +127,7 @@ In realtime mode:
 
 ## Operating a workcell
 
-The workcell API (`wc.workcell/v0.1`, models in `worldcurrent.core.remote.workcell`, so the control plane never
+The workcell API (`hylo.workcell/v0.1`, models in `hylo.core.remote.workcell`, so the control plane never
 imports serve):
 
 | Endpoint | Body / reply | Notes |
@@ -171,7 +171,7 @@ to every role.
 
 ## Robots and bring-up
 
-`wc-env-lerobot-robot` (`lerobot.robot`) turns any robot with LeRobot's `Robot` interface into an environment:
+`hylo-env-lerobot-robot` (`lerobot.robot`) turns any robot with LeRobot's `Robot` interface into an environment:
 SO-100/101 and Koch followers and others. It adds an EnvSpec (named state groups, cameras, an action box in the
 robot's units, the control rate), resets by moving to the `home` pose in small steps within the shield's limits,
 never claims success (the operator's verdict or a calibrated judge decides), and holds the measured position when
@@ -180,8 +180,8 @@ the policy is late.
 Bring a workcell up without hardware first:
 
 ```bash
-uv run wc serve policy --agent '{"type": "bringup.wave", "params": {"amplitude": 8}}' --port 8002
-uv run wc serve workcell --config deployments-template/workcells/sim_arm.yaml --port 8102
+uv run hylo serve policy --agent '{"type": "bringup.wave", "params": {"amplitude": 8}}' --port 8002
+uv run hylo serve workcell --config deployments-template/workcells/sim_arm.yaml --port 8102
 ```
 
 `sim_arm` is a simulated five-joint arm with a gripper, in degrees like LeRobot's SO follower, with first-order
@@ -203,19 +203,19 @@ To bring the runs to the workstation, make the workcell's output directory the r
 [store](store.md) and pull from it:
 
 ```bash
-wc store init runs                                         # on the robot computer, where output_dir lands
-uv run wc store pull robot-host:/path/to/runs              # on the workstation: runs it does not have yet
-uv run wc store push robot-host:/path/to/runs artifact:l10-trace-v2@54a1efadf00d34d8   # an artifact the other way
+hylo store init runs                                         # on the robot computer, where output_dir lands
+uv run hylo store pull robot-host:/path/to/runs              # on the workstation: runs it does not have yet
+uv run hylo store push robot-host:/path/to/runs artifact:l10-trace-v2@54a1efadf00d34d8   # an artifact the other way
 ```
 
 ## Serving one component
 
-`wc serve env` and `wc serve agent` put a single plugin behind a WebSocket (`core.remote.ws`), for example a
+`hylo serve env` and `hylo serve agent` put a single plugin behind a WebSocket (`core.remote.ws`), for example a
 simulator in its own venv on another machine:
 
 ```bash
-uv run wc serve env libero --params '{"image_size": 256}' --port 8765
-uv run wc serve agent lerobot --params '{...}' --port 8766 --token-env WC_TOKEN
+uv run hylo serve env libero --params '{"image_size": 256}' --port 8765
+uv run hylo serve agent lerobot --params '{...}' --port 8766 --token-env HYLO_TOKEN
 ```
 
 Configs then use `{type: remote.ws, params: {url: "ws://host:8765"}}` as the environment or agent.

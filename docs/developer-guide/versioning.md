@@ -1,38 +1,38 @@
 # Versioning and compatibility
 
 The repositories never import each other's code. They cooperate through versioned contracts and formats defined
-in wc-core, and results are identified by digests of what was measured. This page lists everything that carries a
+in hylo-core, and results are identified by digests of what was measured. This page lists everything that carries a
 version or a digest, what changes it, and what is not settled yet.
 
 | Kind | Example | Answers |
 |---|---|---|
-| Contract version | `wc.policy/v0.1` | can this plugin run on this core? |
-| Format schema version | `wc.scorecard/v0.1` | can this file or message be read? |
-| Digest | `config_digest: c26fef49863a7b7a` | is this the same experiment, protocol or content? |
+| Contract version | `hylo.policy/v0.1` | can this plugin run on this core? |
+| Format schema version | `hylo.scorecard/v0.1` | can this file or message be read? |
+| Digest | `config_digest: 2342f91d706e83e9` | is this the same experiment, protocol or content? |
 | Package version | `0.1.0.dev0` | which code is installed? |
 
 ## Contract versions
 
-Each plugin group is a contract with a version (`worldcurrent.core.plugins.CONTRACTS`; RFC-0005 part 4). All are
+Each plugin group is a contract with a version (`hylo.core.plugins.CONTRACTS`; RFC-0005 part 4). All are
 at v0.1:
 
 | Group | Contract | Group | Contract |
 |---|---|---|---|
-| `envs` | `wc.env/v0.1` | `generators` | `wc.generator/v0.1` |
-| `agents` | `wc.agent/v0.1` | `learners` | `wc.learner/v0.1` |
-| `policies` | `wc.policy/v0.1` | `instruments` | `wc.instrument/v0.1` |
-| `reasoners` | `wc.reasoner/v0.1` | `datasources` | `wc.datasource/v0.1` |
-| `choosers` | `wc.chooser/v0.1` | `planners` | `wc.planner/v0.1` |
-| `reflectors` | `wc.reflector/v0.1` | | |
-| `memory` | `wc.memory/v0.1` | `guards` | `wc.guard/v0.1` |
-| `scorers` | `wc.scorer/v0.1` | `gate_tests` | `wc.gate_test/v0.1` |
-| `benchmarks` | `wc.benchmark/v0.1` | | |
+| `envs` | `hylo.env/v0.1` | `generators` | `hylo.generator/v0.1` |
+| `agents` | `hylo.agent/v0.1` | `learners` | `hylo.learner/v0.1` |
+| `policies` | `hylo.policy/v0.1` | `instruments` | `hylo.instrument/v0.1` |
+| `reasoners` | `hylo.reasoner/v0.1` | `datasources` | `hylo.datasource/v0.1` |
+| `choosers` | `hylo.chooser/v0.1` | `planners` | `hylo.planner/v0.1` |
+| `reflectors` | `hylo.reflector/v0.1` | | |
+| `memory` | `hylo.memory/v0.1` | `guards` | `hylo.guard/v0.1` |
+| `scorers` | `hylo.scorer/v0.1` | `gate_tests` | `hylo.gate_test/v0.1` |
+| `benchmarks` | `hylo.benchmark/v0.1` | | |
 
 A plugin package declares the version it implements in its `META` dictionary, registered under the
-`worldcurrent.meta` entry-point group (see [extending](../harness/extending.md)):
+`hylo.meta` entry-point group (see [extending](../harness/extending.md)):
 
 ```python
-META = {"contracts": {"policies": "wc.policy/v0.1", "learners": "wc.learner/v0.1"}, "maturity": "implemented"}
+META = {"contracts": {"policies": "hylo.policy/v0.1", "learners": "hylo.learner/v0.1"}, "maturity": "implemented"}
 ```
 
 **Compatibility rule** (`core.plugins.compatible`): a declared version runs on this core when it names the same
@@ -40,13 +40,13 @@ contract, has the same major version, and its minor version is not newer than th
 
 | Plugin declares | Core implements | Loads? |
 |---|---|---|
-| `wc.policy/v0.1` | `wc.policy/v0.1` | yes |
-| `wc.policy/v1.0` | `wc.policy/v1.3` | yes: the core still supports what v1.0 plugins use |
-| `wc.policy/v1.4` | `wc.policy/v1.3` | no: the plugin may use features this core lacks |
-| `wc.policy/v0.1` | `wc.policy/v1.0` | no: another major version |
+| `hylo.policy/v0.1` | `hylo.policy/v0.1` | yes |
+| `hylo.policy/v1.0` | `hylo.policy/v1.3` | yes: the core still supports what v1.0 plugins use |
+| `hylo.policy/v1.4` | `hylo.policy/v1.3` | no: the plugin may use features this core lacks |
+| `hylo.policy/v0.1` | `hylo.policy/v1.0` | no: another major version |
 
 The registry checks the declaration before it imports an entry point and raises `IncompatiblePlugin` on a
-mismatch. A plugin without a declaration still loads and is listed as undeclared; `wc plugin check` warns.
+mismatch. A plugin without a declaration still loads and is listed as undeclared; `hylo plugin check` warns.
 `module:attr` references are not checked, because there is no package to ask.
 
 **When to bump** (a proposal for after v0.x; nothing has been bumped yet):
@@ -65,25 +65,25 @@ unknown key, is refused when it is read instead of being misread.
 
 | Format | Version | Defined in | Written as |
 |---|---|---|---|
-| Experiment config | `wc.experiment/v0.1` | `core.config` | config YAML; the run's `manifest.json` |
-| Execution profile | `wc.profile/v0.1` | `core.profile` | `~/.config/worldcurrent/profile.yaml` |
-| Store index | `wc.store/v0.1` | `core.store` | `<store>/.wc-store/index.json` |
-| Artifact manifest | `wc.artifact/v0.1` | `core.artifact` | `artifact.json` |
-| Trace events | `wc.trace/v0.1` | `core.events` (`TRACE_SCHEMA`) | `episodes/<id>.jsonl`, recorded in `manifest.json` |
-| Eval log | `wc.evallog/v0.1` | `eval.runner` (`EVALLOG_VERSION`) | `evallog.json` |
-| Scorecard | `wc.scorecard/v0.1` | `core.scorecard` | `scorecards/<protocol>/<policy>.json` |
-| Protocol | `wc.protocol/v0.1` | `bench.protocol` | protocol YAML |
-| Campaign config | `wc.evolve/v0.1` | `evolve.campaign` | campaign YAML |
-| Active version | `wc.active/v0.1` | `core.deployment` | a campaign's `active.json` |
-| Workcell API | `wc.workcell/v0.1` | `core.remote.workcell` | HTTP and WebSocket messages; workcell run manifests |
-| Env server protocol | `wc.envserver/v0.1` | `core.remote.protocol` | the `hello` line of a remote environment |
-| Agent server protocol | `wc.agentserver/v0.1` | `core.remote.agent_server` | the `hello` of a remote agent or policy server |
-| Ingested runs | `wc.external/v0.1` | `learn.data` | `manifest.json` of an external-data run |
+| Experiment config | `hylo.experiment/v0.1` | `core.config` | config YAML; the run's `manifest.json` |
+| Execution profile | `hylo.profile/v0.1` | `core.profile` | `~/.config/hylo/profile.yaml` |
+| Store index | `hylo.store/v0.1` | `core.store` | `<store>/.hylo-store/index.json` |
+| Artifact manifest | `hylo.artifact/v0.1` | `core.artifact` | `artifact.json` |
+| Trace events | `hylo.trace/v0.1` | `core.events` (`TRACE_SCHEMA`) | `episodes/<id>.jsonl`, recorded in `manifest.json` |
+| Eval log | `hylo.evallog/v0.1` | `eval.runner` (`EVALLOG_VERSION`) | `evallog.json` |
+| Scorecard | `hylo.scorecard/v0.1` | `core.scorecard` | `scorecards/<protocol>/<policy>.json` |
+| Protocol | `hylo.protocol/v0.1` | `bench.protocol` | protocol YAML |
+| Campaign config | `hylo.evolve/v0.1` | `evolve.campaign` | campaign YAML |
+| Active version | `hylo.active/v0.1` | `core.deployment` | a campaign's `active.json` |
+| Workcell API | `hylo.workcell/v0.1` | `core.remote.workcell` | HTTP and WebSocket messages; workcell run manifests |
+| Env server protocol | `hylo.envserver/v0.1` | `core.remote.protocol` | the `hello` line of a remote environment |
+| Agent server protocol | `hylo.agentserver/v0.1` | `core.remote.agent_server` | the `hello` of a remote agent or policy server |
+| Ingested runs | `hylo.external/v0.1` | `learn.data` | `manifest.json` of an external-data run |
 
 The remote protocols are matched exactly: a client that receives another `hello` fails with
-`protocol mismatch: ...`. Artifacts also version their own payloads (`wc.action_bank/v0.1`, `wc.critic/v0.1`,
-`wc.world_model/v0.1`, `wc.reference_policy/v0.1`, `wc.selftrain/v0.1`), and each loader refuses a payload of
-another version. `wc schema NAME` prints the JSON Schema of the main contracts ([formats](../api/formats.md)).
+`protocol mismatch: ...`. Artifacts also version their own payloads (`hylo.action_bank/v0.1`, `hylo.critic/v0.1`,
+`hylo.world_model/v0.1`, `hylo.reference_policy/v0.1`, `hylo.selftrain/v0.1`), and each loader refuses a payload of
+another version. `hylo schema NAME` prints the JSON Schema of the main contracts ([formats](../api/formats.md)).
 
 ## Digests
 
@@ -103,7 +103,7 @@ All are SHA-256, truncated to 16 hex characters.
 What the digests are used for:
 
 - runs record the experiment digest and the benchmark digest; a campaign compares parent and candidate on the same
-  episodes, and `wc bench compare` refuses scorecards with different protocol digests;
+  episodes, and `hylo bench compare` refuses scorecards with different protocol digests;
 - store ids are `artifact:<name>@<content digest>`; the gate re-verifies the content of every referenced artifact;
 - a learner job whose output is already sealed with the same job digest is not run again;
 - a campaign rejects a candidate whose patch it has already archived (compared as canonical JSON).
@@ -117,6 +117,15 @@ What the digests are used for:
     process (LIBERO) changed once. Runs recorded between the two changes carry the intermediate digests.
     `timing` is hashed only when it is not the default (sync), so introducing it changed no digest.
 
+!!! note "History: the rename to Hylo (2026-11-01)"
+    Schema ids moved from `wc.<name>/v<x>` to `hylo.<name>/v<x>` and modules from `worldcurrent.*` to `hylo.*`.
+    Because the schema id is part of every config and protocol, every experiment and protocol digest changed once
+    (mujoco-reach v1: `5e0c57ef414a0b21` -> `a76c7037efb84660`). Artifact content digests did not change, so store
+    ids such as `artifact:l10-trace-v2@54a1efadf00d34d8` are still valid. Data written before the rename stays
+    readable: `wc.*` schema ids and `worldcurrent.*` module references are read as their `hylo.*` names
+    (`hylo.core.contract.current_schema` / `current_module`), the policy server still answers on `/wc`, and a
+    workcell config may still say `protocol: wc`.
+
 A change to what a digest covers is a breaking change for comparisons: older runs and scorecards keep the digest
 they were recorded with. Make such a change through an RFC and say which digests change.
 
@@ -129,10 +138,10 @@ versions.
 
 ## Compatibility between repositories
 
-- The harness is the only base. bench, studio and plugins depend on the harness, and serve on wc-core only (a robot
+- The harness is the only base. bench, studio and plugins depend on the harness, and serve on hylo-core only (a robot
   computer installs nothing else). Leaves never import each other ([repository structure](../design/repository-structure.md)).
-- They cooperate through the formats above, all defined in wc-core: registry names, traces, store ids and artifacts,
-  `active.json`, scorecards, the remote protocols, the workcell API, and `wc` subcommands.
+- They cooperate through the formats above, all defined in hylo-core: registry names, traces, store ids and artifacts,
+  `active.json`, scorecards, the remote protocols, the workcell API, and `hylo` subcommands.
 - The boundary lint enforces this in every workspace ([testing](testing.md#the-boundary-lint)).
 
 What is decided for later releases (repository structure, section 6), not yet practised:

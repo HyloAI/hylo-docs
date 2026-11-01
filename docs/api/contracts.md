@@ -1,90 +1,90 @@
 # Contracts
 
-Every plugin group's contract lives in wc-core, so a plugin depends on wc-core alone. What a plugin must provide, and the data that passes between the kernel, environments and agents. The
+Every plugin group's contract lives in hylo-core, so a plugin depends on hylo-core alone. What a plugin must provide, and the data that passes between the kernel, environments and agents. The
 [plugin system](../harness/plugin-system.md) explains how plugins are registered; the
 [interfaces](../harness/interfaces/environment.md) explain the design behind each contract; the
 [plugin catalogue](../developer-guide/plugin-catalogue.md) lists what implements them.
 
 ## Environments
 
-::: worldcurrent.core.env
+::: hylo.core.env
     options:
       heading_level: 3
       show_if_no_docstring: true
 
 ## Agents
 
-::: worldcurrent.core.agent
+::: hylo.core.agent
     options:
       heading_level: 3
       show_if_no_docstring: true
 
 ## Policies
 
-::: worldcurrent.core.policy
+::: hylo.core.policy
     options:
       heading_level: 3
       show_if_no_docstring: true
 
 ## Reasoners, choosers, planners, reflectors
 
-::: worldcurrent.core.reasoning
+::: hylo.core.reasoning
     options:
       heading_level: 3
       show_if_no_docstring: true
 
 ## Shared data types
 
-::: worldcurrent.core.types
+::: hylo.core.types
     options:
       heading_level: 3
       show_if_no_docstring: true
 
 ## Tasks
 
-::: worldcurrent.core.task
+::: hylo.core.task
     options:
       heading_level: 3
       show_if_no_docstring: true
 
 ## Instruments
 
-::: worldcurrent.core.instrument
+::: hylo.core.instrument
     options:
       heading_level: 3
       show_if_no_docstring: true
 
 ## Learners
 
-::: worldcurrent.core.learning
+::: hylo.core.learning
     options:
       heading_level: 3
       show_if_no_docstring: true
 
 ## Benchmarks
 
-::: worldcurrent.core.benchmark
+::: hylo.core.benchmark
     options:
       heading_level: 3
       show_if_no_docstring: true
 
 ## Scorers and gate tests
 
-::: worldcurrent.core.scoring
+::: hylo.core.scoring
     options:
       heading_level: 3
       show_if_no_docstring: true
 
 ## Generators and campaign records
 
-::: worldcurrent.core.improvement
+::: hylo.core.improvement
     options:
       heading_level: 3
       show_if_no_docstring: true
 
 ## Safety
 
-::: worldcurrent.core.safety
+::: hylo.core.safety
     options:
       heading_level: 3
       show_if_no_docstring: true

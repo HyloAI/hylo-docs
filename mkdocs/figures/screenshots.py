@@ -2,7 +2,7 @@
 
     python docs/mkdocs/figures/screenshots.py [--url http://127.0.0.1:8765]
 
-Needs a running playground (`wc playground --repo <bench checkout>`) and Playwright with a Chromium build
+Needs a running playground (`hylo playground --repo <bench checkout>`) and Playwright with a Chromium build
 (`pip install playwright`; `playwright install chromium`, or an existing ~/.cache/ms-playwright build).
 """
 

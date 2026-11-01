@@ -3,7 +3,7 @@
 What runs on a lab's robots is configuration, not code, and it is the lab's own: robot names, network addresses,
 joint limits, safety limits. It lives in a private `<lab>-deployments` repository, started from
 `deployments-template`. The repository holds configuration only; every component it names (environments, agents,
-guards) is registered by an installed worldcurrent repository.
+guards) is registered by an installed Hylo repository.
 
 ```text
 <lab>-deployments/
@@ -15,8 +15,8 @@ guards) is registered by an installed worldcurrent repository.
 ```
 
 ```bash
-uv run wc serve workcell --config workcells/sim_arm.yaml --port 8102
-uv run wc serve workcell --config workcells/so101.yaml --host 0.0.0.0 --port 8100 --token $WC_TOKEN
+uv run hylo serve workcell --config workcells/sim_arm.yaml --port 8102
+uv run hylo serve workcell --config workcells/so101.yaml --host 0.0.0.0 --port 8100 --token $HYLO_TOKEN
 ```
 
 ## A workcell config
@@ -39,7 +39,7 @@ env:
     home: [0, -90, 90, 0, 0, 10]
     home_steps: 90
     control_hz: 30
-policy: {url: "ws://gpu-box:8000/wc", protocol: wc}
+policy: {url: "ws://gpu-box:8000/hylo", protocol: hylo}
 runtime: {clock: wall, refill_steps: 10, max_hold_steps: 30, require_reset_confirm: true, verdict_timeout_s: 120}
 safety: {max_delta: 8.0}
 image_every: 5
@@ -51,7 +51,7 @@ output_dir: runs/workcell
 
 | What | Where | Notes |
 |---|---|---|
-| motor calibration | LeRobot's own calibration, keyed by the robot `id` (`arm1`) | done with LeRobot's tools on the robot computer; not stored by worldcurrent |
+| motor calibration | LeRobot's own calibration, keyed by the robot `id` (`arm1`) | done with LeRobot's tools on the robot computer; not stored by Hylo |
 | joint limits | `env.params.action_low` / `action_high` | in the robot's units (degrees, gripper 0-100); required for a real robot |
 | per-step limit in the robot | `robot.params.max_relative_target` | LeRobot clamps each commanded change; keep it |
 | home pose | `env.params.home`, `home_steps` | reset moves there by interpolation, each step within the shield's limits |
@@ -82,7 +82,7 @@ e-stop within reach.
 
 ## Tokens and addresses
 
-- Never commit tokens. Pass them at start-up (`--token $WC_TOKEN`) from the machine's environment or a secret
+- Never commit tokens. Pass them at start-up (`--token $HYLO_TOKEN`) from the machine's environment or a secret
   store; policy endpoints in a config may carry `token`, but prefer giving it when starting the episode.
 - A workcell binds to `127.0.0.1` unless `--host` says otherwise; expose it (`0.0.0.0`) only on a robot network and
   always with `--token`.
@@ -92,5 +92,5 @@ e-stop within reach.
 ## Machine-specific settings
 
 Interpreter paths and environment variables of the robot computer belong in its
-[execution profile](profiles.md) (`wc profile set-runtime robot ...`), not in the repository: the config says
+[execution profile](profiles.md) (`hylo profile set-runtime robot ...`), not in the repository: the config says
 `remote: {runtime: robot}` and works on any robot computer that registered that runtime.

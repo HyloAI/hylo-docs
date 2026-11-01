@@ -31,7 +31,7 @@
 
 ## 2. Model weights
 
-| Weights | License status | Constraints for worldcurrent |
+| Weights | License status | Constraints for Hylo |
 |---|---|---|
 | π0 / π0-FAST / π0.5 (openpi, LeRobot port) | **Not explicitly declared**; PaliGemma derivative, very likely subject to the **Gemma Terms of Use** (the openpi repo includes `LICENSE_GEMMA.txt` but does not reference it); the "Apache 2.0" in LeRobot docs covers code only | Tag `weights_license="gemma-tou (derivative, unconfirmed)"`; **legal review before external hosted inference** (Gemma ToU treats a Hosted Service as Distribution) |
 | GR00T | NVIDIA Open Model License | Per its terms |

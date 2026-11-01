@@ -1,6 +1,6 @@
 # Docs
 
-This site is built with MkDocs and the Material theme from worldcurrent-docs, in the
+This site is built with MkDocs and the Material theme from hylo-docs, in the
 [development workspace](contributing.md#the-development-workspace), so that it can generate pages from the code
 repositories next to it.
 
@@ -22,7 +22,7 @@ resolve are errors.
 ## Layout
 
 ```text
-docs/                              worldcurrent-docs
+docs/                              hylo-docs
 ├── mkdocs.yml                     site config and navigation
 ├── mkdocs/gen_pages.py            pages generated at build time
 ├── docs/                          the content
@@ -42,20 +42,20 @@ The navigation is explicit in `mkdocs.yml`: a new page appears only once it is l
 | Page | Generated from |
 |---|---|
 | Developer Guide > Extending, Interfaces, Internals; the experiment config schema | `harness/docs/` (copied as `harness/...`) |
-| [CLI Reference](../cli/index.md) | `wc --help` and every subcommand's `--help`, from the installed packages |
-| [Plugin catalogue](plugin-catalogue.md) | `worldcurrent.core.plugins.catalogue()`: every installed plugin's contract, maturity, licence |
+| [CLI Reference](../cli/index.md) | `hylo --help` and every subcommand's `--help`, from the installed packages |
+| [Plugin catalogue](plugin-catalogue.md) | `hylo.core.plugins.catalogue()`: every installed plugin's contract, maturity, licence |
 | [Examples](../getting-started/examples.md) | `bench/examples/{configs,evolve}`, `plugins/examples/{configs,evolve}`: each config with its header comment |
-| [Formats and schemas](../api/formats.md) | the format table, and the JSON Schemas `wc schema` prints |
+| [Formats and schemas](../api/formats.md) | the format table, and the JSON Schemas `hylo schema` prints |
 
 The [API Reference](../api/index.md) pages are written by hand but filled by mkdocstrings from the harness's
-docstrings (`::: worldcurrent.core.policy`). A repository that is not checked out gives a page that says so instead
+docstrings (`::: hylo.core.policy`). A repository that is not checked out gives a page that says so instead
 of failing the build.
 
 ## Images
 
 - `docs/assets/diagrams/*.svg`: architecture and flow diagrams, drawn by hand on a white background.
 - `docs/assets/figures/*.png`: charts and screenshots made from recorded runs and the running system.
-- Reference them with the `wc-figure` class, which gives them a light card in dark mode, and an italic caption:
+- Reference them with the `hylo-figure` class, which gives them a light card in dark mode, and an italic caption:
 
 ```markdown
 ![The improvement loop](../assets/diagrams/improvement-loop.svg){ .wc-figure }
@@ -69,7 +69,7 @@ Small flows that change often can be Mermaid diagrams in a `mermaid` code block 
 
 - English; British spelling (licence, behaviour).
 - Short sentences, plain words, no marketing. Say what something does and what it does not do yet.
-- Task-oriented pages: a short introduction, then sections with runnable `uv run wc ...` commands, tables for
+- Task-oriented pages: a short introduction, then sections with runnable `uv run hylo ...` commands, tables for
   options, admonitions only where they help.
 - Every option, default, path and number must come from the code or from a recorded result, and say which.
 - Link with relative paths to other pages (`../user-guide/store.md`); the strict build checks them.

@@ -1,14 +1,14 @@
 # Protocols
 
-A protocol (`wc.protocol/v0.1`, `worldcurrent.bench.protocol.Protocol`) is everything about an evaluation except the
-policy. Protocols ship with wc-bench as YAML files (`packages/wc-bench/src/worldcurrent/bench/protocols/`) and are
-named by their file name; any YAML file with the same fields works too (`wc bench run path/to/protocol.yaml ...`).
+A protocol (`hylo.protocol/v0.1`, `hylo.bench.protocol.Protocol`) is everything about an evaluation except the
+policy. Protocols ship with hylo-bench as YAML files (`packages/hylo-bench/src/hylo/bench/protocols/`) and are
+named by their file name; any YAML file with the same fields works too (`hylo bench run path/to/protocol.yaml ...`).
 
 ## Fields
 
 | Field | Measured | Meaning |
 |---|---|---|
-| `schema_version` | yes | `wc.protocol/v0.1` |
+| `schema_version` | yes | `hylo.protocol/v0.1` |
 | `name`, `version` | yes | the identity shown on leaderboards; change `version` whenever anything measured changes |
 | `benchmark` | yes | `{type, split, params}`: the benchmark plugin, the split that is scored, its parameters |
 | `env` | yes, except `env.remote` | `{type, params}` of the environment plugin; `remote` says where the simulator runs |
@@ -22,7 +22,7 @@ named by their file name; any YAML file with the same fields works too (`wc benc
 
 ## The digest
 
-`wc bench show NAME` prints the protocol and its digest: sha256 (first 16 hex characters) over the measured
+`hylo bench show NAME` prints the protocol and its digest: sha256 (first 16 hex characters) over the measured
 fields. Left out:
 
 - `description`, `workers`, `requires`;
@@ -31,10 +31,10 @@ fields. Left out:
 - `timing` while it is the default (sync).
 
 A scorecard records the digest it was measured under. Leaderboards group scorecards by (name, version, digest),
-and `wc bench compare` refuses scorecards of different digests: a protocol edited without a new version would
+and `hylo bench compare` refuses scorecards of different digests: a protocol edited without a new version would
 otherwise mix incomparable numbers.
 
-`wc bench run --set` accepts only what does not change the digest: `env.remote.*`, `workers` and `output_dir`.
+`hylo bench run --set` accepts only what does not change the digest: `env.remote.*`, `workers` and `output_dir`.
 Anything else is refused, because the scorecard would no longer belong to the protocol.
 
 !!! note "Where the simulator runs is hashed as local"
@@ -43,17 +43,22 @@ Anything else is refused, because the scorecard would no longer belong to the pr
     simulator in another process (the LIBERO ones) changed once. Scorecards keep the digest they were written
     with, so a LIBERO scorecard from before that change sits on its own board.
 
+!!! note "The rename to Hylo changed every digest once"
+    Schema ids are part of what is hashed, and they changed from `wc.*` to `hylo.*` on 2026-11-01. Every protocol
+    and experiment digest changed once then (mujoco-reach v1: `5e0c57ef414a0b21` before, `a76c7037efb84660`
+    after). Older scorecards and runs stay readable and keep the digest they were written with.
+
 ## Built-in protocols
 
 | Protocol | Benchmark and split | Episodes | Timing | Requires |
 |---|---|---|---|---|
-| `mujoco-reach` | `mujoco/reach-v0`, held-out seeds (50 per task) | 100: a fixed and a random target | sync | wc-env-mujoco |
-| `libero-10` | LIBERO-10, all 50 stored init states per task | 500 | sync | wc-env-libero, `envs/libero/setup.sh` |
+| `mujoco-reach` | `mujoco/reach-v0`, held-out seeds (50 per task) | 100: a fixed and a random target | sync | hylo-env-mujoco |
+| `libero-10` | LIBERO-10, all 50 stored init states per task | 500 | sync | hylo-env-libero, `envs/libero/setup.sh` |
 | `libero-10-heldout` | LIBERO-10, RFC-0002 held-out init states 40-49 | 100 | sync | as above |
 | `libero-10-heldout-realtime` | as `libero-10-heldout` | 100 | realtime, virtual clock, 0.5 s per chunk | as above |
 
 ```bash
-uv run wc bench list
+uv run hylo bench list
 ```
 
 **mujoco-reach.** A planar two-link arm reaching a fixed and a random target in MuJoCo, 50 held-out seeds each. Fast
@@ -89,7 +94,7 @@ The LIBERO protocols run the simulator in its own venv through the `libero-sim` 
 Copy a built-in protocol and change what you measure:
 
 ```yaml
-schema_version: wc.protocol/v0.1
+schema_version: hylo.protocol/v0.1
 name: mujoco-table
 version: "1"
 description: |
@@ -99,22 +104,22 @@ env: {type: mujoco.table_reach}
 safety: {max_delta: 0.5}                     # as examples/configs/mujoco_table_memory.yaml
 trace: {record_privileged: true, image_every: 0}
 workers: 8
-requires: [wc-env-mujoco]
+requires: [hylo-env-mujoco]
 ```
 
 ```bash
-uv run wc bench show protocols/mujoco-table.yaml          # check the digest
-uv run wc bench run protocols/mujoco-table.yaml --policy composable.object_reach --name object-reach
+uv run hylo bench show protocols/mujoco-table.yaml          # check the digest
+uv run hylo bench run protocols/mujoco-table.yaml --policy composable.object_reach --name object-reach
 ```
 
 - Use a split that no campaign learns from or gates on (`heldout`) if improved policies will be scored.
 - Keep `workers` out of your reasoning about results: it changes speed, not the digest.
 - Bump `version` for any change to a measured field, and say what changed in `description`.
 
-To ship a protocol with wc-bench, add the YAML file to `packages/wc-bench/src/worldcurrent/bench/protocols/`.
+To ship a protocol with hylo-bench, add the YAML file to `packages/hylo-bench/src/hylo/bench/protocols/`.
 
 ## The test protocol
 
-`bench/packages/wc-bench/tests/testing-reach.yaml` runs the [test double](../developer-guide/contributing.md#test-doubles)
-(`testing.point_reach`). It exists for wc-bench's own unit tests and is not shipped: test doubles never produce
+`bench/packages/hylo-bench/tests/testing-reach.yaml` runs the [test double](../developer-guide/contributing.md#test-doubles)
+(`testing.point_reach`). It exists for hylo-bench's own unit tests and is not shipped: test doubles never produce
 published numbers.

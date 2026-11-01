@@ -5,7 +5,7 @@
 ```mermaid
 gantt
   dateFormat  YYYY-MM-DD
-  title worldcurrent roadmap (indicative)
+  title Hylo roadmap (indicative)
   section v0.1 Minimal credible loop
   Core + Safety + Remote          :a1, 2026-11-09, 4w
   MuJoCo task set + Bench          :a2, 2026-11-09, 6w

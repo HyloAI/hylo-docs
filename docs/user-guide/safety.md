@@ -62,10 +62,10 @@ Guard plugins from other packages work the same way. The plugins repository's `e
 fingertip near a target:
 
 ```bash
-cd plugins && uv run wc run examples/configs/mujoco_guarded.yaml
+cd plugins && uv run hylo run examples/configs/mujoco_guarded.yaml
 ```
 
-Write your own with `wc plugin new guard NAME` and check it with `wc plugin check guard NAME`; see
+Write your own with `hylo plugin new guard NAME` and check it with `hylo plugin check guard NAME`; see
 [extending](../harness/extending.md).
 
 ## Safety in campaigns

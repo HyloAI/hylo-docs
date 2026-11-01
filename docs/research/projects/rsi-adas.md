@@ -1,4 +1,4 @@
-# ADAS (Meta Agent Search) Source-Level Study, with an AFlow note, for worldcurrent RSI
+# ADAS (Meta Agent Search) Source-Level Study, with an AFlow note, for Hylo RSI
 
 - Repository: `references/evolution/ADAS` (ShengranHu/ADAS @ `2702bee`, 2025-01-27, Apache-2.0). The official repo for "Automated Design of Agentic Systems", ICLR 2025, arXiv 2408.08435 (`references/evolution/ADAS/README.md:8`). Repo and license were checked on the GitHub API (Apache-2.0, not a fork) before cloning.
 - AFlow appears only in the appendix and is labelled **\[Docs/Interface only\]**: its README and abstract were read, no code.
@@ -14,7 +14,7 @@ ADAS is the opposite end of the design space from GEPA:
 - **Proposer:** a "meta agent" (GPT-4o) that sees the **entire archive** of previously discovered agents with their validation fitness and writes the next one. It is told to be "interestingly new" and to "THINK OUTSIDE THE BOX" (`references/evolution/ADAS/_mgsm/mgsm_prompt.py:484-490`).
 - **Search policy:** none beyond "append everything and let the LLM read it". There is no parent selection, no population pruning, no acceptance test and no crossover operator. \[Implemented\]
 
-For worldcurrent the code is a **cautionary reference implementation**. The *ideas* (archive-as-context, self-critique before evaluation, a seed archive of hand-designed baselines, an error → debug retry loop) transfer. The *mechanism* (exec of LLM-written code inside the evaluator process) does not.
+For Hylo the code is a **cautionary reference implementation**. The *ideas* (archive-as-context, self-critique before evaluation, a seed archive of hand-designed baselines, an error → debug retry loop) transfer. The *mechanism* (exec of LLM-written code inside the evaluator process) does not.
 
 ## 2. Architecture
 
@@ -166,7 +166,7 @@ sequenceDiagram
   - `eval(res)`s the agent's string answer (`:407`).
   - `pickle.load`s the dataset (`:388`).
 - The README acknowledges this: "involves executing untrusted model-generated code … may still act destructively" (`references/evolution/ADAS/README.md:65-67`).
-- Implication for us: generated agent code could call the OpenAI client with arbitrary prompts or touch files. In a robotics harness it could also import the env, bypass the kernel loop, or monkey-patch the SafetyShield. Code-level candidates must stay forbidden until we have an out-of-process jail. Our current `check_protected_scope` already rejects `kind != "config_patch"` (wc-evolve `worldcurrent/evolve/candidate.py`).
+- Implication for us: generated agent code could call the OpenAI client with arbitrary prompts or touch files. In a robotics harness it could also import the env, bypass the kernel loop, or monkey-patch the SafetyShield. Code-level candidates must stay forbidden until we have an out-of-process jail. Our current `check_protected_scope` already rejects `kind != "config_patch"` (hylo-evolve `hylo/evolve/candidate.py`).
 
 ## 9. Dependencies, cost, license
 
@@ -194,7 +194,7 @@ sequenceDiagram
 4. Unbounded context growth, five copy-pasted loops, and global-flag mode switching. Also `n -= 1` (`references/evolution/ADAS/_mgsm/search.py:201`) and the DROP percentile bug (`references/evolution/ADAS/_drop/utils.py:284-285`).
 5. Inactive since January 2025 (last commit). Model names are pinned to 2024 OpenAI models (`references/evolution/ADAS/_mgsm/search.py:348-351`).
 
-## 11. What worldcurrent should adopt (concrete)
+## 11. What Hylo should adopt (concrete)
 
 1. **Archive-as-context for our LLM `CandidateGenerator`.** When proposing recovery-rule or reasoner-prompt text, include a compact table of prior candidates from the registry ledger: id, patch digest, short rationale, gate verdict with McNemar p, held-out delta, and *rejection reason*. Unlike ADAS, include rejected candidates and per-bucket failure counts from `diagnose()`, and cap the table (top-k by validation, plus the last k rejected) to bound context.
 2. **Two-turn self-critique before any rollout**, reusing ADAS's three checks:
@@ -205,7 +205,7 @@ sequenceDiagram
 3. **Seed archive.** Register hand-written baseline recovery strategies (retry-same, re-plan-subgoal, back-off-and-regrasp, abort) as `generation: initial` candidates. Every generated candidate is then compared against strong priors, not just the current active version.
 4. **Error → debug loop, scoped to text.** If a candidate fails schema validation or the protected-scope check, feed the exception text back for up to 2 retries (ADAS `debug_max`, `references/evolution/ADAS/_mgsm/search.py:204-222`). Count these retries in the budget, and do not repeat ADAS's `n -= 1` silent drop.
 5. **Keep code candidates out.** ADAS's code-level `forward()` search maps to "LLM writes the agent/reasoner policy". It must wait for an out-of-process runner with no network, no secrets, a read-only filesystem, a CPU/time rlimit, and a kernel-mediated action API, so the SafetyShield stays outside the candidate. Even then, generated code may only emit *plans or rule text to the kernel*, never call the env or VLA directly.
-6. **Keep and cite our gate.** The ADAS val→test table (§7) is the empirical justification for paired McNemar on a validation split that the *proposer never saw scores from*, plus held-out reporting with `used_for_selection: False` (already in wc-evolve `worldcurrent/evolve/loop.py`). Report fitness as numbers, not strings.
+6. **Keep and cite our gate.** The ADAS val→test table (§7) is the empirical justification for paired McNemar on a validation split that the *proposer never saw scores from*, plus held-out reporting with `used_for_selection: False` (already in hylo-evolve `hylo/evolve/loop.py`). Report fitness as numbers, not strings.
 
 **What transfers to physical RSI with a frozen VLA on LIBERO**
 
@@ -264,4 +264,4 @@ sequenceDiagram
   - its operator vocabulary is constrained, which narrows the search space;
   - it evaluates each candidate several times on validation.
   These are the same structural fixes our design already makes: a declarative candidate space, repeated paired evaluation, and lineage in the registry.
-- Takeaway for worldcurrent: an **operator vocabulary** is the useful idea. If we ever allow structured (non-free-code) recovery programs, define them as compositions of a fixed set of kernel-approved operators: retry, re-plan, re-perceive, back-off, abort. Have the LLM edit the composition, not arbitrary Python. That keeps the protected-scope and SafetyShield guarantees checkable statically.
+- Takeaway for Hylo: an **operator vocabulary** is the useful idea. If we ever allow structured (non-free-code) recovery programs, define them as compositions of a fixed set of kernel-approved operators: retry, re-plan, re-perceive, back-off, abort. Have the LLM edit the composition, not arbitrary Python. That keeps the protected-scope and SafetyShield guarantees checkable statically.

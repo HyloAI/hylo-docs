@@ -2,7 +2,7 @@
 
 > Subject: `references/evolution/openevolve` (algorithmicsuperintelligence/openevolve @ `bffd8c0`, 2026-10-30, package `0.4.0`, Apache-2.0). `codelion/openevolve` now returns HTTP 301 to this org repo (GitHub API repository id 984096689), so this is the official repo.
 > Method: static reading only (read / grep). Nothing was installed or run, and no LLM was called.
-> Audience: the `wc-evolve` improvement loop (`packages/wc-evolve/src/worldcurrent/evolve/{candidate,loop}.py`) and the RSI-on-LIBERO design.
+> Audience: the `hylo-evolve` improvement loop (`packages/hylo-evolve/src/hylo/evolve/{candidate,loop}.py`) and the RSI-on-LIBERO design.
 > Tags: **\[Implemented\]** traceable in code · **\[Docs/Interface only\]** config field or docs claim with no consuming code · **\[Unverified\]** code exists, but this study did not run it · **\[Needs model/hardware\]** needs LLM API or GPU
 
 ---
@@ -195,16 +195,16 @@ Key code: the main loop is `references/evolution/openevolve/openevolve/process_p
 | JSONL evolution trace, which is useful as RSI training data | Meta-prompt evolution, `distributed`, memory and CPU limits are config-only |
 | Pure-Python dependencies; Apache-2.0 | The determinism claim is overstated with multiple workers |
 
-## 11. What worldcurrent should adopt (concrete)
+## 11. What Hylo should adopt (concrete)
 
-The context is the frozen SmolVLA policy on LIBERO. The evolvable surface is **critic/recovery rules or controller wrapper code**, never the SafetyShield, scorers or trace (these already sit under `PROTECTED_PREFIXES`, `packages/wc-evolve/src/worldcurrent/evolve/candidate.py:24`).
+The context is the frozen SmolVLA policy on LIBERO. The evolvable surface is **critic/recovery rules or controller wrapper code**, never the SafetyShield, scorers or trace (these already sit under `PROTECTED_PREFIXES`, `packages/hylo-evolve/src/hylo/evolve/candidate.py:24`).
 
 1. **Adopt the cascade, but as sequential statistics, not fixed thresholds.**
    - Stage 1 is a smoke rollout: one seed on 2–3 train tasks. It checks that the code imports, that the SafetyShield sees no new intervention types, and that the run finishes within the step budget.
    - Stage 2 is a small paired batch on the train split.
    - Stage 3 is the existing McNemar gate on the validation split.
 
-   Score a candidate only on the stage it fully completed, and store `stage_reached` as a separate field. Do not reuse one `combined_score` the way OpenEvolve does (`evaluator.py:531-647`). The `gate()` at `packages/wc-evolve/src/worldcurrent/evolve/loop.py:93` stays the final stage.
+   Score a candidate only on the stage it fully completed, and store `stage_reached` as a separate field. Do not reuse one `combined_score` the way OpenEvolve does (`evaluator.py:531-647`). The `gate()` at `packages/hylo-evolve/src/hylo/evolve/loop.py:93` stays the final stage.
 2. **Adopt the artifacts channel as the "diagnosis → prompt" bridge.** Our `FailureReport` and trace excerpts (failure step, shield intervention, task id) play the role of `EvaluationResult.artifacts`. Cap and redact them as OpenEvolve does (`prompt/sampler.py:657-746`).
 3. **Adopt EVOLVE-BLOCK with rejection rather than silent revert.** For `kind="critic_rule"/"recovery_rule"/"code"`, the editable region is a marked function in a template module. A candidate touching anything outside the region fails the protected-scope check. This is stricter than OpenEvolve's default-off revert (`process_parallel.py:371-391`).
 4. **Adopt islands + MAP-Elites only with physical behaviour descriptors.** Useful axes are failure-mode class, mean episode length and shield-intervention rate, rather than code length. Keep `PopulationStrategy`-style pure hooks over frozen snapshots so that the kernel owns every mutation of the archive.

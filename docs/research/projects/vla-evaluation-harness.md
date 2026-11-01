@@ -318,7 +318,7 @@ Config inheritance: `extends:` + OmegaConf merge + `${oc.env:VAR,default}` (`ref
 - **Per-benchmark simulation environment wrappers and Docker images**: use its images + a protocol-compatible client/server to run baselines; do not rebuild LIBERO/SimplerEnv/CALVIN environments ourselves. \[Needs model/hardware\]
 - **Inference servers for mainstream VLAs** (OpenVLA, π0/π0.5, GR00T, X-VLA, CogACT, LeRobot bridge): each has already hit the preprocessing pitfalls (JPEG roundtrip, center crop, unnorm_key, gripper sign), with reproduction reports in `docs/reproductions/`. We only need protocol compatibility to call them. \[Needs model/hardware\][Unverified]
 - **Literature leaderboard**: sufficient as external reference data; not worth building our own extraction pipeline.
-- **No need to reuse / should build ourselves**: its Orchestrator and runner (single policy, benchmark owns the loop, no reasoning/memory hooks), weakly typed dict contract, warning-only spec validation, action chunk ensemble (defective) - `worldcurrent` needs an explicit typed contract, a pluggable agent layer (reasoning/memory/self-improve) and trace-based recording; these should be rewritten in our own harness, then made backward compatible with this project via a protocol adapter.
+- **No need to reuse / should build ourselves**: its Orchestrator and runner (single policy, benchmark owns the loop, no reasoning/memory hooks), weakly typed dict contract, warning-only spec validation, action chunk ensemble (defective) - `Hylo` needs an explicit typed contract, a pluggable agent layer (reasoning/memory/self-improve) and trace-based recording; these should be rewritten in our own harness, then made backward compatible with this project via a protocol adapter.
 
 ---
 

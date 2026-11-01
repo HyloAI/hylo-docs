@@ -7,14 +7,14 @@ the other two from the user's side.
 
 ## Experiment configs
 
-::: worldcurrent.core.config
+::: hylo.core.config
     options:
       heading_level: 3
       show_if_no_docstring: true
 
 ## Execution profiles
 
-::: worldcurrent.core.profile
+::: hylo.core.profile
     options:
       heading_level: 3
       show_if_no_docstring: true
@@ -22,14 +22,14 @@ the other two from the user's side.
 
 ## Contract versions and plugin metadata
 
-::: worldcurrent.core.plugins
+::: hylo.core.plugins
     options:
       heading_level: 3
       show_if_no_docstring: true
 
 ## Plugin registry
 
-::: worldcurrent.core.registry
+::: hylo.core.registry
     options:
       heading_level: 3
       show_if_no_docstring: true

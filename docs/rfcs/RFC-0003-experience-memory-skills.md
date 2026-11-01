@@ -35,17 +35,17 @@ memory modules inside the policy (OnEvoMemory-style cross-attention).
 ## 3. Module map
 
 ```
-wc-core        core/experience.py      contracts + protocols (no implementation)
+hylo-core        core/experience.py      contracts + protocols (no implementation)
                  ActionSegment, ActionMemory, Lesson, LessonBook, Skill, SkillLibrary, PriorSampler
-wc-memory      memory/action_bank.py   numpy cosine bank, FIFO cap, npz snapshot + digest
+hylo-memory      memory/action_bank.py   numpy cosine bank, FIFO cap, npz snapshot + digest
                memory/lessons.py       lesson book over MemoryStore (SEMANTIC items): ADD/UPVOTE/DOWNVOTE/EDIT/RETIRE
                memory/skills.py        directory library (JSON + digest), lifecycle, trigger matching, SKILL.md export
-wc-agents      agents/memory_steer.py  retrieval -> DTW filter -> elite prior -> confidence -> t0 (policy-agnostic)
+hylo-agents      agents/memory_steer.py  retrieval -> DTW filter -> elite prior -> confidence -> t0 (policy-agnostic)
                agents/skills.py        SkillAgent: pick a verified skill at reset, apply its body to the inner agent
                agents/planner.py       (existing) planner gets retrieved lessons + plan skills via a provider
-wc-policy-*    lerobot/prior_sampler.py  PriorSampler: flow integration from x_t0 = (1-t0) prior + t0 eps
-wc-reasoner-llm llm/reflector.py       LLM extracts lessons from traces (contrastive same-state pairs)
-wc-evolve      evolve/experience.py    builders + proposers: ActionMemoryProposer (L1), LessonCurator (per cycle),
+hylo-policy-*    lerobot/prior_sampler.py  PriorSampler: flow integration from x_t0 = (1-t0) prior + t0 eps
+hylo-reasoner-llm llm/reflector.py       LLM extracts lessons from traces (contrastive same-state pairs)
+hylo-evolve      evolve/experience.py    builders + proposers: ActionMemoryProposer (L1), LessonCurator (per cycle),
                                         SkillPromoter (on promotion), skill/lesson counters from gate verdicts
 ```
 
@@ -53,7 +53,7 @@ Layering is unchanged: core defines contracts; memory implements stores; agents 
 adapters implement `PriorSampler`; evolve and reasoner-llm write. New plugin groups are not needed: stores are
 `memory` plugins, writers are `generators`.
 
-## 4. Contracts (wc-core, sketch)
+## 4. Contracts (hylo-core, sketch)
 
 ```python
 class ActionSegment(Contract):        # one verified decision point
@@ -104,7 +104,7 @@ All layers are optional and configured as data, e.g.
 agent:
   type: remote
   params:
-    ref: worldcurrent.policies.lerobot.experience_agent:make_experience_agent
+    ref: hylo.policies.lerobot.experience_agent:make_experience_agent
     params:
       repo_id: lerobot/smolvla_libero
       steering: {n_samples: 1, execution_steps: 25}

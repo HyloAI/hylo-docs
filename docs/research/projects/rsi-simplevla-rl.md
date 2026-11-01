@@ -9,7 +9,7 @@
 
 ## 1. Positioning
 
-SimpleVLA-RL is a **minimal GRPO recipe for autoregressive (token) VLAs**: OpenVLA and OpenVLA-OFT with discrete action bins, on LIBERO and RoboTwin. It is built by bolting a robot rollout onto veRL's single-controller PPO trainer. Its value to worldcurrent is as a **reference recipe**, not as a framework:
+SimpleVLA-RL is a **minimal GRPO recipe for autoregressive (token) VLAs**: OpenVLA and OpenVLA-OFT with discrete action bins, on LIBERO and RoboTwin. It is built by bolting a robot rollout onto veRL's single-controller PPO trainer. Its value to Hylo is as a **reference recipe**, not as a framework:
 
 - Binary outcome reward (`complete` flag from the simulator).
 - GRPO with n=8 samples per initial state.
@@ -143,20 +143,20 @@ Weaknesses / risks
 - **No held-out init states.** No optimizer checkpointing (no exact resume). WandB API key in `align.json`.
 - `kl_coef=0`: unconstrained drift from SFT. Fine for a benchmark, risky for a promote/rollback loop that guards other tasks.
 
-## 11. What worldcurrent should adopt (concrete)
+## 11. What Hylo should adopt (concrete)
 
 **Adopt as recipe (algorithmic protocol):** GRPO on (task, init-state) groups of 8; binary success reward; dynamic sampling [0.1, 0.9]; asymmetric clip 0.2/0.28; small constant LR; greedy evaluation.
 **Adopt as pattern:** "prompt = (task_id, init_state_id)" as the unit of grouping and of dataset splitting. Our EnvServer already resets by task, so we add `init_state_id`.
 **Avoid:** veRL fork; per-trajectory process spawning (our EnvServer pool is better); train = eval init states; zero KL.
 
-### 11.1 Minimal weight-level RSI on worldcurrent (SmolVLA, 3 LIBERO tasks)
+### 11.1 Minimal weight-level RSI on Hylo (SmolVLA, 3 LIBERO tasks)
 
 Combine **SimpleVLA-RL's recipe** with **RLinf's flow-SDE log-prob** (`rsi-rlinf.md` §5).
 1. **Splits.** Per task, the 50 LIBERO init states become 30 train / 10 validation / 10 held-out ids, frozen in a manifest whose digest goes into candidate `evidence`. Pick 3 tasks where SFT SmolVLA succeeds 20–80% on the train ids (measure first with our harness).
 2. **Policy wrapper.** `SmolVLAPolicyRL` around LeRobot SmolVLA. In `mode=train`, run `embed_prefix` + KV once (`modeling_smolvla.py:797-809`). Then run the 10 Euler steps, with **one random step stochastic** via `sample_mean_var(noise_method="flow_sde", noise_level≈0.5)`, and return actions, the chunk-level Gaussian log-prob over executed chunk × 7 dims, and `forward_inputs = {chain, idx, obs refs}`. Freeze the VLM and train only the action expert (SmolVLA default `train_expert_only=True`, `configuration_smolvla.py:69-70`).
 3. **Rollout.** EnvServer pool of 64 CPU workers. 3 tasks × 6 train init states × group 8 = **144 episodes per iteration**. Execute 10 actions per chunk, render only at chunk boundaries (RLinf `skip_intermediate_renders`), max ~300 steps. Write every episode as a replayable trace that includes `forward_inputs`.
 4. **Learner.** GRPO advantage per group, drop all-0/all-1 groups, PPO clip 0.2/0.28, 2 epochs. Add a **KL term to the frozen SFT expert** at the same denoise step (closed form between two Gaussians with equal σ). It costs one extra suffix forward and limits drift on non-target tasks.
-5. **Candidate.** Every N iterations, export safetensors → `Candidate(kind="policy_ref", patch={"agent.policy.ref": "<digest>"})`. Then run the existing gate: validation ids, paired McNemar, per-task regression including a few *non-trained* LIBERO tasks as a regression suite, and safety-intervention delta. Then held-out confirmation, then promote or roll back. Needs `policy_ref` added to `ENABLED_KINDS` (`packages/wc-evolve/src/worldcurrent/evolve/candidate.py:31`).
+5. **Candidate.** Every N iterations, export safetensors → `Candidate(kind="policy_ref", patch={"agent.policy.ref": "<digest>"})`. Then run the existing gate: validation ids, paired McNemar, per-task regression including a few *non-trained* LIBERO tasks as a regression suite, and safety-intervention delta. Then held-out confirmation, then promote or roll back. Needs `policy_ref` added to `ENABLED_KINDS` (`packages/hylo-evolve/src/hylo/evolve/candidate.py:31`).
 6. **Statistics.** With 10 validation states × 3 tasks = 30 pairs, McNemar can only detect large effects. Evaluate each state with several seeds (stochastic SDE sampling or env noise), or add LIBERO-Plus perturbations of the validation states to get ≥150 pairs.
 
 **Compute estimate on this machine.** All figures are estimates; nothing has been measured. Run a 1-iteration timing spike first.

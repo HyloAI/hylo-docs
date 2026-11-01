@@ -1,8 +1,8 @@
 # Cross-Project Concept Map
 
-> The same concept goes by different names in different projects. This table is a "translation table" for reading the source reports and design documents; the worldcurrent column is our naming.
+> The same concept goes by different names in different projects. This table is a "translation table" for reading the source reports and design documents; the Hylo column is our naming.
 
-| worldcurrent | vla-eval | inspect-robots | RPent / Zetta | XPolicyLab | LeRobot | openpi | ManiSkill | LIBERO | RoboCasa |
+| Hylo | vla-eval | inspect-robots | RPent / Zetta | XPolicyLab | LeRobot | openpi | ManiSkill | LIBERO | RoboCasa |
 |---|---|---|---|---|---|---|---|---|---|
 | `Environment` | `Benchmark` / `StepBenchmark` | `Embodiment` | env RPC facade / `EnvExecutionCore` | (RoboDojo, external) | gym env (`lerobot.envs`) | example `Environment` (openpi-client runtime) | `BaseEnv` | `OffScreenRenderEnv` | `Kitchen` + gym wrapper |
 | `EnvSpec.capabilities` | `render_backends`, metadata | `EmbodimentInfo.capabilities` | `EnvFamilyCapability` | — | — | — | — | — | — |
@@ -39,7 +39,7 @@ quadrantChart
   LeRobot eval: [0.6, 0.15]
   RPent: [0.85, 0.85]
   Zetta: [0.75, 0.7]
-  worldcurrent: [0.8, 0.5]
+  Hylo: [0.8, 0.5]
 ```
 
-worldcurrent's position: the Kernel owns the loop (right side), with the intelligence axis centered — it can host either pure VLA or LLM + skills, depending on how the `Agent` is composed.
+Hylo's position: the Kernel owns the loop (right side), with the intelligence axis centered — it can host either pure VLA or LLM + skills, depending on how the `Agent` is composed.

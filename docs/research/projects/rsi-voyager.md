@@ -2,7 +2,7 @@
 
 > Subject: `references/evolution/Voyager` (MineDojo/Voyager @ `55e45a8`, 2023-07-27, MIT, `setup.py` version `0.1`)
 > Method: static reading only (read / grep / `python3 -I` JSON counting). Nothing was installed, no Minecraft server, Node process or LLM was started. Clone is shallow, so the commit count is not visible.
-> Audience: the Evolution (RSI) layer of `worldcurrent`, read alongside `zetta-embodiment.md` and `memory-landscape.md` §6 (ASPIRE)
+> Audience: the Evolution (RSI) layer of `Hylo`, read alongside `zetta-embodiment.md` and `memory-landscape.md` §6 (ASPIRE)
 > Tags: **\[Implemented\]** traceable in code · **\[Docs/Interface only\]** only docs/prompt text · **\[Unverified\]** code exists but we did not run it · **\[Needs model/hardware\]** needs GPT-4, Minecraft, GPU or a robot
 
 ---
@@ -177,9 +177,9 @@ Loop facts with citations:
 - Raw `eval` of LLM code next to a robot driver is unacceptable. Voyager gets away with it because a Minecraft death costs nothing.
 - Environment "helpers" (teleport, `/give`) hide failure modes. Our equivalents are privileged resets and privileged state in LIBERO, which `zetta-embodiment.md` §0 already flags.
 
-## 11. What worldcurrent should adopt (concrete)
+## 11. What Hylo should adopt (concrete)
 
-Context: frozen SmolVLA on LIBERO (CPU), a kernel-owned loop, `SafetyShield`, and the offline loop in `packages/wc-evolve/src/worldcurrent/evolve/loop.py`. `ENABLED_KINDS={"config_patch"}` (`candidate.py:31`); `kind="skill"` exists but is disabled (RFC-0001 D5).
+Context: frozen SmolVLA on LIBERO (CPU), a kernel-owned loop, `SafetyShield`, and the offline loop in `packages/hylo-evolve/src/hylo/evolve/loop.py`. `ENABLED_KINDS={"config_patch"}` (`candidate.py:31`); `kind="skill"` exists but is disabled (RFC-0001 D5).
 
 1. **Skill = declarative composition over a frozen primitive catalog, not free code.** Use Voyager's shape (named, described, retrievable, composable units), but make the body a typed `SkillPlan` (a sequence of `{primitive, args, precondition, postcondition, timeout}` steps). Primitives are `vla_chunk(instruction)`, `move_to(pose)`, `gripper(open|close)`, `retreat`, and so on, all running through the kernel and `SafetyShield`. This enables `kind="skill"` without the isolation runtime D5 requires. It is the same stance as Zetta's bundles and ASPIRE's `_ProgramValidator`.
 2. **Primitive soft-failure counters and structured error text.** Every primitive returns `{ok, reason, progress_delta}`. A per-episode counter (Voyager's `>10` throw) becomes a typed `NoProgress` event in the trace. The generator prompt then gets "error at step k of plan: reason". This is a cheap copy of `index.js:338-398`.

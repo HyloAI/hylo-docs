@@ -1,4 +1,4 @@
-# worldcurrent Architecture Design
+# Hylo Architecture Design
 
 > Status: Draft v0.1 (2026-10-30) | Related: `rfcs/RFC-0001.md`, `../research/comparisons/technology-gap-analysis.md`
 > The interfaces have been validated as runnable code in an interface prototype (38 tests passing; superseded by the packages and removed on 2026-10-31, still in the git history); every part marked **[Validated in prototype]** has a corresponding implementation and tests.
@@ -7,12 +7,12 @@
 
 | Goal | Design response |
 |---|---|
-| Lightweight Harness core | `wc-core` depends only on numpy + pydantic + pyyaml; core is about 1.3k lines |
+| Lightweight Harness core | `hylo-core` depends only on numpy + pydantic + pyyaml; core is about 1.3k lines |
 | No mandatory dependency on any Simulator | Environment is a protocol; MuJoCo and others are provided as adapter packages, lazily imported; environments with heavy dependencies run out-of-process via EnvServer |
 | Not tied to any LLM or VLA | The Kernel only knows `Agent`; Reasoner/Policy/WorldModel are internal components of the Agent |
 | Reasoning, Memory and RSI independently replaceable | Each is a separate package + protocol; they interact with each other only through core contracts and the Trace |
 | Benchmark scoring independent of the Agent | Scorer **reads Trace only** **[Validated in prototype]** |
-| Testable without a simulator | a test double (`worldcurrent.testing`, `testing.*` plugins) for unit and conformance tests only; every example, protocol and campaign runs on a real simulator (MuJoCo, LIBERO) |
+| Testable without a simulator | a test double (`hylo.testing`, `testing.*` plugins) for unit and conformance tests only; every example, protocol and campaign runs on a real simulator (MuJoCo, LIBERO) |
 | Versioned experiment config, reproducible | `ExperimentConfig` (schema_version + digest) + RunManifest + Benchmark digest + seed partitioning **[Validated in prototype]** |
 | Compatible with existing open-source interfaces | openpi WS protocol, vla-eval protocol, LeRobotDataset v3, inspect-style EvalLog |
 
@@ -26,7 +26,7 @@
 
 ```mermaid
 flowchart TB
-  subgraph EVO[Evolution Layer · wc-evolve]
+  subgraph EVO[Evolution Layer · hylo-evolve]
     DIAG[Failure Analysis] --> GEN[Candidate Generation]
     GEN --> CHK[Protected-scope & static checks]
     CHK --> SHD[Shadow Replay]
@@ -35,14 +35,14 @@ flowchart TB
     REFL[Reflection] --> GEN
   end
 
-  subgraph BENCH[Benchmark Layer · wc-eval]
+  subgraph BENCH[Benchmark Layer · hylo-eval]
     BM[Benchmark<br/>TaskSpecs + splits + seeds]
     RUN[Evaluation Runner<br/>queue · shards · resume]
     SC[Scorers / Graders<br/>read Trace only]
     EL[(EvalLog)]
   end
 
-  subgraph CORE[Harness Core · wc-core]
+  subgraph CORE[Harness Core · hylo-core]
     K[Execution Kernel<br/>EpisodeRunner · ChunkExecutor]
     SH[SafetyShield]
     BUS[Event Bus]
@@ -52,7 +52,7 @@ flowchart TB
     RPC[Remote protocol<br/>EnvServer / PolicyServer]
   end
 
-  subgraph INT[Intelligence Layer · wc-agents]
+  subgraph INT[Intelligence Layer · hylo-agents]
     AG[Agent]
     RS[Reasoner]
     PL[Planner]
@@ -60,7 +60,7 @@ flowchart TB
     WMOD[World Model]
   end
 
-  subgraph MEM[Memory Layer · wc-memory]
+  subgraph MEM[Memory Layer · hylo-memory]
     WMEM[Working]
     EPI[Episodic]
     SPA[Spatial]
@@ -98,29 +98,29 @@ layering inside and across them is enforced by `harness/dev/test_boundaries.py`:
 
 | Repository | Package | Role | May depend on |
 |---|---|---|---|
-| harness | wc-core | contracts (incl. the policy contract `core.policy`), kernel, SafetyShield, trace, registry, remote protocols and wire codec, artifact provenance + split guard, conformance kit, every cross-repository format (active version, scorecard, workcell API), the `wc` dispatcher | - |
-| harness | wc-eval | evaluation engine: benchmark contract, splits and seeds, evaluation runner, scorers, paired statistics and gate tests | core |
-| harness | wc-agents | runtime only: steering, memory / critic / noise steering, skills, planner, judges, world-model environment, shadow agent | core |
-| harness | wc-memory | action / noise banks, skill library, lesson book | core |
-| harness | wc-policies | reference policies, one per family (kNN, BC, flow matching, tokens, MPC) and their learners | core, agents |
-| harness | wc-learn | offline: learner jobs, calibration and labelling, external-data ingestion, learners for runtime components | core, eval, agents |
-| harness | wc-evolve | improvement protocol (cascade, gate, registry, campaigns, active.json, prescreen, shadow config) and rule / learning proposers | core, eval, learn |
-| harness | wc-catalog | read-only query API over runs, episodes, comparisons, campaigns, artifacts, skills, lessons, memories | core, eval |
-| harness | worldcurrent-cli | the harness's `wc` subcommands (run, evolve, learn, calibrate, ...) | core, eval, agents, memory, evolve, learn |
+| harness | hylo-core | contracts (incl. the policy contract `core.policy`), kernel, SafetyShield, trace, registry, remote protocols and wire codec, artifact provenance + split guard, conformance kit, every cross-repository format (active version, scorecard, workcell API), the `hylo` dispatcher | - |
+| harness | hylo-eval | evaluation engine: benchmark contract, splits and seeds, evaluation runner, scorers, paired statistics and gate tests | core |
+| harness | hylo-agents | runtime only: steering, memory / critic / noise steering, skills, planner, judges, world-model environment, shadow agent | core |
+| harness | hylo-memory | action / noise banks, skill library, lesson book | core |
+| harness | hylo-policies | reference policies, one per family (kNN, BC, flow matching, tokens, MPC) and their learners | core, agents |
+| harness | hylo-learn | offline: learner jobs, calibration and labelling, external-data ingestion, learners for runtime components | core, eval, agents |
+| harness | hylo-evolve | improvement protocol (cascade, gate, registry, campaigns, active.json, prescreen, shadow config) and rule / learning proposers | core, eval, learn |
+| harness | hylo-catalog | read-only query API over runs, episodes, comparisons, campaigns, artifacts, skills, lessons, memories | core, eval |
+| harness | hylo-cli | the harness's `hylo` subcommands (run, evolve, learn, calibrate, ...) | core, eval, agents, memory, evolve, learn |
 | harness | adapters | policy-lerobot, policy-openpi, reasoner-llm (runtime LLM / VLM), proposer-llm (evolve-time LLM proposer and reflector), data-video | core and the layer they plug into |
-| bench | wc-bench | protocols, scorecards, leaderboards, pairwise comparison (`wc bench`) | core, eval |
+| bench | hylo-bench | protocols, scorecards, leaderboards, pairwise comparison (`hylo bench`) | core, eval |
 | bench | env-libero, env-mujoco | benchmark suites and their environments | core, eval |
-| serve | wc-serve | policy server (/wc + openpi protocols), real-time runner, workcell service (`wc serve`) | core |
+| serve | hylo-serve | policy server (/wc + openpi protocols), real-time runner, workcell service (`hylo serve`) | core |
 | serve | env-lerobot-robot | real robots through LeRobot's Robot interface, a simulated arm | core |
-| studio | wc-playground | web backend and control plane (`wc playground`); React front end in `web/` | core, eval, catalog |
-| plugins | wc-plugin-examples | a guard, gate tests and an online learner, written as a third party would | core, eval, learn |
+| studio | hylo-playground | web backend and control plane (`hylo playground`); React front end in `web/` | core, eval, catalog |
+| plugins | hylo-plugin-examples | a guard, gate tests and an online learner, written as a third party would | core, eval, learn |
 
 Cross-package component references are registered plugin names (resolved in whichever venv runs the component),
-never hard-coded module paths. Across repositories, components meet only through formats defined in wc-core.
+never hard-coded module paths. Across repositories, components meet only through formats defined in hylo-core.
 
 ## 3. Responsibilities and boundaries of each layer
 
-### 3.1 Harness Core (`wc-core`)
+### 3.1 Harness Core (`hylo-core`)
 
 | Module | Responsibility | Prototype location |
 |---|---|---|
@@ -148,12 +148,12 @@ Environment = Simulator + Task logic. Three run locations:
 
 Privileged state (ground-truth poses, etc.) enters only the Trace via `PrivilegedStateSource` for use by the Scorer/diagnostics, and is **never passed to the Agent** **[Validated in prototype]**.
 
-### 3.3 Benchmark Layer (`wc-eval`)
+### 3.3 Benchmark Layer (`hylo-eval`)
 
 Benchmark (versioned TaskSpec set + protocol) → EvaluationRunner → Kernel → Trace → Scorer → EvalLog.
 The `train / validation / heldout` three-way split is a first-class concept, and seeds must not be reused across splits (checked at construction) **[Validated in prototype]**.
 
-### 3.4 Intelligence Layer (`wc-agents`)
+### 3.4 Intelligence Layer (`hylo-agents`)
 
 The Kernel only calls `Agent.reset/act/on_step/on_episode_end`. The reference implementation `ComposableAgent` composes:
 - **Reasoner** (slow, event-triggered) → `Decision` (subgoal/skill/abort)
@@ -163,13 +163,13 @@ The Kernel only calls `Agent.reset/act/on_step/on_episode_end`. The reference im
 
 Decisions and Memory retrievals enter the Trace via `ctx.emit()` **[Validated in prototype]**.
 
-### 3.5 Memory Layer (`wc-memory`)
+### 3.5 Memory Layer (`hylo-memory`)
 
 A unified `MemoryItem` (time intervals and poses with frame_id as first-class fields; bi-temporal invalidation semantics) + the `MemoryStore` protocol (write/query/forget/snapshot).
 Prototype implementation: bounded WorkingMemory + SQLite episodic/spatial store (radius queries, `as_of` time travel, key invalidation, dedup) **[Validated in prototype]**.
 Production backends (Spark-DSG, mem0, Graphiti) plug in through adapter packages.
 
-### 3.6 Evolution Layer (`wc-evolve`)
+### 3.6 Evolution Layer (`hylo-evolve`)
 
 Offline loop: Execute(train) → Diagnose → Generate → Protected-scope check → (Shadow replay) → Validate(validation, paired McNemar + regression + safety) → Held-out(report only) → Promote(requires approval) / Rollback.
 **[Validated in prototype]**: an adversarial candidate (attempting to loosen `safety.max_delta`) is rejected; a gain candidate passes validation and is promoted; held-out is marked `used_for_selection=false`; rollback restores the parent version and writes to the ledger.
@@ -179,7 +179,7 @@ Offline loop: Execute(train) → Diagnose → Generate → Protected-scope check
 The trace store is the single source of truth; everything learned from it (action memory, critics, value models,
 fine-tuned weights, datasets, judges) is a sealed **derived artifact**: a directory with an `artifact.json` manifest
 (kind, role, content digest, provenance: which runs and splits, which builder). Learners (`learners` plugin group)
-run anywhere wc-learn is installed (`python -m worldcurrent.learn.jobs job.json`) and seal their output.
+run anywhere hylo-learn is installed (`python -m hylo.learn.jobs job.json`) and seal their output.
 Artifacts have one of three roles with separate trust paths:
 
 | Role | Changes | Trusted through |
@@ -203,9 +203,9 @@ Three roles that can run on one laptop or on three machines:
 
 | Role | Runs | Owns | Talks |
 |---|---|---|---|
-| policy server (`wc serve policy`) | GPU machine | any agent, or a campaign's active version (rebuilt between sessions after promotion / rollback) | `/wc` (worldcurrent agent protocol; incompatible env refused at reset) and `/openpi` (openpi msgpack protocol, so DROID / RoboArena / openpi clients can run our agents); one session at a time |
-| workcell (`wc serve workcell`) | next to the robot | the environment (simulator or robot adapter), SafetyShield, real-time runner, trace | HTTP `/status`, `/episodes`, `/operator`; WS `/events` |
-| control plane (`wc-playground --workcell ... --policy ...`) | anywhere | nothing that moves: starts episodes, relays operator events and live streams, roles (viewer / operator / approver) | browser and CLI |
+| policy server (`hylo serve policy`) | GPU machine | any agent, or a campaign's active version (rebuilt between sessions after promotion / rollback) | `/hylo` (Hylo agent protocol; incompatible env refused at reset) and `/openpi` (openpi msgpack protocol, so DROID / RoboArena / openpi clients can run our agents); one session at a time |
+| workcell (`hylo serve workcell`) | next to the robot | the environment (simulator or robot adapter), SafetyShield, real-time runner, trace | HTTP `/status`, `/episodes`, `/operator`; WS `/events` |
+| control plane (`hylo-playground --workcell ... --policy ...`) | anywhere | nothing that moves: starts episodes, relays operator events and live streams, roles (viewer / operator / approver) | browser and CLI |
 
 The real-time runner (core's episode loop in `realtime` timing, RFC-0005; the same loop benchmarks run) keeps the
 robot moving while the policy computes: an action queue with aligned merge (actions

@@ -43,7 +43,7 @@ flowchart LR
 | Error handling | `EpisodeError.phase` classification (env_start/env_step/model_act) \[Implemented\] | `PolicyError`/`EmbodimentFault`/`SafetyAbort` + `exc.record` preserves partial records \[Implemented\] | Errors returned to the LLM as data | infra_invalid not scored \[Implemented\] | Not unified |
 | Retry | Queue-level rerun | `retry_attempts` is a stub \[Docs/Interface only\] | No retry | Gate rerun | Deduplicated replay |
 
-**Conclusion**: Each of the three loop ownership models has its own domain of applicability: batch VLA evaluation suits benchmark-driven (performance, isolation); safety and observability require framework-driven (every action passes through the same checkpoint); long-horizon tasks require LLM-driven (skills as tools). **In worldcurrent the Kernel should own the loop**, while also offering a "Served mode" (see §4), and treat the LLM-turn loop as one Reasoner implementation inside the Agent rather than as the harness itself.
+**Conclusion**: Each of the three loop ownership models has its own domain of applicability: batch VLA evaluation suits benchmark-driven (performance, isolation); safety and observability require framework-driven (every action passes through the same checkpoint); long-horizon tasks require LLM-driven (skills as tools). **In Hylo the Kernel should own the loop**, while also offering a "Served mode" (see §4), and treat the LLM-turn loop as one Reasoner implementation inside the Agent rather than as the harness itself.
 
 ### 2.2 Simulator / Benchmark plugin architecture
 
@@ -116,12 +116,12 @@ flowchart LR
 | Critic DSL / shadow replay / McNemar gate / campaign state machine | Zetta `zetta/evolution/` | Borrow schema, rewrite implementation | Apache-2.0 (must retain RPent/RLinf attribution) |
 | rollout state machine + idempotent enqueue | agent-lightning | Borrow pattern | MIT |
 
-## 4. Key judgment: loop ownership in worldcurrent
+## 4. Key judgment: loop ownership in Hylo
 
 **Decision: the Kernel owns the loop (Driven mode), while also supporting Served mode.**
 
 - **Driven mode (default)**: `EpisodeRunner` calls `env.reset → agent.act → SafetyShield → env.step`. The environment can be in-process (MuJoCo, or the test double in unit tests) or a remote `EnvServer` (LIBERO, RoboCasa each in their own venv). Every action passes through the same safety checkpoint and the same trace write point.
-- **Served mode (compatibility)**: Wrap the worldcurrent `Agent` as a **vla-eval ModelServer**, with vla-eval's benchmark containers driving the loop. The cost is losing step-level env control (cannot inject perturbations, cannot read privileged state), but we **get its 20 benchmarks at zero cost**. Trace is still recorded at the agent boundary, and SafetyShield still runs at the agent output.
+- **Served mode (compatibility)**: Wrap the Hylo `Agent` as a **vla-eval ModelServer**, with vla-eval's benchmark containers driving the loop. The cost is losing step-level env control (cannot inject perturbations, cannot read privileged state), but we **get its 20 benchmarks at zero cost**. Trace is still recorded at the agent boundary, and SafetyShield still runs at the agent output.
 
 This design means we do not have to choose between "reusing the ecosystem" and "owning control". See `design/execution-lifecycle.md` for details.
 

@@ -2,7 +2,7 @@
 
 > Subject: `references/evolution/agent-lightning` (microsoft/agent-lightning @ `05c7fe1`, package version `1.0.2`, MIT)
 > Method: static reading only (read / grep / `python3 -I` ast); no dependencies were installed, and no tests or training were run
-> Audience: the Evolution Layer and Tracing design of `worldcurrent`, and cross-project comparison
+> Audience: the Evolution Layer and Tracing design of `Hylo`, and cross-project comparison
 > Tags: **\[Implemented\]** traceable in code · **\[Docs/Interface only\]** only documentation or abstract interfaces · **\[Unverified\]** code exists, but this study did not run it to verify · **\[Needs model/hardware\]** needs GPU or weights
 
 ---
@@ -272,7 +272,7 @@ Key points:
 
 | Component | Reuse approach | Rationale |
 |---|---|---|
-| **Zero-intrusion tracing pattern of "rollout_id embedded in the proxy URL"** | **Pattern**, implement ourselves | The lowest-cost tracing method for LLM/VLM reasoning modules (planner, reflector); `worldcurrent`'s Reasoning layer can capture uniformly at the model gateway layer without changing agents. |
+| **Zero-intrusion tracing pattern of "rollout_id embedded in the proxy URL"** | **Pattern**, implement ourselves | The lowest-cost tracing method for LLM/VLM reasoning modules (planner, reflector); `Hylo`'s Reasoning layer can capture uniformly at the model gateway layer without changing agents. |
 | **Open `Event{event_type, rollout_id, attempt_id, timestamp, data}` schema + "two well-known types + pass through the rest"** | **Borrow the protocol** | The same event stream can hold custom types such as `observation` / `action` / `reasoning` / `memory_retrieval` (passed through as-is at `server/routes/events.py:196-197`). We need to add: event id, step index, parent span, binary blob references (images/point clouds), persistence. |
 | **Rollout state machine + idempotent enqueue + terminal-state cursor pagination** | **Borrow the design directly** (about 200 lines of code, can be rewritten) | `VALID_TRANSITIONS` plus 409, client-pre-allocated ids, append-only `_terminal_order` cursor (`server/routes/rollouts.py:143-171`) — suitable for our episode queue and eval queue. |
 | **Reconciler pattern (Local subprocess / K8s Job + Jinja2 templates)** | **Pattern**; the K8s Job template rendering can serve as reference | Simulator episodes (Isaac/MuJoCo containers) naturally fit "one episode, one Job", with the Gateway as the source of truth. |
@@ -284,7 +284,7 @@ Key points:
 
 ## 10. Capabilities Not Worth Rebuilding
 
-- **GRPO/PPO training pipeline for open-source LLM agents** (verl integration, token-id capture, async carry-over, R3 routed experts): if `worldcurrent` needs agentic RL on the reasoning LLM, **calling agent-lightning directly (as an external service and training scripts)** is far cheaper than building our own verl bridge.
+- **GRPO/PPO training pipeline for open-source LLM agents** (verl integration, token-id capture, async carry-over, R3 routed experts): if `Hylo` needs agentic RL on the reasoning LLM, **calling agent-lightning directly (as an external service and training scripts)** is far cheaper than building our own verl bridge.
 - **Retries, disconnect cancellation, and temperature override in an OpenAI-compatible proxy**: mature, small code; rewrite it directly if needed rather than designing from scratch.
 - **K8s Job reconciler**: if we adopt K8s, refer directly to `controller/k8s_reconciler.py` (362 lines).
 - **Conversely, the parts we must build ourselves (which agent-lightning lacks)**: persistent trace archive, candidate and resource version store, shadow eval, regression testing, promotion/rollback, per-step reward and embodied observation/action schemas, capture of non-LLM policies (VLA continuous actions).
@@ -375,4 +375,4 @@ All paths are prefixed with `references/evolution/agent-lightning/`.
 
 - **It can record them, but only in the sense of "can store"**: `EventCreate{event_type, data}` accepts any type, and the triplet view passes non-`model_request` / `reward` types through as-is (`agentlightning/server/routes/events.py:196-197`). `obs` / `action` / `reasoning` / `memory_retrieval` can be POSTed to `AGL_EVENT_URL` as custom events; swe_smith's `agent_output` is a precedent.
 - **It cannot train on them or replay them**: the training conversion only recognizes `model_request` (which must carry vLLM token ids) plus the last `reward`. There is no step index, causal chain (parent/child span), binary blob, or per-step reward; the Store is in memory and deletes after consumption. For VLA (continuous actions, high-frequency control), the proxy layer cannot capture the policy output at all.
-- **Conclusion**: as a **reference design for the event envelope and rollout lifecycle** of `worldcurrent` Tracing, it is worth borrowing; as a **storage or training backend** for embodied traces, it is not suitable.
+- **Conclusion**: as a **reference design for the event envelope and rollout lifecycle** of `Hylo` Tracing, it is worth borrowing; as a **storage or training backend** for embodied traces, it is not suitable.

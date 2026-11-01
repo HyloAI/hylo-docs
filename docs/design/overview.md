@@ -1,26 +1,26 @@
 # Architecture overview
 
-worldcurrent evaluates robot policies, learns from what they did, improves them under a statistical gate and deploys
+Hylo evaluates robot policies, learns from what they did, improves them under a statistical gate and deploys
 them to robots, behind one set of contracts. This page is the map: the layers, the one episode loop, how data flows
 from runs to deployed versions, and the decisions behind them. The full design is in
 [architecture](architecture.md); the decisions are recorded in the [RFCs](../rfcs/index.md).
 
-![Layers: contracts and kernel in wc-core; evaluation, agents, memory, learning, improvement and catalog on top; the leaf repositories above](../assets/diagrams/architecture.svg){ .wc-figure }
+![Layers: contracts and kernel in hylo-core; evaluation, agents, memory, learning, improvement and catalog on top; the leaf repositories above](../assets/diagrams/architecture.svg){ .wc-figure }
 
-*The harness is the base: wc-core defines the contracts and runs every episode; the other harness packages build on
+*The harness is the base: hylo-core defines the contracts and runs every episode; the other harness packages build on
 it; bench, serve, studio and plugins are leaves that use it.*
 
 ## Layers
 
 | Layer | Packages | Role |
 |---|---|---|
-| Contracts and kernel | `wc-core` | data contracts (EnvSpec, Observation, ActionChunk, TaskSpec, ...), behavioural contracts (Environment, Agent, ChunkPolicy, Guard, Learner, ...), the episode loop, the SafetyShield, events and traces, the plugin registry, experiment configs, store, formats |
-| Evaluation | `wc-eval` | benchmarks and splits, the runner, scorers, paired statistics and gate tests |
-| Decision-making | `wc-agents`, `wc-policies`, `wc-memory` | agents that run any policy (plain, temporal ensemble, steered), reference policies, memories, reasoners, instruments |
-| Learning | `wc-learn` | learner jobs, sealed artifacts, judge calibration and labelling, external data |
-| Improvement | `wc-evolve` | campaigns: generators, the cascade, the sequential gate, approvals, active versions |
-| Catalog and CLI | `wc-catalog`, `worldcurrent-cli` | read-only queries over runs and campaigns; the harness's `wc` commands |
-| Adapters | `wc-policy-lerobot`, `wc-policy-openpi`, `wc-reasoner-llm`, `wc-proposer-llm`, `wc-data-video` | third-party stacks behind the contracts |
+| Contracts and kernel | `hylo-core` | data contracts (EnvSpec, Observation, ActionChunk, TaskSpec, ...), behavioural contracts (Environment, Agent, ChunkPolicy, Guard, Learner, ...), the episode loop, the SafetyShield, events and traces, the plugin registry, experiment configs, store, formats |
+| Evaluation | `hylo-eval` | benchmarks and splits, the runner, scorers, paired statistics and gate tests |
+| Decision-making | `hylo-agents`, `hylo-policies`, `hylo-memory` | agents that run any policy (plain, temporal ensemble, steered), reference policies, memories, reasoners, instruments |
+| Learning | `hylo-learn` | learner jobs, sealed artifacts, judge calibration and labelling, external data |
+| Improvement | `hylo-evolve` | campaigns: generators, the cascade, the sequential gate, approvals, active versions |
+| Catalog and CLI | `hylo-catalog`, `hylo-cli` | read-only queries over runs and campaigns; the harness's `hylo` commands |
+| Adapters | `hylo-policy-lerobot`, `hylo-policy-openpi`, `hylo-reasoner-llm`, `hylo-proposer-llm`, `hylo-data-video` | third-party stacks behind the contracts |
 | Leaves | bench, serve, studio, plugins | benchmarking, deployment, the playground, example plugins |
 
 Three rules hold the layers together:
@@ -99,15 +99,15 @@ components run is not part of it ([RFC-0005 part 1](../rfcs/RFC-0005-architectur
 
 | Repository | Holds | Depends on |
 |---|---|---|
-| worldcurrent-harness | the layers above, the `wc` dispatcher, the reference docs | - |
-| worldcurrent-bench | protocols, scorecards, leaderboards, LIBERO and MuJoCo suites and their setup | harness |
-| worldcurrent-serve | policy server, workcell, robot adapters | wc-core only |
-| worldcurrent-studio | the playground and control plane | harness |
-| worldcurrent-plugins | example plugins written as a third party would | harness |
-| worldcurrent-docs | this site, RFCs, research | - |
+| hylo-harness | the layers above, the `hylo` dispatcher, the reference docs | - |
+| hylo-bench | protocols, scorecards, leaderboards, LIBERO and MuJoCo suites and their setup | harness |
+| hylo-serve | policy server, workcell, robot adapters | hylo-core only |
+| hylo-studio | the playground and control plane | harness |
+| hylo-plugins | example plugins written as a third party would | harness |
+| hylo-docs | this site, RFCs, research | - |
 | `<lab>`-deployments | a lab's workcell configs and safety limits | (configuration only) |
 
-Leaves never import each other: they cooperate through formats in wc-core ([formats](../api/formats.md)): traces,
+Leaves never import each other: they cooperate through formats in hylo-core ([formats](../api/formats.md)): traces,
 artifact manifests, store ids, scorecards, `active.json`, the workcell API. A boundary lint enforces the rules
 ([contributing](../developer-guide/contributing.md#repository-and-package-rules), [repository structure](repository-structure.md)).
 
@@ -120,12 +120,12 @@ artifact manifests, store ids, scorecards, `active.json`, the workcell API. A bo
 | Experience as memory and skills, not only weights | retrieved successes, lessons and skills steer a frozen policy and are cheap to roll back | [RFC-0003](../rfcs/RFC-0003-experience-memory-skills.md) |
 | Everything learned is a sealed artifact with a role | behaviour, instrument and proposal artifacts get different trust paths; the split guard is checked twice | [RFC-0004](../rfcs/RFC-0004-learning-pipeline.md) |
 | Measurement separated from placement; one episode loop; store ids; versioned contracts | results transfer between machines and from simulation to the robot | [RFC-0005](../rfcs/RFC-0005-architecture-measurement-and-placement.md) |
-| One base repository and leaves | atomic changes in the base, independent leaves, a robot installs only wc-core | [repository structure](repository-structure.md) |
+| One base repository and leaves | atomic changes in the base, independent leaves, a robot installs only hylo-core | [repository structure](repository-structure.md) |
 
 ## Not yet
 
 - No job layer: campaigns run in a foreground process, studio jobs are bare subprocesses (RFC-0005 part 6).
-- Every plugin contract is in wc-core, one group per role; the wc-agents package itself still holds decision-making
+- Every plugin contract is in hylo-core, one group per role; the hylo-agents package itself still holds decision-making
   agents, instruments and rule-based reasoners together (RFC-0005 part 5).
 - No real robot has been connected; the robot path has run with a simulated arm.
 - Weight-level learning on LIBERO (self-training, RL fine-tuning) waits for a GPU.

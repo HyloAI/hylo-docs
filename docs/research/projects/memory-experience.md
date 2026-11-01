@@ -74,7 +74,7 @@ are covered in `rsi-voyager.md` and `memory-landscape.md`. The 2026 Agent Skills
 arXiv 2602.12430, 2605.07358; TMLR "Dynamic Agent Skills", arXiv 2607.10113) treats skills as lifecycle-managed,
 verified artifacts with progressive disclosure; robotics coverage is still mostly SayCan / RoboGen-era.
 
-## 5. Lessons for worldcurrent
+## 5. Lessons for Hylo
 
 1. **Write only verified experience.** Both robot papers show unverified memory is worse than none. We have
    ground-truth success in simulation; outside simulation the writer needs a judge (VLM success detector).

@@ -2,7 +2,7 @@
 
 > Subject: `references/evolution/Zetta-Embodiment` (air-embodied-brain/Zetta-Embodiment @ `d7fd15e`, package version `0.0.0`, classifier `Development Status :: 2 - Pre-Alpha`, Apache-2.0)
 > Method: static reading only (read / grep / `python3 -I` ast). No dependencies were installed, no tests were run, and no simulator or LLM was started. The repository is a shallow clone, so the commit count is not visible.
-> Audience: the Harness and Evolution (RSI) Layer design of `worldcurrent`, and cross-project comparison
+> Audience: the Harness and Evolution (RSI) Layer design of `Hylo`, and cross-project comparison
 > Tags: **\[Implemented\]** traceable in code · **\[Docs/Interface only\]** only documentation or abstract interfaces · **\[Unverified\]** code exists, but this study did not run it to verify · **\[Needs model/hardware\]** needs GPU, weights, simulation assets or a robot
 
 ---
@@ -257,7 +257,7 @@ Layering is enforced by AST tests: `rollout_runtime/**` is forbidden from import
 
 | Component | Approach | Rationale |
 |---|---|---|
-| `CandidateBundle`/`CriticRule`/`RecoveryRule`/`GateDecision` data contracts and their `__post_init__` invariants | **Borrow the schema directly, rewrite the implementation** | One hypothesis, every critic covered by a recovery, a parent sha chain — this set of invariants is exactly what worldcurrent's "Improvement Candidate" needs |
+| `CandidateBundle`/`CriticRule`/`RecoveryRule`/`GateDecision` data contracts and their `__post_init__` invariants | **Borrow the schema directly, rewrite the implementation** | One hypothesis, every critic covered by a recovery, a parent sha chain — this set of invariants is exactly what Hylo's "Improvement Candidate" needs |
 | `TemporalCritic` DSL (dwell/cooldown/stagnant/activation guard) | **Reuse the idea directly** (about 140 lines) | Declarative, replayable, no code execution — a safe format for self-generated monitors |
 | `evaluate_shadow_replay` | **Borrow directly** | "Evaluate only the newly added rule, report both recall and success-control FP" is a low-cost offline preflight |
 | `one_sided_exact_mcnemar` + paired gate + `infra_invalid` separate accounting | **Reuse directly** | Statistically correct, very short code |
@@ -272,7 +272,7 @@ Layering is enforced by AST tests: `rollout_runtime/**` is forbidden from import
 - **VLA serving acceleration** (FlashRT FP8 + CUDA Graph, GR00T graph capture): use upstream FlashRT or Zetta's backend directly; do not build our own.
 - **Env ports for each sim** (LIBERO/ManiSkill/RoboTwin taken from RLinf): depend directly on RLinf or Zetta's adapters; do not port them again.
 - **Provider pool / broker / admission** (`zetta/planner/provider_pool.py`, `zetta/evolution/provider_admission.py`, about 2k LOC combined): these are engineering details of an LLM gateway; an off-the-shelf LLM gateway (e.g. LiteLLM) is a better fit.
-- **File queue + capacity + slot broker** (`queue.py`, `capacity.py`, `slot_broker.py`): overlaps with Ray/K8s job functionality; worldcurrent should use an orchestrator directly.
+- **File queue + capacity + slot broker** (`queue.py`, `capacity.py`, `slot_broker.py`): overlaps with Ray/K8s job functionality; Hylo should use an orchestrator directly.
 - **Per-env prepare_campaign scripts**: should be turned into a generic manifest builder, not copied.
 - **RPent CLI/dashboard**: unrelated to our harness; can be ignored.
 
@@ -369,4 +369,4 @@ Layering is enforced by AST tests: `rollout_runtime/**` is forbidden from import
 
 - **Q4 Memory**: the only memory is a **task-level semantic/procedural parameter block** (`strategy_summary`, `decision_rules`, `tool_parameters`, `prompt_ladder`, `failure_modes`..., `task_memory.py:24-32`), stored as JSON files, hash-chain versioned, with a 24KB cap, and writing absolute coordinates or pixels is forbidden. There is no retrieval; the whole block is rendered into the prompt (`:232-255`). The write policy is: frozen within an episode, rewritten by the orchestrator calling the LLM after the episode ends. **There is no episodic, spatial or vector memory**. The Campaign's episodes ledger could count as an episodic archive, but it is only for offline diagnosis and is not retrieved at runtime. `zetta/evolution/__init__.py:4-6` states explicitly that evolution and memory are independent of each other.
 - **Q5 Logging/Tracing/Eval**: each episode writes `actions/states/chunks/tool_events/heartbeat.jsonl`, multi-view videos, and Role1 decision artifacts (`run_evolution_rollout.py:319-326`); LLM calls write transcript sha and evidence-access jsonl; the Gateway exposes Prometheus metrics. **There is no OpenTelemetry or distributed tracing**. Evaluation uses the official env termination as success (`run_evolution_rollout.py:804`).
-- **Q15 Overall recommendations for worldcurrent**: five pieces can be taken over directly — **the Critic DSL, shadow replay, the paired McNemar gate, the bundle invariants, and the recoverable state machine** — and they map one-to-one onto our Evolution Layer's Candidate→Shadow→Gate→Promote path. **Do not copy** two default policies: held-out as report-only, and regression skipped by default. worldcurrent should force held-out gating and also add rollback and demote. Two things **need to be reimplemented**: env/policy registration should switch to entry_points; the Critic interpreter should have a single source, replacing the two copies with a shared pure-Python package. **The RPent CLI, dashboard, provider pool, and file queue can be ignored**.
+- **Q15 Overall recommendations for Hylo**: five pieces can be taken over directly — **the Critic DSL, shadow replay, the paired McNemar gate, the bundle invariants, and the recoverable state machine** — and they map one-to-one onto our Evolution Layer's Candidate→Shadow→Gate→Promote path. **Do not copy** two default policies: held-out as report-only, and regression skipped by default. Hylo should force held-out gating and also add rollback and demote. Two things **need to be reimplemented**: env/policy registration should switch to entry_points; the Critic interpreter should have a single source, replacing the two copies with a shared pure-Python package. **The RPent CLI, dashboard, provider pool, and file queue can be ignored**.

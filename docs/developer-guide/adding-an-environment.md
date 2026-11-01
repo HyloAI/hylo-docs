@@ -1,13 +1,13 @@
 # Adding an environment
 
-This tutorial adds a new simulator to worldcurrent, step by step: the environment, its tasks and benchmark, a
+This tutorial adds a new simulator to Hylo, step by step: the environment, its tasks and benchmark, a
 conformance check, an experiment, an out-of-process run, and a protocol with a scorecard. The example is
 deliberately small: a point on a rail that must stop on a goal, about 80 lines. It was written and run while this
-page was written, and the outputs shown are real. The two environments in worldcurrent-bench are the full
+page was written, and the outputs shown are real. The two environments in hylo-bench are the full
 references:
 
-- **`wc-env-mujoco`**: `mujoco.planar_reach` and `mujoco.table_reach`, in process, MuJoCo as a library;
-- **`wc-env-libero`**: `libero`, with stored init states and a BDDL success predicate, run in its own venv.
+- **`hylo-env-mujoco`**: `mujoco.planar_reach` and `mujoco.table_reach`, in process, MuJoCo as a library;
+- **`hylo-env-libero`**: `libero`, with stored init states and a BDDL success predicate, run in its own venv.
 
 The last section covers what a real robot adds. Background:
 [interfaces: environment](../harness/interfaces/environment.md), [execution lifecycle](../harness/execution-lifecycle.md).
@@ -37,15 +37,15 @@ capabilities are declared in `EnvSpec.capabilities` and provided as separate met
 
 ## 2. Write the environment
 
-```python title="src/wc_env_slider/env.py"
+```python title="src/hylo_env_slider/env.py"
 """A point on a rail that must stop inside a goal interval: the smallest useful Environment."""
 
 from __future__ import annotations
 
 import numpy as np
 
-from worldcurrent.core.task import TaskInstance, TaskSpec
-from worldcurrent.core.types import (Action, ActionSemantics, BoxSpace, EnvCapabilities, EnvSpec, Observation,
+from hylo.core.task import TaskInstance, TaskSpec
+from hylo.core.types import (Action, ActionSemantics, BoxSpace, EnvCapabilities, EnvSpec, Observation,
                                      ObservationSpec, StepResult)
 
 MAX_STEP = 0.02           # metres per control step at |action| = 1
@@ -136,9 +136,9 @@ A `TaskSpec` describes one task: `id` (globally unique), `version`, `instruction
 (`init`), the success predicate (`success`, descriptive), `max_steps`, environment-specific `params` and `tags`. A
 `Benchmark` is tasks plus **splits**: named sets of seeds, disjoint across splits, each run on every task.
 
-```python title="src/wc_env_slider/env.py (continued)"
+```python title="src/hylo_env_slider/env.py (continued)"
 def slider_benchmark(protocol: str = "rsi", n_states: int = 50):
-    from worldcurrent.core.benchmark import Benchmark, rsi_splits
+    from hylo.core.benchmark import Benchmark, rsi_splits
 
     tasks = (TaskSpec(id="slider/reach", version="1", instruction="stop on the goal", max_steps=100, tags=("slider",)),)
     splits = rsi_splits(n_states, (20, 30, 40)) if protocol == "rsi" else {"validation": tuple(range(1000, 1020))}
@@ -173,27 +173,27 @@ Environments and benchmarks are found by name through entry points; declare the 
 
 ```toml title="pyproject.toml"
 [project]
-name = "wc-env-slider"
-dependencies = ["wc-core", "wc-eval", "numpy>=1.24"]
+name = "hylo-env-slider"
+dependencies = ["hylo-core", "hylo-eval", "numpy>=1.24"]
 license = "Apache-2.0"
 
-[project.entry-points."worldcurrent.envs"]
-"slider" = "wc_env_slider.env:SliderEnv"
+[project.entry-points."hylo.envs"]
+"slider" = "hylo_env_slider.env:SliderEnv"
 
-[project.entry-points."worldcurrent.benchmarks"]
-"slider-v0" = "wc_env_slider.env:slider_benchmark"
+[project.entry-points."hylo.benchmarks"]
+"slider-v0" = "hylo_env_slider.env:slider_benchmark"
 
-[project.entry-points."worldcurrent.meta"]
-"wc-env-slider" = "wc_env_slider:META"
+[project.entry-points."hylo.meta"]
+"hylo-env-slider" = "hylo_env_slider:META"
 ```
 
-```python title="src/wc_env_slider/__init__.py"
-META = {"contracts": {"envs": "wc.env/v0.1", "benchmarks": "wc.benchmark/v0.1"}, "maturity": "unverified"}
+```python title="src/hylo_env_slider/__init__.py"
+META = {"contracts": {"envs": "hylo.env/v0.1", "benchmarks": "hylo.benchmark/v0.1"}, "maturity": "unverified"}
 ```
 
-`wc-env-mujoco` registers `mujoco.planar_reach`, `mujoco.table_reach`, `mujoco/reach-v0` and `mujoco/table-v0`
+`hylo-env-mujoco` registers `mujoco.planar_reach`, `mujoco.table_reach`, `mujoco/reach-v0` and `mujoco/table-v0`
 exactly this way. Before installing, use `module:attr` names in configs (below, with the package on `PYTHONPATH`).
-There is no `wc plugin new env` template; copy this page's file or wc-env-mujoco's.
+There is no `hylo plugin new env` template; copy this page's file or hylo-env-mujoco's.
 
 ## 5. Check conformance
 
@@ -201,16 +201,16 @@ A config with the environment and a simple agent. Any policy that reads `pos` an
 proportional controller written as a [`ChunkPolicy`](adding-a-policy.md) in the same file:
 
 ```yaml title="slider.yaml"
-schema_version: wc.experiment/v0.1
+schema_version: hylo.experiment/v0.1
 name: slider-p
-benchmark: {type: "wc_env_slider.env:slider_benchmark", split: search_val}
-env: {type: "wc_env_slider.env:SliderEnv"}
-agent: {type: policy, params: {policy: {type: "wc_env_slider.env:SliderPolicy"}}}
+benchmark: {type: "hylo_env_slider.env:slider_benchmark", split: search_val}
+env: {type: "hylo_env_slider.env:SliderEnv"}
+agent: {type: policy, params: {policy: {type: "hylo_env_slider.env:SliderPolicy"}}}
 output_dir: runs
 ```
 
 ```bash
-uv run wc conformance slider.yaml --agent
+uv run hylo conformance slider.yaml --agent
 ```
 
 ```text
@@ -236,7 +236,7 @@ error in a 500-episode run costs an afternoon.
 ## 6. Run it
 
 ```bash
-uv run wc run slider.yaml
+uv run hylo run slider.yaml
 ```
 
 ```json
@@ -273,16 +273,16 @@ started from another interpreter. Nothing in the environment changes; the config
     measured. Register the runtime once per machine:
 
     ```bash
-    uv run wc profile set-runtime my-sim --python /path/to/sim-venv/bin/python --env MUJOCO_GL=osmesa
+    uv run hylo profile set-runtime my-sim --python /path/to/sim-venv/bin/python --env MUJOCO_GL=osmesa
     ```
 
-    Install wc-core and your package into that venv. bench's `envs/libero/setup.sh` does exactly this for LIBERO
+    Install hylo-core and your package into that venv. bench's `envs/libero/setup.sh` does exactly this for LIBERO
     ([profiles](../configuration/profiles.md)).
 
 === "WebSocket, another machine"
 
     ```bash
-    uv run wc serve env slider --port 8799          # in the simulator's venv; --host 0.0.0.0 to expose it
+    uv run hylo serve env slider --port 8799          # in the simulator's venv; --host 0.0.0.0 to expose it
     ```
 
     ```yaml
@@ -316,22 +316,22 @@ that is scored, the environment, the trace options and the timing, and its diges
 ([protocols](../benchmarking/protocols.md#writing-a-protocol)).
 
 ```yaml title="slider-v1.yaml"
-schema_version: wc.protocol/v0.1
+schema_version: hylo.protocol/v0.1
 name: slider-reach
 version: "1"
 description: |
   The slider stops on its goal: the 10 held-out init states of the RFC-0002 split (40-49).
-benchmark: {type: "wc_env_slider.env:slider_benchmark", split: heldout, params: {protocol: rsi}}
-env: {type: "wc_env_slider.env:SliderEnv"}
+benchmark: {type: "hylo_env_slider.env:slider_benchmark", split: heldout, params: {protocol: rsi}}
+env: {type: "hylo_env_slider.env:SliderEnv"}
 trace: {record_privileged: false, image_every: 0}
 workers: 4
-requires: [wc-env-slider]
+requires: [hylo-env-slider]
 ```
 
 ```bash
-uv run wc bench show slider-v1.yaml          # digest: 13026fb9ab2bee26
-uv run wc bench run slider-v1.yaml --name p-0.5 \
-    --policy '{"type": "policy", "params": {"policy": {"type": "wc_env_slider.env:SliderPolicy"}}}'
+uv run hylo bench show slider-v1.yaml          # digest: 13026fb9ab2bee26
+uv run hylo bench run slider-v1.yaml --name p-0.5 \
+    --policy '{"type": "policy", "params": {"policy": {"type": "hylo_env_slider.env:SliderPolicy"}}}'
 ```
 
 ```text
@@ -339,11 +339,11 @@ uv run wc bench run slider-v1.yaml --name p-0.5 \
 ```
 
 Ten episodes give a wide interval; the built-in protocols use 100 (MuJoCo reach) and 500 (LIBERO-10). A protocol
-that ships with wc-bench goes in `packages/wc-bench/src/worldcurrent/bench/protocols/`.
+that ships with hylo-bench goes in `packages/hylo-bench/src/hylo/bench/protocols/`.
 
 ## 10. A robot
 
-A real robot is an environment like any other; `wc-env-lerobot-robot` (`lerobot.robot`) wraps LeRobot's `Robot`
+A real robot is an environment like any other; `hylo-env-lerobot-robot` (`lerobot.robot`) wraps LeRobot's `Robot`
 interface (SO-100/101, Koch, LeKiwi, ROS 2 robots through LeRobot plugins, and `sim_arm` for bring-up without
 hardware). What it adds to the contract:
 
@@ -359,7 +359,7 @@ hardware). What it adds to the contract:
 The kernel uses `hold_action` and `stop` when an environment provides them; without them, it holds delta and
 velocity control at zero motion and refuses to guess a hold for absolute control.
 
-A robot runs in a **workcell** (worldcurrent-serve), not in an experiment: the workcell config adds the policy
+A robot runs in a **workcell** (hylo-serve), not in an experiment: the workcell config adds the policy
 endpoint, the realtime runner settings, safety limits and where runs are recorded:
 
 ```yaml title="workcells/sim_arm.yaml (deployments-template)"
@@ -373,7 +373,7 @@ env:
     action_high: [120, 120, 120, 120, 170, 100]
     home: [0, -30, 60, 0, 0, 20]
     control_hz: 30
-policy: {url: "ws://127.0.0.1:8002/wc", protocol: wc}
+policy: {url: "ws://127.0.0.1:8002/hylo", protocol: hylo}
 runtime: {clock: wall, refill_steps: 5, max_hold_steps: 60, require_reset_confirm: true, verdict_timeout_s: 120}
 safety: {max_delta: 12.0}
 image_every: 5
@@ -389,6 +389,6 @@ simulated arm only. See [deployment](../user-guide/deployment.md) and
 
 - Score policies on it: [benchmarking](../benchmarking/index.md), [adding a policy](adding-a-policy.md).
 - Improve a policy on it with a campaign: [campaigns](../user-guide/campaigns.md).
-- API: [wc-env-mujoco](../api/packages/wc-env-mujoco.md), [wc-env-libero](../api/packages/wc-env-libero.md),
-  [wc-eval](../api/packages/wc-eval.md); commands: [`wc conformance`](../cli/index.md#wc-conformance),
-  [`wc serve`](../cli/index.md#wc-serve), [`wc bench`](../cli/index.md#wc-bench).
+- API: [hylo-env-mujoco](../api/packages/hylo-env-mujoco.md), [hylo-env-libero](../api/packages/hylo-env-libero.md),
+  [hylo-eval](../api/packages/hylo-eval.md); commands: [`hylo conformance`](../cli/index.md#hylo-conformance),
+  [`hylo serve`](../cli/index.md#hylo-serve), [`hylo bench`](../cli/index.md#hylo-bench).

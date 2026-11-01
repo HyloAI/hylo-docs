@@ -1,15 +1,15 @@
 # Experiments
 
 An experiment is one config file that says what to measure: a benchmark split, an environment, an agent, and
-optionally safety limits, trace options, timing and a seed. `wc run` evaluates it and writes a run. Everything else in
-worldcurrent (protocols, campaigns, learners, studio) builds on experiments.
+optionally safety limits, trace options, timing and a seed. `hylo run` evaluates it and writes a run. Everything else in
+Hylo (protocols, campaigns, learners, studio) builds on experiments.
 
 ## Run a config
 
 ```bash
-uv run wc run bench/examples/configs/mujoco_reach.yaml
-uv run wc run bench/examples/configs/mujoco_reach.yaml --split heldout --set agent.params.kp=0.1 --set workers=8
-uv run wc run bench/examples/configs/mujoco_reach.yaml --output /tmp/runs
+uv run hylo run bench/examples/configs/mujoco_reach.yaml
+uv run hylo run bench/examples/configs/mujoco_reach.yaml --split heldout --set agent.params.kp=0.1 --set workers=8
+uv run hylo run bench/examples/configs/mujoco_reach.yaml --output /tmp/runs
 ```
 
 | Option | Meaning |
@@ -18,13 +18,13 @@ uv run wc run bench/examples/configs/mujoco_reach.yaml --output /tmp/runs
 | `--set KEY=VALUE` | dotted-path override, value parsed as YAML; repeatable (`--set benchmark.params.suite=libero_goal`) |
 | `--output DIR` | where the run directory goes (default: the config's `output_dir`, `runs`) |
 
-`wc run` prints one line per finished episode on stderr, then a JSON summary on stdout: `run_dir`, `config_digest`,
+`hylo run` prints one line per finished episode on stderr, then a JSON summary on stdout: `run_dir`, `config_digest`,
 `success_mean`, `safety_interventions_mean`, `steps_mean`, `n_episodes` and `n_scored`.
 
 ## The config
 
 ```yaml
-schema_version: wc.experiment/v0.1
+schema_version: hylo.experiment/v0.1
 name: mujoco-guarded
 benchmark: {type: mujoco/reach-v0, split: validation}      # a "benchmarks" plugin, its params, the split
 env: {type: mujoco.planar_reach}                           # an "envs" plugin; remote: {...} to run it elsewhere
@@ -51,7 +51,7 @@ output_dir: runs
 | `workers` | 1 | no | parallel episode workers, each with its own environment and agent |
 | `output_dir` | `runs` | no | where run directories go |
 
-The full schema is the [experiment config schema](../harness/experiment-schema.md); `wc schema experiment` prints
+The full schema is the [experiment config schema](../harness/experiment-schema.md); `hylo schema experiment` prints
 it as JSON Schema.
 
 ## What is measured: the digest
@@ -122,7 +122,7 @@ policy time relates to robot time:
 | `verdict_timeout_s` | 0.0 | how long to wait for an operator's verdict when the environment cannot judge success |
 
 ```bash
-uv run wc run bench/examples/configs/mujoco_reach.yaml --set timing.mode=realtime --set timing.latency_s=0.25
+uv run hylo run bench/examples/configs/mujoco_reach.yaml --set timing.mode=realtime --set timing.latency_s=0.25
 ```
 
 A realtime episode records, at its end, how many hold steps it needed (`holds`) and how many chunks were requested
@@ -154,14 +154,14 @@ Each episode ends with a status:
 | `error` | the agent failed, or the realtime watchdog fired |
 | `infra_invalid` | the environment faulted or the simulator diverged (`sim_error`); not the policy's fault, not scored as a failure |
 
-Read runs with `wc trace RUN_DIR [EPISODE_ID]`, in [studio](studio.md), or programmatically with
-`worldcurrent.core.trace.TraceStore`.
+Read runs with `hylo trace RUN_DIR [EPISODE_ID]`, in [studio](studio.md), or programmatically with
+`hylo.core.trace.TraceStore`.
 
 ## Check a config before a long run
 
 ```bash
-uv run wc conformance bench/examples/configs/mujoco_reach.yaml            # the environment against its contract
-uv run wc conformance bench/examples/configs/mujoco_reach.yaml --agent    # and the agent (two full episodes)
+uv run hylo conformance bench/examples/configs/mujoco_reach.yaml            # the environment against its contract
+uv run hylo conformance bench/examples/configs/mujoco_reach.yaml --agent    # and the agent (two full episodes)
 ```
 
 The environment check covers: `spec()` is cheap and typed and survives JSON; `reset` returns an observation matching

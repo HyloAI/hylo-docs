@@ -30,7 +30,7 @@ Human corrections (HG-DAgger 1810.02890, ROVE 2606.17011) need a teleoperation c
 web co-training change the base model; surveys (2607.13104, 2609.13236) stress safety-critical exploration and
 non-stationarity as the open problems of embodied self-improvement.
 
-## 4. Consequences for worldcurrent
+## 4. Consequences for Hylo
 
 1. A **value / progress model** is the hub: RECAP, ViVa and DSRL depend on one, and the same model serves as the
    success judge that RFC-0003 M5 needs. First step: zero-shot VLM judge vs a judge trained on our traces, both

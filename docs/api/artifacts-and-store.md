@@ -9,14 +9,14 @@ active versions are the formats bench and serve exchange. User guides: [learning
 
 ## Artifacts and the split guard
 
-::: worldcurrent.core.artifact
+::: hylo.core.artifact
     options:
       heading_level: 3
       show_if_no_docstring: true
 
 ## Store
 
-::: worldcurrent.core.store
+::: hylo.core.store
     options:
       heading_level: 3
       show_if_no_docstring: true
@@ -24,14 +24,14 @@ active versions are the formats bench and serve exchange. User guides: [learning
 
 ## Scorecards
 
-::: worldcurrent.core.scorecard
+::: hylo.core.scorecard
     options:
       heading_level: 3
       show_if_no_docstring: true
 
 ## Active versions
 
-::: worldcurrent.core.deployment
+::: hylo.core.deployment
     options:
       heading_level: 3
       show_if_no_docstring: true

@@ -301,9 +301,9 @@ The repo also ships skills for coding agents: `.agents/skills/add-robot/SKILL.md
 
 | Component | Mode | Rationale |
 |---|---|---|
-| `@tool` / `Tool` / `ToolResult` / `iter_tools` (`rpent/tools/base.py`) | **Port directly** (about 290 lines, depends only on pydantic + pydantic_ai.Tool for schema generation, replaceable) | Single-source schema + validation + resource exclusion; a ready-made implementation of the worldcurrent Tool contract |
+| `@tool` / `Tool` / `ToolResult` / `iter_tools` (`rpent/tools/base.py`) | **Port directly** (about 290 lines, depends only on pydantic + pydantic_ai.Tool for schema generation, replaceable) | Single-source schema + validation + resource exclusion; a ready-made implementation of the Hylo Tool contract |
 | `Toolkit._Scheduler` + `execute_tool` + `planner/base.py:execute_tool/cancel_and_wait` | **Port directly** | Read/write separation, FIFO, cooperative cancellation, "errors as data", automatic observation capture after non-readonly actions - exactly the semantics physical tools need |
-| `RpcFacade` / `RpcClient` / HTTP transport / `ProcessDaemon` + parent-watch | **Port the HTTP version, drop the pickle socket** | Lightweight "one process per model" isolation with healthz, sessions, read-write locks, meta validation; suitable as worldcurrent's default serving layer when not using Ray |
+| `RpcFacade` / `RpcClient` / HTTP transport / `ProcessDaemon` + parent-watch | **Port the HTTP version, drop the pickle socket** | Lightweight "one process per model" isolation with healthz, sessions, read-write locks, meta validation; suitable as Hylo's default serving layer when not using Ray |
 | `EnvState` / `StepRecord` (`rpent/session/base.py`) | **Rewrite after reference** (add schema version, run manifest) | Trace storage with atomic writes, per-step artifacts and rollback on exception is very practical |
 | `MemoryManager.merge_memory`'s frontmatter + evidence merging, confidence promotion rules | **Reference the design** | A simple, auditable "evidence count → single-shot/probable/verified" promotion (`manager.py:99-122`); the inbox→review→publish flow suits physical memory |
 | `DashboardEventSink` Protocol + `NullDashboardEventSink` | **Borrow the pattern** | Minimal interface decoupling core logic from UI |
@@ -315,10 +315,10 @@ The repo also ships skills for coding agents: `.agents/skills/add-robot/SKILL.md
 
 ## 10. Capabilities Not Worth Rebuilding
 
-- **The inner agent loop itself**: RPent has already shown that handing turn loops, parallel tools, compaction and retries to a mature SDK (pydantic-ai Agent + `SlidingWindowCompaction(max_messages=80, keep=40)`, `api_loop.py:176-184`) is viable; worldcurrent should not write its own tool-calling loop, only define a Planner adapter layer.
+- **The inner agent loop itself**: RPent has already shown that handing turn loops, parallel tools, compaction and retries to a mature SDK (pydantic-ai Agent + `SlidingWindowCompaction(max_messages=80, keep=40)`, `api_loop.py:176-184`) is viable; Hylo should not write its own tool-calling loop, only define a Planner adapter layer.
 - **Per-benchmark env wrappers**: use RLinf (or RPent's `robots/<name>/env_server.py`) directly as the source of env adapters, rather than wrapping LIBERO/RoboCasa/RoboTwin ourselves.
 - **Claude Code / Codex SDK glue**: 2000+ lines tightly coupled to SDK versions; if needed, depend directly on RPent's implementation or wait for upstream SDKs to stabilize - not worth forking and maintaining.
-- **Dashboard frontend**: 1300+ lines of JS, product-layer; early worldcurrent can make do with an event sink + an off-the-shelf trace viewer.
+- **Dashboard frontend**: 1300+ lines of JS, product-layer; early Hylo can make do with an event sink + an off-the-shelf trace viewer.
 - **Flash replay / hand-eye calibration / real-robot Franka stack**: highly robot-specific; reference as needed.
 - **Should be ignored**: the prompt-driven "self-evolution" narrative - no weight updates, no automatic reward learning; Flywheel only exports LeRobot data (`rpent/flywheel/export.py:66`), training happens outside the repo.
 

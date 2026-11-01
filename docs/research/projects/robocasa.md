@@ -228,7 +228,7 @@ Source: `create_env` `R/robocasa/utils/env_utils.py:57-139`; scene sampling `kit
 | gym | `gym==0.25.2` | `gymnasium` | Can coexist but interfaces differ |
 | robomimic | `==0.2.0` | Built-in fork (`utils/robomimic/`) | — |
 
-**Conclusion: the two cannot run in the same Python process (and almost certainly not in the same venv).** worldcurrent's Environment layer must use an architecture of "one separate venv per benchmark + subprocess/RPC env server" (similar to what `vla-evaluation-harness` does), with the host process depending only on our own lightweight protocol.
+**Conclusion: the two cannot run in the same Python process (and almost certainly not in the same venv).** Hylo's Environment layer must use an architecture of "one separate venv per benchmark + subprocess/RPC env server" (similar to what `vla-evaluation-harness` does), with the host process depending only on our own lightweight protocol.
 
 ## 7. License and Reuse Constraints
 
@@ -263,8 +263,8 @@ Source: `create_env` `R/robocasa/utils/env_utils.py:57-139`; scene sampling `kit
 
 1. **The task classes themselves (as black boxes)**: instantiate them in an isolated process via `robosuite.make(env_name=...)`; we only consume `get_ep_meta()["lang"]`, `_check_success()`, and obs/action.
 2. **Task sets and horizons from `dataset_registry.py`**: `TARGET_TASKS` (atomic_seen 18 / composite_seen 16 / composite_unseen 16 = target50), `PRETRAINING_TASKS`, `LIFELONG_LEARNING_TASKS` serve directly as the data source for the BenchmarkSpec manifest; `get_task_horizon` serves as `max_steps`.
-3. **The `ep_meta` + `reset_to` replay protocol**: as a reference for worldcurrent's `init_state` serialization format (the "scene parameters + model xml + qpos/qvel" triple is more robust than LIBERO's pure state vector).
-4. **The `object_utils.py` predicate library**: as an API reference for worldcurrent's "physical predicates/memory" module (inside_of, upright, grasped, far, contact, liquid contact).
+3. **The `ep_meta` + `reset_to` replay protocol**: as a reference for Hylo's `init_state` serialization format (the "scene parameters + model xml + qpos/qvel" triple is more robust than LIBERO's pure state vector).
+4. **The `object_utils.py` predicate library**: as an API reference for Hylo's "physical predicates/memory" module (inside_of, upright, grasped, far, contact, liquid contact).
 5. **The determinism testing pattern** (mock the global RNG and assert it is not called, `test_env_determinism.py:35-125`): borrow it directly for our Environment consistency tests.
 6. **The key conventions of PandaOmronKeyConverter** (`state.*`/`video.*`/`action.*`/`annotation.*`): aligned with the GR00T/LeRobot ecosystem, usable as a naming reference for our obs/action specs.
 
@@ -273,7 +273,7 @@ Source: `create_env` `R/robocasa/utils/env_utils.py:57-139`; scene sampling `kit
 - Procedural kitchen scene generation, fixture joint/state logic, the object library and the asset conversion toolchain: enormous in scale; use them directly.
 - MimicGen data augmentation and the subtask labeling pipeline: just use them as data tools; do not fold them into the Environment abstraction.
 - Do not reuse `eval_utils.py` and `run_random_rollouts` as the evaluator (obsolete / smoke test only).
-- Do not reuse the built-in robomimic fork and groot_utils as worldcurrent's data layer; the data layer should uniformly use the LeRobot format.
+- Do not reuse the built-in robomimic fork and groot_utils as Hylo's data layer; the data layer should uniformly use the LeRobot format.
 
 ## 11. Source Index of Key Implementations
 
@@ -324,9 +324,9 @@ Source: `create_env` `R/robocasa/utils/env_utils.py:57-139`; scene sampling `kit
 | LeRobot datasets | \[Docs/Interface only\]/\[Needs model/hardware\] | docs + download_datasets |
 | Same process as LIBERO | ✗ Not feasible | §6 conflict table |
 
-## 12. Mapping to worldcurrent Environment/Task/Evaluator Interfaces
+## 12. Mapping to Hylo Environment/Task/Evaluator Interfaces
 
-| worldcurrent concept | RoboCasa counterpart | Adaptation points |
+| Hylo concept | RoboCasa counterpart | Adaptation points |
 |---|---|---|
 | `Benchmark` | `TASK_SET_REGISTRY[task_set]` × `split` | `BenchmarkSpec(id="robocasa/target50", tasks=..., split="target", episodes_per_task=50)` |
 | `TaskSpec.id` | Task class name (e.g. `PickPlaceCounterToCabinet`) | `f"robocasa/{split}/{ClassName}"`; class names are case-sensitive |
@@ -340,4 +340,4 @@ Source: `create_env` `R/robocasa/utils/env_utils.py:57-139`; scene sampling `kit
 | `action_spec` | 12-D composite (by key) | `ActionSpec` must be **named components** (`ee_delta_pos 3, ee_delta_rot 3, gripper 1, base 3, torso 1, base_mode 1`); relying on flat ordering is forbidden |
 | `Evaluator` | External eval scripts + documented protocol | `RoboCasaEvaluator(episodes=50, horizon=get_task_horizon(task), early_stop_on_success=True, split)`, recording ep_meta for later review |
 
-Conclusion: RoboCasa is worldcurrent's representative of "**Task = code class, Init = seed/snapshot, instructions generated dynamically**", forming exactly the opposite pole from LIBERO's "Task = declarative file + fixed init states". worldcurrent's `TaskSpec` should support both forms of `init_state` (*file index* and *seed/snapshot*) and both forms of `success` (*declarative* and *callable reference*), and treat the instruction as an output of `reset` rather than only a static field.
+Conclusion: RoboCasa is Hylo's representative of "**Task = code class, Init = seed/snapshot, instructions generated dynamically**", forming exactly the opposite pole from LIBERO's "Task = declarative file + fixed init states". Hylo's `TaskSpec` should support both forms of `init_state` (*file index* and *seed/snapshot*) and both forms of `success` (*declarative* and *callable reference*), and treat the instruction as an output of `reset` rather than only a static field.

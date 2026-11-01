@@ -40,9 +40,9 @@
 <rect x="36" y="338" width="548" height="30" rx="6" fill="#fff" stroke="#2a7f86" stroke-width="1"/>
 <text x="48" y="358" class="m" text-anchor="start" fill="#0d5c63">/home/you/…/runs/judges/l10-trace-v2  (pinned in the run)</text>
 <rect x="36" y="392" width="548" height="110" rx="8" fill="#fdeee6" stroke="#c2410c" stroke-width="1.2"/>
-<text x="48" y="414" class="m" text-anchor="start" fill="#c2410c" font-weight="600">wc store rm run:rsi-l10-parent-search-…</text>
+<text x="48" y="414" class="m" text-anchor="start" fill="#c2410c" font-weight="600">hylo store rm run:rsi-l10-parent-search-…</text>
 <text x="48" y="434" class="s" text-anchor="start">refused: referred to by artifact:l10-trace-v2@… and 3 more</text>
-<text x="48" y="456" class="m" text-anchor="start" fill="#c2410c">wc store rm … --force --reason &quot;…&quot;</text>
+<text x="48" y="456" class="m" text-anchor="start" fill="#c2410c">hylo store rm … --force --reason &quot;…&quot;</text>
 <text x="48" y="476" class="s" text-anchor="start">deletes and appends a tombstone: a later lookup of the id says</text>
 <text x="48" y="492" class="s" text-anchor="start">when and why it was removed, instead of &quot;not found&quot;</text>
 <text x="624" y="44" class="cap" text-anchor="start">BETWEEN MACHINES (rsync over ssh)</text>
@@ -64,12 +64,12 @@
 <path d="M876,302 L876,396" fill="none" stroke="#c2410c" stroke-width="1.5" marker-end="url(#a-c2410c)"/>
 <text x="868" y="364" class="s" text-anchor="end" fill="#c2410c" font-weight="600">push: artifacts</text>
 <text x="624" y="482" class="s" text-anchor="start" fill="#64748b">(run on the workstation)</text>
-<text x="624" y="499" class="m" text-anchor="start" fill="#334155">wc store pull robot:/path/runs</text>
-<text x="624" y="516" class="m" text-anchor="start" fill="#334155">wc store push robot:/path/runs artifact:…</text>
+<text x="624" y="499" class="m" text-anchor="start" fill="#334155">hylo store pull robot:/path/runs</text>
+<text x="624" y="516" class="m" text-anchor="start" fill="#334155">hylo store push robot:/path/runs artifact:…</text>
 <text x="624" y="533" class="s" text-anchor="start" fill="#64748b">Sealed artifacts are never re-copied or</text>
 <text x="624" y="550" class="s" text-anchor="start" fill="#64748b">overwritten; the same path holding something</text>
 <text x="624" y="567" class="s" text-anchor="start" fill="#64748b">else is a conflict: nothing is copied.</text>
 <text x="36" y="548" class="s" text-anchor="start">ids: run:&lt;run_id&gt; · artifact:&lt;name&gt;@&lt;digest&gt; (a prefix of ≥ 8 hex characters works)</text>
-<text x="36" y="566" class="s" text-anchor="start">index: &lt;store&gt;/.wc-store/index.json, a cache rebuilt by walking the tree on a miss</text>
-<text x="930" y="596" class="m" text-anchor="end" fill="#64748b">worldcurrent.core.store · wc store</text>
+<text x="36" y="566" class="s" text-anchor="start">index: &lt;store&gt;/.hylo-store/index.json, a cache rebuilt by walking the tree on a miss</text>
+<text x="930" y="596" class="m" text-anchor="end" fill="#64748b">hylo.core.store · hylo store</text>
 </svg>

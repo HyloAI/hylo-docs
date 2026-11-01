@@ -214,7 +214,7 @@ Registration is an **import-time side effect**: `mani_skill/envs/__init__.py:1-2
 | panda / fetch / xarm7 / trifinger, etc. | No LICENSE file in the directory; per the README they should fall under CC BY-NC 4.0 | \[Unverified\] |
 | Downloaded datasets (YCB, PartNet-Mobility, ReplicaCAD, AI2THOR, RoboCasa, OakInk-v2, Bridge real2sim) | Each upstream's own license; the repository has **no** per-item declaration | `references/benchmarks/ManiSkill/mani_skill/utils/assets/data.py:41-200`. URLs come from HF `haosulab/*` and `storage1.ucsd.edu`. PartNet-Mobility generally has research-use terms \[Unverified\] |
 
-**Conclusion**: the code can be freely reused under Apache-2.0. If worldcurrent wants to distribute or commercially use assets, each one must be re-reviewed individually; by default treat ManiSkill assets as NC and use them for research only.
+**Conclusion**: the code can be freely reused under Apache-2.0. If Hylo wants to distribute or commercially use assets, each one must be re-reviewed individually; by default treat ManiSkill assets as NC and use them for research only.
 
 ## 8. Strengths, Weaknesses and Risks
 
@@ -243,7 +243,7 @@ Registration is an **import-time side effect**: `mani_skill/envs/__init__.py:1-2
 
 ## 9. Components Worth Reusing
 
-1. **The orthogonal three-mode design** (obs_mode / control_mode / reward_mode strings and parsers), which can be borrowed directly for worldcurrent's `EnvConfig`. See `references/benchmarks/ManiSkill/mani_skill/envs/utils/observations/__init__.py:37-100`.
+1. **The orthogonal three-mode design** (obs_mode / control_mode / reward_mode strings and parsers), which can be borrowed directly for Hylo's `EnvConfig`. See `references/benchmarks/ManiSkill/mani_skill/envs/utils/observations/__init__.py:37-100`.
 2. **The metrics semantics of `ManiSkillVectorEnv`**: `success_once`, `success_at_end`, `fail_once`, `return`, `episode_len`, plus the `ignore_terminations` switch. These are exactly the definitions the Evaluator needs, and we can copy them as is (`references/benchmarks/ManiSkill/mani_skill/vector/wrappers/gymnasium.py:127-185`).
 3. **The options convention of `reset(options={"env_idx", "reset_to_env_states", "reconfigure"})`**, which can be adopted into the standard keys of our `reset(seed, options)`.
 4. **Declarative asset dependencies via `DataSource` and `asset_download_ids`** (with sha256 checks). We can borrow its structure, but the interactive prompt should be replaced with fail-fast (`references/benchmarks/ManiSkill/mani_skill/utils/assets/data.py:13-38`, `references/benchmarks/ManiSkill/mani_skill/utils/download_asset.py:37-47`).
@@ -294,20 +294,20 @@ Registration is an **import-time side effect**: `mani_skill/envs/__init__.py:1-2
 | Sim2Real | `references/benchmarks/ManiSkill/mani_skill/envs/sim2real_env.py:15` |
 | Tests (seed reproducibility, state, wrappers) | `references/benchmarks/ManiSkill/tests/test_envs.py:151-186`, `references/benchmarks/ManiSkill/tests/test_sim_state.py`, `references/benchmarks/ManiSkill/tests/test_wrappers.py` |
 
-## 12. Mapping to worldcurrent Environment Interface
+## 12. Mapping to Hylo Environment Interface
 
-| worldcurrent contract | ManiSkill counterpart | Adaptation notes |
+| Hylo contract | ManiSkill counterpart | Adaptation notes |
 |---|---|---|
 | `reset(seed, options) -> Observation` | `BaseEnv.reset(seed: int\|list[int], options: dict) -> (obs, info)` (`references/benchmarks/ManiSkill/mani_skill/envs/sapien_env.py:861`) | `seed` can be a list (one per env). Keys in `options` are passed through unchanged: `env_idx`, `reconfigure`, `reset_to_env_states`. The `info` returned on reset already contains fields such as `success`, which should go into `Observation.info` |
 | `step(Action) -> StepResult(obs, reward, terminated, truncated, info)` | `TimeLimitWrapper(BaseEnv).step` (`references/benchmarks/ManiSkill/mani_skill/utils/registration.py:160-168`) | Must be wrapped with TimeLimit, otherwise truncated is always False. All return values are batched torch tensors, even with num_envs=1; `CPUGymWrapper` can remove the batch dimension (`references/benchmarks/ManiSkill/mani_skill/utils/wrappers/gymnasium.py:55-98`). **The adapter should expose `success` separately from `terminated`**; terminated must not be used in place of success |
-| `observation_spec` | `single_observation_space` and `observation_space` (gym.Space, derived from actual obs) (`references/benchmarks/ManiSkill/mani_skill/envs/sapien_env.py:371-380`) | Requires instantiating the env to obtain; constructing once triggers one reset and reconfigure. We recommend designing worldcurrent's spec to be optional and lazily obtained |
+| `observation_spec` | `single_observation_space` and `observation_space` (gym.Space, derived from actual obs) (`references/benchmarks/ManiSkill/mani_skill/envs/sapien_env.py:371-380`) | Requires instantiating the env to obtain; constructing once triggers one reset and reconfigure. We recommend designing Hylo's spec to be optional and lazily obtained |
 | `action_spec` | `single_action_space` (`references/benchmarks/ManiSkill/mani_skill/envs/sapien_env.py:333-336`), determined by `control_mode`; usually a normalized `Box(-1,1)` space | The spec should carry `control_mode` and the denormalized low/high (`controller._original_single_action_space`, `references/benchmarks/ManiSkill/mani_skill/agents/controllers/base_controller.py:158-168`). Absolute EE poses output by a VLA must be aligned with `pd_ee_pose` or `pd_ee_delta_pose` |
 | Task success predicate | `Task.evaluate() -> {"success": BoolTensor[N], "fail"?: BoolTensor[N], ...}` (`references/benchmarks/ManiSkill/mani_skill/envs/sapien_env.py:1143`) | Wrap it in the adapter as `TaskSpec.is_success(info)`. The Evaluator layer maintains `success_once` or `success_at_end` itself, with semantics following `ManiSkillVectorEnv` (`references/benchmarks/ManiSkill/mani_skill/vector/wrappers/gymnasium.py:132-156`), and forcibly sets `ignore_terminations` to control the definition |
-| Language instruction (VLA) | No unified interface; only the local API `get_language_instruction()` (`references/benchmarks/ManiSkill/mani_skill/envs/tasks/digital_twins/bridge_dataset_eval/put_on_in_scene.py:70`) | Provided by worldcurrent's Task layer; for other ManiSkill tasks we need to maintain our own instruction mapping table |
+| Language instruction (VLA) | No unified interface; only the local API `get_language_instruction()` (`references/benchmarks/ManiSkill/mani_skill/envs/tasks/digital_twins/bridge_dataset_eval/put_on_in_scene.py:70`) | Provided by Hylo's Task layer; for other ManiSkill tasks we need to maintain our own instruction mapping table |
 | `render(camera)` | `render_rgb_array(camera_name)` (`references/benchmarks/ManiSkill/mani_skill/envs/sapien_env.py:1379`), using human render cameras; sensor images via `get_sensor_images()` (`:568`) | Returns `(N,H,W,3)`; requires Vulkan \[Needs model/hardware\]; unavailable when `render_backend="none"` |
 | `close()` | `BaseEnv.close() -> _clear()` (`references/benchmarks/ManiSkill/mani_skill/envs/sapien_env.py:1241-1255`) | Frees GPU memory via `gc.collect()`; watch GPU memory when repeatedly creating GPU envs in the same process |
 | state snapshot (memory/self-improvement) | `get_state_dict()` / `set_state_dict(state, env_idx)` (`references/benchmarks/ManiSkill/mani_skill/envs/sapien_env.py:1281-1314`) | Tasks must override it to include task state such as the goal (see `references/benchmarks/ManiSkill/mani_skill/envs/template.py:193-206`); otherwise the snapshot has no goal |
-| Benchmark (suite) | Does not exist. There is only the flat dict `REGISTERED_ENVS` | worldcurrent's Benchmark layer should define its own suite = [env_id + kwargs + seeds + episodes + metric definitions] |
+| Benchmark (suite) | Does not exist. There is only the flat dict `REGISTERED_ENVS` | Hylo's Benchmark layer should define its own suite = [env_id + kwargs + seeds + episodes + metric definitions] |
 
 **Split recommendation**: Simulator = SAPIEN and `ManiSkillScene` (backend); Environment adapter = `BaseEnv` + TimeLimit; Task = the env subclass with `evaluate()` (in ManiSkill, Task and Environment are the same class and cannot be split apart; the separation can only be logical, at the adapter layer); Evaluator = implemented by us, reusing the metrics definitions of `ManiSkillVectorEnv`; Benchmark = a suite list implemented by us.
 

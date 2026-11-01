@@ -1,4 +1,4 @@
-# GEPA (standalone) Source-Level Study: Reflective Pareto Evolution of Text Components for worldcurrent RSI
+# GEPA (standalone) Source-Level Study: Reflective Pareto Evolution of Text Components for Hylo RSI
 
 - Repository: `references/evolution/gepa` (gepa-ai/gepa @ `02ea415`, 2026-10-30, MIT). `pyproject.toml` still reads `version="0.1.4"`, but that is a placeholder the publish workflow rewrites. HEAD is **newer than 0.1.4**: `optimize_anything` describes the 0.1.4 behaviour as "legacy" (`references/evolution/gepa/src/gepa/optimize_anything.py:160-163`). DSPy pins `gepa[dspy]==0.1.4` (see `research/projects/dspy.md` §6), so the HEAD-only features below (eval server, sealed `test_set`, `oa` engines, ComBEE) **are not available through DSPy's pin**.
 - Paper: arXiv 2507.19457 (README:12). Official repo and license were checked on the GitHub API (MIT, not a fork, 7.2k stars) before cloning.
@@ -20,7 +20,7 @@ GEPA is a **black-box optimizer over a dict of named text components** (`Candida
 
 GEPA has no dependency on DSPy and no runtime dependencies at all (`dependencies = []`, `references/evolution/gepa/pyproject.toml`). Everything domain-specific sits behind one protocol, `GEPAAdapter`.
 
-How it differs from our current loop (wc-evolve `worldcurrent/evolve/loop.py`):
+How it differs from our current loop (hylo-evolve `hylo/evolve/loop.py`):
 - Our loop: one deterministic diagnosis → N declarative patches → McNemar gate → held-out check.
 - GEPA: many cheap noisy minibatch tests → a growing population → Pareto-weighted parent sampling. **GEPA has no statistical test anywhere.** A grep over `src/gepa` finds no McNemar, binomial or p-value code. \[Implemented\]
 
@@ -241,7 +241,7 @@ sequenceDiagram
 4. The API is churning fast. HEAD differs substantially from the 0.1.4 that DSPy pins, and there are two parallel APIs (`optimize`, `optimize_anything`) plus legacy `GEPAConfig`.
 5. Pickled state and in-process `exec` are unsafe defaults for anything evolving code.
 
-## 11. What worldcurrent should adopt (concrete)
+## 11. What Hylo should adopt (concrete)
 
 1. **Map candidates 1:1.** A GEPA `Candidate` (`dict[str,str]`) equals our `Candidate.patch` restricted to string-valued, non-protected dotted paths. Examples: `reasoner.prompt.system`, `reasoner.recovery_rules`, `agent.instruction_template`.
    - Only these keys go in the seed. Because GEPA cannot add keys (`references/evolution/gepa/src/gepa/proposer/reflective_mutation/reflective_mutation.py:597`), the protected scope holds structurally.

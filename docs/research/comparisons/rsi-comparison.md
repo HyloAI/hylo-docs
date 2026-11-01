@@ -21,7 +21,7 @@ Also: XPolicyLab's `physicalRSI` has a complete recursive self-improvement desig
 
 ## 2. Key lessons
 
-1. **The unit of improvement determines the safety ceiling**. Zetta restricts candidates to **declarative bundles** (critic rules + parameterization of frozen tools) and does not execute generated code — currently the only design that delivers "safe self-improvement" at the source-code level. worldcurrent uses **declarative candidates** by default; code-type candidates must execute in an isolated runtime (Zetta itself states "disabled until an isolated executable runtime is available").
+1. **The unit of improvement determines the safety ceiling**. Zetta restricts candidates to **declarative bundles** (critic rules + parameterization of frozen tools) and does not execute generated code — currently the only design that delivers "safe self-improvement" at the source-code level. Hylo uses **declarative candidates** by default; code-type candidates must execute in an isolated runtime (Zetta itself states "disabled until an isolated executable runtime is available").
 2. **Statistical gating is a reusable hard asset**: paired same-seed comparison + one-sided exact McNemar (`gating.py:12-23`, a dozen or so lines) + separate accounting for infra failures.
 3. **Validation and held-out must be separate**: in `test` mode Zetta's held-out only reports (avoiding contamination, reasonable), but before promotion it lacks a **validation split independent of the training failure seeds**, leaving only the gate "pass_rate≥0.5 on training failure seeds", which risks overfitting. We require a three-way split: train (for diagnosis) / validation (for selection) / heldout (reported only).
 4. **Rollback must be a first-class operation**: all projects only move forward. We implement it with "registry pointer + immutable versions": promote = move the `active` pointer; rollback = point back to the parent version; both write to the ledger.
@@ -29,7 +29,7 @@ Also: XPolicyLab's `physicalRSI` has a complete recursive self-improvement desig
 6. **Privileged information must be isolated and labeled**: Zetta defaults to privileged simulation evidence, making its improvements non-transferable. Candidates may read privileged diagnostic information during generation, but **the validation stage must run under deployment-equivalent observation conditions**.
 7. **LLM-driven stages need idempotency and evidence traceability**: Zetta's attempt directories + input sha + validator re-verification reuse are worth copying as is.
 
-## 3. The RSI closed loop in worldcurrent
+## 3. The RSI closed loop in Hylo
 
 ```mermaid
 flowchart LR

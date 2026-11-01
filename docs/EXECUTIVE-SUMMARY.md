@@ -1,4 +1,4 @@
-# Executive Summary: worldcurrent Physical AI Stack
+# Executive Summary: Hylo Physical AI Stack
 
 > 2026-10-30 | Basis: source-level study of 20 open-source repositories (14 assigned + 6 verified memory projects), 8 cross-project comparisons, and a runnable prototype (about 2.7k lines, 38 tests passing).
 > All third-party code was only read statically; "existing implementation" in this document means the code exists and is traceable, **not that we have run and verified it**.
@@ -55,11 +55,11 @@ But it has two flaws: its logs cannot replay a trial, and its programmatic API a
 
 ## 5. How many repositories should the first version have?
 
-**Superseded 2026-10-31** by [design/repository-structure.md](design/repository-structure.md) (five code repositories on one base). Original decision — **one, for now** (2026-10-30): the existing `dyna-harness` repository is a multi-package uv workspace: `packages/` (wc-core, wc-eval, wc-agents, wc-memory, wc-evolve, worldcurrent-cli), `adapters/` (wc-env-mujoco, then LIBERO), and `physical-ai-research/` (this research workspace, now `docs/`). An import-lint test enforces the layering. Packages are split into separate repositories later, when an adapter gets external maintainers, needs different CI (GPU, real robot, Isaac) or carries a different license.
+**Superseded 2026-10-31** by [design/repository-structure.md](design/repository-structure.md) (five code repositories on one base). Original decision — **one, for now** (2026-10-30): the existing `dyna-harness` repository is a multi-package uv workspace: `packages/` (hylo-core, hylo-eval, hylo-agents, hylo-memory, hylo-evolve, hylo-cli), `adapters/` (hylo-env-mujoco, then LIBERO), and `physical-ai-research/` (this research workspace, now `docs/`). An import-lint test enforces the layering. Packages are split into separate repositories later, when an adapter gets external maintainers, needs different CI (GPU, real robot, Isaac) or carries a different license.
 
 ## 6. Which module should the first phase start with?
 
-**`wc-core`**, including contracts, Kernel, SafetyShield, Trace and the EnvServer protocol, while building the **MuJoCo in-house task suite** in parallel.
+**`hylo-core`**, including contracts, Kernel, SafetyShield, Trace and the EnvServer protocol, while building the **MuJoCo in-house task suite** in parallel.
 
 Rationale: every other layer depends on these contracts, and the prototype has already validated their shape. In week 4 we will use the openpi client for a "contract stress test" to expose contract defects before touching a real VLA.
 
@@ -67,7 +67,7 @@ Rationale: every other layer depends on these contracts, and the prototype has a
 
 **v0.1 minimal credible loop**, 3 engineers for about 10-11 weeks (about 32 person-weeks); see `design/mvp-v0.1.md` for details:
 
-- **P0**: wc-core; SafetyShield (port of the Approver chain); EnvServer; a test-double environment and the conformance kit; MuJoCo task suite `wc-mj-v0` (reach, push, disturbance recovery, occlusion memory); wc-eval (splits, Scorer, resume, paired statistics); baseline Agent; ComposableAgent; swappable Reasoner (rules + OpenAI-compatible LLM); SQLite episodic/spatial memory; offline diagnosis and config-patch candidates, gate, Registry and rollback; CLI.
+- **P0**: hylo-core; SafetyShield (port of the Approver chain); EnvServer; a test-double environment and the conformance kit; MuJoCo task suite `hylo-mj-v0` (reach, push, disturbance recovery, occlusion memory); hylo-eval (splits, Scorer, resume, paired statistics); baseline Agent; ComposableAgent; swappable Reasoner (rules + OpenAI-compatible LLM); SQLite episodic/spatial memory; offline diagnosis and config-patch candidates, gate, Registry and rollback; CLI.
 - **P1**: vla-eval bridge (LIBERO); openpi remote policy; LIBERO EnvServer; LeRobot v3 and Rerun export; shadow replay.
 - **Definition of done**: the full Execute→Promote/Rollback flow runs end to end on MuJoCo plus one external benchmark; four protocol versions are frozen; a technical report is produced that includes baselines, a memory ablation and one RSI round.
 

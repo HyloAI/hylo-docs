@@ -2,7 +2,7 @@
 
 > Subject: `references/evolution/dgm` (jennyzzt/dgm @ `a565fd2`, 2025-08-13, Apache-2.0). This is the official code linked from arXiv:2505.22954 (Zhang, Hu, Lu, Lange, Clune).
 > Method: static reading only. Nothing was installed or run, and no Docker images or SWE-bench/Polyglot data were pulled.
-> Audience: the `worldcurrent` offline improvement loop (diagnose -> declarative candidates -> protected-scope check -> paired McNemar on validation -> held-out report -> registry promote/rollback).
+> Audience: the `Hylo` offline improvement loop (diagnose -> declarative candidates -> protected-scope check -> paired McNemar on validation -> held-out report -> registry promote/rollback).
 > Tags: **\[Implemented\]** traceable in code · **\[Docs/Interface only\]** only in README, prompts or analysis scaffolding · **\[Unverified\]** paper claim or code path not checked end to end · **\[Needs model/hardware\]** needs paid LLM APIs, Docker or SWE-bench images
 
 ---
@@ -186,9 +186,9 @@ Evidence: parent sampling `references/evolution/dgm/DGM_outer.py:91-100`; system
 - Sandboxing is coarse: no resource or network limits, and API keys sit inside the container.
 - Several bugs in non-default paths (§6). The third evaluation stage is dead code.
 
-## 11. What worldcurrent should adopt (concrete)
+## 11. What Hylo should adopt (concrete)
 
-| DGM mechanism | worldcurrent adaptation (frozen SmolVLA, LIBERO) |
+| DGM mechanism | Hylo adaptation (frozen SmolVLA, LIBERO) |
 |---|---|
 | Archive tree + `score_child_prop` parents | Extend the registry from a linear promote/rollback history into a **candidate archive with `parent_id`**. Sample proposal parents with `sigmoid(k·(sr−sr0))/(1+children)`, but **promote** only through our McNemar gate. Search breadth (archive) stays separate from deployment (promoted pointer). |
 | Lineage as diff chain | Our candidates are declarative (critic/recovery rules, prompt templates, controller params, skill library entries). Store each as `parent_id + delta` with a content hash, and materialise by replay. A rollback is then just a pointer move. |

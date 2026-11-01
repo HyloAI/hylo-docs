@@ -56,27 +56,27 @@ gate split stays clean. The splits are recorded in evidence so the bias is visib
 ## 5. Contracts and modules
 
 ```
-wc-core   core/artifact.py    SourceRef, Provenance, ArtifactManifest; dir_digest, write_manifest, verify,
+hylo-core   core/artifact.py    SourceRef, Provenance, ArtifactManifest; dir_digest, write_manifest, verify,
                               referenced_artifacts; check_splits, development_runs (the one split guard)
           core/learning.py    TrainJob, Learner, DataSource, Labeler; run_job (in-process), launch (any interpreter:
-                              `python -m worldcurrent.learn.jobs job.json`, in wc-learn), resumable by job digest
+                              `python -m hylo.learn.jobs job.json`, in hylo-learn), resumable by job digest
           core/instrument.py  SuccessJudge, ValueModel, WorldModel protocols; Judgement; CalibrationReport,
                               calibration_report, calibrate_judge
           testing/learners.py SummaryLearner (dependency-free learner for tests and conformance)
-wc-evolve evolve/learning.py  LearningProposer ("learn"): run a learner job on the cycle's development runs, check
+hylo-evolve evolve/learning.py  LearningProposer ("learn"): run a learner job on the cycle's development runs, check
                               manifest metrics (`require`), fill a patch template ({artifact}, {metrics.x})
-wc-agents critic_train.py     CriticLearner ("critic.chunk_value"), seals a value_model
-wc-agents judges.py           TraceJudgeLearner ("judge.trace" learner) + TraceSuccessJudge ("judge.trace" instrument)
-wc-reasoner-llm judge.py      VLMSuccessJudge ("judge.vlm"): zero-shot VLM on the final frames + instruction
-worldcurrent-cli              wc learn JOB.json, wc calibrate ..., wc artifact PATH
-wc-policy-lerobot             export.py (seals a dataset), selftrain.py ExpertIterationLearner ("lerobot.expert_iteration",
+hylo-agents critic_train.py     CriticLearner ("critic.chunk_value"), seals a value_model
+hylo-agents judges.py           TraceJudgeLearner ("judge.trace" learner) + TraceSuccessJudge ("judge.trace" instrument)
+hylo-reasoner-llm judge.py      VLMSuccessJudge ("judge.vlm"): zero-shot VLM on the final frames + instruction
+hylo-cli              hylo learn JOB.json, hylo calibrate ..., hylo artifact PATH
+hylo-policy-lerobot             export.py (seals a dataset), selftrain.py ExpertIterationLearner ("lerobot.expert_iteration",
                               seals policy_weights), memory_build.py ActionMemoryLearner ("lerobot.action_memory")
 ```
 
-New plugin groups: `learners`, `instruments`, `datasources`. Orchestration lives in wc-core rather than a separate
-package because a job must be runnable in every venv (the policy venv has wc-core but not wc-evolve); the proposer
-lives in wc-evolve. Heavy learners (video labelers, world models) will go into their own adapter
-(`wc-learn-video`), never into core.
+New plugin groups: `learners`, `instruments`, `datasources`. Orchestration lives in hylo-core rather than a separate
+package because a job must be runnable in every venv (the policy venv has hylo-core but not hylo-evolve); the proposer
+lives in hylo-evolve. Heavy learners (video labelers, world models) will go into their own adapter
+(`hylo-learn-video`), never into core.
 
 Candidates stay `config_patch`: an artifact is referenced by path (`agent.params.critic.path: <artifact dir>`), so
 no new candidate kind and no change to the protected scope are needed.
@@ -95,12 +95,12 @@ Every artifact a run uses is recorded in its trace (agent spec components) and i
 |---|---|---|---|
 | A1 | core contracts, split guard, sealing, gate stage-0 provenance check, LearningProposer, plugin groups | CPU | implemented |
 | A2 | existing builders sealed and exposed as learners (critic, expert iteration, export, action memory) | CPU | implemented |
-| A3 | instruments: success / progress judges (zero-shot VLM `judge.vlm` vs trained on traces `judge.trace`), calibrated on LIBERO ground truth (`wc calibrate`); completes RFC-0003 M5 | CPU | implemented |
+| A3 | instruments: success / progress judges (zero-shot VLM `judge.vlm` vs trained on traces `judge.trace`), calibrated on LIBERO ground truth (`hylo calibrate`); completes RFC-0003 M5 | CPU | implemented |
 | A4 | noise-space learner: done as W3 (offline retrieval form; the online RL form needs thousands of episodes) | CPU | see W3 |
-| W1 | external data: `core/datasource.py` (ExternalEpisode, `ingest` into split external:<name> with origin and licence, `contamination_report` against gate / held-out init states), `instrument.label_run` (calibrated judges only, high-precision positives only); sources `lerobot.dataset`, `video.frames`, `video.files` (adapter wc-data-video); `wc ingest / label / contamination` | CPU | implemented |
+| W1 | external data: `core/datasource.py` (ExternalEpisode, `ingest` into split external:<name> with origin and licence, `contamination_report` against gate / held-out init states), `instrument.label_run` (calibrated judges only, high-precision positives only); sources `lerobot.dataset`, `video.frames`, `video.files` (adapter hylo-data-video); `hylo ingest / label / contamination` | CPU | implemented |
 | W2 | world model: `agents/world_model.py` (StateWorldModel ensemble + task-complete head, learner `world_model.state`, `WorldModelEnvironment`); `protocol.prescreen` (off by default; rejects predicted regressions before any rollout; never used by the gate); synthetic runs excluded from development data | CPU (state); GPU for video models | implemented (state) |
 | W3 | noise-space steering (A4, offline DSRL counterpart): exact seed-noise recovery, `memory_build --store noise`, `NoiseSteeredAgent` mixing retrieved noise variance-preservingly | CPU | implemented; null result on unseen init states (0.55 / 0.54 vs 0.54) |
-| W4 | shadow mode: `agents/shadow.py` (`ShadowAgent`, divergence events, background evaluation), `wc evolve shadow` | CPU / robot | implemented |
+| W4 | shadow mode: `agents/shadow.py` (`ShadowAgent`, divergence events, background evaluation), `hylo evolve shadow` | CPU / robot | implemented |
 | later | latent-action / hand-pose labelers (actions from video), video world models, RL fine-tuning (GRPO / RECAP), real-robot adapters | GPU, data approval, hardware | - |
 
 Lessons and skill libraries (mutable stores) are not sealed yet; they keep their own content digests

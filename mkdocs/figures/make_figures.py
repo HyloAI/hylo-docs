@@ -2,7 +2,7 @@
 
     uv run --group demo python docs/mkdocs/figures/make_figures.py [--store PATH] [only ...]
 
-Reads runs from the run and artifact store (`--store`, else this machine's profile; see `wc store where`).
+Reads runs from the run and artifact store (`--store`, else this machine's profile; see `hylo store where`).
 MuJoCo renders need offscreen OpenGL: MUJOCO_GL=osmesa PYOPENGL_PLATFORM=osmesa
 LD_LIBRARY_PATH=~/.local/mesa/root/usr/lib/x86_64-linux-gnu (bench/scripts/install-osmesa-user.sh).
 
@@ -133,7 +133,7 @@ def campaign(store: Path) -> Path:
 
 # ---------------------------------------------------------------- 10. LIBERO frames
 def libero_strip(store: Path, run: str, n_frames: int = 7, camera: str = "agentview") -> Path:
-    from worldcurrent.core.trace import TraceStore
+    from hylo.core.trace import TraceStore
 
     rd = store / run
     log = json.loads((rd / "evallog.json").read_text())
@@ -159,9 +159,9 @@ def libero_strip(store: Path, run: str, n_frames: int = 7, camera: str = "agentv
 def mujoco_scenes() -> Path:
     import mujoco
 
-    from worldcurrent.core.task import TaskInstance
-    from worldcurrent.envs.mujoco.planar_reach import PlanarReachEnv, mujoco_benchmark
-    from worldcurrent.envs.mujoco.table_reach import TableReachEnv, table_benchmark
+    from hylo.core.task import TaskInstance
+    from hylo.envs.mujoco.planar_reach import PlanarReachEnv, mujoco_benchmark
+    from hylo.envs.mujoco.table_reach import TableReachEnv, table_benchmark
 
     images = []
     env = PlanarReachEnv()
@@ -199,7 +199,7 @@ def main() -> None:
     if a.store:
         store = Path(a.store)
     else:
-        from worldcurrent.core.store import default_root
+        from hylo.core.store import default_root
 
         store = default_root()
     jobs = {"leaderboard": lambda: leaderboard(store), "campaign": lambda: campaign(store),

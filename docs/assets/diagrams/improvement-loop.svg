@@ -36,7 +36,7 @@
 <text x="148.0" y="293.0" class="t" text-anchor="middle" fill="#c2410c">approval</text>
 <text x="148.0" y="307.0" class="s" text-anchor="middle">auto, or manual:</text>
 <text x="148.0" y="321.0" class="s" text-anchor="middle">pending_approval.json</text>
-<text x="148.0" y="335.0" class="s" text-anchor="middle">wc evolve approve</text>
+<text x="148.0" y="335.0" class="s" text-anchor="middle">hylo evolve approve</text>
 <rect x="278" y="250" width="196" height="120" rx="8" fill="#fff" stroke="#0d5c63" stroke-width="1.2"/>
 <text x="376.0" y="293.0" class="t" text-anchor="middle" fill="#0d5c63">held-out report</text>
 <text x="376.0" y="307.0" class="s" text-anchor="middle">heldout split, the winner</text>
@@ -59,10 +59,10 @@
 <path d="M276,310 L248,310" fill="none" stroke="#2a7f86" stroke-width="1.5" marker-end="url(#a-2a7f86)"/>
 <rect x="50" y="430" width="424" height="70" rx="8" fill="#e6f2f3" stroke="#0d5c63" stroke-width="1.2"/>
 <text x="262.0" y="462.0" class="t" text-anchor="middle" fill="#0d5c63">promotion</text>
-<text x="262.0" y="476.0" class="s" text-anchor="middle">registry ledger · ACTIVE · active.json → wc serve policy --campaign</text>
+<text x="262.0" y="476.0" class="s" text-anchor="middle">registry ledger · ACTIVE · active.json → hylo serve policy --campaign</text>
 <path d="M148,372 L148,428" fill="none" stroke="#0d5c63" stroke-width="1.5" marker-end="url(#a-0d5c63)"/>
 <rect x="506" y="430" width="196" height="70" rx="8" fill="#fff" stroke="#c2410c" stroke-width="1.2"/>
-<text x="604.0" y="455.0" class="t" text-anchor="middle" fill="#c2410c">wc evolve rollback</text>
+<text x="604.0" y="455.0" class="t" text-anchor="middle" fill="#c2410c">hylo evolve rollback</text>
 <text x="604.0" y="469.0" class="s" text-anchor="middle">restores the previous</text>
 <text x="604.0" y="483.0" class="s" text-anchor="middle">active version</text>
 <path d="M504,465 L476,465" fill="none" stroke="#c2410c" stroke-width="1.5" marker-end="url(#a-c2410c)"/>

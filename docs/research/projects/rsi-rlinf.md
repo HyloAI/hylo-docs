@@ -10,7 +10,7 @@
 
 ## 1. Positioning
 
-RLinf is a **general distributed RL system** (Ray-based scheduler + typed channels + FSDP/Megatron engines). On top of it sits a large **embodied RL stack**: about 20 VLA/policy families, about 15 simulators and real robots, and PPO / GRPO / SAC / DSRL / NFT / DAgger / OPD / RECAP. For worldcurrent it is the most complete public reference for weight-level VLA improvement. It is also the only one with:
+RLinf is a **general distributed RL system** (Ray-based scheduler + typed channels + FSDP/Megatron engines). On top of it sits a large **embodied RL stack**: about 20 VLA/policy families, about 15 simulators and real robots, and PPO / GRPO / SAC / DSRL / NFT / DAgger / OPD / RECAP. For Hylo it is the most complete public reference for weight-level VLA improvement. It is also the only one with:
 
 - On-policy RL for **flow-matching VLAs** (pi0/pi0.5) via a stochastic-denoising log-prob, in four variants (`flow_ode`, `flow_sde`, `flow_cps`, `flow_noise`). \[Implemented\] `rlinf/models/embodiment/openpi/sampling/rl_sampler.py:30-87`
 - An **offline, advantage-conditioned** pipeline (RECAP, the pi*0.6 recipe) that needs no online log-probs. \[Implemented\] `rlinf/algorithms/offline/process/advantage.py:15-69`, `rlinf/models/embodiment/openpi_cfg/openpi_cfg_action_model.py:103-150`
@@ -194,7 +194,7 @@ Weaknesses / risks
 - SmolVLA is unsupported. A wrapper is required (≈ `pi0_fast` LeRobot IO + `Pi0RL` sampler).
 - `kl_beta=0` everywhere. Drift from the SFT policy is controlled only by clip and LR, which is risky for a gated promote loop that also cares about non-target tasks.
 
-## 11. What worldcurrent should adopt (concrete)
+## 11. What Hylo should adopt (concrete)
 
 **Reuse as code (copy with attribution, Apache-2.0).**
 1. `rl_sampler.sample_mean_var` + `gaussian_logprob` (`rl_sampler.py:24-110`, ~90 lines). It is exactly what a SmolVLA policy needs. SmolVLA's `sample_actions`/`denoise_step` (`references/policies/lerobot/src/lerobot/policies/smolvla/modeling_smolvla.py:777-863`) uses the same NOISE_AT_ONE convention and the same prefix-KV + suffix-denoise split as `Pi0RL._predict_train`.
@@ -212,7 +212,7 @@ Weaknesses / risks
 ### 11.1 Plugging into the candidate registry
 
 A weight candidate = `Candidate(kind="policy_ref", patch={"agent.policy.ref": "smolvla-libero@<sha256-of-safetensors>"}, evidence={rl_run_id, base_ref, algo, cfg_hash, train_init_state_ids_digest, steps, wall_clock})`.
-- `policy_ref` exists in `CandidateKind` but is **not in `ENABLED_KINDS`** (`packages/wc-evolve/src/worldcurrent/evolve/candidate.py:27,31`). Enabling it requires (a) an immutable artifact store keyed by digest, and (b) an AgentServer that can hot-load a ref.
+- `policy_ref` exists in `CandidateKind` but is **not in `ENABLED_KINDS`** (`packages/hylo-evolve/src/hylo/evolve/candidate.py:27,31`). Enabling it requires (a) an immutable artifact store keyed by digest, and (b) an AgentServer that can hot-load a ref.
 - The gate is unchanged (`loop.py:93-120`, paired McNemar + per-task regression + safety). Add one check: the candidate's `train_init_state_ids` ∩ (validation ∪ heldout) = ∅.
 - Export: RLinf-style `full_weights.pt` → LeRobot `save_pretrained` (safetensors) so the AgentServer loads it like any LeRobot checkpoint.
 

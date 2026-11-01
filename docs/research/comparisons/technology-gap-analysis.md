@@ -14,7 +14,7 @@ The real gaps are concentrated in **cross-layer** areas:
 4. **A trustworthy RSI closed loop**: Zetta proved that "declarative candidates + paired statistical gate" is feasible, but it lacks validation/held-out separation, rollback, physical safety guardrails and cross-benchmark regression, and it is bound to LIBERO.
 5. **A composable Reasoning × Policy × Memory × World Model Agent**: existing projects are either pure VLA (no reasoning/memory hooks) or an LLM that treats everything as a tool (loop handed to an external SDK, making safety and timing hard to control).
 
-**These are worldcurrent's R&D priorities. Everything else is integrated via dependencies, protocol compatibility or external processes.**
+**These are Hylo's R&D priorities. Everything else is integrated via dependencies, protocol compatibility or external processes.**
 
 ## 1. Coverage matrix
 

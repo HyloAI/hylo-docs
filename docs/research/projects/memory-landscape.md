@@ -1,6 +1,6 @@
 # Survey of Open-Source Physical Memory Implementations (Memory Landscape)
 
-> A survey of reference implementations for the `worldcurrent` Memory Layer (Working / Episodic / Spatial / Skill).
+> A survey of reference implementations for the `Hylo` Memory Layer (Working / Episodic / Spatial / Skill).
 > Survey date: 2026-10-30. All conclusions are based on **static source reading**: no `pip install`, no scripts run, no weights or datasets downloaded, no cloned repositories modified.
 >
 > Tag conventions:
@@ -141,7 +141,7 @@ class AgentOutput:
 Milvus server (`pymilvus`), LangChain/LangGraph, HuggingFace embedding, VILA captioner (GPU) \[Needs model/hardware\]; `requirements.txt` pins `pydantic==1.10.18`, `deepspeed==0.9.5`, with a high risk of conflict with the modern LangChain/pydantic v2 ecosystem \[Unverified\]. The core library does not depend on ROS; ROS2 is only in `examples/nova_carter_demo/`.
 
 ### 3.7 License
-`LICENSE.md` is the **NVIDIA License**; §3.3 states *"only may be used or intended for use non-commercially … research or evaluation purposes only"* (`references/memory/remembr/LICENSE.md:20`). **worldcurrent must not copy its code**; only its design may be borrowed.
+`LICENSE.md` is the **NVIDIA License**; §3.3 states *"only may be used or intended for use non-commercially … research or evaluation purposes only"* (`references/memory/remembr/LICENSE.md:20`). **Hylo must not copy its code**; only its design may be borrowed.
 
 ### 3.8 Strengths, Weaknesses and Risks
 - Strengths: an extremely minimal data model; the combination of three-way spatio-temporal retrieval and LLM tool-calling is clear; "answer -> navigation goal" closes the loop from memory to planner.
@@ -238,7 +238,7 @@ MIT (`LICENSE`). Dependencies such as Grounded-SAM and LLaVA have their own lice
 - Weaknesses: untyped dicts; no timestamps (only `image_idx`), so it **cannot answer "when was it seen"**; no handling of dynamic objects; offline batch processing; pickle deserialization carries security risk; no tests.
 
 ### 4.9 Reusable Components
-The geometric+semantic weighted association of `compute_match_batch`, the weighted feature averaging of `merge_obj2_into_obj1`, the observation-count forgetting of `filter_objects`, and MST+LLM relation-edge generation are all pure functions and can be rewritten under MIT into worldcurrent's `SpatialMemory.upsert_observation()`.
+The geometric+semantic weighted association of `compute_match_batch`, the weighted feature averaging of `merge_obj2_into_obj1`, the observation-count forgetting of `filter_objects`, and MST+LLM relation-edge generation are all pure functions and can be rewritten under MIT into Hylo's `SpatialMemory.upsert_observation()`.
 
 ### 4.10 Source Index
 | Topic | Location |
@@ -261,7 +261,7 @@ Static reading of the main branch; pipeline not run; the `ali-dev` branch not co
 ## 5. Spark-DSG (`references/memory/Spark-DSG`)
 
 ### 5.1 Positioning
-MIT-SPARK's **Dynamic Scene Graph data structure library** (C++17 + pybind11), the common storage format of Hydra, Clio and Khronos. It does not handle perception; it only handles the nodes/edges/layers/partitions of a "layered 3D scene graph", serialization, incremental sync (ZMQ) and conversion (networkx / PyTorch Geometric). For worldcurrent, it is the closest thing to **"the standard storage layer for spatial memory"**.
+MIT-SPARK's **Dynamic Scene Graph data structure library** (C++17 + pybind11), the common storage format of Hydra, Clio and Khronos. It does not handle perception; it only handles the nodes/edges/layers/partitions of a "layered 3D scene graph", serialization, incremental sync (ZMQ) and conversion (networkx / PyTorch Geometric). For Hylo, it is the closest thing to **"the standard storage layer for spatial memory"**.
 
 ### 5.2 Architecture
 
@@ -337,7 +337,7 @@ The `LICENSE` file contains BSD-2-Clause text (no "Neither the name…" clause, 
 - Risks: the C++ extension needs compilation, and custom attributes require writing C++; no semantic/vector retrieval; `semantic_feature` is an `Eigen::MatrixXf`, so embedding model version metadata must be defined by us.
 
 ### 5.9 Reusable Components
-Use directly as the backend of worldcurrent's `SpatialMemory` (or write a Python version following its schema): layered layers, the `is_active`/`is_predicted` flags, `mergeNodes`, change-feed, and the observation-interval model of `KhronosObjectAttributes`.
+Use directly as the backend of Hylo's `SpatialMemory` (or write a Python version following its schema): layered layers, the `is_active`/`is_predicted` flags, `mergeNodes`, change-feed, and the observation-interval model of `KhronosObjectAttributes`.
 
 ### 5.10 Source Index
 | Topic | Location |
@@ -443,7 +443,7 @@ Static reading; no campaign run, submodules not pulled, no LLM called.
 ## 7. mem0 (`references/memory/mem0`)
 
 ### 7.1 Positioning
-The most widely used general-purpose agent memory library: it uses an LLM to extract conversations/messages into self-contained factual statements, writes them into a pluggable vector store (Qdrant by default, ~28 supported), and isolates them by a user/agent/run triple scope; retrieval uses **additive hybrid scoring of semantic + BM25 + entity boost**. Suitable as worldcurrent's **semantic/episodic textual fact backend**.
+The most widely used general-purpose agent memory library: it uses an LLM to extract conversations/messages into self-contained factual statements, writes them into a pluggable vector store (Qdrant by default, ~28 supported), and isolates them by a user/agent/run triple scope; retrieval uses **additive hybrid scoring of semantic + BM25 + entity boost**. Suitable as Hylo's **semantic/episodic textual fact backend**.
 
 ### 7.2 Architecture
 
@@ -532,7 +532,7 @@ Static reading; not installed, not connected to any vector store or LLM. The "AD
 ## 8. Graphiti (`references/memory/graphiti`)
 
 ### 8.1 Positioning
-Zep's open-source **temporal knowledge graph** engine: it takes an *episode* (a chunk of messages/text/JSON) as the unit of writing, uses an LLM to extract entity nodes and fact edges, and **every fact edge carries dual timelines** (event time `valid_at/invalid_at` + system time `created_at/expired_at`); new facts invalidate contradictory old facts rather than deleting them. For worldcurrent's episodic memory, it provides a ready-made paradigm of "**temporal consistency + traceability**".
+Zep's open-source **temporal knowledge graph** engine: it takes an *episode* (a chunk of messages/text/JSON) as the unit of writing, uses an LLM to extract entity nodes and fact edges, and **every fact edge carries dual timelines** (event time `valid_at/invalid_at` + system time `created_at/expired_at`); new facts invalidate contradictory old facts rather than deleting them. For Hylo's episodic memory, it provides a ready-made paradigm of "**temporal consistency + traceability**".
 
 ### 8.2 Architecture
 
@@ -634,14 +634,14 @@ Static reading; not connected to a graph database, no LLM called.
 
 ---
 
-## 10. Implications for the worldcurrent Memory Layer
+## 10. Implications for the Hylo Memory Layer
 
 ### 10.1 Five Core Findings
-1. **A general-purpose vector store can be bent into doing spatio-temporal retrieval, but the semantics are wrong**: ReMEmbR treats position and time as FLOAT_VECTOR for L2 nearest neighbor (`references/memory/remembr/remembr/memory/milvus_memory.py:37-69`, `:130`), with no radius / time window / coordinate frame; worldcurrent should make *time intervals* and *pose (including frame_id)* first-class fields, paired with dedicated indexes (R-tree/KD-tree + interval tree), rather than stuffing them into embeddings.
+1. **A general-purpose vector store can be bent into doing spatio-temporal retrieval, but the semantics are wrong**: ReMEmbR treats position and time as FLOAT_VECTOR for L2 nearest neighbor (`references/memory/remembr/remembr/memory/milvus_memory.py:37-69`, `:130`), with no radius / time window / coordinate frame; Hylo should make *time intervals* and *pose (including frame_id)* first-class fields, paired with dedicated indexes (R-tree/KD-tree + interval tree), rather than stuffing them into embeddings.
 2. **Episodic memory needs dual timelines and "invalidation rather than deletion"**: Graphiti's `valid_at/invalid_at/created_at/expired_at` (`references/memory/graphiti/graphiti_core/edges.py:263-290`) and `resolve_edge_contradictions` (`.../edge_operations.py:748-782`) correspond directly to physical-world state changes such as "the cup was on the table, now it is in the cabinet"; mem0's current OSS is ADD-only (`references/memory/mem0/mem0/configs/prompts.py:472`) and cannot carry state consistency on its own.
 3. **The ontology of spatial memory is a graph, not a list**: Spark-DSG's layering (BUILDINGS→ROOMS→PLACES→OBJECTS, with AGENTS as a dynamic layer), `is_active/is_predicted`, `mergeNodes`, change-feed (`references/memory/Spark-DSG/include/spark_dsg/dynamic_scene_graph.h:389-450`) and Khronos's observation intervals (`.../node_attributes.h:410-421`) form a complete schema; ConceptGraphs provides the association/fusion rules for writing perception into that graph (`references/memory/concept-graphs/conceptgraph/slam/cfslam_pipeline_batch.py:56-80`, `.../slam/utils.py:178-222`).
 4. **Writes to skill memory must pass a validation gate**: ASPIRE's proposer→verifier→promote protocol (`references/memory/ASPIRE/.claude/skills/iterative-debugging/skills/README.md:20-34`) + usage ratings (`.../subagent-prompt.md:437-494`) + content-hash versioning (`.../scripts/campaign.py:115-137`) + execution sandbox (`references/memory/ASPIRE/src/cap_harness/runtime.py:159-200`) are the interface point between self-improvement and memory.
-5. **Memory output must be structured to be consumable by the planner/policy**: ReMEmbR constrains QA results to `AgentOutput(position, time, duration, binary, ...)` (`references/memory/remembr/remembr/agents/agent.py:5-12`) and converts them directly into `/goal_pose` (`.../agent_node.py:79-100`); worldcurrent's `query()` should return structured hits with pose/object ID/confidence, not merely concatenated text.
+5. **Memory output must be structured to be consumable by the planner/policy**: ReMEmbR constrains QA results to `AgentOutput(position, time, duration, binary, ...)` (`references/memory/remembr/remembr/agents/agent.py:5-12`) and converts them directly into `/goal_pose` (`.../agent_node.py:79-100`); Hylo's `query()` should return structured hits with pose/object ID/confidence, not merely concatenated text.
 
 ### 10.2 Proposed General `MemoryItem` Schema
 
@@ -774,7 +774,7 @@ class Memory(Protocol):
 - **Evidence and ratings**: every use writes back `useful / misleading / wrong / not-applicable` and seeds, as the basis for consolidation (narrow the trigger, fix, retire).
 - **Versioning and reproducibility**: the library's content hash is recorded with every run ("which version of the skill library this run used"), supporting regression re-runs after library changes.
 - **Retrieval semantics**: match by trigger/preconditions (scene, object category, failure symptoms) rather than pure semantic similarity; embeddings are only for recall, and the final decision is made by the planner/LLM reading the trigger.
-- **Interface with the self-improvement layer**: proposals come from the self-improvement loop, and verification depends on the Simulator/Benchmark layer; skill memory is the module where the most worldcurrent layers converge, so it should be integrated last and have its schema defined first.
+- **Interface with the self-improvement layer**: proposals come from the self-improvement loop, and verification depends on the Simulator/Benchmark layer; skill memory is the module where the most Hylo layers converge, so it should be integrated last and have its schema defined first.
 
 ### 10.5 License Conclusions
 - Can be used directly as dependencies or reused via rewriting: Spark-DSG (BSD), ConceptGraphs (MIT), ASPIRE (Apache-2.0), mem0 (Apache-2.0), Graphiti (Apache-2.0).

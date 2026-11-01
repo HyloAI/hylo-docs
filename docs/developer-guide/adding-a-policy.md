@@ -2,21 +2,21 @@
 
 This tutorial takes a new policy from an empty directory to a scorecard on the `mujoco-reach` leaderboard. Each step
 was run while writing it, and the outputs shown are real. It assumes the
-[development workspace](../getting-started/installation.md) with worldcurrent-bench next to the harness: MuJoCo
+[development workspace](../getting-started/installation.md) with hylo-bench next to the harness: MuJoCo
 planar reach is the environment throughout.
 
 A policy is the model inside an agent: given an observation, it draws action chunks, one per noise seed. You write
-the policy. The agents in wc-agents run it, temporally ensemble it or steer it, and the kernel, the SafetyShield,
+the policy. The agents in hylo-agents run it, temporally ensemble it or steer it, and the kernel, the SafetyShield,
 traces, benchmarks and the gate treat it like any other policy. If your decision logic is more than drawing chunks
 from one model (planning, switching between models, a remote service with its own loop), write an agent instead
-(`wc plugin new agent NAME`); see [interfaces: agent](../harness/interfaces/agent.md).
+(`hylo plugin new agent NAME`); see [interfaces: agent](../harness/interfaces/agent.md).
 
 | Step | What you get |
 |---|---|
 | [1. Scaffold](#1-scaffold-the-package) | a plugin package that already passes its conformance check |
 | [2. The contract](#2-the-contract) | `spec`, `reset`, `default_execution_steps`, `sample` |
 | [3. Declare it](#3-declare-the-contract-version-maturity-and-licence) | contract version, maturity, licence |
-| [4. Check it](#4-check-it) | conformance from pytest and from `wc plugin check` |
+| [4. Check it](#4-check-it) | conformance from pytest and from `hylo plugin check` |
 | [5. Run it](#5-run-it-with-the-three-agents) | under `policy`, `temporal_ensemble` and `steered` |
 | [6. Learn it](#6-a-learned-policy-weights-from-a-sealed-artifact) | weights from development runs, sealed, referenced by store id |
 | [7. Score it](#7-score-it-and-put-it-on-the-leaderboard) | a scorecard and a place on the leaderboard |
@@ -25,42 +25,42 @@ from one model (planning, switching between models, a remote service with its ow
 ## 1. Scaffold the package
 
 ```bash
-uv run wc plugin new policy my-reacher --dir plugins
+uv run hylo plugin new policy my-reacher --dir plugins
 ```
 
 ```text
-created plugins/wc-plugin-my-reacher
-  install: uv pip install -e plugins/wc-plugin-my-reacher
-  check:   uv run pytest plugins/wc-plugin-my-reacher/tests && wc plugin check policy my-reacher
+created plugins/hylo-plugin-my-reacher
+  install: uv pip install -e plugins/hylo-plugin-my-reacher
+  check:   uv run pytest plugins/hylo-plugin-my-reacher/tests && hylo plugin check policy my-reacher
 ```
 
 ```text
-plugins/wc-plugin-my-reacher/
+plugins/hylo-plugin-my-reacher/
 ├── pyproject.toml                 # dependencies, the entry point, the declaration
-├── src/wc_my_reacher/
+├── src/hylo_my_reacher/
 │   ├── __init__.py                # META: contract version and maturity
 │   └── plugin.py                  # MyReacherPolicy
 └── tests/test_wc_my_reacher.py    # conformance, and "it reaches the target"
 ```
 
-The entry point is what makes the policy findable by name. Nothing in worldcurrent is edited:
+The entry point is what makes the policy findable by name. Nothing in Hylo is edited:
 
 ```toml title="pyproject.toml"
 [project]
-name = "wc-plugin-my-reacher"
+name = "hylo-plugin-my-reacher"
 version = "0.1.0"
-dependencies = ["wc-core", "wc-agents", "numpy>=1.24"]
+dependencies = ["hylo-core", "hylo-agents", "numpy>=1.24"]
 
-[project.entry-points."worldcurrent.policies"]
-"my-reacher" = "wc_my_reacher.plugin:MyReacherPolicy"
+[project.entry-points."hylo.policies"]
+"my-reacher" = "hylo_my_reacher.plugin:MyReacherPolicy"
 
-[project.entry-points."worldcurrent.meta"]
-"wc-plugin-my-reacher" = "wc_my_reacher:META"
+[project.entry-points."hylo.meta"]
+"hylo-plugin-my-reacher" = "hylo_my_reacher:META"
 ```
 
-Install it into the workspace venv with `uv pip install -e plugins/wc-plugin-my-reacher`. Until then, or to try
+Install it into the workspace venv with `uv pip install -e plugins/hylo-plugin-my-reacher`. Until then, or to try
 something without installing it, any plugin can be named as `module:attr` with its module on `PYTHONPATH`, for
-example `type: "wc_my_reacher.plugin:MyReacherPolicy"`. The commands below were run that way.
+example `type: "hylo_my_reacher.plugin:MyReacherPolicy"`. The commands below were run that way.
 
 ## 2. The contract
 
@@ -78,7 +78,7 @@ class ChunkPolicy(Protocol):
 It is a `typing.Protocol`: you do not inherit from anything, you provide the methods. The generated policy drives
 the planar arm with two-link inverse kinematics plus seeded noise:
 
-```python title="src/wc_my_reacher/plugin.py"
+```python title="src/hylo_my_reacher/plugin.py"
 class MyReacherPolicy:
     def __init__(self, gain: float = 0.3, horizon: int = 8, noise: float = 0.05, l1: float = 0.3, l2: float = 0.25,
                  max_step: float = 0.05) -> None:
@@ -135,19 +135,19 @@ What each method is for:
 
 ## 3. Declare the contract version, maturity and licence
 
-```python title="src/wc_my_reacher/__init__.py"
-# the contract version this plugin implements and how far it has been verified (worldcurrent.core.plugins);
+```python title="src/hylo_my_reacher/__init__.py"
+# the contract version this plugin implements and how far it has been verified (hylo.core.plugins);
 # set maturity to implemented once it has run end to end on its target, and add `license` to pyproject.toml
-META = {"contracts": {"policies": "wc.policy/v0.1"}, "maturity": "unverified"}
+META = {"contracts": {"policies": "hylo.policy/v0.1"}, "maturity": "unverified"}
 ```
 
 The registry reads this declaration before it imports the plugin, and refuses an incompatible contract version:
-another major version, or a newer minor version than the core implements. `wc plugins` lists the declaration, and
+another major version, or a newer minor version than the core implements. `hylo plugins` lists the declaration, and
 the [plugin catalogue](plugin-catalogue.md) is generated from it. Add `license = "..."` to `pyproject.toml` for the
 code, and a per-plugin `weights` entry when the policy needs weights under another licence:
 
 ```python
-META = {"contracts": {"policies": "wc.policy/v0.1"}, "maturity": "implemented",
+META = {"contracts": {"policies": "hylo.policy/v0.1"}, "maturity": "implemented",
         "plugins": {"policies/my-reacher": {"weights": "CC-BY-NC-4.0 (checkpoint my-org/my-reacher-v1)"}}}
 ```
 
@@ -158,7 +158,7 @@ See [versioning](versioning.md) for what a contract version promises.
 The generated tests run the policy conformance check and one episode on MuJoCo planar reach:
 
 ```bash
-uv run pytest plugins/wc-plugin-my-reacher/tests
+uv run pytest plugins/hylo-plugin-my-reacher/tests
 ```
 
 ```text
@@ -169,7 +169,7 @@ uv run pytest plugins/wc-plugin-my-reacher/tests
 The same check from the command line, for any registered plugin (or a `module:attr` reference):
 
 ```bash
-uv run wc plugin check policy my-reacher
+uv run hylo plugin check policy my-reacher
 ```
 
 ```text
@@ -183,7 +183,7 @@ policy MyReacherPolicy: PASS
 - `--params '{"gain": 0.5}'` passes constructor arguments.
 - `--experiment CONFIG` checks against another environment. By default the check uses MuJoCo planar reach when it
   is installed, and the test double otherwise.
-- `wc plugin check` also warns when the declaration, the maturity or the licence is missing.
+- `hylo plugin check` also warns when the declaration, the maturity or the licence is missing.
 
 More in [testing](testing.md).
 
@@ -195,7 +195,7 @@ The policy never knows which agent runs it. Write an experiment config
 === "policy"
 
     ```yaml title="my_reacher.yaml"
-    schema_version: wc.experiment/v0.1
+    schema_version: hylo.experiment/v0.1
     name: mujoco-reach-my-reacher
     benchmark: {type: mujoco/reach-v0, split: validation}
     env: {type: mujoco.planar_reach}
@@ -228,18 +228,18 @@ The policy never knows which agent runs it. Write an experiment config
     `gripper_vote_medoid`. Recovery `rules` can fire on stalls. Steering only helps stochastic policies.
 
 ```bash
-uv run wc run my_reacher.yaml
+uv run hylo run my_reacher.yaml
 ```
 
 With `steered` as above, all 20 validation episodes succeed, in 37.7 steps on average (38.2 with `n_samples: 1`).
 Agent parameters are in [policies](../user-guide/policies.md#agents-that-run-a-policy) and the
-[wc-agents API](../api/packages/wc-agents.md).
+[hylo-agents API](../api/packages/hylo-agents.md).
 
 ## 6. A learned policy: weights from a sealed artifact
 
 A learned policy loads its weights in `__init__` from a directory, and that directory is a **sealed artifact**. A
 learner writes it from development runs, with a manifest (`artifact.json`) that records its content digest and the
-runs it was built from ([learning](../user-guide/learning.md)). The reference policies in wc-policies show the
+runs it was built from ([learning](../user-guide/learning.md)). The reference policies in hylo-policies show the
 pattern: `ReferencePolicy.__init__(path)` reads `policy.json` and `policy.npz` and names itself after the artifact's
 digest, and the learners of the same names write and seal those files. To write your own learner, see
 [adding a learner](adding-a-learner.md).
@@ -247,7 +247,7 @@ digest, and the learners of the same names write and seal those files. To write 
 Record demonstrations on a development split, train, and look up the artifact's id:
 
 ```bash
-uv run wc run bench/examples/configs/mujoco_reach.yaml --split search --output runs/demos \
+uv run hylo run bench/examples/configs/mujoco_reach.yaml --split search --output runs/demos \
     --set benchmark.params.protocol=rsi            # 80 expert episodes on the RFC-0002 search split
 ```
 
@@ -257,8 +257,8 @@ uv run wc run bench/examples/configs/mujoco_reach.yaml --split search --output r
 ```
 
 ```bash
-uv run wc learn job.json
-uv run wc store ref runs/artifacts/my-bc
+uv run hylo learn job.json
+uv run hylo store ref runs/artifacts/my-bc
 ```
 
 ```text
@@ -295,11 +295,11 @@ Your own learned policy does the same: take a `path` parameter, load from it, re
 
 ## 7. Score it and put it on the leaderboard
 
-A protocol fixes the benchmark, split, environment, seeds and timing. `wc bench run` scores an agent under a
+A protocol fixes the benchmark, split, environment, seeds and timing. `hylo bench run` scores an agent under a
 protocol and writes a scorecard ([benchmarking](../benchmarking/index.md)):
 
 ```bash
-uv run wc bench run mujoco-reach --name my-reacher \
+uv run hylo bench run mujoco-reach --name my-reacher \
     --policy '{"type": "policy", "params": {"policy": {"type": "my-reacher"}}}'
 ```
 
@@ -316,8 +316,8 @@ uv run wc bench run mujoco-reach --name my-reacher \
 moves the `runs/` and `scorecards/` roots. Then rank and compare:
 
 ```bash
-uv run wc bench leaderboard scorecards
-uv run wc bench compare scorecards/mujoco-reach/my-reacher.json scorecards/mujoco-reach/bc.json   # candidate, baseline
+uv run hylo bench leaderboard scorecards
+uv run hylo bench compare scorecards/mujoco-reach/my-reacher.json scorecards/mujoco-reach/bc.json   # candidate, baseline
 ```
 
 ```text
@@ -340,7 +340,7 @@ keep that stack out of the harness's venv.
 
 === "In another venv (LeRobot)"
 
-    `wc-policy-lerobot` registers `LeRobotAgent` both as a policy (`lerobot`) and as an agent. Its `sample()`:
+    `hylo-policy-lerobot` registers `LeRobotAgent` both as a policy (`lerobot`) and as an agent. Its `sample()`:
 
     - builds one batch of `N` copies of the observation;
     - draws the flow-matching noise from the seeds with `torch.Generator().manual_seed(seed)`;
@@ -356,16 +356,16 @@ keep that stack out of the harness's venv.
       type: remote
       params:
         ref: lerobot.steered                        # resolved inside the lerobot venv
-        runtime: lerobot                            # wc profile set-runtime lerobot --python ... --env ...
+        runtime: lerobot                            # hylo profile set-runtime lerobot --python ... --env ...
         params: {repo_id: lerobot/smolvla_libero, num_threads: 4, steering: {n_samples: 1, seed_noise: true}}
     ```
 
-    Install your package (with wc-core and wc-agents) into that venv as well. The runtime name and the interpreter
+    Install your package (with hylo-core and hylo-agents) into that venv as well. The runtime name and the interpreter
     never enter the experiment digest.
 
 === "Behind a server (openpi)"
 
-    `wc-policy-openpi` is a client of openpi's own policy server. `OpenPIAgent(url=..., preset="libero")`:
+    `hylo-policy-openpi` is a client of openpi's own policy server. `OpenPIAgent(url=..., preset="libero")`:
 
     - maps the observation to openpi's input keys: images resized with padding to 224, the 8-D LIBERO state, the
       instruction as prompt;
@@ -381,16 +381,16 @@ keep that stack out of the harness's venv.
 
     Its maturity is `unverified`: it has not been run end to end here.
 
-=== "As a worldcurrent policy server"
+=== "As a Hylo policy server"
 
     Any agent can be served over WebSocket and used from an experiment or a workcell:
 
     ```bash
-    uv run wc serve policy --config my_reacher.yaml --port 8001          # serves the config's agent
+    uv run hylo serve policy --config my_reacher.yaml --port 8001          # serves the config's agent
     ```
 
     ```yaml
-    agent: {type: remote.ws, params: {url: "ws://gpu-box:8001/wc"}}
+    agent: {type: remote.ws, params: {url: "ws://gpu-box:8001/hylo"}}
     workers: 1                                   # the policy server takes one session at a time
     ```
 
@@ -405,4 +405,4 @@ step.
   [adding a learner](adding-a-learner.md).
 - Put it on a robot: [deployment](../user-guide/deployment.md).
 - Contract details: [extending](../harness/extending.md), [plugin system](../harness/plugin-system.md),
-  [wc-policies API](../api/packages/wc-policies.md), [`wc plugin`](../cli/index.md#wc-plugin).
+  [hylo-policies API](../api/packages/hylo-policies.md), [`hylo plugin`](../cli/index.md#hylo-plugin).

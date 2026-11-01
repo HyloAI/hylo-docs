@@ -1,7 +1,7 @@
 # Learning
 
-Everything worldcurrent learns comes from recorded runs and becomes a sealed **artifact**: a directory with an
-`artifact.json` manifest (`wc.artifact/v0.1`) that records what it is, a content digest, and its provenance (the
+Everything Hylo learns comes from recorded runs and becomes a sealed **artifact**: a directory with an
+`artifact.json` manifest (`hylo.artifact/v0.1`) that records what it is, a content digest, and its provenance (the
 builder, its parameters, and the runs and data it was built from). The trace store is the single source of truth;
 artifacts are derived from it ([RFC-0004](../rfcs/RFC-0004-learning-pipeline.md)).
 
@@ -44,8 +44,8 @@ A job names a `learners` plugin, its inputs, where to seal the artifact, and par
 
 ```bash
 cd bench
-uv run wc learn examples/policies/jobs/flow.json
-uv run wc learn job.json --python bench/envs/libero/.venv/bin/python     # in another venv
+uv run hylo learn examples/policies/jobs/flow.json
+uv run hylo learn job.json --python bench/envs/libero/.venv/bin/python     # in another venv
 ```
 
 | Field | Meaning |
@@ -58,7 +58,7 @@ uv run wc learn job.json --python bench/envs/libero/.venv/bin/python     # in an
 
 A job is resumable: if `out` already holds a verified artifact sealed by the same job (the job digest covers
 everything but `out`), it is not run again. `--python` runs the learner with another interpreter
-(`python -m worldcurrent.learn.jobs`), for learners whose dependencies live in a runtime's venv.
+(`python -m hylo.learn.jobs`), for learners whose dependencies live in a runtime's venv.
 
 Learners that ship (see the [plugin catalogue](../developer-guide/plugin-catalogue.md) for maturity):
 
@@ -77,8 +77,8 @@ the same jobs; see [extending](../harness/extending.md).
 ## Inspect and reference an artifact
 
 ```bash
-uv run wc artifact runs/policies/artifacts/flow     # verify (digest intact, no gate / held-out sources), print the manifest
-uv run wc store ref runs/policies/artifacts/flow    # its store id: artifact:policy.flow@<digest>
+uv run hylo artifact runs/policies/artifacts/flow     # verify (digest intact, no gate / held-out sources), print the manifest
+uv run hylo store ref runs/policies/artifacts/flow    # its store id: artifact:policy.flow@<digest>
 ```
 
 Configs reference artifacts by store id, never by path:
@@ -95,8 +95,8 @@ A success judge (`instruments` group) labels an episode from its trace when no s
 on a robot, or for external data. A judge is trusted only after calibration on runs whose outcome is known.
 
 ```bash
-uv run wc learn judge-job.json                                       # learner judge.trace -> a success_judge artifact
-uv run wc calibrate --judge '{"type": "judge.trace", "params": {"path": "artifact:l10-trace-v2@54a1efadf00d34d8"}}' \
+uv run hylo learn judge-job.json                                       # learner judge.trace -> a success_judge artifact
+uv run hylo calibrate --judge '{"type": "judge.trace", "params": {"path": "artifact:l10-trace-v2@54a1efadf00d34d8"}}' \
     --runs RUN_DIR [RUN_DIR ...] --artifact JUDGE_DIR      # JUDGE_DIR: the judge's artifact directory
 ```
 
@@ -120,17 +120,17 @@ Demonstrations, videos and other robots' logs enter as ordinary runs with split 
 artifacts that record origin and licence:
 
 ```bash
-uv run wc ingest spec.json          # {"source": {"type", "params"}, "name", "licence", "out", "image_every", "assume_success"}
-uv run wc label RUN_DIR --judge bench/runs/judges/l10-trace-v2     # label unlabelled episodes with a ready judge
-uv run wc contamination EXTERNAL_RUN --protected bench/runs/rsi-libero10/runs
+uv run hylo ingest spec.json          # {"source": {"type", "params"}, "name", "licence", "out", "image_every", "assume_success"}
+uv run hylo label RUN_DIR --judge bench/runs/judges/l10-trace-v2     # label unlabelled episodes with a ready judge
+uv run hylo contamination EXTERNAL_RUN --protected bench/runs/rsi-libero10/runs
 ```
 
-- `wc label` labels only ingested runs, only with a `ready` judge, at no less than its calibrated threshold, and
+- `hylo label` labels only ingested runs, only with a `ready` judge, at no less than its calibrated threshold, and
   never runs the judge was built from. An episode below the threshold stays unlabelled; a low score is never called
   a failure.
-- `wc contamination` compares each external episode's initial state with the initial states of protected (gate and
+- `hylo contamination` compares each external episode's initial state with the initial states of protected (gate and
   held-out) episodes of the same task. External data that reproduces protected init states must not be used to build
   anything that is then gated on them.
 
-Data sources are `datasources` plugins: `video.frames` and `video.files` (wc-data-video) and `lerobot.dataset`
-(wc-policy-lerobot, unverified here: dataset downloads have not been approved yet).
+Data sources are `datasources` plugins: `video.frames` and `video.files` (hylo-data-video) and `lerobot.dataset`
+(hylo-policy-lerobot, unverified here: dataset downloads have not been approved yet).

@@ -53,7 +53,7 @@ Split "Environment" into three orthogonal roles; adapters combine them according
 | `Environment` | Wraps Simulator+Task into `reset/step` + spec | **We implement** | Wrap `BaseEnv` | Wrap `OffScreenRenderEnv` | Wrap gym wrapper | Wrap `ManagerBasedRLEnv` |
 | `Task` | Initialization distribution, instruction, success/fail predicates, reward | **We implement** | Embedded in env subclass; adapter extracts `evaluate()` | BDDL (declarative)| Class methods (callable) | `TerminationManager`/`RewardManager` |
 
-worldcurrent's Environment contract (full definition in `design/interfaces/environment.md`):
+Hylo's Environment contract (full definition in `design/interfaces/environment.md`):
 
 ```python
 class Environment(Protocol):
@@ -74,13 +74,13 @@ class Environment(Protocol):
 
 | Adapter | Where it runs | Difficulty | Priority | Notes |
 |---|---|---|---|---|
-| test double (`worldcurrent.testing`) | In-process | Low | **P0** | Pure Python, deterministic; the basis for unit and interface tests, never for evaluation |
-| `wc-env-mujoco` | In-process | Low-medium | **P0** | Uses MuJoCo Python bindings directly + own MJCF + own Task; catches BADQACC |
-| `wc-env-vlaeval` (bridge) | External container | Medium | **P1** | Connects to its LIBERO/SimplerEnv/CALVIN images via the vla-eval protocol (Served mode) |
-| `wc-env-libero` | Separate py3.8 venv + EnvServer | Medium | P1 | Only build it if step-level control (perturbations/privileged state) is needed; otherwise use the bridge |
-| `wc-env-maniskill` | Separate venv + EnvServer | Medium | P2 | Requires Vulkan; assets under NC license |
-| `wc-env-robocasa` | Separate py3.11 venv + EnvServer | Medium-high | P2 | Actions must be mapped by key (three inconsistent flat orderings)|
-| `wc-env-isaaclab` | Separate container + EnvServer | High | P3 | Requires NVIDIA GPU + Isaac Sim |
+| test double (`hylo.testing`) | In-process | Low | **P0** | Pure Python, deterministic; the basis for unit and interface tests, never for evaluation |
+| `hylo-env-mujoco` | In-process | Low-medium | **P0** | Uses MuJoCo Python bindings directly + own MJCF + own Task; catches BADQACC |
+| `hylo-env-vlaeval` (bridge) | External container | Medium | **P1** | Connects to its LIBERO/SimplerEnv/CALVIN images via the vla-eval protocol (Served mode) |
+| `hylo-env-libero` | Separate py3.8 venv + EnvServer | Medium | P1 | Only build it if step-level control (perturbations/privileged state) is needed; otherwise use the bridge |
+| `hylo-env-maniskill` | Separate venv + EnvServer | Medium | P2 | Requires Vulkan; assets under NC license |
+| `hylo-env-robocasa` | Separate py3.11 venv + EnvServer | Medium-high | P2 | Actions must be mapped by key (three inconsistent flat orderings)|
+| `hylo-env-isaaclab` | Separate container + EnvServer | High | P3 | Requires NVIDIA GPU + Isaac Sim |
 
 ## 4. Not worth redeveloping
 

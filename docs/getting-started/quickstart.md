@@ -14,7 +14,7 @@ GPU or downloaded weights.
 An experiment config names a benchmark split, an environment and an agent:
 
 ```yaml title="bench/examples/configs/mujoco_reach.yaml"
-schema_version: wc.experiment/v0.1
+schema_version: hylo.experiment/v0.1
 name: mujoco-reach
 benchmark: {type: mujoco/reach-v0, split: validation}
 env: {type: mujoco.planar_reach}
@@ -23,7 +23,7 @@ output_dir: runs
 ```
 
 ```bash
-uv run wc run bench/examples/configs/mujoco_reach.yaml
+uv run hylo run bench/examples/configs/mujoco_reach.yaml
 ```
 
 Each finished episode is printed as it ends (`[20] mujoco/planar_reach_random seed=10009 success (32 steps)`), then
@@ -31,8 +31,8 @@ the run's metrics:
 
 ```json
 {
-  "run_dir": "runs/mujoco-reach-validation-c26fef49863a7b7a-399b55",
-  "config_digest": "c26fef49863a7b7a",
+  "run_dir": "runs/mujoco-reach-validation-2342f91d706e83e9-7a6c91",
+  "config_digest": "2342f91d706e83e9",
   "success_mean": 1.0,
   "safety_interventions_mean": 0.0,
   "steps_mean": 35.25,
@@ -46,7 +46,7 @@ where components run and where results go are not part of it (see [experiments](
 Change any measured value and the digest changes:
 
 ```bash
-uv run wc run bench/examples/configs/mujoco_reach.yaml --set agent.params.kp=0.02 --set workers=8
+uv run hylo run bench/examples/configs/mujoco_reach.yaml --set agent.params.kp=0.02 --set workers=8
 ```
 
 ## 2. Read the traces
@@ -55,12 +55,12 @@ A run directory holds `evallog.json` (per-episode results and scores), `manifest
 package versions, the store ids it used) and one event trace per episode under `episodes/`.
 
 ```bash
-uv run wc trace runs/mujoco-reach-validation-c26fef49863a7b7a-399b55            # results and episode ids
-uv run wc trace runs/mujoco-reach-validation-c26fef49863a7b7a-399b55 \
+uv run hylo trace runs/mujoco-reach-validation-2342f91d706e83e9-7a6c91            # results and episode ids
+uv run hylo trace runs/mujoco-reach-validation-2342f91d706e83e9-7a6c91 \
     mujoco.planar_reach_fixed-s10000-1fac203d                                     # one episode
 ```
 
-For one episode, `wc trace` counts the events and prints the episode's end record:
+For one episode, `hylo trace` counts the events and prints the episode's end record:
 
 ```text
 Counter({'observation': 31, 'agent.chunk': 30, 'safety.review': 30, 'action': 30, 'step.result': 30,
@@ -77,8 +77,8 @@ A protocol fixes everything about an evaluation except the policy. `mujoco-reach
 and a random target, 50 seeds each, never used for learning.
 
 ```bash
-uv run wc bench list
-uv run wc bench run mujoco-reach --name ik-0.3 \
+uv run hylo bench list
+uv run hylo bench run mujoco-reach --name ik-0.3 \
     --policy '{"type": "baseline.planar_ik", "params": {"kp": 0.3}}'
 ```
 
@@ -90,10 +90,10 @@ The scorecard records the protocol digest, the policy, the success rate with a 9
 episode. Score a second policy, then rank and compare:
 
 ```bash
-uv run wc bench run mujoco-reach --name ik-0.05 \
+uv run hylo bench run mujoco-reach --name ik-0.05 \
     --policy '{"type": "baseline.planar_ik", "params": {"kp": 0.05}}'
-uv run wc bench leaderboard                     # every scorecard under scorecards/, per protocol, best first
-uv run wc bench compare scorecards/mujoco-reach/ik-0.05.json scorecards/mujoco-reach/ik-0.3.json
+uv run hylo bench leaderboard                     # every scorecard under scorecards/, per protocol, best first
+uv run hylo bench compare scorecards/mujoco-reach/ik-0.05.json scorecards/mujoco-reach/ik-0.3.json
 ```
 
 ```text
@@ -114,7 +114,7 @@ held-out split it never selected on. This one starts the IK controller with a we
 generator proposes larger gains:
 
 ```bash
-uv run wc evolve run bench/examples/evolve/mujoco_reach_gain.yaml    # writes runs/evolve/mujoco-reach-gain here
+uv run hylo evolve run bench/examples/evolve/mujoco_reach_gain.yaml    # writes runs/evolve/mujoco-reach-gain here
 ```
 
 ```text
@@ -138,8 +138,8 @@ On the held-out split, success went from 0.40 to 1.00: 24 wins, no losses, over 
 stops after one cycle without a promotion. Inspect it, or roll back the promotion:
 
 ```bash
-uv run wc evolve status bench/examples/evolve/mujoco_reach_gain.yaml
-uv run wc evolve rollback bench/examples/evolve/mujoco_reach_gain.yaml --reason "trying again"
+uv run hylo evolve status bench/examples/evolve/mujoco_reach_gain.yaml
+uv run hylo evolve rollback bench/examples/evolve/mujoco_reach_gain.yaml --reason "trying again"
 ```
 
 The campaign directory (`runs/evolve/mujoco-reach-gain/`) keeps every candidate with its hypothesis and evidence
@@ -151,7 +151,7 @@ policy server would deploy. See [campaigns](../user-guide/campaigns.md).
 With studio checked out, the playground shows runs, episodes frame by frame, comparisons and campaigns:
 
 ```bash
-uv run wc playground --repo bench          # http://127.0.0.1:8765
+uv run hylo playground --repo bench          # http://127.0.0.1:8765
 ```
 
 `--repo` is the directory whose `runs/`, `examples/configs` and `examples/evolve` the UI shows and runs jobs in.

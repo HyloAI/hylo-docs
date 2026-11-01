@@ -10,7 +10,7 @@
 
 ## 1. Positioning and Core Capabilities
 
-MuJoCo is a **physics engine + low-level API**, **not** an environment framework. The repository has no concepts such as `Env`, `Task`, reward or success (grepping `python/` and `mjx/` for `gymnasium|dm_control|class .*Env` finds no env classes). Gymnasium's `MujocoEnv` and dm_control's `composer.Task`/`suite` live in other repositories and are mentioned here only as background. Therefore, for worldcurrent, MuJoCo is a backend for the **Simulator layer**: Task, Reward and Evaluator all have to be written by us.
+MuJoCo is a **physics engine + low-level API**, **not** an environment framework. The repository has no concepts such as `Env`, `Task`, reward or success (grepping `python/` and `mjx/` for `gymnasium|dm_control|class .*Env` finds no env classes). Gymnasium's `MujocoEnv` and dm_control's `composer.Task`/`suite` live in other repositories and are mentioned here only as background. Therefore, for Hylo, MuJoCo is a backend for the **Simulator layer**: Task, Reward and Evaluator all have to be written by us.
 
 | Capability | Status | Evidence |
 |---|---|---|
@@ -134,7 +134,7 @@ step(m: Model, d: Data) -> Data   # pure function, can be jax.vmap / jit        
 
 ```mermaid
 sequenceDiagram
-  participant H as Harness (worldcurrent)
+  participant H as Harness (Hylo)
   participant Py as mujoco (pybind11)
   participant C as libmujoco
   participant GL as Renderer/GLContext
@@ -249,11 +249,11 @@ Key details:
 | Tests | `python/mujoco/bindings_test.py`, `rollout_test.py` (28 tests), `batch_test.py` (47), `thread_safety_test.py`, `render_test.py`, `renderer_test.py`, `viewer_test.py`, `specs_test.py` |
 | CI | `.github/workflows/build.yml:270-275`; `.github/workflows/build_steps.sh:460-463` |
 
-## 12. Mapping to worldcurrent Environment Interface
+## 12. Mapping to Hylo Environment Interface
 
 MuJoCo can only provide the **Simulator** layer. A `MuJoCoSimulator` adapter plus our own `Task` and `Evaluator` together make up a complete Environment.
 
-| worldcurrent contract | MuJoCo implementation | Responsible layer | Notes |
+| Hylo contract | MuJoCo implementation | Responsible layer | Notes |
 |---|---|---|---|
 | `reset(seed, options) -> Observation` | `rng = np.random.default_rng(seed)`; `mj_resetDataKeyframe(m,d,options.get("keyframe",k))` or `mj_resetData`; `task.initialize_episode(m, d, rng)` writes qpos etc.; `mj_forward`; when `options["state"]` is given, use `mj_setState(m,d,s,mjSTATE_INTEGRATION)` | Simulator + Task | MuJoCo has no seed parameter; the seed is consumed entirely by the Task RNG |
 | `step(Action) -> StepResult(obs, reward, terminated, truncated, info)` | `d.ctrl[:] = clip(a, m.actuator_ctrlrange)`; `mj_step(m,d,nstep=frame_skip)`; `reward=task.reward()`; `terminated=task.success() or task.failure()`; `truncated = t>=T or d.warning[mjWARN_BADQACC].number increases` | Simulator + Task | Must check for divergence auto-reset (`engine_forward.c:105-110`) |

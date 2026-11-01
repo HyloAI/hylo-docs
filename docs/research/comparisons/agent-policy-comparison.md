@@ -29,11 +29,11 @@
 | **inspect-robots agent plugin** | The entire LLM inner loop is hidden inside `policy.act()` | Plugin | None | learnings.md injected back | Multi-vendor wire |
 
 **Assessment**
-- **LangGraph is not suitable as the control loop**: each superstep incurs task planning + callbacks + write merging + checkpoint serialization overhead; the default checkpoint fully copies state every step and the base `prune` is not implemented; `interrupt()` reruns the entire node on resume (physical actions would need to be idempotent). **Suitable for**: slow deliberative planners, human-in-the-loop interrupts, planner-level replay. → Optional `wc-reasoner-langgraph` adapter package.
+- **LangGraph is not suitable as the control loop**: each superstep incurs task planning + callbacks + write merging + checkpoint serialization overhead; the default checkpoint fully copies state every step and the base `prune` is not implemented; `interrupt()` reruns the entire node on resume (physical actions would need to be idempotent). **Suitable for**: slow deliberative planners, human-in-the-loop interrupts, planner-level replay. → Optional `hylo-reasoner-langgraph` adapter package.
 - **DSPy is suitable as an "optimizable Reasoner" and an RSI candidate generator**: the metric can directly be "run a set of simulation rollouts and return success + textual feedback" (GEPA supports textual feedback and multiple objectives, `gepa.py:34`, `gepa_utils.py:70-80`); however DSPy parallelizes with threads, so simulation must be wrapped in a process pool; GEPA is marked `@experimental`. → Install it only in the offline Improvement worker; the online runtime only reads the exported JSON prompt state.
 - **RPent's tool layer is portable**: `@tool` single-source schema + validation, read/write-separated scheduling, cancel waits for a safe point, automatic env-state capture after non-read-only tools — exactly what "LLM invoking physical skills" needs. But its practice of "handing the planner to an external coding-agent SDK and giving it Bash/Write" is not acceptable.
 
-## 3. Agent layering in worldcurrent
+## 3. Agent layering in Hylo
 
 ```mermaid
 flowchart TB
@@ -65,9 +65,9 @@ Interface principles:
 
 | Component | Approach | Package |
 |---|---|---|
-| LeRobot policies | Adapter (in-process or remote), `spec()` generated from `chunk_inference_spec()` | `wc-policy-lerobot` (optional) |
-| openpi | Remote (openpi WS protocol) | Built-in `OpenPIRemotePolicy` in `wc-core` (depends only on msgpack + websockets) |
-| vla-eval's 17 model servers | Remote (vla-eval protocol) | `wc-bridge-vlaeval` |
-| LangGraph | Reasoner adapter + optional checkpointer/Store backend | `wc-reasoner-langgraph` (optional) |
-| DSPy | Offline CandidateGenerator; online reads JSON only | `wc-evolve-dspy` (optional) |
-| Any LLM/VLM | `Reasoner` implementation, via vendor SDK or an OpenAI-compatible endpoint | `wc-reasoner-llm` (optional) |
+| LeRobot policies | Adapter (in-process or remote), `spec()` generated from `chunk_inference_spec()` | `hylo-policy-lerobot` (optional) |
+| openpi | Remote (openpi WS protocol) | Built-in `OpenPIRemotePolicy` in `hylo-core` (depends only on msgpack + websockets) |
+| vla-eval's 17 model servers | Remote (vla-eval protocol) | `hylo-bridge-vlaeval` |
+| LangGraph | Reasoner adapter + optional checkpointer/Store backend | `hylo-reasoner-langgraph` (optional) |
+| DSPy | Offline CandidateGenerator; online reads JSON only | `hylo-evolve-dspy` (optional) |
+| Any LLM/VLM | `Reasoner` implementation, via vendor SDK or an OpenAI-compatible endpoint | `hylo-reasoner-llm` (optional) |

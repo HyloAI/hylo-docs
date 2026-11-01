@@ -9,21 +9,21 @@ policy computes the next chunk); evaluation, the playground's live sandbox and t
 
 ## Episode loop
 
-::: worldcurrent.core.kernel
+::: hylo.core.kernel
     options:
       heading_level: 3
       show_if_no_docstring: true
 
 ## Events
 
-::: worldcurrent.core.events
+::: hylo.core.events
     options:
       heading_level: 3
       show_if_no_docstring: true
 
 ## Traces
 
-::: worldcurrent.core.trace
+::: hylo.core.trace
     options:
       heading_level: 3
       show_if_no_docstring: true

@@ -2,7 +2,7 @@
 
 > Subject: `references/evolution/self_improving_coding_agent` (MaximeRobeyns/self_improving_coding_agent @ `ed8275d`, 2025-04-24, MIT). This is the official code linked from arXiv:2504.15228 (Robeyns, Szummer, Aitchison; ICLR 2025 SSI-FM workshop).
 > Method: static reading only. Nothing was installed or run, and the `sica_sandbox` image was not built.
-> Audience: the `worldcurrent` offline improvement loop (diagnose -> declarative candidates -> protected-scope check -> paired McNemar on validation -> held-out report -> registry promote/rollback).
+> Audience: the `Hylo` offline improvement loop (diagnose -> declarative candidates -> protected-scope check -> paired McNemar on validation -> held-out report -> registry promote/rollback).
 > Tags: **\[Implemented\]** traceable in code · **\[Docs/Interface only\]** only in README, prompts or commented-out code · **\[Unverified\]** paper claim or code path not checked end to end · **\[Needs model/hardware\]** needs paid LLM APIs or Docker
 
 ---
@@ -225,9 +225,9 @@ Evidence: main loop `references/evolution/self_improving_coding_agent/runner.py:
   - port `808{worker_id}` breaks for ≥ 10 workers (`references/evolution/self_improving_coding_agent/runner.py:422`);
   - the meta prompt says `/home/sandbox/workdir`, but the mount is `/home/agent/workdir` (`references/evolution/self_improving_coding_agent/base_agent/__main__.py:151` vs `:166`).
 
-## 11. What worldcurrent should adopt (concrete)
+## 11. What Hylo should adopt (concrete)
 
-| SICA mechanism | worldcurrent adaptation (frozen SmolVLA, LIBERO) |
+| SICA mechanism | Hylo adaptation (frozen SmolVLA, LIBERO) |
 |---|---|
 | `agent_change_log.md` hypothesis ledger | Add a registry-owned **hypothesis record** per candidate: motivation, unit type, expected effect on named failure classes, and later a verdict (`confirmed / refuted / inconclusive`) filled in from the McNemar and held-out reports. Feed the last K verdicts into the proposer context. Keep it **outside** the candidate payload so proposers cannot rewrite history. |
 | CI-based base selection | When choosing which registry version to branch from, take the most recent promoted version whose validation success rate is within the best's lower bound. Use a Wilson or exact binomial interval, not a normal approximation, because LIBERO task counts are small. Promotion stays on our paired McNemar. |

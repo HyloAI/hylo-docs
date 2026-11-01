@@ -304,7 +304,7 @@ Reuse risks:
 
 ## 10. Capabilities Not Worth Rebuilding
 
-- **The policy zoo itself**. The 69 adapters have already wired the inference entry points of upstreams such as openpi, starVLA, GR00T and RDT into the unified `ModelTemplate`. `worldcurrent` should write an **XPolicyLab bridge**, i.e. a ws client implementing our Policy interface, calling these servers as a submodule or external service, rather than re-wiring them ourselves. The prerequisite is choosing license-clean adapters (section 7). \[Implemented\][Needs model/hardware]
+- **The policy zoo itself**. The 69 adapters have already wired the inference entry points of upstreams such as openpi, starVLA, GR00T and RDT into the unified `ModelTemplate`. `Hylo` should write an **XPolicyLab bridge**, i.e. a ws client implementing our Policy interface, calling these servers as a submodule or external service, rather than re-wiring them ourselves. The prerequisite is choosing license-clean adapters (section 7). \[Implemented\][Needs model/hardware]
 - **Per-policy environment install scripts** (the uv/conda recipes in `install.sh`), and the checkpoint naming convention.
 - **LeRobot v2.1/v3.0 converter** (`P/scripts/transform_lerobot_v{21,30}_format.py`): used to convert RoboDojo trajectories into LeRobot data. \[Implemented\][Unverified]
 

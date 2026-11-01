@@ -1,7 +1,7 @@
 # Troubleshooting
 
-Failure messages as worldcurrent prints them, why they happen, and what to do. Long paths are shortened with `...`.
-Where the message comes from a library rather than from worldcurrent, the page says so.
+Failure messages as Hylo prints them, why they happen, and what to do. Long paths are shortened with `...`.
+Where the message comes from a library rather than from Hylo, the page says so.
 
 ## Inspecting a run
 
@@ -9,8 +9,8 @@ Most questions about an experiment are answered by its run directory (see
 [runs and traces](../user-guide/experiments.md#runs-and-traces)):
 
 ```bash
-uv run wc trace runs/<run_dir>                        # aggregate results, status counts, episode ids
-uv run wc trace runs/<run_dir> <episode_id>           # event counts and the episode.end payload
+uv run hylo trace runs/<run_dir>                        # aggregate results, status counts, episode ids
+uv run hylo trace runs/<run_dir> <episode_id>           # event counts and the episode.end payload
 ```
 
 | Look at | For |
@@ -35,26 +35,26 @@ text of the error that ended the episode.
     uv sync
     ```
 
-??? question "`ModuleNotFoundError: No module named 'worldcurrent.envs.mujoco'` (or another worldcurrent package)"
+??? question "`ModuleNotFoundError: No module named 'hylo.envs.mujoco'` (or another Hylo package)"
     The repository that provides it is not checked out next to the harness, or `uv sync` has not run since it was
     added. Run `harness/dev/bootstrap.sh` in the workspace directory; it clones missing repositories when
-    `WC_GIT_BASE` is set and reinstalls everything ([installation](../getting-started/installation.md)).
+    `HYLO_GIT_BASE` is set and reinstalls everything ([installation](../getting-started/installation.md)).
 
 ??? question "`pydantic_core._pydantic_core.ValidationError: ... Extra inputs are not permitted [type=extra_forbidden ...]`"
     Every contract (`ExperimentConfig`, protocols, workcell configs, profiles) refuses unknown keys, so a typo
     fails loudly instead of being ignored. The line before names the field (for example `worker` instead of
-    `workers`). Fix the key; `wc schema experiment` prints the schema.
+    `workers`). Fix the key; `hylo schema experiment` prints the schema.
 
 ## Runtimes and the profile
 
-??? question "`KeyError: "runtime 'libero-sim' is not in ~/.config/worldcurrent/profile.yaml (known: -); register it with: wc profile set-runtime libero-sim --python PATH [--env KEY=VALUE ...]"`"
+??? question "`KeyError: "runtime 'libero-sim' is not in ~/.config/hylo/profile.yaml (known: -); register it with: hylo profile set-runtime libero-sim --python PATH [--env KEY=VALUE ...]"`"
     The config names a runtime this machine's profile does not have. On a LIBERO machine, `bench/envs/libero/setup.sh`
-    registers `libero-sim` and `lerobot`; otherwise register the venv yourself. `WC_PROFILE` selects another profile
+    registers `libero-sim` and `lerobot`; otherwise register the venv yourself. `HYLO_PROFILE` selects another profile
     file. See [execution profiles](../configuration/profiles.md).
 
     ```bash
-    uv run wc profile show
-    uv run wc profile set-runtime robot --python ~/robot/.venv/bin/python --env LD_LIBRARY_PATH=...
+    uv run hylo profile show
+    uv run hylo profile set-runtime robot --python ~/robot/.venv/bin/python --env LD_LIBRARY_PATH=...
     ```
 
 ??? question "`EnvironmentFault: env server exited with code 1`, after a traceback"
@@ -77,42 +77,42 @@ text of the error that ended the episode.
 
 ## The store
 
-The store's messages come from `wc store` (prefixed `wc store:`) or from a run that resolves ids. See
+The store's messages come from `hylo store` (prefixed `hylo store:`) or from a run that resolves ids. See
 [the store](../user-guide/store.md).
 
 ??? question "`artifact:l10-trace-v2 not found in the store at .../runs`"
     No run or sealed artifact with that id is under the store directory, even after the index was rebuilt. Check
-    which store this machine uses (`wc store where`: the profile's `store:`, else `$WC_STORE`, else `./runs`), and
-    `wc store ls --name l10-trace-v2`. When the artifact is on another machine, `wc store pull HOST:PATH ID`. When a
+    which store this machine uses (`hylo store where`: the profile's `store:`, else `$HYLO_STORE`, else `./runs`), and
+    `hylo store ls --name l10-trace-v2`. When the artifact is on another machine, `hylo store pull HOST:PATH ID`. When a
     different digest of the name exists, the message lists it: `...; with that name: [...]`.
 
 ??? question "`'l10-trace-v2' is not a store id (run:<id> or artifact:<name>[@<digest>])`"
-    Ids start with `run:` or `artifact:`. `wc store ref PATH` prints the id of a directory.
+    Ids start with `run:` or `artifact:`. `hylo store ref PATH` prints the id of a directory.
 
 ??? question "`artifact:gain is ambiguous: ['artifact:gain@0c15194f963398b2', 'artifact:gain@7c0e3c577ceeacab']; add the digest`"
     A bare name works only when exactly one artifact has it. Add the digest (8 hex characters are enough).
 
 ??? question "`artifact:gain@0c15194f963398b2 was removed at Sun Nov  1 04:19:38 2026 (superseded)`"
-    The entry was deleted with `wc store rm`, and the tombstone records when and why. Rebuild the artifact, pull it
+    The entry was deleted with `hylo store rm`, and the tombstone records when and why. Rebuild the artifact, pull it
     from a machine that still has it, or change the reference.
 
 ??? question "`run:r1 is referred to by ['artifact:gain@0c15194f963398b2']; remove those first or pass force (with a reason)`"
     Deletion protection: an artifact was built from the run, or a campaign's archive or ledger names it
-    (`campaign:<dir>`). `wc store show ID` lists the referrers. Delete them first, or
-    `wc store rm ID --force --reason "..."`, which still records the referrers in the tombstone.
+    (`campaign:<dir>`). `hylo store show ID` lists the referrers. Delete them first, or
+    `hylo store rm ID --force --reason "..."`, which still records the referrers in the tombstone.
 
 ??? question "`sync refused, 1 conflict(s): [{'path': 'b/gain', 'here': 'artifact:gain@7c0e...', 'there': 'artifact:gain@fd51...'}]`"
     The same path holds different content on the two machines. Sealed artifacts are never overwritten, so nothing
-    was copied. Rename or remove one side (`wc store rm` there), then sync again.
+    was copied. Rename or remove one side (`hylo store rm` there), then sync again.
 
 ??? question "`cannot list the store at robot:/data/runs: ...`, `rsync failed (N): ...`, `rsync is needed to sync with another machine`"
-    Syncing with `HOST:PATH` runs `ssh HOST wc store --root PATH ls --json` and `rsync`. The other machine needs ssh
-    access without a prompt and `wc` on its `PATH` (or `--remote-wc /path/to/wc`); this machine needs `rsync`.
+    Syncing with `HOST:PATH` runs `ssh HOST hylo store --root PATH ls --json` and `rsync`. The other machine needs ssh
+    access without a prompt and `hylo` on its `PATH` (or `--remote-wc /path/to/hylo`); this machine needs `rsync`.
     Between two local directories, a plain copy is used when `rsync` is missing.
 
 ??? question "`run:<id>: indexed at <path> but missing in <store>`"
-    The index lists the entry but its directory is gone, even after a rebuild. Remove `<store>/.wc-store/index.json`
-    and run `wc store index`.
+    The index lists the entry but its directory is gone, even after a rebuild. Remove `<store>/.hylo-store/index.json`
+    and run `hylo store index`.
 
 ## Artifacts and the split guard
 
@@ -132,7 +132,7 @@ The store's messages come from `wc store` (prefixed `wc store:`) or from a run t
     see [the split guard](../user-guide/learning.md#the-split-guard).
 
 ??? question "A candidate is `rejected` with `behaviour artifacts with unknown provenance: [...]`"
-    The candidate references a behaviour artifact adopted without its training runs (`wc store adopt` without
+    The candidate references a behaviour artifact adopted without its training runs (`hylo store adopt` without
     `--source`), so the gate cannot rule out a leak of gate or held-out data. Rebuild the artifact with a learner,
     or adopt it with its sources. Other stage-0 rejections in the archive: `candidate <id> touches protected scope
     '<path>'`, `duplicate of an archived candidate`, `prescreen: world model predicts ...`.
@@ -140,20 +140,20 @@ The store's messages come from `wc store` (prefixed `wc store:`) or from a run t
 ## Plugins
 
 ??? question "`KeyError: "no policies plugin named 'policy.nope'; known: [...]"`"
-    The name is not registered in that group. `wc plugins` lists what is installed (`--all` adds the test doubles);
+    The name is not registered in that group. `hylo plugins` lists what is installed (`--all` adds the test doubles);
     a plugin package must be installed (`uv sync` in the workspace, or `uv pip install -e`) for its entry points to
     exist. A `module:attr` reference bypasses the registry.
 
-??? question "`IncompatiblePlugin: policies plugin 'x' (pkg 1.2.0) implements wc.policy/v1.0; this core implements wc.policy/v0.1`"
+??? question "`IncompatiblePlugin: policies plugin 'x' (pkg 1.2.0) implements hylo.policy/v1.0; this core implements hylo.policy/v0.1`"
     The plugin declares a contract version this core cannot run: another major version, or a newer minor one.
     Install a plugin version written for this core, or upgrade the harness. See [versioning](versioning.md).
 
 ??? question "`cannot build policy 'policy.knn': TypeError: KNNPolicy.__init__() missing 1 required positional argument: 'path'`"
-    `wc plugin check` builds the plugin with `--params` (JSON), and this one needs a parameter. For example:
-    `wc plugin check policy policy.knn --params '{"path": "artifact:policy.knn"}'`.
+    `hylo plugin check` builds the plugin with `--params` (JSON), and this one needs a parameter. For example:
+    `hylo plugin check policy policy.knn --params '{"path": "artifact:policy.knn"}'`.
 
-??? question "`warning: <dist> declares no contract version ...` from `wc plugin check`"
-    The package has no `worldcurrent.meta` declaration, or it lacks maturity or licence. The plugin still loads;
+??? question "`warning: <dist> declares no contract version ...` from `hylo plugin check`"
+    The package has no `hylo.meta` declaration, or it lacks maturity or licence. The plugin still loads;
     add the declaration ([extending](../harness/extending.md), [versioning](versioning.md)).
 
 ## Experiments and the episode loop
@@ -162,7 +162,7 @@ The store's messages come from `wc store` (prefixed `wc store:`) or from a run t
     Raised when the agent is bound to the environment, before any episode runs: their specs disagree. Other
     errors of the same check: `env does not provide state keys [...]`, `env does not provide cameras [...]`,
     `control_mode: agent ... != env ...`, `rotation_repr: ...`. Differences in `frame` and `gripper` are only
-    warnings (recorded as `compat_warnings` in `episode.start`). `wc conformance CONFIG --agent` shows the specs.
+    warnings (recorded as `compat_warnings` in `episode.start`). `hylo conformance CONFIG --agent` shows the specs.
 
 ??? question "Episodes end with `error`, `safety_abort` or `infra_invalid` instead of success or failure"
     | Status | Cause | `termination_reason` examples |
@@ -187,15 +187,15 @@ The store's messages come from `wc store` (prefixed `wc store:`) or from a run t
 ## Benchmarks
 
 ??? question "`ValueError: overrides ['agent.params.kp'] would change what the protocol measures; only env.remote.*, workers`"
-    `wc bench run --set` only changes how a protocol runs, never what it measures; otherwise the scorecard would
+    `hylo bench run --set` only changes how a protocol runs, never what it measures; otherwise the scorecard would
     not belong to the protocol. Change the policy instead (`--policy`), or write a new protocol.
 
 ??? question "`ValueError: different protocols: mujoco-reach@1 vs ...`"
-    `wc bench compare` pairs episodes only within one protocol digest. Two scorecards of one protocol name differ
+    `hylo bench compare` pairs episodes only within one protocol digest. Two scorecards of one protocol name differ
     when the protocol definition changed (for LIBERO protocols, once in RFC-0005); rerun the older policy.
 
 ??? question "`KeyError: "unknown protocol 'nope'; built in: libero-10, libero-10-heldout, libero-10-heldout-realtime, mujoco-reach"`"
-    Use a built-in name (`wc bench list`) or a path to a protocol YAML.
+    Use a built-in name (`hylo bench list`) or a path to a protocol YAML.
 
 ## Serve and studio
 
@@ -207,7 +207,7 @@ The store's messages come from `wc store` (prefixed `wc store:`) or from a run t
 ??? question "A workcell episode ends at once; `/status` shows `"state": "idle"` and `"last": {"error": "..."}`"
     The episode failed to start or run, for example because the policy endpoint does not answer; the message is
     also broadcast on `/events` as `{"type": "failed", ...}`. The workcell stays up. Check the policy server
-    (`wc serve policy`) and the URL in the workcell config or the request.
+    (`hylo serve policy`) and the URL in the workcell config or the request.
 
 ??? question "HTTP 409 from `POST /episodes`: `latched fault: e-stop by operator; clear it first` / `an episode is running` / `no policy endpoint (in the request or the workcell config)`"
     An e-stop latches until an operator posts `{"type": "clear_fault"}` to `/operator`; only one episode runs at a
@@ -225,7 +225,7 @@ Include:
 1. the command and its full output (the traceback, and the child process's traceback for remote components);
 2. `manifest.json` of the run, which records the config, its digest, package versions, git commit, Python and
    platform;
-3. `uv run wc plugins --json` for the plugins involved, and `uv run wc profile show` with secrets removed;
-4. for one bad episode, `uv run wc trace RUN_DIR EPISODE_ID`, and the episode's `.jsonl` if it is small;
-5. whether it reproduces on the test double or MuJoCo (`wc plugin check ... --experiment`), which separates a
+3. `uv run hylo plugins --json` for the plugins involved, and `uv run hylo profile show` with secrets removed;
+4. for one bad episode, `uv run hylo trace RUN_DIR EPISODE_ID`, and the episode's `.jsonl` if it is small;
+5. whether it reproduces on the test double or MuJoCo (`hylo plugin check ... --experiment`), which separates a
    plugin problem from a simulator problem.

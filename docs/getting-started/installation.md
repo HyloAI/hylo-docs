@@ -1,6 +1,6 @@
 # Installation
 
-worldcurrent is several git repositories, developed side by side and installed into one Python environment. The
+Hylo is several git repositories, developed side by side and installed into one Python environment. The
 harness is the base; bench, serve, studio and plugins are leaves on top of it (see
 [repository structure](../design/repository-structure.md)). You need:
 
@@ -9,16 +9,16 @@ harness is the base; bench, serve, studio and plugins are leaves on top of it (s
 - [uv](https://docs.astral.sh/uv/);
 - no GPU: everything here runs on CPU.
 
-![The worldcurrent repositories](../assets/diagrams/repositories.svg){ .wc-figure }
+![The Hylo repositories](../assets/diagrams/repositories.svg){ .wc-figure }
 
-*The harness is the only base. Leaves never import each other; they cooperate through formats defined in wc-core.*
+*The harness is the only base. Leaves never import each other; they cooperate through formats defined in hylo-core.*
 
 ## The development workspace
 
 Check the repositories out next to each other in one directory, then run the harness's bootstrap script there:
 
 ```bash
-mkdir worldcurrent && cd worldcurrent
+mkdir Hylo && cd Hylo
 # clone or copy harness/ (required) and any of bench/ serve/ studio/ plugins/ docs/ deployments-template/
 harness/dev/bootstrap.sh          # writes ./pyproject.toml (a uv workspace) and runs `uv sync`
 ```
@@ -26,7 +26,7 @@ harness/dev/bootstrap.sh          # writes ./pyproject.toml (a uv workspace) and
 `bootstrap.sh [DIR]` does three things:
 
 1. For each repository listed in `harness/dev/repos.toml` that is missing in `DIR`, it clones
-   `$WC_GIT_BASE/worldcurrent-<name>.git` when `WC_GIT_BASE` is set, and skips the repository otherwise.
+   `$HYLO_GIT_BASE/hylo-<name>.git` when `HYLO_GIT_BASE` is set, and skips the repository otherwise.
 2. It writes `DIR/pyproject.toml` with `harness/dev/workspace.py`. That file makes every package of every present
    code repository (`<repo>/packages/*`, `<repo>/adapters/*`) a workspace member.
 3. It runs `uv sync`, which installs all of them editable into `DIR/.venv`.
@@ -57,13 +57,13 @@ MuJoCo environments.
 |---|---|
 | `harness` | contracts, kernel, learners, campaigns and conformance on the test double (`testing.*` plugins) |
 | `harness` + `bench` | MuJoCo and LIBERO experiments, protocols, scorecards, leaderboards, the examples |
-| `harness` + `serve` | policy servers and workcells (a robot computer installs only `wc-core` and serve) |
+| `harness` + `serve` | policy servers and workcells (a robot computer installs only `hylo-core` and serve) |
 | `harness` + `studio` | the playground and the control plane (rebuilding the web front end needs Node) |
 | `harness` + `plugins` | the example plugins, written the way a third party would |
 
 ## MuJoCo
 
-MuJoCo comes with `wc-env-mujoco` (in bench) and needs nothing else for experiments. Camera rendering (the
+MuJoCo comes with `hylo-env-mujoco` (in bench) and needs nothing else for experiments. Camera rendering (the
 table-reach vision variant, figures) needs an OpenGL backend. On a GPU machine set `MUJOCO_GL=egl`; otherwise install
 user-space OSMesa (next section) and set `MUJOCO_GL=osmesa`.
 
@@ -91,7 +91,7 @@ in a separate venv inside bench, and experiments reach them as out-of-process ru
     The script:
 
     - builds `bench/envs/libero/.venv` (Python 3.12, CPU) and installs LIBERO and `lerobot[smolvla]`;
-    - installs the harness packages it needs, editable, from the harness checkout next to bench (`WC_HARNESS`,
+    - installs the harness packages it needs, editable, from the harness checkout next to bench (`HYLO_HARNESS`,
       default `../harness`);
     - downloads the LIBERO assets (`lerobot/libero-assets`, research use only) and writes a non-interactive LIBERO
       config.
@@ -107,7 +107,7 @@ in a separate venv inside bench, and experiments reach them as out-of-process ru
     | `lerobot` | LeRobot policies (`agent: {type: remote, params: {runtime: lerobot}}`) | `HF_HOME=bench/envs/hf-home`, `HF_HUB_OFFLINE=1` |
 
     ```bash
-    uv run wc profile show
+    uv run hylo profile show
     ```
 
 Experiment configs name these runtimes, never paths. So LIBERO experiments run from any directory, and where the venv
@@ -126,20 +126,20 @@ Runs and learned artifacts are found by id through this machine's store (see [st
 Register the directory your runs go to once:
 
 ```bash
-uv run wc store init bench/runs      # recorded as `store:` in ~/.config/worldcurrent/profile.yaml
-uv run wc store ls
+uv run hylo store init bench/runs      # recorded as `store:` in ~/.config/hylo/profile.yaml
+uv run hylo store ls
 ```
 
-Without a registered store, `$WC_STORE` is used if it is set, and `./runs` relative to the working directory
+Without a registered store, `$HYLO_STORE` is used if it is set, and `./runs` relative to the working directory
 otherwise.
 
 ## Check the installation
 
 ```bash
-uv run wc --help              # subcommands contributed by the installed packages
-uv run wc plugins             # every plugin: contract version, maturity, licence
+uv run hylo --help              # subcommands contributed by the installed packages
+uv run hylo plugins             # every plugin: contract version, maturity, licence
 uv run pytest                 # every present repository, plus the boundary lint (harness/dev)
 ```
 
-`wc --help` lists only the commands of installed packages: `wc bench` comes from bench, `wc serve` from serve and
-`wc playground` from studio. Next: the [quickstart](quickstart.md).
+`hylo --help` lists only the commands of installed packages: `hylo bench` comes from bench, `hylo serve` from serve and
+`hylo playground` from studio. Next: the [quickstart](quickstart.md).

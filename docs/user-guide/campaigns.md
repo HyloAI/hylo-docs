@@ -14,12 +14,12 @@ report on `heldout`, approve, promote. The promoted candidate is the next cycle'
 ## Run a campaign
 
 ```bash
-uv run wc evolve run bench/examples/evolve/mujoco_reach_gain.yaml      # out_dir (runs/...) is relative to here
-uv run wc evolve status bench/examples/evolve/mujoco_reach_gain.yaml
+uv run hylo evolve run bench/examples/evolve/mujoco_reach_gain.yaml      # out_dir (runs/...) is relative to here
+uv run hylo evolve status bench/examples/evolve/mujoco_reach_gain.yaml
 ```
 
 ```yaml title="bench/examples/evolve/mujoco_reach_gain.yaml"
-schema_version: wc.evolve/v0.1
+schema_version: hylo.evolve/v0.1
 name: mujoco-reach-gain
 experiment: ../configs/mujoco_reach.yaml
 experiment_overrides: {agent.params.kp: 0.02, workers: 16, benchmark.params: {protocol: rsi, gate_looks: 2}}
@@ -37,7 +37,7 @@ out_dir: runs/evolve/mujoco-reach-gain
 episodes, the promoted candidate on 1.00 (24 wins, 0 losses over 40 pairs, p = 6e-8). Cycle 2 finds nothing better
 and the campaign stops.*
 
-`wc evolve run` resumes an interrupted campaign from its state file; `--set KEY=VALUE` overrides the campaign config.
+`hylo evolve run` resumes an interrupted campaign from its state file; `--set KEY=VALUE` overrides the campaign config.
 
 | Key | Default | Meaning |
 |---|---|---|
@@ -49,7 +49,7 @@ and the campaign stops.*
 | `cycles` | 1 | maximum cycles |
 | `stop_after_no_progress` | 2 | stop after this many consecutive cycles without a promotion |
 | `budget_s` | none | wall-clock budget for the campaign |
-| `approval` | `auto` | `manual`: a candidate that passes the gate waits for `wc evolve approve` |
+| `approval` | `auto` | `manual`: a candidate that passes the gate waits for `hylo evolve approve` |
 | `out_dir` | `runs/evolve` | the campaign directory |
 
 ## Splits
@@ -110,14 +110,14 @@ config patches with a hypothesis. Patches may not touch `safety`, `benchmark`, `
 |---|---|---|
 | `rule.gain` | scaled values of one numeric config path | implemented |
 | `rule.steering` | steering rules (resample, back off) from failure buckets such as stalls and regrasps | implemented |
-| `llm.steering` | steering patches from a local LLM reading failure traces (wc-proposer-llm, Ollama) | implemented |
+| `llm.steering` | steering patches from a local LLM reading failure traces (hylo-proposer-llm, Ollama) | implemented |
 | `learn` | trains an artifact with a learner each cycle and patches the config to use it (`{artifact}` in the patch template becomes its store id) | unverified |
 | `critic.chunk_value` | trains a chunk critic and proposes critic steering | unverified |
 | `experience` | lessons and skills mined from the archive | unverified |
 | `selftrain.expert_iteration` | fine-tunes the policy on its own successes | unverified (smoke run only) |
 
 Unverified means tested but not yet run end to end in a campaign here; see the
-[plugin catalogue](../developer-guide/plugin-catalogue.md). Write your own with `wc plugin new generator NAME`.
+[plugin catalogue](../developer-guide/plugin-catalogue.md). Write your own with `hylo plugin new generator NAME`.
 
 ## What a campaign leaves behind
 
@@ -127,7 +127,7 @@ runs/evolve/mujoco-reach-gain/
   campaign_state.json       cycles done, history, why it stopped
   archive.jsonl             every candidate: patch, hypothesis, stages reached, verdict, evidence
   registry/                 promotion ledger (ledger.jsonl) and the active candidate (ACTIVE)
-  active.json               the active version, resolved to an agent spec (wc.active/v0.1)
+  active.json               the active version, resolved to an agent spec (hylo.active/v0.1)
   cycle-01/                 the cycle's runs and cycle_report.json
   pending_approval.json     only while a candidate waits for manual approval
 ```
@@ -139,10 +139,10 @@ Archive verdicts: `rejected` (stage 0 or 1), `archived` (evaluated on `search_va
 ## Approve, roll back, shadow
 
 ```bash
-uv run wc evolve approve runs/evolve/my-campaign          # recorded with your user name
-uv run wc evolve rollback runs/evolve/my-campaign --reason "regression seen on the robot"
-uv run wc evolve status runs/evolve/my-campaign --publish        # also (re)write active.json
-uv run wc evolve shadow runs/evolve/my-campaign --candidate cand-9147236d7d
+uv run hylo evolve approve runs/evolve/my-campaign          # recorded with your user name
+uv run hylo evolve rollback runs/evolve/my-campaign --reason "regression seen on the robot"
+uv run hylo evolve status runs/evolve/my-campaign --publish        # also (re)write active.json
+uv run hylo evolve shadow runs/evolve/my-campaign --candidate cand-9147236d7d
 ```
 
 - With `approval: manual`, a candidate that passes the gate is parked in `pending_approval.json` and the campaign
@@ -153,7 +153,7 @@ uv run wc evolve shadow runs/evolve/my-campaign --candidate cand-9147236d7d
 - `shadow` runs the active version with the candidate riding along: the candidate sees every observation but never
   acts, and the report says how often and how far it would have acted differently. This is the step before trying a
   candidate on a robot.
-- A policy server started with `wc serve policy --campaign DIR` follows `active.json` and switches versions between
+- A policy server started with `hylo serve policy --campaign DIR` follows `active.json` and switches versions between
   sessions, never during one ([deployment](deployment.md)).
 
 Studio shows campaigns, their archives and pending approvals, and lets an approver approve or roll back

@@ -1,4 +1,4 @@
-# openpi Source-Level Architecture Study (for `worldcurrent`)
+# openpi Source-Level Architecture Study (for `Hylo`)
 
 > Repository: `Physical-Intelligence/openpi` @ `215abfb`; code license Apache-2.0 (`references/policies/openpi/LICENSE`); the repository root additionally ships `LICENSE_GEMMA.txt` (Gemma Terms of Use).
 > Method: purely static reading; no dependencies installed, no `gs://openpi-assets` checkpoints downloaded, no tests run.
@@ -194,7 +194,7 @@ openpi **has no plugin registration mechanism**; extension is done by "copy and 
 | PaliGemma tokenizer / `pt_224.npz` | Gemma ToU | Must be downloaded for both training and inference \[Needs model/hardware\] |
 | `lerobot/pi0*`/`pi05*` weights ported by LeRobot | LeRobot docs say "Apache 2.0, consistent with OpenPI" (lerobot `docs/source/pi05.mdx:389-391`) | Can only be regarded as a code-level claim; the weights cannot be assumed to be Apache-2.0 on this basis |
 
-Implications for `worldcurrent`: (1) the code can safely be borrowed/vendored (Apache-2.0); (2) treat the π-series weights as **"restricted-license weights"**: mark them in the registry with `weights_license="gemma-tou(derivative, unconfirmed)"`, and require legal review before offering hosted inference externally (e.g. opening the policy server to third parties), because the Gemma ToU treats a Hosted Service as Distribution; (3) do not bake pi weights into the images we publish.
+Implications for `Hylo`: (1) the code can safely be borrowed/vendored (Apache-2.0); (2) treat the π-series weights as **"restricted-license weights"**: mark them in the registry with `weights_license="gemma-tou(derivative, unconfirmed)"`, and require legal review before offering hosted inference externally (e.g. opening the policy server to third parties), because the Gemma ToU treats a Hosted Service as Distribution; (3) do not bake pi weights into the images we publish.
 
 ## 8. Strengths, Weaknesses and Risks
 
@@ -216,7 +216,7 @@ Implications for `worldcurrent`: (1) the code can safely be borrowed/vendored (A
 
 ## 9. Components Worth Reusing
 
-1. **The entire `openpi-client` package** (Apache-2.0, ~400 lines): as `worldcurrent`'s "openpi-compatible" remote policy client, either as a direct dependency or vendored; the `msgpack_numpy` codec can serve as the wire format for the simple protocol.
+1. **The entire `openpi-client` package** (Apache-2.0, ~400 lines): as `Hylo`'s "openpi-compatible" remote policy client, either as a direct dependency or vendored; the `msgpack_numpy` codec can serve as the wire format for the simple protocol.
 2. **The `Runtime / Environment / Agent / Subscriber` quartet**: highly consistent with our harness's episode loop abstraction; the semantics can be borrowed directly (`Subscriber` ≈ our recorder / physical memory hook).
 3. **The symmetric composition rule of `DataTransformFn` + `Group.push`, "inputs appended, outputs prepended"** (`transforms.py:49-59`), a good model for transforms in our adapter layer.
 4. **`DeltaActions/AbsoluteActions` + `make_bool_mask`**: a standardized representation of "delta actions relative to state, excluding the gripper".
@@ -290,22 +290,22 @@ Implications for `worldcurrent`: (1) the code can safely be borrowed/vendored (A
 | Weights license | \[Docs/Interface only\] | Not declared; Gemma ToU risk |
 | SOTA LIBERO results / GPU requirements in README | \[Docs/Interface only\] | |
 
-## 12. Mapping to worldcurrent Policy Interface
+## 12. Mapping to Hylo Policy Interface
 
-| worldcurrent | openpi counterpart | Adaptation notes |
+| Hylo | openpi counterpart | Adaptation notes |
 |---|---|---|
 | `spec()` | No formal spec; only the `metadata` dict (first frame) + `TrainConfig.model.action_horizon/action_dim` + the dimensions after `XxxOutputs` cropping | `OpenPIRemotePolicy` needs the schema **supplied by configuration on our side** (obs key mapping, image size 224, action_dim, horizon), optionally supplemented by the first-frame metadata (e.g. `reset_pose`) |
 | `reset(episode_ctx)` | client `reset()` is a no-op; `ActionChunkBroker.reset()` only clears the local buffer | Clearing the chunk buffer locally in the adapter is sufficient (π models are stateless); `episode_ctx.seed` -> only usable via local `Policy.infer(noise=...)`; the remote protocol **does not support passing noise** |
 | `act(observation, instruction)` | `infer({...obs_mapped, "prompt": instruction})["actions"]` | Observation conversion: HWC uint8, `resize_with_pad(224)`, keys and orientation per the training convention (LIBERO rotated 180°); state as raw values (server normalizes); returns `[H, A]` (no batch dim), wrapped as `ActionChunk(actions, dt=1/control_hz, execution_steps=replan_steps)` |
-| Execution horizon | client-side `ActionChunkBroker(action_horizon)` / `replan_steps` / `open_loop_horizon` | Handled uniformly by `worldcurrent`'s `ChunkExecutor`; `execution_steps` as a configurable item of the policy spec rather than a magic number in env code |
-| Remote service | websocket + msgpack-numpy, unversioned | Recommendation: `worldcurrent`'s **simple remote backend is fully compatible with the openpi wire protocol** (so it can connect directly to any openpi server, and to ecosystems such as RoboArena that use the same protocol); at the same time define a **v1 extension**: add a reserved key in the obs dict (e.g. `"__wc__": {"version":1, "request_id", "episode_id", "reset": bool}`), which stays compatible as long as the server ignores unknown keys |
+| Execution horizon | client-side `ActionChunkBroker(action_horizon)` / `replan_steps` / `open_loop_horizon` | Handled uniformly by `Hylo`'s `ChunkExecutor`; `execution_steps` as a configurable item of the policy spec rather than a magic number in env code |
+| Remote service | websocket + msgpack-numpy, unversioned | Recommendation: `Hylo`'s **simple remote backend is fully compatible with the openpi wire protocol** (so it can connect directly to any openpi server, and to ecosystems such as RoboArena that use the same protocol); at the same time define a **v1 extension**: add a reserved key in the obs dict (e.g. `"__wc__": {"version":1, "request_id", "episode_id", "reset": bool}`), which stays compatible as long as the server ignores unknown keys |
 | Local embedding | `create_trained_policy(get_config(name), ckpt_dir)` returns a `BasePolicy` | Process isolation from us: openpi dependencies (jax 0.5.3/py3.11/old lerobot) conflict with LeRobot HEAD, so **always integrate it as a separate process/container + websocket (recommended)** |
-| Safety | None (only the DROID example clip) | The SafetyGuard must be implemented on `worldcurrent`'s robot/sim side |
+| Safety | None (only the DROID example clip) | The SafetyGuard must be implemented on `Hylo`'s robot/sim side |
 | Training data | LeRobot v2.x dataset (`delta_timestamps` fetches `action_horizon` frames) or RLDS | Our v3 data must be exported to v2.1 to use openpi native training; or use LeRobot's pi0/pi05 port for training instead |
 
 Minimal adapter sketch:
 ```python
-class OpenPIRemotePolicy(worldcurrent.Policy):
+class OpenPIRemotePolicy(Hylo.Policy):
     def __init__(self, uri, obs_mapper, action_dim, execution_steps):
         self._c = WebsocketClientPolicy(uri)            # first-frame metadata -> self.meta
     def reset(self, ctx): pass                           # stateless; the local executor clears the queue

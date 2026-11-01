@@ -1,4 +1,4 @@
-# LangGraph Source-Level Architecture Study (worldcurrent Reasoning Layer Selection)
+# LangGraph Source-Level Architecture Study (Hylo Reasoning Layer Selection)
 
 - Repository: `references/reasoning/langgraph` (langchain-ai/langgraph @ `6f2df05`, 2026-10-29, MIT, monorepo `libs/`)
 - Method: purely static reading (read / grep / `python3 -I` parsing `uv.lock`); **nothing was installed, and no code or benchmark was run**.
@@ -27,7 +27,7 @@ LangGraph is a **stateful graph orchestration runtime with the Pregel / BSP (Bul
 | Retry / Timeout / Cache policy | Node-level `RetryPolicy`, `TimeoutPolicy`, `CachePolicy` | \[Implemented\] `LG/langgraph/langgraph/types.py:427`, `:461`, `:530` |
 | Remote deployment (LangGraph Server) | `sdk-py` is only an HTTP/WS client; the server `langgraph-api` is not in this repository | \[Docs/Interface only\] `LG/cli/pyproject.toml:26` |
 
-One-line verdict: **LangGraph is a "persistable actor-channel state machine", suitable as worldcurrent's deliberative planner / task-level agent loop, but not suitable for placement inside a 5–50 Hz closed-loop control loop.**
+One-line verdict: **LangGraph is a "persistable actor-channel state machine", suitable as Hylo's deliberative planner / task-level agent loop, but not suitable for placement inside a 5–50 Hz closed-loop control loop.**
 
 ---
 
@@ -201,7 +201,7 @@ sequenceDiagram
 
 ## 5. Extension Points and Plugin Mechanism
 
-| Extension point | Mechanism | Significance for worldcurrent |
+| Extension point | Mechanism | Significance for Hylo |
 |---|---|---|
 | Custom Checkpointer | Subclass `BaseCheckpointSaver`, implement `get_tuple/list/put/put_writes` (+async) \[Docs/Interface only\] `LG/checkpoint/langgraph/checkpoint/base/__init__.py:262-343`; conformance tests in `LG/checkpoint-conformance/` \[Implemented\] | We can write a saver that persists checkpoints to our episode artifact store (e.g. alongside a Zarr/LeRobot dataset) |
 | Custom Serializer / encryption | `SerializerProtocol.dumps_typed/loads_typed`, `CipherProtocol` \[Implemented\] `LG/checkpoint/langgraph/checkpoint/serde/base.py:15-51` | Large tensors can be serialized as external references (store only the URI) |
@@ -258,7 +258,7 @@ sequenceDiagram
 |---|---|---|
 | `StateGraph` + Pregel runtime | As an **optional adapter** driving the deliberative planner (0.1–2 Hz) | Gains HITL, durability, and time travel at low cost |
 | `BaseCheckpointSaver` interface + `SqliteSaver/PostgresSaver` | Planning-layer thread persistence; at the episode level store only the "planning decision trajectory", not high-frequency observations | Mature, with conformance tests |
-| Checkpoint data model (thread/ns/id + parent + pending_writes) | **Borrow the design** for worldcurrent's own `EpisodeCheckpoint` schema | The versioning + fork semantics are worth copying |
+| Checkpoint data model (thread/ns/id + parent + pending_writes) | **Borrow the design** for Hylo's own `EpisodeCheckpoint` schema | The versioning + fork semantics are worth copying |
 | `interrupt()` / `Command(resume)` | Safety operator confirmation, failure recovery, human-robot collaborative demonstration | Off-the-shelf HITL |
 | `BaseStore` interface (namespace tuple + batch ops) | As **one backend implementation** of episodic/semantic memory, behind our own `MemoryBackend` protocol | Concise interface; Postgres+pgvector is production-ready |
 | `checkpoint-conformance` | If we build our own saver, use it for regression testing | No need to write tests |
@@ -324,18 +324,18 @@ Conversely, the following **should not** be handed to LangGraph: high-frequency 
 
 ---
 
-## 12. Mapping to worldcurrent Reasoner / Memory / Improvement Interfaces
+## 12. Mapping to Hylo Reasoner / Memory / Improvement Interfaces
 
-**(a) Agent Loop frequency positioning**: LangGraph is used only for the **deliberative layer** (task decomposition, subgoal selection, failure recovery, HITL), typically 0.1–2 Hz, with one `invoke`/`stream` per "thinking cycle". The 5–50 Hz VLA / control loop must run in worldcurrent's own real-time loop (or C++/ROS2 nodes); LangGraph nodes only dispatch "skill call + parameters" and read back execution results via the `custom` stream or the Store. See the superstep overhead in Section 4 and weaknesses 1 and 5 in Section 8 for the reasons.
+**(a) Agent Loop frequency positioning**: LangGraph is used only for the **deliberative layer** (task decomposition, subgoal selection, failure recovery, HITL), typically 0.1–2 Hz, with one `invoke`/`stream` per "thinking cycle". The 5–50 Hz VLA / control loop must run in Hylo's own real-time loop (or C++/ROS2 nodes); LangGraph nodes only dispatch "skill call + parameters" and read back execution results via the `custom` stream or the Store. See the superstep overhead in Section 4 and weaknesses 1 and 5 in Section 8 for the reasons.
 
-**(b) Episode checkpoint / replay**: suitable for checkpointing the **planning decision trajectory** (thread_id = episode_id, checkpoint_ns distinguishes planner subgraphs); time travel can be used for "fork and retry from the k-th planning decision". **Not suitable** for storing high-frequency observations/actions: one checkpoint per superstep, with a full (non-Delta) copy of channel values. Recommendation: put only references in the state (`obs_uri`, `traj_chunk_id`), with raw data going into worldcurrent's episode storage; rolling back sim physical state requires the simulator's own snapshot, while LangGraph's fork only rolls back the "thinking state".
+**(b) Episode checkpoint / replay**: suitable for checkpointing the **planning decision trajectory** (thread_id = episode_id, checkpoint_ns distinguishes planner subgraphs); time travel can be used for "fork and retry from the k-th planning decision". **Not suitable** for storing high-frequency observations/actions: one checkpoint per superstep, with a full (non-Delta) copy of channel values. Recommendation: put only references in the state (`obs_uri`, `traj_chunk_id`), with raw data going into Hylo's episode storage; rolling back sim physical state requires the simulator's own snapshot, while LangGraph's fork only rolls back the "thinking state".
 
-**(c) Store as a memory backend**: suitable for episodic (`("episodic", robot_id, task)`) and semantic (text facts + vector search) memory. Missing: 3D spatial indexing (KD-tree/voxel/scene graph), time-window queries, multimodal embeddings (`IndexConfig.embed` applies only to text fields, `LG/checkpoint/langgraph/store/base/__init__.py:578-600`), versioning and dependencies of skills (code/policy weights), binary large objects. worldcurrent should define its own `MemoryBackend` protocol, with `LangGraphStoreBackend` being just one implementation of it.
+**(c) Store as a memory backend**: suitable for episodic (`("episodic", robot_id, task)`) and semantic (text facts + vector search) memory. Missing: 3D spatial indexing (KD-tree/voxel/scene graph), time-window queries, multimodal embeddings (`IndexConfig.embed` applies only to text fields, `LG/checkpoint/langgraph/store/base/__init__.py:578-600`), versioning and dependencies of skills (code/policy weights), binary large objects. Hylo should define its own `MemoryBackend` protocol, with `LangGraphStoreBackend` being just one implementation of it.
 
-**(f) Integration pattern**: an **optional adapter package** (e.g. `worldcurrent-reasoner-langgraph`), with the core package having zero dependency on langchain-core.
+**(f) Integration pattern**: an **optional adapter package** (e.g. `hylo-reasoner-langgraph`), with the core package having zero dependency on langchain-core.
 
 ```python
-# worldcurrent core (no LangGraph dependency)
+# Hylo core (no LangGraph dependency)
 class Reasoner(Protocol):
     def step(self, obs: ObsRef, ctx: ReasonerContext) -> Plan | SkillCall | Interrupt: ...
     def snapshot(self) -> ReasonerState: ...
@@ -348,7 +348,7 @@ class MemoryBackend(Protocol):
 # adapter package
 class LangGraphReasoner(Reasoner):      # wraps CompiledStateGraph; thread_id = episode_id
 class LangGraphStoreBackend(MemoryBackend):  # wraps BaseStore.batch
-class EpisodeCheckpointSaver(BaseCheckpointSaver):  # persists to the worldcurrent episode store, validated with checkpoint-conformance
+class EpisodeCheckpointSaver(BaseCheckpointSaver):  # persists to the Hylo episode store, validated with checkpoint-conformance
 ```
 
 **Improvement mapping**: LangGraph itself provides no optimizer; however, the decision trajectories exported by `get_state_history` can serve as training/reflection data for candidate generators such as DSPy/GEPA (see `dspy.md`).

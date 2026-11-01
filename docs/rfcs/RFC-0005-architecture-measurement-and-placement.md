@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | Status | Parts 1 and 3 implemented (2026-10-31); parts 2 and 4 implemented, part 5 partly (2026-11-01); part 6 proposed |
-| Scope | worldcurrent-harness (wc-core, wc-eval, wc-agents), worldcurrent-bench, worldcurrent-serve, deployments |
+| Scope | hylo-harness (hylo-core, hylo-eval, hylo-agents), hylo-bench, hylo-serve, deployments |
 | Builds on | RFC-0001 (contracts), RFC-0002 (gate), RFC-0004 (artifacts), design/repository-structure.md |
 
 ## Motivation
@@ -20,7 +20,7 @@ Six structural problems found in the code on 2026-10-31, ordered by how much the
 3. **Two episode loops.** Evaluation ran core's `EpisodeRunner`; deployment ran serve's `RealtimeEpisodeRunner`
    (which imported a private kernel helper). What the gate approved in simulation was not the loop the robot ran.
 4. **Plugins carry no contract version or metadata** (licence, maturity), which the repository split needs.
-5. **wc-agents mixes roles**: decision-making agents, instruments (judges, critic, world model), reasoners, test
+5. **hylo-agents mixes roles**: decision-making agents, instruments (judges, critic, world model), reasoners, test
    doubles.
 6. **No job layer**: campaigns run in a foreground process; studio jobs are bare subprocesses.
 
@@ -30,10 +30,10 @@ Six structural problems found in the code on 2026-10-31, ordered by how much the
   `runtime` / `python` / `env`; `env.remote` is hashed as absent (`null`), the way a local environment always was.
   `timing` is measured but left out while it is the default (sync). So digests of local experiments and protocols
   did not change. Protocol digests treat `env.remote` the same way.
-- **Execution profiles** (`core.profile`, `wc.profile/v0.1`): one file per machine (`$WC_PROFILE`, else
-  `~/.config/worldcurrent/profile.yaml`) maps runtime names to an interpreter and environment variables. Configs
+- **Execution profiles** (`core.profile`, `hylo.profile/v0.1`): one file per machine (`$HYLO_PROFILE`, else
+  `~/.config/hylo/profile.yaml`) maps runtime names to an interpreter and environment variables. Configs
   name a runtime (`remote: {runtime: libero-sim}`, agent params `runtime: lerobot`); explicit `python` / `env` still
-  work and override it. `wc profile show | set-runtime | remove-runtime`; bench's `envs/libero/setup.sh` registers
+  work and override it. `hylo profile show | set-runtime | remove-runtime`; bench's `envs/libero/setup.sh` registers
   `libero-sim` and `lerobot` with absolute paths.
 - Result: every shipped LIBERO config, protocol and workcell template is free of machine paths and runs from any
   directory; the same experiment has the same digest on the workstation, the GPU box and the robot computer.
@@ -68,8 +68,8 @@ Six structural problems found in the code on 2026-10-31, ordered by how much the
 
 ## Part 2: a run and artifact store (implemented)
 
-- `core.store` (`wc.store/v0.1`). A store is a directory tree on one machine; the profile says which
-  (`wc store init PATH` sets `store:`; else `$WC_STORE`, else `./runs`). Every run (an `evallog.json`) and sealed
+- `core.store` (`hylo.store/v0.1`). A store is a directory tree on one machine; the profile says which
+  (`hylo store init PATH` sets `store:`; else `$HYLO_STORE`, else `./runs`). Every run (an `evallog.json`) and sealed
   artifact (an `artifact.json`) under it has an id: `run:<run_id>` (run ids already end in a random suffix, so no
   digest is needed) and `artifact:<name>@<digest>` (a digest prefix of at least 8 hex characters works; a bare
   `artifact:<name>` only when exactly one artifact has that name).
@@ -79,17 +79,17 @@ Six structural problems found in the code on 2026-10-31, ordered by how much the
   path it resolved to). Learner job inputs accept run and artifact ids. The gate resolves ids, checks that the
   content still has the referenced digest, and refuses behaviour artifacts whose provenance is unknown.
   Generators that seal artifacts (`learn`, `critic.chunk_value`) put ids into candidate patches.
-- The index (`<root>/.wc-store/index.json`) is a cache: a miss rebuilds it by walking the tree (108 entries under
+- The index (`<root>/.hylo-store/index.json`) is a cache: a miss rebuilds it by walking the tree (108 entries under
   bench/runs in 0.2 s). It records what each artifact was built from (its provenance) and what each campaign's
   archive and promotion ledger names: ids, paths inside an entry, or run ids as path components (paths recorded
   before a move).
-- Referential integrity: `wc store rm ID` refuses while anything refers to the entry; `--force --reason` deletes
+- Referential integrity: `hylo store rm ID` refuses while anything refers to the entry; `--force --reason` deletes
   anyway. Either way a tombstone (`tombstones.jsonl`) records what was removed, why, and what referred to it, and a
   later lookup of the id reports the removal instead of "not found".
-- Sync: `wc store push|pull PATH|HOST:PATH [ID ...] [--with-sources] [--dry-run]`, rsync over ssh, with the other
-  side listed by its own `wc store ls --json`. Sealed artifacts are never re-copied or overwritten; the same path
+- Sync: `hylo store push|pull PATH|HOST:PATH [ID ...] [--with-sources] [--dry-run]`, rsync over ssh, with the other
+  side listed by its own `hylo store ls --json`. Sealed artifacts are never re-copied or overwritten; the same path
   holding a different entry is a conflict and nothing is copied; runs and mutable artifacts are brought up to date.
-- `wc store adopt DIR --kind --role [--source RUN ...]` seals a directory built before manifests existed, with the
+- `hylo store adopt DIR --kind --role [--source RUN ...]` seals a directory built before manifests existed, with the
   sources the caller states, or "unknown provenance" when none are known (recorded, and refused by the gate for
   behaviour artifacts). Adopted here: `memory/l10-search-v1` (its build report lists its two search runs) and
   `critics/l10-v1` (no record of its training runs: unknown provenance).
@@ -102,10 +102,10 @@ Six structural problems found in the code on 2026-10-31, ordered by how much the
 
 ## Part 4: contract versions and plugin metadata (implemented)
 
-- `core.plugins`: every plugin group is a versioned contract (`CONTRACTS`: `wc.env/v0.1`, `wc.agent/v0.1`,
-  `wc.policy/v0.1`, ... one per group). Compatible means the same contract and major version, and a minor version
+- `core.plugins`: every plugin group is a versioned contract (`CONTRACTS`: `hylo.env/v0.1`, `hylo.agent/v0.1`,
+  `hylo.policy/v0.1`, ... one per group). Compatible means the same contract and major version, and a minor version
   not newer than the core's.
-- Each distribution declares, in one `META` dictionary under the `worldcurrent.meta` entry-point group (a module
+- Each distribution declares, in one `META` dictionary under the `hylo.meta` entry-point group (a module
   with no heavy imports, so listing never loads a plugin): the contract version per group, a default maturity, and
   per-plugin overrides (maturity, weights licence, notes). The code licence is the distribution's `license`.
   Maturity is `implemented` (run end to end on its target, with recorded runs), `unverified`, `needs-hardware`, or
@@ -113,8 +113,8 @@ Six structural problems found in the code on 2026-10-31, ordered by how much the
 - The registry checks the declaration before importing an entry point and refuses an incompatible one
   (`IncompatiblePlugin`); an undeclared plugin still loads and is listed as undeclared. `module:attr` references
   are not checked (no distribution to ask).
-- `wc plugins [--all] [--json]` lists contract, maturity, licence, weights and notes; `wc plugin check` warns when a
-  declaration, maturity or licence is missing; `wc plugin new` generates the declaration (maturity `unverified`).
+- `hylo plugins [--all] [--json]` lists contract, maturity, licence, weights and notes; `hylo plugin check` warns when a
+  declaration, maturity or licence is missing; `hylo plugin new` generates the declaration (maturity `unverified`).
 - All 16 plugin distributions declare v0.1. Maturity was set from the recorded runs (which plugin types appear in
   run manifests and campaign archives): 59 implemented, 23 unverified, 6 test doubles (e.g. unverified: openpi, the
   generic memory / noise steering agents, the experience, learn, critic and self-training generators, lesson books
@@ -123,18 +123,18 @@ Six structural problems found in the code on 2026-10-31, ordered by how much the
   checkpoints under the Gemma Terms of Use, LLM plugins under the served model's licence.
 - Not yet: studio does not show maturity and licence next to the components it runs.
 
-## Part 5: contracts in wc-core, one plugin group per role (partly implemented, 2026-11-01)
+## Part 5: contracts in hylo-core, one plugin group per role (partly implemented, 2026-11-01)
 
 Done:
 
-- Every plugin group's contract is defined in wc-core (`core.plugins.CONTRACT_OBJECTS`, checked by a test):
-  `core.benchmark` (Benchmark and the split functions, moved from wc-eval), `core.scoring` (Score, Scorer,
+- Every plugin group's contract is defined in hylo-core (`core.plugins.CONTRACT_OBJECTS`, checked by a test):
+  `core.benchmark` (Benchmark and the split functions, moved from hylo-eval), `core.scoring` (Score, Scorer,
   PairedComparison, GateTest), `core.improvement` (Candidate, StageResult, ArchiveEntry, Proposer) and
   `core.reasoning` (Reasoner, Chooser, Planner, and a new Reflector contract). The old modules re-export the
-  names, so existing imports keep working. A plugin of any group now depends on wc-core alone: wc-reasoner-llm,
-  wc-env-mujoco and wc-env-libero dropped their dependencies on wc-agents and wc-eval.
+  names, so existing imports keep working. A plugin of any group now depends on hylo-core alone: hylo-reasoner-llm,
+  hylo-env-mujoco and hylo-env-libero dropped their dependencies on hylo-agents and hylo-eval.
 - `reasoners` was three interfaces under one version; it is now four groups, each with its own contract version:
-  `reasoners` (wc.reasoner), `choosers` (wc.chooser), `planners` (wc.planner), `reflectors` (wc.reflector).
+  `reasoners` (hylo.reasoner), `choosers` (hylo.chooser), `planners` (hylo.planner), `reflectors` (hylo.reflector).
   Plugin names did not change.
 - One generator contract: the old `CandidateGenerator` and `GainRuleGenerator` are gone. The single-cycle loop on
   standard splits (`improvement_cycle`, used by the demos) takes the same `Proposer` as campaigns; `rule.gain`
@@ -142,13 +142,13 @@ Done:
 
 Not done:
 
-- Splitting the wc-agents package itself: wc-agents (decision-making), wc-instruments (judges, value models,
-  world models), wc-reasoners (rule-based reasoners). With the contracts in core this is a packaging change only;
+- Splitting the hylo-agents package itself: hylo-agents (decision-making), hylo-instruments (judges, value models,
+  world models), hylo-reasoners (rule-based reasoners). With the contracts in core this is a packaging change only;
   it matters once the robot computer should install decision-making alone.
 
 ## Part 6: a job layer (proposed)
 
-- `core.jobs` contract: a job is a `wc` command with resources (CPU threads, GPU, runtime); a local executor with a
+- `core.jobs` contract: a job is a `hylo` command with resources (CPU threads, GPU, runtime); a local executor with a
   queue, concurrency limits, resume and logs; studio and campaigns submit jobs instead of starting processes.
 - Later executors: a GPU box over SSH, a cluster scheduler.
 

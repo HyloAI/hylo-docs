@@ -37,7 +37,7 @@
 
 ## 3. What to adopt (and from where)
 
-| Mechanism | Source | How it lands in worldcurrent |
+| Mechanism | Source | How it lands in Hylo |
 |---|---|---|
 | Paired comparison with common random numbers | our gate + SmolVLA/pi0 `noise=` | seed each chunk's noise from (episode seed, chunk index); parent and candidate see identical noise on identical init states |
 | Four-way split + sealed held-out | lessons from GEPA, Eureka, ADAS, RLinf | init states: diagnose/search 0–19, search-validation 20–29, gate 30–39, held-out 40–49; proposer sees only search metrics (ShinkaEvolve public/private) |

@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 560" width="960" height="560" role="img" aria-labelledby="title desc">
-<title id="title">worldcurrent repositories and how they depend on each other</title>
-<desc id="desc">bench, serve, studio and plugins depend only on the harness and never import each other; they cooperate through formats defined in wc-core. serve declares only wc-core, so a robot computer installs little.</desc>
+<title id="title">Hylo repositories and how they depend on each other</title>
+<desc id="desc">bench, serve, studio and plugins depend only on the harness and never import each other; they cooperate through formats defined in hylo-core. serve declares only hylo-core, so a robot computer installs little.</desc>
 <defs><style>
   text { font-family: IBM Plex Sans, Helvetica, Arial, sans-serif; fill: #334155; }
   .t { font-size: 13px; font-weight: 600; }
@@ -12,42 +12,42 @@
 </style><marker id="a-64748b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#64748b"/></marker><marker id="a-0d5c63" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#0d5c63"/></marker><marker id="a-2a7f86" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2a7f86"/></marker><marker id="a-c2410c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#c2410c"/></marker><marker id="a-334155" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#334155"/></marker></defs>
 <rect width="960" height="560" fill="#ffffff"/>
 <rect x="30" y="30" width="210" height="70" rx="8" fill="#fff" stroke="#2a7f86" stroke-width="1.2"/>
-<text x="135.0" y="55.0" class="t" text-anchor="middle" fill="#0d5c63">worldcurrent-bench</text>
+<text x="135.0" y="55.0" class="t" text-anchor="middle" fill="#0d5c63">hylo-bench</text>
 <text x="135.0" y="69.0" class="s" text-anchor="middle">benchmark scoring</text>
 <text x="135.0" y="83.0" class="s" text-anchor="middle">LIBERO / MuJoCo suites</text>
 <path d="M135,102 L135,188" fill="none" stroke="#2a7f86" stroke-width="1.5" marker-end="url(#a-2a7f86)"/>
-<rect x="89" y="132" width="92" height="22" rx="11" fill="#fff" stroke="#2a7f86" stroke-width="1"/>
+<rect x="79" y="132" width="112" height="22" rx="11" fill="#fff" stroke="#2a7f86" stroke-width="1"/>
 <text x="135" y="147" class="s" text-anchor="middle" fill="#2a7f86" font-weight="600">harness</text>
 <rect x="260" y="30" width="210" height="70" rx="8" fill="#fff" stroke="#2a7f86" stroke-width="1.2"/>
-<text x="365.0" y="55.0" class="t" text-anchor="middle" fill="#0d5c63">worldcurrent-serve</text>
+<text x="365.0" y="55.0" class="t" text-anchor="middle" fill="#0d5c63">hylo-serve</text>
 <text x="365.0" y="69.0" class="s" text-anchor="middle">policy server · workcell</text>
 <text x="365.0" y="83.0" class="s" text-anchor="middle">robot computer side</text>
 <path d="M365,102 L365,188" fill="none" stroke="#c2410c" stroke-width="1.5" marker-end="url(#a-c2410c)"/>
-<rect x="319" y="132" width="92" height="22" rx="11" fill="#fff" stroke="#c2410c" stroke-width="1"/>
-<text x="365" y="147" class="s" text-anchor="middle" fill="#c2410c" font-weight="600">wc-core only</text>
+<rect x="309" y="132" width="112" height="22" rx="11" fill="#fff" stroke="#c2410c" stroke-width="1"/>
+<text x="365" y="147" class="s" text-anchor="middle" fill="#c2410c" font-weight="600">hylo-core only</text>
 <rect x="490" y="30" width="210" height="70" rx="8" fill="#fff" stroke="#2a7f86" stroke-width="1.2"/>
-<text x="595.0" y="55.0" class="t" text-anchor="middle" fill="#0d5c63">worldcurrent-studio</text>
+<text x="595.0" y="55.0" class="t" text-anchor="middle" fill="#0d5c63">hylo-studio</text>
 <text x="595.0" y="69.0" class="s" text-anchor="middle">playground</text>
 <text x="595.0" y="83.0" class="s" text-anchor="middle">control plane · UI</text>
 <path d="M595,102 L595,188" fill="none" stroke="#2a7f86" stroke-width="1.5" marker-end="url(#a-2a7f86)"/>
-<rect x="549" y="132" width="92" height="22" rx="11" fill="#fff" stroke="#2a7f86" stroke-width="1"/>
+<rect x="539" y="132" width="112" height="22" rx="11" fill="#fff" stroke="#2a7f86" stroke-width="1"/>
 <text x="595" y="147" class="s" text-anchor="middle" fill="#2a7f86" font-weight="600">harness</text>
 <rect x="720" y="30" width="210" height="70" rx="8" fill="#fff" stroke="#2a7f86" stroke-width="1.2"/>
-<text x="825.0" y="55.0" class="t" text-anchor="middle" fill="#0d5c63">worldcurrent-plugins</text>
+<text x="825.0" y="55.0" class="t" text-anchor="middle" fill="#0d5c63">hylo-plugins</text>
 <text x="825.0" y="69.0" class="s" text-anchor="middle">examples, written as</text>
 <text x="825.0" y="83.0" class="s" text-anchor="middle">a third party would</text>
 <path d="M825,102 L825,188" fill="none" stroke="#2a7f86" stroke-width="1.5" marker-end="url(#a-2a7f86)"/>
-<rect x="779" y="132" width="92" height="22" rx="11" fill="#fff" stroke="#2a7f86" stroke-width="1"/>
+<rect x="769" y="132" width="112" height="22" rx="11" fill="#fff" stroke="#2a7f86" stroke-width="1"/>
 <text x="825" y="147" class="s" text-anchor="middle" fill="#2a7f86" font-weight="600">harness</text>
 <text x="250" y="70" class="t" text-anchor="middle" fill="#c2410c" font-size="16">✕</text>
 <text x="480" y="70" class="t" text-anchor="middle" fill="#c2410c" font-size="16">✕</text>
 <text x="710" y="70" class="t" text-anchor="middle" fill="#c2410c" font-size="16">✕</text>
 <text x="480" y="120" class="s" text-anchor="middle" fill="#c2410c" font-weight="600">leaves never import each other</text>
 <rect x="30" y="190" width="900" height="210" rx="12" fill="#e6f2f3" stroke="#2a7f86" stroke-width="1.2"/>
-<text x="50" y="218" class="h" text-anchor="start" fill="#0d5c63">worldcurrent-harness</text>
-<text x="272" y="218" class="s" text-anchor="start">the base: core, eval, agents, memory, learn, evolve, catalog, policies, adapters, wc</text>
+<text x="50" y="218" class="h" text-anchor="start" fill="#0d5c63">hylo-harness</text>
+<text x="272" y="218" class="s" text-anchor="start">the base: core, eval, agents, memory, learn, evolve, catalog, policies, adapters, hylo</text>
 <rect x="50" y="234" width="860" height="150" rx="10" fill="#fff" stroke="#0d5c63" stroke-width="1.4"/>
-<text x="66" y="256" class="cap" text-anchor="start" fill="#0d5c63">FORMATS IN WC-CORE: THE ONLY WAY THE REPOSITORIES TALK TO EACH OTHER</text>
+<text x="66" y="256" class="cap" text-anchor="start" fill="#0d5c63">FORMATS IN HYLO-CORE: THE ONLY WAY THE REPOSITORIES TALK TO EACH OTHER</text>
 <rect x="66" y="270" width="196" height="22" rx="11" fill="#e6f2f3" stroke="#2a7f86" stroke-width="1"/>
 <text x="164.0" y="285" class="s" text-anchor="middle" fill="#0d5c63" font-weight="600">registry names</text>
 <text x="164" y="308" class="s" text-anchor="middle">envs, agents, policies … by name</text>
@@ -62,19 +62,19 @@
 <text x="794" y="308" class="s" text-anchor="middle">what a policy server deploys</text>
 <rect x="66" y="324" width="196" height="22" rx="11" fill="#e6f2f3" stroke="#2a7f86" stroke-width="1"/>
 <text x="164.0" y="339" class="s" text-anchor="middle" fill="#0d5c63" font-weight="600">scorecards</text>
-<text x="164" y="362" class="s" text-anchor="middle">wc.scorecard/v0.1</text>
+<text x="164" y="362" class="s" text-anchor="middle">hylo.scorecard/v0.1</text>
 <rect x="276" y="324" width="196" height="22" rx="11" fill="#e6f2f3" stroke="#2a7f86" stroke-width="1"/>
 <text x="374.0" y="339" class="s" text-anchor="middle" fill="#0d5c63" font-weight="600">wire protocol</text>
 <text x="374" y="362" class="s" text-anchor="middle">msgpack-numpy over websockets</text>
 <rect x="486" y="324" width="196" height="22" rx="11" fill="#e6f2f3" stroke="#2a7f86" stroke-width="1"/>
 <text x="584.0" y="339" class="s" text-anchor="middle" fill="#0d5c63" font-weight="600">workcell API</text>
-<text x="584" y="362" class="s" text-anchor="middle">wc.workcell/v0.1 over HTTP</text>
+<text x="584" y="362" class="s" text-anchor="middle">hylo.workcell/v0.1 over HTTP</text>
 <rect x="696" y="324" width="196" height="22" rx="11" fill="#e6f2f3" stroke="#2a7f86" stroke-width="1"/>
-<text x="794.0" y="339" class="s" text-anchor="middle" fill="#0d5c63" font-weight="600">wc subcommands</text>
+<text x="794.0" y="339" class="s" text-anchor="middle" fill="#0d5c63" font-weight="600">hylo subcommands</text>
 <text x="794" y="362" class="s" text-anchor="middle">each package adds its own</text>
 <text x="30" y="440" class="cap" text-anchor="start">NO IMPORTABLE CODE</text>
 <rect x="30" y="452" width="260" height="62" rx="8" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2" stroke-dasharray="4 3"/>
-<text x="160.0" y="473.0" class="t" text-anchor="middle">worldcurrent-docs</text>
+<text x="160.0" y="473.0" class="t" text-anchor="middle">hylo-docs</text>
 <text x="160.0" y="487.0" class="s" text-anchor="middle">this site: guides, design, RFCs,</text>
 <text x="160.0" y="501.0" class="s" text-anchor="middle">research, generated references</text>
 <rect x="310" y="452" width="290" height="62" rx="8" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2" stroke-dasharray="4 3"/>

@@ -1,23 +1,23 @@
 # Environment variables
 
-What worldcurrent reads from the environment, and the third-party variables its setup relies on. Variables that
+What Hylo reads from the environment, and the third-party variables its setup relies on. Variables that
 belong to one machine (paths, renderers, caches) are best set per runtime in the
 [execution profile](profiles.md), so they reach exactly the component that needs them.
 
-## worldcurrent
+## Hylo
 
 | Variable | Read by | Meaning | Default |
 |---|---|---|---|
-| `WC_PROFILE` | `core.profile` | path of this machine's execution profile | `~/.config/worldcurrent/profile.yaml` |
-| `WC_STORE` | `core.store` | the run and artifact store directory; overrides `store:` in the profile | the profile's `store`, else `./runs` |
-| `WORLDCURRENT_NO_PLUGIN_AUTOLOAD` | `core.registry` | `1`: do not load plugins from entry points; only explicitly registered plugins and `module:attr` references resolve | unset (entry points load) |
-| `WC_HARNESS` | `bench/envs/libero/setup.sh` | the harness checkout to install into the LIBERO venv | `../harness` (side by side) |
-| `WC_GIT_BASE` | `harness/dev/bootstrap.sh` | clone missing repositories from `$WC_GIT_BASE/worldcurrent-<name>.git` | unset: missing repositories are skipped |
-| `WC_TEST_LLM` | the LLM reasoner tests | `1`: run the tests that call the local Ollama server | unset (skipped) |
+| `HYLO_PROFILE` | `core.profile` | path of this machine's execution profile | `~/.config/hylo/profile.yaml` |
+| `HYLO_STORE` | `core.store` | the run and artifact store directory; overrides `store:` in the profile | the profile's `store`, else `./runs` |
+| `HYLO_NO_PLUGIN_AUTOLOAD` | `core.registry` | `1`: do not load plugins from entry points; only explicitly registered plugins and `module:attr` references resolve | unset (entry points load) |
+| `HYLO_HARNESS` | `bench/envs/libero/setup.sh` | the harness checkout to install into the LIBERO venv | `../harness` (side by side) |
+| `HYLO_GIT_BASE` | `harness/dev/bootstrap.sh` | clone missing repositories from `$HYLO_GIT_BASE/hylo-<name>.git` | unset: missing repositories are skipped |
+| `HYLO_TEST_LLM` | the LLM reasoner tests | `1`: run the tests that call the local Ollama server | unset (skipped) |
 
 Tokens are never read from a fixed variable. Pass them on the command line (`--token`) or name a variable that holds
-one: `wc serve env|agent ... --token-env WC_TOKEN`, or `token_env: WC_TOKEN` in a `remote.ws` agent's params. The
-templates use `$WC_TOKEN` by convention.
+one: `hylo serve env|agent ... --token-env HYLO_TOKEN`, or `token_env: HYLO_TOKEN` in a `remote.ws` agent's params. The
+templates use `$HYLO_TOKEN` by convention.
 
 ## Rendering and simulators
 
@@ -43,7 +43,7 @@ templates use `$WC_TOKEN` by convention.
 === "In the profile (recommended)"
 
     ```bash
-    uv run wc profile set-runtime libero-sim --python bench/envs/libero/.venv/bin/python \
+    uv run hylo profile set-runtime libero-sim --python bench/envs/libero/.venv/bin/python \
         --env MUJOCO_GL=osmesa --env PYOPENGL_PLATFORM=osmesa
     ```
 
@@ -58,7 +58,7 @@ templates use `$WC_TOKEN` by convention.
 === "In the shell"
 
     ```bash
-    MUJOCO_GL=osmesa uv run pytest bench/adapters/wc-env-mujoco
+    MUJOCO_GL=osmesa uv run pytest bench/adapters/hylo-env-mujoco
     ```
 
 Variables in the profile or a config reach only the subprocess of that component; the parent process and other

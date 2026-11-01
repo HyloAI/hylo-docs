@@ -1,13 +1,13 @@
-/* worldcurrent palette: deep current teal, with a warm signal colour for what needs attention */
+/* Hylo palette: deep current teal, with a warm signal colour for what needs attention */
 :root, [data-md-color-scheme="default"] {
   --md-primary-fg-color: #0d5c63;
   --md-primary-fg-color--light: #2a7f86;
   --md-primary-fg-color--dark: #08434a;
   --md-accent-fg-color: #c2410c;
-  --wc-ok: #15803d;
-  --wc-warn: #b45309;
-  --wc-hw: #6d28d9;
-  --wc-figure-bg: #ffffff;
+  --hylo-ok: #15803d;
+  --hylo-warn: #b45309;
+  --hylo-hw: #6d28d9;
+  --hylo-figure-bg: #ffffff;
 }
 [data-md-color-scheme="slate"] {
   --md-primary-fg-color: #0f6b73;
@@ -15,18 +15,19 @@
   --md-primary-fg-color--dark: #0a4b51;
   --md-accent-fg-color: #fb923c;
   --md-default-bg-color: #12181b;
-  --wc-ok: #4ade80;
-  --wc-warn: #fbbf24;
-  --wc-hw: #c4b5fd;
-  --wc-figure-bg: #f8fafc;
+  --hylo-ok: #4ade80;
+  --hylo-warn: #fbbf24;
+  --hylo-hw: #c4b5fd;
+  --hylo-figure-bg: #f8fafc;
 }
-.wc-ok { color: var(--wc-ok); }
-.wc-warn { color: var(--wc-warn); }
-.wc-hw { color: var(--wc-hw); }
+.wc-badge { font-weight: 600; white-space: nowrap; }
+.wc-ok { color: var(--hylo-ok); }
+.wc-warn { color: var(--hylo-warn); }
+.wc-hw { color: var(--hylo-hw); }
 
 /* diagrams and figures are drawn on white; in dark mode they sit on a light card */
 .md-typeset img.wc-figure, .md-typeset figure img {
-  background: var(--wc-figure-bg);
+  background: var(--hylo-figure-bg);
   border-radius: 6px;
   padding: 6px;
 }

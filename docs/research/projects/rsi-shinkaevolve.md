@@ -2,7 +2,7 @@
 
 > Subject: `references/evolution/ShinkaEvolve` (SakanaAI/ShinkaEvolve @ `8adc053`, 2026-10-05, package `0.0.7`, Apache-2.0). This is the official Sakana AI repo (about 1.5k stars, not a fork). Paper: Lange, Imajuku, Cetin, "ShinkaEvolve: Towards Open-Ended And Sample-Efficient Program Evolution", arXiv:2509.19349 (cited in `references/evolution/ShinkaEvolve/README.md:575-578`).
 > Method: static reading only (read / grep). Nothing was installed or run, and no LLM was called.
-> Audience: the `wc-evolve` improvement loop and the RSI-on-LIBERO design. This is a companion to `rsi-openevolve.md`.
+> Audience: the `hylo-evolve` improvement loop and the RSI-on-LIBERO design. This is a companion to `rsi-openevolve.md`.
 > Tags: **\[Implemented\]** · **\[Docs/Interface only\]** · **\[Unverified\]** · **\[Needs model/hardware\]**
 
 ---
@@ -214,14 +214,14 @@ Key code: the proposal is built at `references/evolution/ShinkaEvolve/shinka/cor
 | Rich lineage: inspirations, attempt and failure logs, per-generation directories | Migration off by default (`migration_rate=0.0`); 2 islands by default |
 | Rank-normalised multi-criteria archive and crowding replacement | Syntax validator implemented but not wired in |
 
-## 11. What worldcurrent should adopt (concrete)
+## 11. What Hylo should adopt (concrete)
 
-The target is RSI on LIBERO with a frozen SmolVLA. The evolvable artefacts are `critic_rule`, `recovery_rule` or wrapper `code`. These kinds are already declared but not enabled (`packages/wc-evolve/src/worldcurrent/evolve/candidate.py:27-31`).
+The target is RSI on LIBERO with a frozen SmolVLA. The evolvable artefacts are `critic_rule`, `recovery_rule` or wrapper `code`. These kinds are already declared but not enabled (`packages/hylo-evolve/src/hylo/evolve/candidate.py:27-31`).
 
 1. **Novelty and dedup before rollouts.** First reject candidates whose canonicalised source digest matches an existing one; `Candidate.digest()` already exists. Then apply an embedding or AST similarity check. Only after that should a candidate reach the simulator, where each evaluation costs CPU-minutes per episode (`async_runner.py:2739-2912`).
 2. **A `correct` flag distinct from score.** It is set by the kernel, not by the candidate. A candidate is incorrect if it raises, exceeds the step or time budget, emits actions the SafetyShield must clip beyond a quota, or touches a protected scope. Only correct candidates may become parents or enter the archive (`dbase.py:2247-2362`). Fix mode is worth copying for repairing the rules of a broken recovery candidate.
 3. **A subprocess evaluator contract.** The candidate file and `results_dir` go in; `metrics.json` and `correct.json` come out. The kernel launches it, scrubs the environment and kills it on timeout using the 5×EWMA+60 s rule (`async_runner.py:5131-5141`). Unlike Shinka, put the candidate in a different process from the scorer, so a candidate cannot write its own metrics. Our trace is the source of truth.
-4. **Public vs private metrics.** Prompts may only see train-split metrics and redacted failure traces. Validation and held-out results go into `private` and never into prompts (`sampler.py:172-173`). Unlike Shinka, use the private channel for the promotion gate. The McNemar gate in `packages/wc-evolve/src/worldcurrent/evolve/loop.py:93` is that gate.
+4. **Public vs private metrics.** Prompts may only see train-split metrics and redacted failure traces. Validation and held-out results go into `private` and never into prompts (`sampler.py:172-173`). Unlike Shinka, use the private channel for the promotion gate. The McNemar gate in `packages/hylo-evolve/src/hylo/evolve/loop.py:93` is that gate.
 5. **Sequential evaluation, made correct for Bernoulli outcomes.** Take the idea of `eval_stop.py`: stop rollouts early when the outcome is decided. Implement it as a paired, Beta-Binomial or SPRT-style test against the **parent** on the same seeds. This becomes the bridge between cascade stage 2 and the full validation McNemar test.
 6. **The committed-cost budget** (`async_runner.py:863-886`) should cover both LLM dollars and simulator CPU-seconds, and the bandit cost term should be reused for choosing among proposer models.
 7. **Visit-count-penalised parent selection** (`parents.py:367-397`) is cheap and robust to score scale. Use it over registry versions, so that the same parent is not hammered repeatedly. This replaces "always mutate the active version".

@@ -1,13 +1,13 @@
 # Adding a learner
 
-This tutorial covers the four ways to make worldcurrent learn, from a plugin package to a gated, promoted result:
+This tutorial covers the four ways to make Hylo learn, from a plugin package to a gated, promoted result:
 
 | You want to | Write | Contract | Reference implementations |
 |---|---|---|---|
-| build a model from recorded runs | an offline **learner** | `Learner.fit(job) -> sealed artifact` | `policy.bc` / `flow` / `knn` / `tokens` (wc-policies), `critic.chunk_value`, `world_model.state`, `judge.trace` (wc-learn) |
-| learn by acting | an online **learner** | `OnlineLearner`: `start / policies / update / finished / seal` | `examples.cem` (worldcurrent-plugins) |
-| measure or label episodes | an **instrument** (success judge) | `SuccessJudge.judge(trace) -> Judgement` | `judge.trace` (wc-agents), `judge.vlm` |
-| propose improvements | a candidate **generator** | `propose(diagnosis, cfg, parent_id, archive) -> [(Candidate, hypothesis)]` | `rule.gain`, `rule.steering`, `learn` (wc-evolve), `llm.steering` |
+| build a model from recorded runs | an offline **learner** | `Learner.fit(job) -> sealed artifact` | `policy.bc` / `flow` / `knn` / `tokens` (hylo-policies), `critic.chunk_value`, `world_model.state`, `judge.trace` (hylo-learn) |
+| learn by acting | an online **learner** | `OnlineLearner`: `start / policies / update / finished / seal` | `examples.cem` (hylo-plugins) |
+| measure or label episodes | an **instrument** (success judge) | `SuccessJudge.judge(trace) -> Judgement` | `judge.trace` (hylo-agents), `judge.vlm` |
+| propose improvements | a candidate **generator** | `propose(diagnosis, cfg, parent_id, archive) -> [(Candidate, hypothesis)]` | `rule.gain`, `rule.steering`, `learn` (hylo-evolve), `llm.steering` |
 
 The steps were run while writing this page, in a scratch directory with its own store; the outputs are real. The
 background is in [learning](../user-guide/learning.md) and [campaigns](../user-guide/campaigns.md).
@@ -33,13 +33,13 @@ background is in [learning](../user-guide/learning.md) and [campaigns](../user-g
 ## 1. An offline learner
 
 ```bash
-uv run wc plugin new learner my-recap --dir plugins
+uv run hylo plugin new learner my-recap --dir plugins
 ```
 
 The generated learner summarises the success rate of development runs into one sealed file. Replace the middle with
 your model:
 
-```python title="plugins/wc-plugin-my-recap/src/wc_my_recap/plugin.py"
+```python title="plugins/hylo-plugin-my-recap/src/hylo_my_recap/plugin.py"
 class MyRecapLearner:
     name = "my-recap@0.1"
 
@@ -55,7 +55,7 @@ class MyRecapLearner:
 ```
 
 `development_runs` returns `(run_dir, SourceRef)` pairs. Read episodes from each run's `evallog.json` and their
-step-by-step events with `core.trace.TraceStore(run_dir).read(episode_id)`; `worldcurrent.policies.reference.base.load_demos`
+step-by-step events with `core.trace.TraceStore(run_dir).read(episode_id)`; `hylo.policies.reference.base.load_demos`
 shows how the reference policies turn traces into `(observation, next T actions)` pairs.
 
 `kind` is one of `dataset`, `action_memory`, `value_model`, `noise_policy`, `policy_weights`, `policy_params`,
@@ -64,16 +64,16 @@ shows how the reference policies turn traces into `(observation, next T actions)
 Register it (the template does) and check it:
 
 ```toml title="pyproject.toml"
-[project.entry-points."worldcurrent.learners"]
-"my-recap" = "wc_my_recap.plugin:MyRecapLearner"
+[project.entry-points."hylo.learners"]
+"my-recap" = "hylo_my_recap.plugin:MyRecapLearner"
 ```
 
 ```bash
-uv run wc plugin check learner my-recap
+uv run hylo plugin check learner my-recap
 ```
 
 ```text
-learner wc_my_recap.plugin:MyRecapLearner: PASS
+learner hylo_my_recap.plugin:MyRecapLearner: PASS
   [  ok] runs and seals a verifiable artifact: other / behaviour, digest 740f272a4d5caa2c
   [  ok] provenance lists development data only: splits ['search', 'search_val']
   [  ok] refuses gate / held-out splits
@@ -90,8 +90,8 @@ seal, the splits (default `search`, `search_val`) and the learner's parameters:
 ```
 
 ```bash
-uv run wc learn recap.json                                       # in this process
-uv run wc learn recap.json --python /path/to/other/venv/bin/python   # with another venv's interpreter
+uv run hylo learn recap.json                                       # in this process
+uv run hylo learn recap.json --python /path/to/other/venv/bin/python   # with another venv's interpreter
 ```
 
 ```json
@@ -106,15 +106,15 @@ A job that asks for gate data is refused before anything is read:
 ```
 
 ```text
-worldcurrent.core.artifact.SplitLeak: gate / heldout data must never be used to build anything that is gated on it: ['gate']
+hylo.core.artifact.SplitLeak: gate / heldout data must never be used to build anything that is gated on it: ['gate']
 ```
 
-Then reference the artifact by its store id (`uv run wc store ref runs/artifacts/recap`) in the component that
+Then reference the artifact by its store id (`uv run hylo store ref runs/artifacts/recap`) in the component that
 loads it, as in [adding a policy](adding-a-policy.md#6-a-learned-policy-weights-from-a-sealed-artifact).
 
 !!! tip "Learners with heavy dependencies"
-    A learner that needs torch (the LeRobot ones) runs in that venv: `wc learn job.json --python ...`, or `python:`
-    / `python_path:` in the `learn` generator below. wc-learn is light (wc-core and wc-agents), so install it into
+    A learner that needs torch (the LeRobot ones) runs in that venv: `hylo learn job.json --python ...`, or `python:`
+    / `python_path:` in the `learn` generator below. hylo-learn is light (hylo-core and hylo-agents), so install it into
     the model's venv.
 
 ## 2. An online learner
@@ -134,13 +134,13 @@ class OnlineLearner(Protocol):
 ```
 
 The job carries the experiment to roll out in as `params.experiment`, plus `iterations` (default 3) and `split`
-(default the job's first split, `search`). `examples.cem` (worldcurrent-plugins, `wc_examples/online.py`) is the
+(default the job's first split, `search`). `examples.cem` (hylo-plugins, `hylo_examples/online.py`) is the
 cross-entropy method over numeric agent parameters: `policies()` samples a population from a Gaussian, `update()`
 scores each rollout by `success_mean - step_penalty * mean steps` and refits the Gaussian to the elites, `seal()`
 writes `best.json`. The same contract fits on-policy RL: `policies()` returns the current policy, `update()` reads the
 rollouts' traces from `run_dir` and takes a gradient step, `seal()` writes the weights.
 
-`wc plugin new online_learner NAME` scaffolds one (random search over one parameter), and `wc plugin check
+`hylo plugin new online_learner NAME` scaffolds one (random search over one parameter), and `hylo plugin check
 online_learner NAME` checks it. Online learners are usually run by the `learn` generator, below.
 
 ## 3. A success judge (instrument)
@@ -154,21 +154,21 @@ class SuccessJudge(Protocol):
     def judge(self, episode: EpisodeTrace) -> Judgement: ...
 ```
 
-`wc plugin new judge NAME` scaffolds one; `wc plugin check judge NAME` checks it. A judge that is learned has a
-learner too: `judge.trace` (wc-learn) trains a classifier on the last frames of development episodes, labelled with
+`hylo plugin new judge NAME` scaffolds one; `hylo plugin check judge NAME` checks it. A judge that is learned has a
+learner too: `judge.trace` (hylo-learn) trains a classifier on the last frames of development episodes, labelled with
 the simulator outcome, and seals a `success_judge` artifact with role `instrument`.
 
 An instrument is trusted only after calibration against ground truth, on runs it was not built from:
 
 ```bash
-uv run wc calibrate --judge '{"type": "judge.trace", "params": {"path": "artifact:l10-trace-v2@54a1efad"}}' \
+uv run hylo calibrate --judge '{"type": "judge.trace", "params": {"path": "artifact:l10-trace-v2@54a1efad"}}' \
     --runs runs/... --artifact artifact:l10-trace-v2@54a1efad --target-precision 0.95 --out calibration.json
 ```
 
 The report gives AUC, Brier score, calibration error, and the lowest threshold that reaches the target precision.
 It is `ready` when it has at least 50 episodes, reaches the target precision, and keeps a recall of at least 0.3.
 `--artifact` excludes the judge's own training runs and stores the report in the artifact. Only a `ready` judge may
-label (`wc label RUN --judge ID`), and only at or above its calibrated threshold; episodes below it stay
+label (`hylo label RUN --judge ID`), and only at or above its calibrated threshold; episodes below it stay
 unlabeled. The LIBERO-10 trace judge reached AUC 0.92 on 600 episodes
 ([experiment record](../research/experiments/2026-10-31-success-judges-libero10.md)).
 
@@ -193,10 +193,10 @@ class Proposer(Protocol):
 The scaffold scales one numeric path, like the built-in `rule.gain`:
 
 ```bash
-uv run wc plugin new generator my-gain --dir plugins
+uv run hylo plugin new generator my-gain --dir plugins
 ```
 
-```python title="plugins/wc-plugin-my-gain/src/wc_my_gain/plugin.py"
+```python title="plugins/hylo-plugin-my-gain/src/hylo_my_gain/plugin.py"
 class MyGainProposer:
     name = "my-gain@0.1"
 
@@ -213,7 +213,7 @@ class MyGainProposer:
 ```
 
 ```bash
-uv run wc plugin check generator my-gain
+uv run hylo plugin check generator my-gain
 ```
 
 ```text
@@ -223,7 +223,7 @@ generator my-gain@0.1: PASS
   [  ok] candidates name their generator
 ```
 
-Register it under `worldcurrent.generators` and use it in a campaign as `proposer: {type: my-gain, params: {...}}`.
+Register it under `hylo.generators` and use it in a campaign as `proposer: {type: my-gain, params: {...}}`.
 
 ### What a candidate must pass before it costs an evaluation
 
@@ -249,7 +249,7 @@ Placeholders in the patch are filled in: `{artifact}` with the artifact's store 
 store) and `{metrics.a.b}` with values from the manifest's metrics.
 
 ```yaml title="plugins/examples/evolve/mujoco_online_cem.yaml"
-schema_version: wc.evolve/v0.1
+schema_version: hylo.evolve/v0.1
 name: mujoco-online-cem
 experiment: ../configs/mujoco_reach.yaml
 experiment_overrides: {benchmark.params: {protocol: rsi}, agent.params.kp: 0.02}
@@ -267,7 +267,7 @@ out_dir: runs/evolve/mujoco-online-cem
 ```
 
 ```bash
-uv run wc evolve run plugins/examples/evolve/mujoco_online_cem.yaml          # about 30 s
+uv run hylo evolve run plugins/examples/evolve/mujoco_online_cem.yaml          # about 30 s
 ```
 
 ```text
@@ -310,8 +310,8 @@ maturity is `unverified`: they have not yet run in a campaign here ([plugin cata
 
 - Declare and version what you wrote: [versioning](versioning.md), [plugin catalogue](plugin-catalogue.md).
 - Test it: [testing](testing.md); when something fails: [troubleshooting](troubleshooting.md).
-- APIs: [wc-learn](../api/packages/wc-learn.md), [wc-evolve](../api/packages/wc-evolve.md),
-  [wc-policies](../api/packages/wc-policies.md), [contracts](../api/contracts.md); commands:
-  [`wc learn`](../cli/index.md#wc-learn), [`wc calibrate`](../cli/index.md#wc-calibrate),
-  [`wc evolve`](../cli/index.md#wc-evolve), [`wc plugin`](../cli/index.md#wc-plugin).
+- APIs: [hylo-learn](../api/packages/hylo-learn.md), [hylo-evolve](../api/packages/hylo-evolve.md),
+  [hylo-policies](../api/packages/hylo-policies.md), [contracts](../api/contracts.md); commands:
+  [`hylo learn`](../cli/index.md#hylo-learn), [`hylo calibrate`](../cli/index.md#hylo-calibrate),
+  [`hylo evolve`](../cli/index.md#hylo-evolve), [`hylo plugin`](../cli/index.md#hylo-plugin).
 - The learning pipeline's design: [RFC-0004](../rfcs/RFC-0004-learning-pipeline.md).

@@ -1,6 +1,6 @@
 # API Reference
 
-The Python API of `wc-core`: the contracts every plugin implements, the episode loop, configuration, and the formats
+The Python API of `hylo-core`: the contracts every plugin implements, the episode loop, configuration, and the formats
 the repositories exchange. Plugins and leaf repositories depend on these modules only; everything else in the
 harness is an implementation behind them.
 
@@ -22,5 +22,5 @@ included, and the plugins it registers. Depend on the core contracts; read the r
 !!! tip "Contracts are pydantic models or protocols"
     Data contracts (`EnvSpec`, `Observation`, `ActionChunk`, `ExperimentConfig`, ...) are frozen pydantic models:
     build them with keyword arguments, copy them with `model_copy(update=...)`, and get their JSON Schema with
-    `wc schema NAME`. Behavioural contracts (`Environment`, `Agent`, `ChunkPolicy`, `Guard`, ...) are
+    `hylo schema NAME`. Behavioural contracts (`Environment`, `Agent`, `ChunkPolicy`, `Guard`, ...) are
     `typing.Protocol`s: a plugin does not inherit from them, it has the methods.

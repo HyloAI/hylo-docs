@@ -1,4 +1,4 @@
-site_name: worldcurrent
+site_name: Hylo
 site_description: Evaluation, learning, gated self-improvement and deployment for robot policies, behind one set of contracts.
 docs_dir: docs
 site_dir: site
@@ -52,27 +52,27 @@ plugins:
       handlers:
         python:
           paths:
-            - ../harness/packages/wc-core/src
-            - ../harness/packages/wc-eval/src
-            - ../harness/packages/wc-agents/src
-            - ../harness/packages/wc-memory/src
-            - ../harness/packages/wc-learn/src
-            - ../harness/packages/wc-evolve/src
-            - ../harness/packages/wc-catalog/src
-            - ../harness/packages/wc-policies/src
-            - ../harness/packages/worldcurrent-cli/src
-            - ../harness/adapters/wc-policy-lerobot/src
-            - ../harness/adapters/wc-policy-openpi/src
-            - ../harness/adapters/wc-reasoner-llm/src
-            - ../harness/adapters/wc-proposer-llm/src
-            - ../harness/adapters/wc-data-video/src
-            - ../bench/packages/wc-bench/src
-            - ../bench/adapters/wc-env-mujoco/src
-            - ../bench/adapters/wc-env-libero/src
-            - ../serve/packages/wc-serve/src
-            - ../serve/adapters/wc-env-lerobot-robot/src
-            - ../studio/packages/wc-playground/src
-            - ../plugins/packages/wc-plugin-examples/src
+            - ../harness/packages/hylo-core/src
+            - ../harness/packages/hylo-eval/src
+            - ../harness/packages/hylo-agents/src
+            - ../harness/packages/hylo-memory/src
+            - ../harness/packages/hylo-learn/src
+            - ../harness/packages/hylo-evolve/src
+            - ../harness/packages/hylo-catalog/src
+            - ../harness/packages/hylo-policies/src
+            - ../harness/packages/hylo-cli/src
+            - ../harness/adapters/hylo-policy-lerobot/src
+            - ../harness/adapters/hylo-policy-openpi/src
+            - ../harness/adapters/hylo-reasoner-llm/src
+            - ../harness/adapters/hylo-proposer-llm/src
+            - ../harness/adapters/hylo-data-video/src
+            - ../bench/packages/hylo-bench/src
+            - ../bench/adapters/hylo-env-mujoco/src
+            - ../bench/adapters/hylo-env-libero/src
+            - ../serve/packages/hylo-serve/src
+            - ../serve/adapters/hylo-env-lerobot-robot/src
+            - ../studio/packages/hylo-playground/src
+            - ../plugins/packages/hylo-plugin-examples/src
           options:
             show_source: false
             show_root_heading: true
@@ -232,30 +232,30 @@ nav:
       - Packages:
           - api/packages/index.md
           - Harness:
-              - wc-core: api/packages/wc-core.md
-              - wc-eval: api/packages/wc-eval.md
-              - wc-agents: api/packages/wc-agents.md
-              - wc-memory: api/packages/wc-memory.md
-              - wc-learn: api/packages/wc-learn.md
-              - wc-evolve: api/packages/wc-evolve.md
-              - wc-catalog: api/packages/wc-catalog.md
-              - wc-policies: api/packages/wc-policies.md
-              - worldcurrent-cli: api/packages/worldcurrent-cli.md
+              - hylo-core: api/packages/hylo-core.md
+              - hylo-eval: api/packages/hylo-eval.md
+              - hylo-agents: api/packages/hylo-agents.md
+              - hylo-memory: api/packages/hylo-memory.md
+              - hylo-learn: api/packages/hylo-learn.md
+              - hylo-evolve: api/packages/hylo-evolve.md
+              - hylo-catalog: api/packages/hylo-catalog.md
+              - hylo-policies: api/packages/hylo-policies.md
+              - hylo-cli: api/packages/hylo-cli.md
           - Harness adapters:
-              - wc-policy-lerobot: api/packages/wc-policy-lerobot.md
-              - wc-policy-openpi: api/packages/wc-policy-openpi.md
-              - wc-reasoner-llm: api/packages/wc-reasoner-llm.md
-              - wc-proposer-llm: api/packages/wc-proposer-llm.md
-              - wc-data-video: api/packages/wc-data-video.md
+              - hylo-policy-lerobot: api/packages/hylo-policy-lerobot.md
+              - hylo-policy-openpi: api/packages/hylo-policy-openpi.md
+              - hylo-reasoner-llm: api/packages/hylo-reasoner-llm.md
+              - hylo-proposer-llm: api/packages/hylo-proposer-llm.md
+              - hylo-data-video: api/packages/hylo-data-video.md
           - Bench:
-              - wc-bench: api/packages/wc-bench.md
-              - wc-env-mujoco: api/packages/wc-env-mujoco.md
-              - wc-env-libero: api/packages/wc-env-libero.md
+              - hylo-bench: api/packages/hylo-bench.md
+              - hylo-env-mujoco: api/packages/hylo-env-mujoco.md
+              - hylo-env-libero: api/packages/hylo-env-libero.md
           - Serve:
-              - wc-serve: api/packages/wc-serve.md
-              - wc-env-lerobot-robot: api/packages/wc-env-lerobot-robot.md
+              - hylo-serve: api/packages/hylo-serve.md
+              - hylo-env-lerobot-robot: api/packages/hylo-env-lerobot-robot.md
           - Studio:
-              - wc-playground: api/packages/wc-playground.md
+              - hylo-playground: api/packages/hylo-playground.md
           - Plugins:
-              - wc-plugin-examples: api/packages/wc-plugin-examples.md
+              - hylo-plugin-examples: api/packages/hylo-plugin-examples.md
   - CLI Reference: cli/index.md

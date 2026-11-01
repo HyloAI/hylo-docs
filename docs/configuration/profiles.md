@@ -4,30 +4,30 @@ An experiment config says **what** is measured. Where an interpreter lives, whic
 where the model cache is differ from machine to machine, and must not change an experiment's identity. They live in
 the machine's execution profile instead ([RFC-0005 part 1](../rfcs/RFC-0005-architecture-measurement-and-placement.md)).
 
-A profile (`wc.profile/v0.1`, `worldcurrent.core.profile`) is one YAML file per machine:
+A profile (`hylo.profile/v0.1`, `hylo.core.profile`) is one YAML file per machine:
 
 ```yaml
-schema_version: wc.profile/v0.1
+schema_version: hylo.profile/v0.1
 runtimes:
   libero-sim:                                    # the LIBERO simulator
-    python: /home/me/worldcurrent/bench/envs/libero/.venv/bin/python
+    python: /home/me/hylo/bench/envs/libero/.venv/bin/python
     env:
       MUJOCO_GL: osmesa
       PYOPENGL_PLATFORM: osmesa
       LD_LIBRARY_PATH: ~/.local/mesa/root/usr/lib/x86_64-linux-gnu
-      LIBERO_CONFIG_PATH: /home/me/worldcurrent/bench/envs/libero/config
+      LIBERO_CONFIG_PATH: /home/me/hylo/bench/envs/libero/config
       OMP_NUM_THREADS: '1'
       LP_NUM_THREADS: '2'
   lerobot:                                       # LeRobot policies (SmolVLA, pi0, ...)
-    python: /home/me/worldcurrent/bench/envs/libero/.venv/bin/python
+    python: /home/me/hylo/bench/envs/libero/.venv/bin/python
     env:
-      HF_HOME: /home/me/worldcurrent/bench/envs/hf-home
+      HF_HOME: /home/me/hylo/bench/envs/hf-home
       HF_HUB_OFFLINE: '1'
       TOKENIZERS_PARALLELISM: 'false'
-store: /home/me/worldcurrent/bench/runs           # the run and artifact store
+store: /home/me/hylo/bench/runs           # the run and artifact store
 ```
 
-It is found at `$WC_PROFILE`, else `~/.config/worldcurrent/profile.yaml`. A machine without a profile has no
+It is found at `$HYLO_PROFILE`, else `~/.config/hylo/profile.yaml`. A machine without a profile has no
 runtimes and uses `./runs` as its store.
 
 ## Runtimes
@@ -55,10 +55,10 @@ the digest.
 ## Commands
 
 ```bash
-uv run wc profile show                                       # the profile and where it is
-uv run wc profile set-runtime robot --python ~/robot/.venv/bin/python --env HF_HOME=~/hf
-uv run wc profile remove-runtime robot
-uv run wc store init ~/worldcurrent/runs                     # record this machine's store (see the store guide)
+uv run hylo profile show                                       # the profile and where it is
+uv run hylo profile set-runtime robot --python ~/robot/.venv/bin/python --env HF_HOME=~/hf
+uv run hylo profile remove-runtime robot
+uv run hylo store init ~/hylo/runs                     # record this machine's store (see the store guide)
 ```
 
 `set-runtime` adds or replaces a runtime. `--python` is stored as an absolute path without following symlinks, so a
@@ -69,7 +69,7 @@ venv's interpreter keeps its venv. `--env KEY=VALUE` can be repeated; values are
 
 ## Resolution rules
 
-When a component starts in a runtime (`worldcurrent.core.profile.resolve`):
+When a component starts in a runtime (`hylo.core.profile.resolve`):
 
 1. the runtime named in the config is looked up in this machine's profile; an unknown name is an error that says
    which runtimes exist and how to register the missing one;
@@ -79,7 +79,7 @@ When a component starts in a runtime (`worldcurrent.core.profile.resolve`):
    profile is written;
 4. the subprocess gets the parent's environment plus these variables.
 
-The store directory follows its own order: `--root` on `wc store`, then `$WC_STORE`, then `store:` in the profile,
+The store directory follows its own order: `--root` on `hylo store`, then `$HYLO_STORE`, then `store:` in the profile,
 then `./runs` ([store](../user-guide/store.md)).
 
 ## Machines in a lab
@@ -87,7 +87,7 @@ then `./runs` ([store](../user-guide/store.md)).
 | Machine | Typical runtimes | Store |
 |---|---|---|
 | workstation | `libero-sim`, `lerobot` | the main store, where campaigns and benchmarks write |
-| GPU machine | `lerobot` (policy server, learners) | its own, synced with `wc store push/pull` |
+| GPU machine | `lerobot` (policy server, learners) | its own, synced with `hylo store push/pull` |
 | robot computer | `robot` (the robot SDK venv) | where the workcell writes, pulled by the workstation |
 
 The profile is personal to each machine and is not committed anywhere. What is shared (workcell configs, safety

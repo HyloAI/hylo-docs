@@ -1,18 +1,18 @@
 # Concepts
 
-The vocabulary used throughout worldcurrent. Each entry names the code that defines it; the other pages assume these
+The vocabulary used throughout Hylo. Each entry names the code that defines it; the other pages assume these
 meanings.
 
 ![Architecture](../assets/diagrams/architecture.svg){ .wc-figure }
 
-*Contracts and the kernel in wc-core; evaluation, agents, memory, learning and campaigns on top; adapters connect
+*Contracts and the kernel in hylo-core; evaluation, agents, memory, learning and campaigns on top; adapters connect
 simulators, robots and policy stacks; the leaf repositories use all of it through the same formats.*
 
 ## Running
 
 Experiment config
-:   A YAML file (`wc.experiment/v0.1`, `core.config.ExperimentConfig`) naming a benchmark and split, an
-    environment, an agent, and optionally safety limits, trace options, timing and a seed. `wc run CONFIG`
+:   A YAML file (`hylo.experiment/v0.1`, `core.config.ExperimentConfig`) naming a benchmark and split, an
+    environment, an agent, and optionally safety limits, trace options, timing and a seed. `hylo run CONFIG`
     evaluates it. See [experiments](../user-guide/experiments.md) and the
     [schema](../harness/experiment-schema.md).
 
@@ -71,7 +71,7 @@ Run
 ## Learning
 
 Artifact
-:   Anything learned, sealed as a directory with an `artifact.json` manifest (`wc.artifact/v0.1`,
+:   Anything learned, sealed as a directory with an `artifact.json` manifest (`hylo.artifact/v0.1`,
     `core.artifact`): kind, content digest, and provenance (the builder and the runs it was built from). Roles
     decide how it is trusted:
 
@@ -89,18 +89,18 @@ Store id
 
 Learner
 :   A `learners` plugin that turns runs (and other artifacts) into one sealed artifact (`Learner.fit(job)`), driven
-    by a `TrainJob` JSON (`wc learn`). Learners read development splits only. See
+    by a `TrainJob` JSON (`hylo learn`). Learners read development splits only. See
     [learning](../user-guide/learning.md).
 
 Judge, calibration
 :   A success judge (`instruments` group) labels episodes without the simulator's ground truth. It is calibrated
-    on runs whose outcome is known (`wc calibrate`: AUC, precision and recall at a threshold), and only then used to
-    label data (`wc label`).
+    on runs whose outcome is known (`hylo calibrate`: AUC, precision and recall at a threshold), and only then used to
+    label data (`hylo label`).
 
 ## Improving
 
 Campaign
-:   Repeated improvement cycles on one experiment (`wc.evolve/v0.1`, `wc evolve run`). Each cycle diagnoses the
+:   Repeated improvement cycles on one experiment (`hylo.evolve/v0.1`, `hylo evolve run`). Each cycle diagnoses the
     parent's search runs, asks a generator for candidates, evaluates them in a cascade and promotes at most one
     through the gate. See [campaigns](../user-guide/campaigns.md).
 
@@ -115,37 +115,37 @@ Gate
     used for selection.
 
 Active version
-:   What a campaign currently deploys, written as `active.json` (`wc.active/v0.1`, `core.deployment`). A policy
-    server can serve it (`wc serve policy --campaign DIR`).
+:   What a campaign currently deploys, written as `active.json` (`hylo.active/v0.1`, `core.deployment`). A policy
+    server can serve it (`hylo serve policy --campaign DIR`).
 
 ## Benchmarking and deployment
 
 Protocol, scorecard, leaderboard
-:   A protocol (`wc.protocol/v0.1`, bench) fixes everything except the policy; its digest covers only what is
-    measured. Running a policy under it gives a scorecard (`wc.scorecard/v0.1`): success with a 95% Wilson
+:   A protocol (`hylo.protocol/v0.1`, bench) fixes everything except the policy; its digest covers only what is
+    measured. Running a policy under it gives a scorecard (`hylo.scorecard/v0.1`): success with a 95% Wilson
     interval and every episode. Leaderboards rank scorecards of one protocol. See
     [benchmarking](../benchmarking/index.md).
 
 Policy server, workcell
-:   serve's two processes next to hardware. A policy server (`wc serve policy`) answers chunk requests over
-    WebSocket. A workcell (`wc serve workcell`) owns one robot or simulator, runs episodes with the realtime kernel,
+:   serve's two processes next to hardware. A policy server (`hylo serve policy`) answers chunk requests over
+    WebSocket. A workcell (`hylo serve workcell`) owns one robot or simulator, runs episodes with the realtime kernel,
     and takes operator input (stop, latched e-stop, reset confirmation, verdicts). See
     [deployment](../user-guide/deployment.md).
 
 Runtime, execution profile
 :   A runtime is a named interpreter plus environment variables on one machine (for example `libero-sim`). The
-    execution profile (`wc.profile/v0.1`, `~/.config/worldcurrent/profile.yaml`) lists them and the store
+    execution profile (`hylo.profile/v0.1`, `~/.config/hylo/profile.yaml`) lists them and the store
     location. Configs name runtimes, never paths. See [profiles](../configuration/profiles.md).
 
 ## Extending
 
 Plugin, contract, maturity
-:   Everything that varies is a plugin registered under a `worldcurrent.<group>` entry point. Each group is a
-    versioned contract (`wc.policy/v0.1`, ...); a package declares the version it implements and each plugin's
+:   Everything that varies is a plugin registered under a `Hylo.<group>` entry point. Each group is a
+    versioned contract (`hylo.policy/v0.1`, ...); a package declares the version it implements and each plugin's
     maturity: `implemented` (run end to end on its target), `unverified`, `needs-hardware` or `test-double`. The
     registry refuses an incompatible contract version. See the [plugin catalogue](../developer-guide/plugin-catalogue.md)
     and [extending](../harness/extending.md).
 
 Test double
-:   `worldcurrent.testing` and the `testing.*` plugins: a point-reach environment and simple agents for unit and
+:   `hylo.testing` and the `testing.*` plugins: a point-reach environment and simple agents for unit and
     conformance tests only. Every example, protocol and campaign runs on a real simulator.

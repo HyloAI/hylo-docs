@@ -13,13 +13,13 @@ pull copy entries between machines.*
 ## Set up the store
 
 ```bash
-uv run wc store init bench/runs          # this machine's store, recorded in the profile
-uv run wc store where
-uv run wc store ls                       # every run and artifact, by id
-uv run wc store ls --kind artifact --json
+uv run hylo store init bench/runs          # this machine's store, recorded in the profile
+uv run hylo store where
+uv run hylo store ls                       # every run and artifact, by id
+uv run hylo store ls --kind artifact --json
 ```
 
-The store root is, in order: `--root` on the command line, `$WC_STORE`, `store:` in this machine's
+The store root is, in order: `--root` on the command line, `$HYLO_STORE`, `store:` in this machine's
 [execution profile](../configuration/profiles.md), and otherwise `./runs` relative to the working directory.
 
 ## Ids
@@ -32,8 +32,8 @@ The store root is, in order: `--root` on the command line, `$WC_STORE`, `store:`
 | `artifact:<name>` | allowed only while exactly one artifact has that name |
 
 ```bash
-uv run wc store ref bench/runs/judges/l10-trace-v2     # -> artifact:l10-trace-v2@54a1efadf00d34d8
-uv run wc store show artifact:l10-trace-v2             # entry, path on this machine, what it was built from, referrers
+uv run hylo store ref bench/runs/judges/l10-trace-v2     # -> artifact:l10-trace-v2@54a1efadf00d34d8
+uv run hylo store show artifact:l10-trace-v2             # entry, path on this machine, what it was built from, referrers
 ```
 
 An id that is not found lists the ids with the same name; an ambiguous one lists the candidates; an id that was
@@ -64,7 +64,7 @@ agent:
 
 ## The index and what refers to what
 
-`<root>/.wc-store/index.json` is a cache, rebuilt by walking the tree whenever an id is not found (`wc store index`
+`<root>/.hylo-store/index.json` is a cache, rebuilt by walking the tree whenever an id is not found (`hylo store index`
 rebuilds it explicitly). Besides ids and paths it records references:
 
 - an artifact refers to what it was built from (its provenance: runs and other artifacts);
@@ -74,12 +74,12 @@ rebuilds it explicitly). Besides ids and paths it records references:
 ## Delete safely
 
 ```bash
-uv run wc store rm run:<run_id>
-uv run wc store rm artifact:old-critic@1a2b3c4d --force --reason "superseded by l10-v2"
+uv run hylo store rm run:<run_id>
+uv run hylo store rm artifact:old-critic@1a2b3c4d --force --reason "superseded by l10-v2"
 ```
 
-`wc store rm` refuses while anything refers to the entry, and lists what does. `--force` deletes anyway. Either way a
-tombstone in `<root>/.wc-store/tombstones.jsonl` records what was removed, when, why and what referred to it, so a
+`hylo store rm` refuses while anything refers to the entry, and lists what does. `--force` deletes anyway. Either way a
+tombstone in `<root>/.hylo-store/tombstones.jsonl` records what was removed, when, why and what referred to it, so a
 later lookup of that id says it was removed instead of "not found".
 
 !!! warning
@@ -88,9 +88,9 @@ later lookup of that id says it was removed instead of "not found".
 ## Move runs and artifacts between machines
 
 ```bash
-uv run wc store pull robot-host:/home/lab/runs                        # runs recorded on the robot computer
-uv run wc store push gpu-box:/data/runs artifact:l10-trace-v2@54a1efad --with-sources
-uv run wc store push /mnt/backup/runs --dry-run                       # what would be copied
+uv run hylo store pull robot-host:/home/lab/runs                        # runs recorded on the robot computer
+uv run hylo store push gpu-box:/data/runs artifact:l10-trace-v2@54a1efad --with-sources
+uv run hylo store push /mnt/backup/runs --dry-run                       # what would be copied
 ```
 
 | Option | Meaning |
@@ -99,9 +99,9 @@ uv run wc store push /mnt/backup/runs --dry-run                       # what wou
 | `IDS ...` | what to copy (default: everything) |
 | `--with-sources` | also what the selected artifacts were built from |
 | `--dry-run` | print the plan |
-| `--remote-wc` | the `wc` command on the other machine (default `wc`) |
+| `--remote-wc` | the `hylo` command on the other machine (default `hylo`) |
 
-The other side is listed with its own `wc store ls --json`, so `wc` must be installed there. Sealed artifacts are
+The other side is listed with its own `hylo store ls --json`, so `hylo` must be installed there. Sealed artifacts are
 never re-copied or overwritten. The same path holding a different entry on the other side is a conflict, and then
 nothing is copied. Runs and mutable artifacts (such as lesson books) are brought up to date.
 
@@ -115,7 +115,7 @@ nothing is copied. Runs and mutable artifacts (such as lesson books) are brought
 Artifacts built before manifests existed can be sealed in place, with the runs they were built from:
 
 ```bash
-uv run wc store adopt bench/runs/memory/l10-search-v1 --kind action_memory --role behaviour \
+uv run hylo store adopt bench/runs/memory/l10-search-v1 --kind action_memory --role behaviour \
     --source run:rsi-l10-parent-search-10507bae9c9e95b3-31f1e5
 ```
 

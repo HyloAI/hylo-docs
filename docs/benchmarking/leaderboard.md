@@ -1,7 +1,7 @@
 # Leaderboards
 
 A leaderboard is every scorecard of one protocol (name, version and digest), ranked by success. There is no server:
-scorecards are JSON files, and `wc bench leaderboard` collects them from directories.
+scorecards are JSON files, and `hylo bench leaderboard` collects them from directories.
 
 ## Running policies
 
@@ -10,21 +10,21 @@ scorecards are JSON files, and `wc bench leaderboard` collects them from directo
 === "Agent spec"
 
     ```bash
-    uv run wc bench run mujoco-reach --name ik-0.3 \
+    uv run hylo bench run mujoco-reach --name ik-0.3 \
         --policy '{"type": "baseline.planar_ik", "params": {"kp": 0.3}}'
     ```
 
 === "Experiment config"
 
     ```bash
-    uv run wc bench run libero-10-heldout --name smolvla-steered \
+    uv run hylo bench run libero-10-heldout --name smolvla-steered \
         --policy bench/examples/configs/libero10_steered.yaml --workers 12
     ```
 
 === "Plugin name"
 
     ```bash
-    uv run wc bench run mujoco-reach --name random --policy baseline.random
+    uv run hylo bench run mujoco-reach --name random --policy baseline.random
     ```
 
 | Option | Meaning |
@@ -41,9 +41,9 @@ Artifacts in the agent spec are referenced by [store id](../user-guide/store.md)
 ## Ranking and comparing
 
 ```bash
-uv run wc bench leaderboard                          # ./scorecards
-uv run wc bench leaderboard runs/policies/scorecards --json
-uv run wc bench compare scorecards/mujoco-reach/flow-steering-4.json scorecards/mujoco-reach/bc.json
+uv run hylo bench leaderboard                          # ./scorecards
+uv run hylo bench leaderboard runs/policies/scorecards --json
+uv run hylo bench compare scorecards/mujoco-reach/flow-steering-4.json scorecards/mujoco-reach/bc.json
 ```
 
 The leaderboard prints one Markdown table per protocol digest: rank, policy, success %, 95% interval, scored
@@ -77,12 +77,12 @@ p-value is the one-sided exact McNemar test on them ([statistics](index.md#stati
 
 ```bash
 uv run python bench/examples/policies/compare.py --out runs/policies
-uv run wc bench leaderboard runs/policies/scorecards
+uv run hylo bench leaderboard runs/policies/scorecards
 ```
 
 ![The mujoco-reach leaderboard](../assets/figures/leaderboard-mujoco-reach.png){ .wc-figure }
 
-The recorded result (mujoco-reach v1, protocol digest `5e0c57ef414a0b21`; see [protocols](protocols.md#the-digest)):
+The recorded result (mujoco-reach v1, scorecards with protocol digest `5e0c57ef414a0b21`, written before the rename to Hylo; see [protocols](protocols.md#the-digest)):
 
 | # | Policy | Agent | Success % | 95% CI | Mean steps |
 |---|---|---|---|---|---|
@@ -100,7 +100,8 @@ the gap between plain behaviour cloning and the demonstrator; planning in a lear
 model was trained on expert and random data together. Pairwise, flow + steering beats plain BC with 18 wins against
 5 (p = 0.005). It is one small task: the ranking is not a claim about the policy families in general.
 
-Rerunning `compare.py` writes scorecards with the same digest, so they join this board.
+Since the rename to Hylo the protocol's digest is `a76c7037efb84660` (its schema id is part of it), so rerunning
+`compare.py` writes scorecards that form a new board; the recorded ones stay readable under their old digest.
 
 ## Publishing results
 

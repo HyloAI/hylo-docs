@@ -4,11 +4,11 @@ hide:
   - toc
 ---
 
-<div class="wc-hero" markdown>
+<div class="hylo-hero" markdown>
 
-# worldcurrent
+# Hylo
 
-<p class="wc-tagline">Evaluate robot policies, learn from what they did, improve them behind a statistical gate, and run
+<p class="hylo-tagline">Evaluate robot policies, learn from what they did, improve them behind a statistical gate, and run
 the approved version on a robot, with one set of contracts from simulation to hardware.</p>
 
 [Get started](getting-started/installation.md){ .md-button .md-button--primary }
@@ -17,65 +17,65 @@ the approved version on a robot, with one set of contracts from simulation to ha
 
 </div>
 
-![worldcurrent layers: simulators, robots and models reach the harness through adapters; bench, serve, studio and plugins build on the harness](assets/diagrams/architecture.svg){ .wc-figure }
+![Hylo layers: simulators, robots and models reach the harness through adapters; bench, serve, studio and plugins build on the harness](assets/diagrams/architecture.svg){ .wc-figure }
 
 ## What it does
 
 <div class="grid cards" markdown>
 
--   :material-flask-outline:{ .lg .middle } **Measure**
+-   **Measure**
 
     ---
 
     An experiment config says what is measured; where it runs is a property of the machine. Every episode is
     traced step by step, and a digest identifies the experiment on any computer.
 
-    [:octicons-arrow-right-24: Experiments](user-guide/experiments.md)
+    [Experiments →](user-guide/experiments.md)
 
--   :material-podium:{ .lg .middle } **Benchmark**
+-   **Benchmark**
 
     ---
 
     Protocols fix the episodes, seeds and timing; scorecards carry Wilson intervals; leaderboards compare
     policies, and pairs are tested with McNemar.
 
-    [:octicons-arrow-right-24: Benchmarking](benchmarking/index.md)
+    [Benchmarking →](benchmarking/index.md)
 
--   :material-robot-outline:{ .lg .middle } **Run any policy**
+-   **Run any policy**
 
     ---
 
     One chunk-policy contract covers retrieval, behaviour cloning, flow matching, tokenized actions and
     model-based planning, plus SmolVLA and pi0 through LeRobot and openpi.
 
-    [:octicons-arrow-right-24: Policies](user-guide/policies.md)
+    [Policies →](user-guide/policies.md)
 
--   :material-school-outline:{ .lg .middle } **Learn**
+-   **Learn**
 
     ---
 
     Learners turn development runs into sealed, digest-pinned artifacts: critics, memories, world models,
     success judges. Gate and held-out data can never be read.
 
-    [:octicons-arrow-right-24: Learning](user-guide/learning.md)
+    [Learning →](user-guide/learning.md)
 
--   :material-source-branch-check:{ .lg .middle } **Improve, behind a gate**
+-   **Improve, behind a gate**
 
     ---
 
     Campaigns propose candidates, screen them, and promote only what passes a sequential paired test on
     episodes no learner has seen, after a person approves.
 
-    [:octicons-arrow-right-24: Campaigns](user-guide/campaigns.md)
+    [Campaigns →](user-guide/campaigns.md)
 
--   :material-transit-connection-variant:{ .lg .middle } **Deploy**
+-   **Deploy**
 
     ---
 
     A workcell runs the same episode loop as the benchmark, in real time, behind the SafetyShield and an
     operator channel; a policy server serves the approved version.
 
-    [:octicons-arrow-right-24: Deployment](user-guide/deployment.md)
+    [Deployment →](user-guide/deployment.md)
 
 </div>
 
@@ -95,18 +95,18 @@ says which parts have run end to end and which have not.
 
 | Repository | What it holds |
 |---|---|
-| **worldcurrent-harness** | the base: contracts and episode kernel, evaluation, agents, memory, learning, campaigns, the run catalog and store, adapters to policy stacks and LLMs, the `wc` command |
-| **worldcurrent-bench** | protocols, scorecards and leaderboards; the MuJoCo and LIBERO suites and their setup |
-| **worldcurrent-serve** | policy server, workcell, real-time runner, operator channel, robot adapters |
-| **worldcurrent-studio** | the playground: run explorer, live sandbox, campaigns, the control plane for workcells |
-| **worldcurrent-plugins** | example and community plugins, written the way a third party would |
-| **worldcurrent-docs** | this site: design, RFCs, research notes and experiment records |
+| **hylo-harness** | the base: contracts and episode kernel, evaluation, agents, memory, learning, campaigns, the run catalog and store, adapters to policy stacks and LLMs, the `hylo` command |
+| **hylo-bench** | protocols, scorecards and leaderboards; the MuJoCo and LIBERO suites and their setup |
+| **hylo-serve** | policy server, workcell, real-time runner, operator channel, robot adapters |
+| **hylo-studio** | the playground: run explorer, live sandbox, campaigns, the control plane for workcells |
+| **hylo-plugins** | example and community plugins, written the way a third party would |
+| **hylo-docs** | this site: design, RFCs, research notes and experiment records |
 | **deployments-template** | template for a lab's private configuration: workcells, calibration, safety limits |
 
-Every leaf builds on the harness alone and cooperates with the others through formats defined in `wc-core`
+Every leaf builds on the harness alone and cooperates with the others through formats defined in `hylo-core`
 ([repository structure](design/repository-structure.md)).
 
-[:material-book-open-variant: Design overview](design/overview.md){ .md-button }
-[:material-puzzle-outline: Extending](harness/extending.md){ .md-button }
-[:material-console: CLI reference](cli/index.md){ .md-button }
-[:material-format-list-checks: Plugin catalogue](developer-guide/plugin-catalogue.md){ .md-button }
+[Design overview](design/overview.md){ .md-button }
+[Extending](harness/extending.md){ .md-button }
+[CLI reference](cli/index.md){ .md-button }
+[Plugin catalogue](developer-guide/plugin-catalogue.md){ .md-button }

@@ -169,11 +169,11 @@ Budgets: `iteration: 1`, `sample: 3`, `max_iterations: 3000` PPO epochs, `num_ev
 - Showing the selection metric to the generator invites overfitting to the validation split. Our gate must keep a split the generator never sees.
 - Prompt-only safety (DrEureka) is not a control.
 
-## 11. What worldcurrent should adopt (concrete)
+## 11. What Hylo should adopt (concrete)
 
 Our object of improvement is **not a reward**: the VLA is frozen and there is no RL. Eureka's transferable ideas are in the search and reflection protocol. They apply to our scoring-like artifacts: runtime **critics** (failure detectors), recovery-trigger thresholds, and config patches.
 
-1. **"LLM proposes, ground truth disposes", as a hard rule.** `wc-evolve` already gates on BDDL success via McNemar (`packages/wc-evolve/src/worldcurrent/evolve/loop.py:93-120`). Keep the LLM (qwen3.5) strictly upstream of the gate. Never let an LLM judgement substitute for `scores.success`.
+1. **"LLM proposes, ground truth disposes", as a hard rule.** `hylo-evolve` already gates on BDDL success via McNemar (`packages/hylo-evolve/src/hylo/evolve/loop.py:93-120`). Keep the LLM (qwen3.5) strictly upstream of the gate. Never let an LLM judgement substitute for `scores.success`.
 2. **Critic reflection, the analogue of reward reflection.** When `critic_rule` candidates are enabled (Zetta-style DSL `feature/operator/threshold/dwell`), feed back a per-rule table computed by shadow replay over the parent's traces. It shows firing rate on successful episodes (false-alarm rate), firing rate on failed episodes (recall), median lead time before the failure step, and a flat or never-firing flag. These fill the same role as Eureka's "component is flat / dominates" statistics (`code_feedback.txt:1-8`). Compute them only on the **train** split.
 3. **Never show the validation metric to the generator.** Eureka shows `task_score` (`eureka.py:259-263`). We show train-split diagnostics only. Validation is used only by the gate, and held-out only for the report. The trace should record which split each number came from.
 4. **Correct for best-of-N.** Eureka picks argmax over N×iterations without correction. Our cycle gates each candidate at α=0.05 and then takes the best passer (`loop.py:143-158`). Use Holm/Bonferroni (α/N) across the candidates in a cycle, or a confirmatory re-test of the single winner on fresh validation seeds. Log N in the `CycleReport`.

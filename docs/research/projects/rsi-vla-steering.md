@@ -2,7 +2,7 @@
 
 > Subjects: `references/evolution/RoboMonkey` (robomonkey-vla/RoboMonkey @ `db9f8d3`, MIT), `references/evolution/V-GPS` (nakamotoo/V-GPS @ `912a290`, **no LICENSE file**), `references/evolution/dsrl_pi0` (nakamotoo/dsrl_pi0 @ `7f48937`, MIT), `references/evolution/dsrl` (ajwagen/dsrl @ `8d21b9c`, **no LICENSE file**), `references/evolution/SAFE` (vla-safe/SAFE @ `b8e31df`, MIT), `references/evolution/FAIL-Detect` (CXU-TRI/FAIL-Detect @ `b758e55`, **CC-BY-NC-4.0**)
 > Method: static reading only. Nothing was installed, run, or downloaded (no weights). Clones were made with `--no-recurse-submodules`. In three repos the key selection or steering code lives in **git submodules**, so I read those files read-only from `raw.githubusercontent.com` at the **SHA pinned by the parent repo**. They are cited as `owner/repo@sha7:path:line`.
-> Audience: the `worldcurrent` policy-wrapper Agent, runtime critic, and the offline RSI loop (paired McNemar gate in `packages/wc-evolve/src/worldcurrent/evolve/loop.py:93`)
+> Audience: the `Hylo` policy-wrapper Agent, runtime critic, and the offline RSI loop (paired McNemar gate in `packages/hylo-evolve/src/hylo/evolve/loop.py:93`)
 > Tags: **\[Implemented\]** traceable in code · **\[Docs/Interface only\]** · **\[Unverified\]** code exists but was not run here · **\[Needs model/hardware\]** needs GPU or weights
 
 Motivating diagnosis (ours): SmolVLA-on-LIBERO failures are dominated by **repeated failed grasps** (51/72 failures have ≥3 grasp attempts) and **stalls** (23/72 have ≥30 still steps). Successes almost never stall. Every design choice below is judged against those two modes.
@@ -163,7 +163,7 @@ flowchart LR
 **Integration hooks & CPU feasibility.**
 - **SmolVLA already exposes the exact hook.** `predict_action_chunk(batch, *, noise=None)` → `_get_action_chunk` → `VLAFlowMatching.sample_actions(..., noise=None)` (`references/policies/lerobot/src/lerobot/policies/smolvla/modeling_smolvla.py:240-252,777-795`).
 - SmolVLA's noise shape is `(B, chunk_size=50, max_action_dim=32)` (`configuration_smolvla.py:29,42`). That is **identical to pi0's (50, 32)**, so DSRL-pi0's 32-d repeated latent ports directly.
-- Our adapter currently calls `predict_action_chunk(self.pre(batch))` without `noise` (`adapters/wc-policy-lerobot/src/worldcurrent/policies/lerobot/agent.py:81`). The change is a one-line kwarg.
+- Our adapter currently calls `predict_action_chunk(self.pre(batch))` without `noise` (`adapters/hylo-policy-lerobot/src/hylo/policies/lerobot/agent.py:81`). The change is a one-line kwarg.
 - Runtime cost: the actor is a tiny CNN, so it adds negligible latency on CPU.
 - Training cost:
   - DSRL-SAC needs no extra VLA calls beyond normal rollouts. It does need ~10k env steps per task (paper LIBERO: pi0 ≈20%→≈100% in ≈10k online samples, reported). On CPU, that is **one SmolVLA chunk per 20 env steps, about 500 VLA calls per 10k steps**. That is feasible overnight per task **\[Unverified\]**.
@@ -211,7 +211,7 @@ flowchart LR
 - It is cheap on CPU **\[Unverified\]**. It is evaluated only on Robomimic with its own diffusion/flow policies (reported).
 - **Non-commercial license**: read only, do not vendor.
 
-**Signals usable as runtime critics in `worldcurrent` (ranked by cost).**
+**Signals usable as runtime critics in `Hylo` (ranked by cost).**
 1. **Kinematic stall / grasp-retry counters** from the trace. This is free and directly matches our diagnosis. It is already computable from per-step obs.
 2. **Sample disagreement** across N noises at the same obs: total variance, or the medoid distance. It costs nothing extra once we sample N anyway. SAFE's evidence puts it on par with learned detectors on pi0/LIBERO.
 3. **STAC-single**: the disagreement between the new chunk and the unexecuted tail of the previous chunk. It costs zero extra samples.
@@ -237,7 +237,7 @@ flowchart LR
 
 ---
 
-## 6. Recommended design for `worldcurrent`
+## 6. Recommended design for `Hylo`
 
 ### 6.1 Components
 
@@ -251,7 +251,7 @@ flowchart TB
   TR -- yes --> RS["Resample: σ↑, anti-repeat filter vs last failed chunk,<br/>optional critic / VLM tiebreak"] --> SH
   CE -->|trace: N noises, scores, choice, trigger| TRC[("Replayable trace")]
   TRC --> OFF["Offline: train chunk critic (−1/0 time-to-go), DSRL noise policy"]
-  OFF --> EV[wc-evolve candidate → paired McNemar gate → promote/rollback]
+  OFF --> EV[hylo-evolve candidate → paired McNemar gate → promote/rollback]
 ```
 
 ### 6.2 Phases
@@ -288,7 +288,7 @@ flowchart TB
 - (a) As an **offline labeler/classifier** of failure modes on traces, e.g. "missed grasp / object slipped / wrong object".
 - (b) As a **trigger-time tiebreaker** only when Phase A fires. Render the N candidates' end-effector paths, projected with LIBERO camera intrinsics, onto the image, and ask it to pick one. **[Unverified idea]**; it must win a McNemar gate before use.
 
-### 6.3 RSI improvement units (each one a `wc-evolve` Candidate, gated by the paired McNemar test)
+### 6.3 RSI improvement units (each one a `hylo-evolve` Candidate, gated by the paired McNemar test)
 
 | Unit | Range / form | Source of idea |
 |---|---|---|
@@ -325,7 +325,7 @@ Gate on success, but also on **mean still-steps and grasp-attempt counts** as se
 | DSRL-NA noise-critic distillation | `ajwagen/stable-baselines3-dsrl@10e5d31:stable_baselines3/dsrl/dsrl.py:349-362` |
 | openpi noise hook (upstream) | `references/policies/openpi/src/openpi/policies/policy.py:68-88` |
 | SmolVLA noise hook | `references/policies/lerobot/src/lerobot/policies/smolvla/modeling_smolvla.py:240-252,777-826` |
-| Our policy call site | `adapters/wc-policy-lerobot/src/worldcurrent/policies/lerobot/agent.py:81` |
+| Our policy call site | `adapters/hylo-policy-lerobot/src/hylo/policies/lerobot/agent.py:81` |
 | SAFE detectors | `references/evolution/SAFE/failure_prob/model/indep.py:49-69`, `model/lstm.py:33-72` |
 | SAFE sample-variance / STAC | `references/evolution/SAFE/failure_prob/utils/failure_metrics.py:91-165` |
 | SAFE conformal band | `references/evolution/SAFE/failure_prob/utils/conformal/functional_predictor.py:104-165` |

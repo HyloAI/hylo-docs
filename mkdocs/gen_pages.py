@@ -27,7 +27,7 @@ def write(path: str, text: str, source: Path | None = None) -> None:
 
 
 def missing(repo: str) -> str:
-    return (f"!!! warning \"Not built\"\n    This page is generated from worldcurrent-{repo}, which is not checked out next to "
+    return (f"!!! warning \"Not built\"\n    This page is generated from hylo-{repo}, which is not checked out next to "
             f"this repository. Build the docs from the development workspace (see Developer Guide > Docs).\n")
 
 
@@ -37,7 +37,7 @@ def harness_docs() -> None:
     for f in sorted(src.rglob("*.md")) if src.is_dir() else []:
         rel = f.relative_to(src).as_posix()
         text = f.read_text()
-        note = f"!!! note \"Source\"\n    Maintained in worldcurrent-harness: `docs/{rel}`.\n\n"
+        note = f"!!! note \"Source\"\n    Maintained in hylo-harness: `docs/{rel}`.\n\n"
         title, _, body = text.partition("\n")
         write(f"harness/{rel}", f"{title}\n\n{note}{body}", f)
     if not src.is_dir():
@@ -47,7 +47,7 @@ def harness_docs() -> None:
 
 # ---------------------------------------------------------------- CLI reference
 def _help(*args: str) -> str:
-    out = subprocess.run([sys.executable, "-m", "worldcurrent.core.cli", *args, "--help"], capture_output=True,
+    out = subprocess.run([sys.executable, "-m", "hylo.core.cli", *args, "--help"], capture_output=True,
                          text=True, timeout=120, cwd=WORKSPACE)
     return (out.stdout or out.stderr).strip()
 
@@ -60,25 +60,25 @@ def cli_reference() -> None:
         return
     commands = re.findall(r"^  ([a-z][a-z-]*)\s{2,}(.+)$", top, re.M)
     lines = ["# CLI Reference", "",
-             "`wc` is one command whose subcommands come from the installed worldcurrent packages (the "
-             "`worldcurrent.commands` entry-point group): what is listed here depends on which repositories are "
+             "`hylo` is one command whose subcommands come from the installed Hylo packages (the "
+             "`hylo.commands` entry-point group): what is listed here depends on which repositories are "
              "installed. Every page below is the command's own `--help`.", "",
              "| Command | What it does |", "|---|---|"]
-    lines += [f"| [`wc {c}`](#wc-{c}) | {d} |" for c, d in commands]
+    lines += [f"| [`hylo {c}`](#hylo-{c}) | {d} |" for c, d in commands]
     for c, _ in commands:
         text = _help(c)
-        lines += ["", f"## wc {c}", "", "```text", text, "```"]
+        lines += ["", f"## hylo {c}", "", "```text", text, "```"]
         usage = text.split("\n\n")[0]
         subs = re.search(r"\{([a-z,_-]+)\}", usage)
         for sub in (subs.group(1).split(",") if subs else []):
-            lines += ["", f"### wc {c} {sub}", "", "```text", _help(c, sub), "```"]
+            lines += ["", f"### hylo {c} {sub}", "", "```text", _help(c, sub), "```"]
     write("cli/index.md", "\n".join(lines) + "\n")
 
 
 # ---------------------------------------------------------------- plugin catalogue
 def plugin_catalogue() -> None:
     try:
-        from worldcurrent.core.plugins import CONTRACTS, catalogue
+        from hylo.core.plugins import CONTRACTS, catalogue
     except ImportError:
         write("developer-guide/plugin-catalogue.md", "# Plugin catalogue\n\n" + missing("harness"))
         return
@@ -86,12 +86,12 @@ def plugin_catalogue() -> None:
     counts: dict[str, int] = {}
     for m in metas:
         counts[m.maturity] = counts.get(m.maturity, 0) + 1
-    badge = {"implemented": ":material-check-circle:{ .wc-ok } implemented",
-             "unverified": ":material-help-circle:{ .wc-warn } unverified",
-             "needs-hardware": ":material-robot-industrial:{ .wc-hw } needs hardware"}
+    badge = {"implemented": '<span class="hylo-badge hylo-ok">implemented</span>',
+             "unverified": '<span class="hylo-badge hylo-warn">unverified</span>',
+             "needs-hardware": '<span class="hylo-badge hylo-hw">needs hardware</span>'}
     lines = ["# Plugin catalogue", "",
              "Every plugin installed in the development workspace, with the contract version it implements, how far it "
-             "has been verified and its licences (`wc plugins`; RFC-0005 part 4). Maturity is declared by each "
+             "has been verified and its licences (`hylo plugins`; RFC-0005 part 4). Maturity is declared by each "
              "package and was set from recorded runs:", "",
              "- **implemented**: run end to end on its target (a real simulator or robot), with recorded runs;",
              "- **unverified**: tests pass, but not yet run end to end on its intended target;",
@@ -122,12 +122,12 @@ def _header(path: Path) -> str:
 
 
 def examples() -> None:
-    groups = [("bench", "examples/configs", "Experiments", "wc run {path}"),
-              ("bench", "examples/evolve", "Improvement campaigns", "wc evolve run {path}"),
-              ("plugins", "examples/configs", "Plugin examples: experiments", "wc run {path}"),
-              ("plugins", "examples/evolve", "Plugin examples: campaigns", "wc evolve run {path}")]
+    groups = [("bench", "examples/configs", "Experiments", "hylo run {path}"),
+              ("bench", "examples/evolve", "Improvement campaigns", "hylo evolve run {path}"),
+              ("plugins", "examples/configs", "Plugin examples: experiments", "hylo run {path}"),
+              ("plugins", "examples/evolve", "Plugin examples: campaigns", "hylo evolve run {path}")]
     lines = ["# Examples", "",
-             "Every example config in worldcurrent-bench and worldcurrent-plugins, with the comment at its top. Paths "
+             "Every example config in hylo-bench and hylo-plugins, with the comment at its top. Paths "
              "are relative to the development workspace; commands run from any directory (simulator runtimes come from "
              "the machine profile, artifacts from the store).", ""]
     for repo, sub, title, cmd in groups:
@@ -157,34 +157,34 @@ def examples() -> None:
 # ---------------------------------------------------------------- formats
 def formats() -> None:
     try:
-        from worldcurrent.cli.main import SCHEMAS
+        from hylo.cli.main import SCHEMAS
     except ImportError:
         write("api/formats.md", "# Formats and schemas\n\n" + missing("harness"))
         return
     import importlib
 
     lines = ["# Formats and schemas", "",
-             "Repositories cooperate through versioned formats defined in wc-core, never through each other's code. Each "
-             "format carries its schema version; the JSON Schemas below are what `wc schema NAME` prints.", "",
+             "Repositories cooperate through versioned formats defined in hylo-core, never through each other's code. Each "
+             "format carries its schema version; the JSON Schemas below are what `hylo schema NAME` prints.", "",
              "| Format | Version | Defined in | Used for |", "|---|---|---|---|"]
-    table = [("Experiment config", "wc.experiment/v0.1", "core.config", "what is measured: benchmark, env, agent, timing"),
-             ("Execution profile", "wc.profile/v0.1", "core.profile", "where runtimes and the store are on one machine"),
+    table = [("Experiment config", "hylo.experiment/v0.1", "core.config", "what is measured: benchmark, env, agent, timing"),
+             ("Execution profile", "hylo.profile/v0.1", "core.profile", "where runtimes and the store are on one machine"),
              ("Trace events", "core.events.TRACE_SCHEMA", "core.events, core.trace", "every episode, step by step"),
-             ("Artifact manifest", "wc.artifact/v0.1", "core.artifact", "a sealed, digest-pinned learned thing"),
-             ("Store index", "wc.store/v0.1", "core.store", "run and artifact ids, references, tombstones"),
-             ("Scorecard", "wc.scorecard/v0.1", "core.scorecard", "a protocol's result for one policy"),
-             ("Active version", "wc.active/v0.1", "core.deployment", "what a policy server deploys"),
-             ("Workcell API", "wc.workcell/v0.1", "core.remote.workcell", "control plane <-> workcell"),
-             ("Plugin contracts", "wc.<group>/v0.1", "core.plugins", "what a plugin implements"),
+             ("Artifact manifest", "hylo.artifact/v0.1", "core.artifact", "a sealed, digest-pinned learned thing"),
+             ("Store index", "hylo.store/v0.1", "core.store", "run and artifact ids, references, tombstones"),
+             ("Scorecard", "hylo.scorecard/v0.1", "core.scorecard", "a protocol's result for one policy"),
+             ("Active version", "hylo.active/v0.1", "core.deployment", "what a policy server deploys"),
+             ("Workcell API", "hylo.workcell/v0.1", "core.remote.workcell", "control plane <-> workcell"),
+             ("Plugin contracts", "hylo.<group>/v0.1", "core.plugins", "what a plugin implements"),
              ("Wire codec", "msgpack-numpy", "core.remote.wire", "remote environments and agents")]
-    lines += [f"| {a} | `{b}` | `worldcurrent.{c}` | {d} |" for a, b, c, d in table]
+    lines += [f"| {a} | `{b}` | `hylo.{c}` | {d} |" for a, b, c, d in table]
     for name, (module, cls) in sorted(SCHEMAS.items()):
         try:
             schema = getattr(importlib.import_module(module), cls).model_json_schema()
         except Exception as exc:  # noqa: BLE001 - one missing package must not stop the docs
             lines += ["", f"## {name}", "", f"Not available here: {exc}"]
             continue
-        lines += ["", f"## {name}", "", f"`{module}.{cls}` (`wc schema {name}`)", "",
+        lines += ["", f"## {name}", "", f"`{module}.{cls}` (`hylo schema {name}`)", "",
                   f'??? abstract "JSON Schema"', "", "    ```json",
                   *[f"    {l}" for l in json.dumps(schema, indent=2).splitlines()], "    ```"]
     write("api/formats.md", "\n".join(lines) + "\n")
@@ -192,14 +192,14 @@ def formats() -> None:
 
 # ---------------------------------------------------------------- API reference, one page per package
 PACKAGES = {  # repository -> package directories, in the order of the nav
-    "harness": ["packages/wc-core", "packages/wc-eval", "packages/wc-agents", "packages/wc-memory", "packages/wc-learn",
-                "packages/wc-evolve", "packages/wc-catalog", "packages/wc-policies", "packages/worldcurrent-cli",
-                "adapters/wc-policy-lerobot", "adapters/wc-policy-openpi", "adapters/wc-reasoner-llm",
-                "adapters/wc-proposer-llm", "adapters/wc-data-video"],
-    "bench": ["packages/wc-bench", "adapters/wc-env-mujoco", "adapters/wc-env-libero"],
-    "serve": ["packages/wc-serve", "adapters/wc-env-lerobot-robot"],
-    "studio": ["packages/wc-playground"],
-    "plugins": ["packages/wc-plugin-examples"],
+    "harness": ["packages/hylo-core", "packages/hylo-eval", "packages/hylo-agents", "packages/hylo-memory", "packages/hylo-learn",
+                "packages/hylo-evolve", "packages/hylo-catalog", "packages/hylo-policies", "packages/hylo-cli",
+                "adapters/hylo-policy-lerobot", "adapters/hylo-policy-openpi", "adapters/hylo-reasoner-llm",
+                "adapters/hylo-proposer-llm", "adapters/hylo-data-video"],
+    "bench": ["packages/hylo-bench", "adapters/hylo-env-mujoco", "adapters/hylo-env-libero"],
+    "serve": ["packages/hylo-serve", "adapters/hylo-env-lerobot-robot"],
+    "studio": ["packages/hylo-playground"],
+    "plugins": ["packages/hylo-plugin-examples"],
 }
 SKIP_MODULE = re.compile(r"(^|\.)(_[^.]+|tests?|static|__main__)(\.|$)")
 
@@ -237,12 +237,12 @@ def package_api() -> None:
     curated = _curated()
 
     index = ["# Packages", "",
-             "The API of every worldcurrent package, generated from its docstrings and type annotations (mkdocstrings). "
+             "The API of every Hylo package, generated from its docstrings and type annotations (mkdocstrings). "
              "Plugins and leaf repositories should depend on the [core contracts](../index.md) only; the rest is "
              "documented so that it can be read, extended and debugged. Members whose names start with an underscore "
              "are left out.", ""]
     for repo, dirs in PACKAGES.items():
-        index += [f"## worldcurrent-{repo}", "", "| Package | What it is | Modules |", "|---|---|---|"]
+        index += [f"## hylo-{repo}", "", "| Package | What it is | Modules |", "|---|---|---|"]
         for d in dirs:
             root = WORKSPACE / repo / d
             dist = Path(d).name
@@ -254,11 +254,11 @@ def package_api() -> None:
             src = root / "src"
             mods = _modules(src)
             lines = [f"# {dist}", "", proj.get("description", ""), "",
-                     f"Repository worldcurrent-{repo}, `{d}`. Licence: {proj.get('license', '-')}. "
+                     f"Repository hylo-{repo}, `{d}`. Licence: {proj.get('license', '-')}. "
                      f"Depends on: {', '.join(f'`{x}`' for x in proj.get('dependencies', [])) or 'nothing'}.", ""]
             eps = proj.get("entry-points", {})
-            plug = [(g.removeprefix("worldcurrent."), n, v) for g, items in eps.items()
-                    if g.startswith("worldcurrent.") and g not in ("worldcurrent.meta",) for n, v in items.items()]
+            plug = [(g.removeprefix("hylo."), n, v) for g, items in eps.items()
+                    if g.startswith("hylo.") and g not in ("hylo.meta",) for n, v in items.items()]
             if plug:
                 lines += ["??? info \"Registered entry points\"", "", "    | Group | Name | Object |", "    |---|---|---|",
                           *[f"    | {g} | `{n}` | `{v}` |" for g, n, v in sorted(plug)], ""]

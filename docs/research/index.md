@@ -2,7 +2,7 @@
 
 We study the source code and architecture of existing open-source Physical AI projects, and use it to design our own Physical AI Stack. **Read [`EXECUTIVE-SUMMARY.md`](../EXECUTIVE-SUMMARY.md) first.**
 
-Source-level reports on the open-source projects worldcurrent learns from, cross-project comparisons, and dated
+Source-level reports on the open-source projects Hylo learns from, cross-project comparisons, and dated
 experiment records. Third-party sources are cloned read-only under `references/` at the root of this repository
 (gitignored; `references/MANIFEST.md` records URL, commit and licence).
 

@@ -10,17 +10,17 @@
 
 | # | Feature | Acceptance criteria | Estimate (person-weeks) |
 |---|---|---|---|
-| P0-1 | **wc-core**: contracts, Kernel, ChunkExecutor, error taxonomy, EventBus, Trace v0.1 (JSONL + blob), Registry, Config/Manifest | All prototype tests migrated and passing; core depends only on numpy+pyyaml; import-lint passes | 3 |
+| P0-1 | **hylo-core**: contracts, Kernel, ChunkExecutor, error taxonomy, EventBus, Trace v0.1 (JSONL + blob), Registry, Config/Manifest | All prototype tests migrated and passing; core depends only on numpy+pyyaml; import-lint passes | 3 |
 | P0-2 | **SafetyShield**: port the inspect-robots Approver chain (MIT, with attribution); mandatory guards; in real-robot mode, any modification aborts | Guard conformance tests: NaN aborts, out-of-bounds is clipped, extra guards cannot loosen bounds, rotation representations are not clipped per dimension | 1 |
 | P0-3 | **EnvServer** protocol v0.1 (two transports: stdio + WebSocket) | Remote and in-process episodes with the same seed match step by step; protocol version mismatch is rejected; no pickle | 1 |
-| P0-4 | **Test-double environment** (unit tests only) + conformance kit | Any Env adapter can self-check with `wc conformance env <ref>` | 1 |
-| P0-5 | **MuJoCo adapter + first-party task set `wc-mj-v0`**: reach, push (object contact), disturbance recovery, occlusion memory (object briefly visible) | ≥ 4 tasks, each with train/validation/heldout seed tables; snapshot restores exactly; divergence → infra_invalid; 100 episodes < 60 s on CPU | 3 |
-| P0-6 | **wc-eval**: Benchmark/split, Scorer (success/safety/steps/latency), EvaluationRunner (sequential + SQLite queue resume), EvalLog, paired McNemar | Resuming after interruption does not repeat completed episodes; Scorer can re-score historical Traces independently of env/agent | 2 |
+| P0-4 | **Test-double environment** (unit tests only) + conformance kit | Any Env adapter can self-check with `hylo conformance env <ref>` | 1 |
+| P0-5 | **MuJoCo adapter + first-party task set `hylo-mj-v0`**: reach, push (object contact), disturbance recovery, occlusion memory (object briefly visible) | ≥ 4 tasks, each with train/validation/heldout seed tables; snapshot restores exactly; divergence → infra_invalid; 100 episodes < 60 s on CPU | 3 |
+| P0-6 | **hylo-eval**: Benchmark/split, Scorer (success/safety/steps/latency), EvaluationRunner (sequential + SQLite queue resume), EvalLog, paired McNemar | Resuming after interruption does not repeat completed episodes; Scorer can re-score historical Traces independently of env/agent | 2 |
 | P0-7 | **Baseline Agents**: scripted controller, random; **ComposableAgent** + Reasoner protocol + rule-based Reasoner | The composed Agent's decision/retrieval events fully enter the Trace | 1.5 |
 | P0-8 | **Swappable Reasoner: LLM (OpenAI-compatible endpoint)** structured output → Decision; records model/tokens/latency/prompt hash | Within the same experiment config, changing only `agent.params.reasoner` switches between rule-based and LLM; when the LLM is unavailable, the episode abstains with `error` instead of crashing | 1.5 |
 | P0-9 | **Local Episodic + Spatial Memory** (SQLite) + WorkingMemory | Memory conformance: dedup, key invalidation, as_of, radius, forget; on the occlusion-memory task, the success-rate difference between with-memory and without-memory is significant (McNemar p<0.05) | 1.5 |
-| P0-10 | **Offline Reflection + Candidate Validation**: diagnostic bucketing, config-patch candidates, protected scope, gate (paired + regression + safety), Registry (promote/rollback/ledger), held-out report-only | `wc evolve` completes one round on `wc-mj-v0`; adversarial candidates are rejected; rollback works | 2 |
-| P0-11 | **CLI**: `wc run / eval / evolve / trace show / conformance` | Every example command in the docs is executed in CI | 1 |
+| P0-10 | **Offline Reflection + Candidate Validation**: diagnostic bucketing, config-patch candidates, protected scope, gate (paired + regression + safety), Registry (promote/rollback/ledger), held-out report-only | `hylo evolve` completes one round on `hylo-mj-v0`; adversarial candidates are rejected; rollback works | 2 |
+| P0-11 | **CLI**: `hylo run / eval / evolve / trace show / conformance` | Every example command in the docs is executed in CI | 1 |
 | | **P0 total** | | **≈ 19** |
 
 ### P1: complete before the v0.1 release if possible
@@ -50,7 +50,7 @@ The following protocols are frozen at the v0.1 release (changes within `0.x` req
 | `Reasoner`, `Decision` | `interfaces/reasoner.md` |
 | `MemoryItem`, `MemoryQuery`, `MemoryStore` | `interfaces/memory.md` |
 | `Candidate`, `CandidateRegistry`, Gate rules | `interfaces/improvement.md` |
-| `wc.experiment/v0.1`, `wc.trace/v0.1`, `wc.evallog/v0.1`, `wc.envserver/v0.1` | `experiment-schema.md`, `execution-lifecycle.md` |
+| `hylo.experiment/v0.1`, `hylo.trace/v0.1`, `hylo.evallog/v0.1`, `hylo.envserver/v0.1` | `experiment-schema.md`, `execution-lifecycle.md` |
 
 ## 3. Testing and Acceptance
 
@@ -59,9 +59,9 @@ The following protocols are frozen at the v0.1 release (changes within `0.x` req
 | Unit | ≥ 85% line coverage per package; invariants of contract types | CPU CI < 5 min |
 | Conformance | Env / Agent / Memory / Scorer conformance suites | All first-party adapters pass |
 | Determinism | Two runs with the same seed on MuJoCo (single-threaded) and the test double produce bit-identical Trace actions | R2 |
-| End-to-end | (1) `wc eval` runs the baseline on `wc-mj-v0` validation; (2) `wc evolve` completes one round and produces a ledger; (3) one LIBERO suite runs end to end via the bridge | Nightly sim CI |
+| End-to-end | (1) `hylo eval` runs the baseline on `hylo-mj-v0` validation; (2) `hylo evolve` completes one round and produces a ledger; (3) one LIBERO suite runs end to end via the bridge | Nightly sim CI |
 | Safety | Adversarial test set: NaN, out-of-bounds, overspeed, rotation out-of-bounds, candidates attempting to modify safety, Agents attempting to read privileged state | All intercepted and recorded |
-| Research usability | Memory task: significant difference between with and without memory; recovery task: post-disturbance success rate is measurable | Report goes into `worldcurrent-research/experiments/` |
+| Research usability | Memory task: significant difference between with and without memory; recovery task: post-disturbance success rate is measurable | Report goes into `hylo-research/experiments/` |
 
 **v0.1 Definition of Done**: all P0 complete and passing the thresholds above; P1-1 complete; the four protocol versions in the docs frozen; one internal technical report (baseline, memory ablation, one RSI cycle).
 
@@ -88,9 +88,9 @@ The following protocols are frozen at the v0.1 release (changes within `0.x` req
 
 | Dependency | Purpose | Location |
 |---|---|---|
-| numpy, pyyaml | core | wc-core |
-| mujoco ≥ 3.1 | simulation | wc-env-mujoco |
-| websockets, msgpack | remote protocol (vla-eval / openpi compatible) | wc-core[remote], bridge |
-| openai (or httpx) | LLM Reasoner | wc-reasoner-llm |
+| numpy, pyyaml | core | hylo-core |
+| mujoco ≥ 3.1 | simulation | hylo-env-mujoco |
+| websockets, msgpack | remote protocol (vla-eval / openpi compatible) | hylo-core[remote], bridge |
+| openai (or httpx) | LLM Reasoner | hylo-reasoner-llm |
 | pytest | testing | dev |
 | Docker, NVIDIA Container Toolkit | LIBERO / vla-eval containers | sim CI |

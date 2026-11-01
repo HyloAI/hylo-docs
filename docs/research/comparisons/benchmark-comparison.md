@@ -68,4 +68,4 @@ flowchart LR
 2. **Direct LIBERO adaptation (P1/P2)**: build it only when step-level control or RSI scenarios (perturbation, recovery) are needed; BDDL is the first "declarative TaskSpec" exemplar.
 3. **RoboCasa (P2)**: represents "dynamic task generation", validating the other pole of TaskSpec.
 4. **ManiSkill (P2)**: validates batched Environment and GPU parallelism.
-5. **inspect-robots as a runner backend (optional)**: when real-robot or Isaac evaluation is needed, write a thin `worldcurrent.Agent → inspect_robots.Policy` adapter.
+5. **inspect-robots as a runner backend (optional)**: when real-robot or Isaac evaluation is needed, write a thin `Hylo.Agent → inspect_robots.Policy` adapter.

@@ -15,7 +15,7 @@ ends the moment it succeeds, so length would leak the label).
   successful episodes as extra negatives). CPU, 4 s.
 - `judge.vlm`: qwen3.5:35b-a3b via Ollama, zero-shot. Both final frames and the instruction; asked for completed +
   confidence. Median latency 2.7 s per episode on CPU.
-- Calibration (`wc calibrate`): `search_val` runs (init states 20-29, unseen by `judge.trace`), LIBERO-10 tasks only,
+- Calibration (`hylo calibrate`): `search_val` runs (init states 20-29, unseen by `judge.trace`), LIBERO-10 tasks only,
   the same seeded random sample of 300 episodes for both judges (base rate 0.58). The ground truth is the
   simulator outcome.
 

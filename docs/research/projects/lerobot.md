@@ -1,4 +1,4 @@
-# LeRobot Source-Level Architecture Study (for `worldcurrent`)
+# LeRobot Source-Level Architecture Study (for `Hylo`)
 
 > Repository: `huggingface/lerobot` @ `38b975c` (package version `0.6.2`, `references/policies/lerobot/pyproject.toml:28`); code license Apache-2.0 (`references/policies/lerobot/pyproject.toml:31`).
 > Method: purely static reading (read / grep / find); no dependencies installed, no tests run, no weights downloaded.
@@ -9,7 +9,7 @@
 
 ## 1. Positioning and Core Capabilities
 
-LeRobot is an "end-to-end robot learning framework" in the PyTorch ecosystem: dataset format + recording, policy training and evaluation, simulation benchmark adapters, real-robot Robot/Teleoperator drivers, and a remote inference service. For `worldcurrent`, its three most valuable assets are: **(a) a Policy base-class contract implemented by 25 policies**, **(b) a serializable processor pipeline (normalization and other pre/post-processing)**, and **(c) the LeRobotDataset v3 data format**, which has become the de facto standard input for third-party VLA training such as openpi.
+LeRobot is an "end-to-end robot learning framework" in the PyTorch ecosystem: dataset format + recording, policy training and evaluation, simulation benchmark adapters, real-robot Robot/Teleoperator drivers, and a remote inference service. For `Hylo`, its three most valuable assets are: **(a) a Policy base-class contract implemented by 25 policies**, **(b) a serializable processor pipeline (normalization and other pre/post-processing)**, and **(c) the LeRobotDataset v3 data format**, which has become the de facto standard input for third-party VLA training such as openpi.
 
 | Capability | Status | Evidence |
 |---|---|---|
@@ -213,7 +213,7 @@ sequenceDiagram
 | GR00T weights | NVIDIA Open Model License | `docs/source/groot.mdx:224-226` \[Docs/Interface only\] |
 | Datasets / other checkpoints on the Hub | Determined by each model card; can be recorded in the `PreTrainedConfig.license` field (`configs/policies.py:82`) | \[Docs/Interface only\] |
 
-Conclusion: there is no obstacle to reusing LeRobot **code** (Apache-2.0; just keep NOTICE/copyright headers); **the license of every VLA weight must be reviewed individually against its model card**, and the `worldcurrent` policy registry should make `weights_license` a required metadata field.
+Conclusion: there is no obstacle to reusing LeRobot **code** (Apache-2.0; just keep NOTICE/copyright headers); **the license of every VLA weight must be reviewed individually against its model card**, and the `Hylo` policy registry should make `weights_license` a required metadata field.
 
 ## 8. Strengths, Weaknesses and Risks
 
@@ -233,9 +233,9 @@ Conclusion: there is no obstacle to reusing LeRobot **code** (Apache-2.0; just k
 
 ## 9. Components Worth Reusing
 
-1. **The data model of `FeatureSpec` / `ChunkPolicySpec` / `PolicyCapabilities` / `ActionChunk` / `ActionProvenance`** (`policies/chunk.py:21-86`, `inference/contracts.py:54-139`): can serve almost directly as the schema blueprint for the `worldcurrent` Policy contract (especially required `semantics` and the separation of `prediction_steps` vs `execution_steps`).
+1. **The data model of `FeatureSpec` / `ChunkPolicySpec` / `PolicyCapabilities` / `ActionChunk` / `ActionProvenance`** (`policies/chunk.py:21-86`, `inference/contracts.py:54-139`): can serve almost directly as the schema blueprint for the `Hylo` Policy contract (especially required `semantics` and the separation of `prediction_steps` vs `execution_steps`).
 2. **Normalization math and mode enum** (`normalize_processor.py:305-425`), compatible with openpi's quantile mode.
-3. **LeRobotDataset v3 format** as the primary exchange format for `worldcurrent` training/memory data (readers/writers can depend directly on `lerobot[dataset]`).
+3. **LeRobotDataset v3 format** as the primary exchange format for `Hylo` training/memory data (readers/writers can depend directly on `lerobot[dataset]`).
 4. **The envelope + codec design of remote_inference** (version number, message_type, correlation IDs, explicit tensor/rgb records, limits): can serve as a reference implementation for our custom protocol.
 5. **`ensure_safe_goal_position` / `EEBoundsAndSafety` / hold semantics**: as a reference for the `SafetyGuard` layer.
 
@@ -244,7 +244,7 @@ Conclusion: there is no obstacle to reusing LeRobot **code** (Apache-2.0; just k
 - The individual VLA model implementations (pi0/pi05/smolvla/groot/xvla ...) and their processors: call LeRobot policies directly through an adapter instead of rewriting them.
 - Dataset recording, video encoding, Hub upload, stats computation (`datasets/compute_stats.py`, `scripts/augment_dataset_quantile_stats.py`).
 - Low-level motor/camera drivers and calibration procedures.
-- Gym adapters for simulation benchmarks (LIBERO / MetaWorld / RoboCasa / RoboTwin ...); `worldcurrent` only needs to wrap `EnvConfig.create_envs` as our Simulator interface.
+- Gym adapters for simulation benchmarks (LIBERO / MetaWorld / RoboCasa / RoboTwin ...); `Hylo` only needs to wrap `EnvConfig.create_envs` as our Simulator interface.
 
 ## 11. Source Index of Key Implementations
 
@@ -304,7 +304,7 @@ Conclusion: there is no obstacle to reusing LeRobot **code** (Apache-2.0; just k
 | Apache-2.0 claim for pi0/pi05 weights | \[Docs/Interface only\] | Risk of conflict with Gemma terms; needs legal confirmation |
 | "Checkpoints verified on remote HW" (README table) | \[Docs/Interface only\] | Claimed in `remote_inference/README.md`; cannot be treated as verified |
 
-## 12. Mapping to worldcurrent Policy Interface
+## 12. Mapping to Hylo Policy Interface
 
 Assumed target contract:
 ```python
@@ -314,16 +314,16 @@ class Policy(Protocol):
     def act(self, observation: Observation, instruction: str | None) -> ActionChunk
 ```
 
-| worldcurrent | LeRobot counterpart | Adaptation notes |
+| Hylo | LeRobot counterpart | Adaptation notes |
 |---|---|---|
 | `spec()` | `config.input_features/output_features` + `chunk_inference_spec()` -> `ChunkPolicySpec`; `PolicyCapabilities` when remote | Use `FeatureSpec` (including `semantics`, `names`) directly as our feature schema; supplement license from the model card |
 | `reset(episode_ctx)` | `policy.reset(); preprocessor.reset(); postprocessor.reset()` (`lerobot_eval.py:229-231`; `policy_runner.py:309-319`) | **Processors must be reset at the same time** (`RelativeActionsProcessorStep` caches an anchor). `episode_ctx.seed` can map to `predict_action_chunk(noise=...)` |
 | Instruction change mid-episode | `drop_queued_actions()` (`pretrained.py:245-261`) / `reset(full=False)` | Recommend that the contract explicitly distinguish `reset` (new episode) from `invalidate()` (keep memory, discard action queue) |
 | `act(obs, instruction)` | `preprocessor({**obs, "task": [instruction]})` -> `predict_action_chunk` -> `postprocessor` | obs must be converted to LeRobot keys (`observation.images.*`, `observation.state`), images as BCHW float[0,1] (`envs/utils.py:99-104`) or HWC uint8 when remote (`policy_runner.py:219-221`); returns `[B, prediction_steps, A]`, truncated by `execution_steps` |
 | `ActionChunk` | `inference/contracts.py:130-139` | Keep `canonical_actions` (unnormalized, processor output, before robot-side processing) + optional `model_actions` (for RTC) + `provenance` |
-| Single-step env compatibility layer | `select_action` (internal queue / temporal ensembling) | `worldcurrent`'s `ChunkExecutor` handles queuing/ensembling, and the policy only outputs chunks; for policies that must use `select_action` (`n_obs_steps>1`, ensembling), provide a `StepwisePolicyAdapter` |
-| Remote service | Zenoh `lerobot/inference/v1/deployments/{d}/...`: `describe`/`open` (queryable), `sessions/{s}/obs|act|control|language/*`, liveliness `alive`; msgpack envelope `{version, message_type, instance_id, session_id, generation, request_id, body}` (`protocol.py:121-189`, `codec.py:323-338`) | Can serve as the "rich" remote backend for `worldcurrent`; openpi websocket as the "simple" backend. Both should sit behind our `RemotePolicy` adapter |
-| Safety | `Robot.send_action` returns the actual value + `max_relative_target` + `EEBoundsAndSafety` + hold | `worldcurrent` should place the SafetyGuard outside the policy (robot/sim side) and **make it a mandatory part of the contract**, not dependent on whether a driver implements it |
-| Training data | LeRobotDataset v3 | `worldcurrent`'s episode storage writes v3 directly; when feeding openpi, provide a v3->v2.1 downgrade export (or wait for openpi to upgrade) |
+| Single-step env compatibility layer | `select_action` (internal queue / temporal ensembling) | `Hylo`'s `ChunkExecutor` handles queuing/ensembling, and the policy only outputs chunks; for policies that must use `select_action` (`n_obs_steps>1`, ensembling), provide a `StepwisePolicyAdapter` |
+| Remote service | Zenoh `lerobot/inference/v1/deployments/{d}/...`: `describe`/`open` (queryable), `sessions/{s}/obs|act|control|language/*`, liveliness `alive`; msgpack envelope `{version, message_type, instance_id, session_id, generation, request_id, body}` (`protocol.py:121-189`, `codec.py:323-338`) | Can serve as the "rich" remote backend for `Hylo`; openpi websocket as the "simple" backend. Both should sit behind our `RemotePolicy` adapter |
+| Safety | `Robot.send_action` returns the actual value + `max_relative_target` + `EEBoundsAndSafety` + hold | `Hylo` should place the SafetyGuard outside the policy (robot/sim side) and **make it a mandatory part of the contract**, not dependent on whether a driver implements it |
+| Training data | LeRobotDataset v3 | `Hylo`'s episode storage writes v3 directly; when feeding openpi, provide a v3->v2.1 downgrade export (or wait for openpi to upgrade) |
 
-Recommendation: `worldcurrent.policies.lerobot.LeRobotPolicyAdapter(policy_path)` internally calls `make_policy` + `make_pre_post_processors(pretrained_path=...)`, with `spec()` generated from `chunk_inference_spec()`; policies for which `chunk_inference_spec()` raises are automatically downgraded to `StepwisePolicyAdapter` (each `act` returns a chunk of length 1).
+Recommendation: `hylo.policies.lerobot.LeRobotPolicyAdapter(policy_path)` internally calls `make_policy` + `make_pre_post_processors(pretrained_path=...)`, with `spec()` generated from `chunk_inference_spec()`; policies for which `chunk_inference_spec()` raises are automatically downgraded to `StepwisePolicyAdapter` (each `act` returns a chunk of length 1).

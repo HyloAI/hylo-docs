@@ -1,10 +1,10 @@
 # Studio
 
-worldcurrent-studio is the playground: one web UI over runs, campaigns, learning artifacts and workcells, and the
-control plane for robots. `wc-playground` is the FastAPI backend (`wc playground`); `web/` is the React front end,
+hylo-studio is the playground: one web UI over runs, campaigns, learning artifacts and workcells, and the
+control plane for robots. `hylo-playground` is the FastAPI backend (`hylo playground`); `web/` is the React front end,
 built into the package.
 
-The playground reads runs and campaigns through the harness's catalog, runs `wc` commands as jobs (the same commands
+The playground reads runs and campaigns through the harness's catalog, runs `hylo` commands as jobs (the same commands
 a person would type, with the same checks), and talks to workcells through the workcell API. It never sends
 actions to a robot.
 
@@ -14,7 +14,7 @@ actions to a robot.
 
 ```bash
 cd studio/web && npm install --ignore-scripts && npm run build && cd ../..   # once; Node >= 18
-uv run wc playground --repo bench                                          # http://127.0.0.1:8765
+uv run hylo playground --repo bench                                          # http://127.0.0.1:8765
 ```
 
 | Option | Default | Meaning |
@@ -28,7 +28,7 @@ uv run wc playground --repo bench                                          # htt
 | `--policy NAME=WS_URL[#TOKEN]` | none | a policy server endpoint (repeatable) |
 | `--role-token ROLE=TOKEN` | none | viewer / operator / approver tokens (repeatable) |
 
-Development with hot reload: `uv run wc-playground` and, in `studio/web`, `npm run dev` (Vite proxies `/api`).
+Development with hot reload: `uv run hylo-playground` and, in `studio/web`, `npm run dev` (Vite proxies `/api`).
 
 ## Pages
 
@@ -40,7 +40,7 @@ Development with hot reload: `uv run wc-playground` and, in `studio/web`, `npm r
 | Compare | two runs paired on (task, seed) |
 | Self-improvement | campaigns, cycles, candidates, gate statistics, the ledger; approve or roll back |
 | Experience & learning | skills, lessons, action memories, sealed artifacts with provenance and calibration |
-| Jobs | `wc run`, `wc evolve run` and `wc calibrate` in the background, with their logs |
+| Jobs | `hylo run`, `hylo evolve run` and `hylo calibrate` in the background, with their logs |
 | Operator station | episodes on a workcell with a chosen policy server; reset, verdicts, stop, e-stop |
 
 ### Runs and replay
@@ -55,14 +55,14 @@ interventions, and the success judge's estimate along the episode.
 
 Two runs of the same benchmark split, paired on (task, seed): wins and losses, the one-sided exact McNemar p-value,
 per-task deltas, and side-by-side replays of the discordant pairs (where one run succeeded and the other failed).
-This is the same test as [`wc bench compare`](../benchmarking/index.md#statistics) and the gate.
+This is the same test as [`hylo bench compare`](../benchmarking/index.md#statistics) and the gate.
 
 ### Self-improvement
 
 Every campaign under the runs directory: its cycles, the candidates with their hypotheses, the search_val and
 group-sequential gate statistics, vetoes, the promotion ledger and the active version
 ([campaigns](campaigns.md)). A candidate that passed the gate and waits for approval can be approved here
-(`wc evolve approve`); the active version can be rolled back with a reason (`wc evolve rollback`). Both need the
+(`hylo evolve approve`); the active version can be rolled back with a reason (`hylo evolve rollback`). Both need the
 approver role.
 
 ![A campaign: cycles, candidates and gate statistics](../assets/figures/studio-campaign.png){ .wc-figure }
@@ -92,9 +92,9 @@ confirm the scene reset (`reset_done`) or judge the outcome (success, partial, f
 e-stop, clear a latched fault. See [deployment](deployment.md#operating-a-workcell) for what each event does.
 
 ```bash
-uv run wc serve policy --agent '{"type": "bringup.wave", "params": {"amplitude": 12, "horizon": 15}}' --port 8002
-uv run wc serve workcell --config deployments-template/workcells/sim_arm.yaml --port 8102
-uv run wc playground --repo bench --workcell sim-arm=http://127.0.0.1:8102 --policy wave=ws://127.0.0.1:8002/wc
+uv run hylo serve policy --agent '{"type": "bringup.wave", "params": {"amplitude": 12, "horizon": 15}}' --port 8002
+uv run hylo serve workcell --config deployments-template/workcells/sim_arm.yaml --port 8102
+uv run hylo playground --repo bench --workcell sim-arm=http://127.0.0.1:8102 --policy wave=ws://127.0.0.1:8002/hylo
 ```
 
 ## Roles

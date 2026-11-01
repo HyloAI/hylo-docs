@@ -198,7 +198,7 @@ Source mapping: `L/libero/lifelong/metric.py:52-161` (`evaluate_one_task_success
 ## 7. License and Reuse Constraints
 
 - Code: MIT (`L/LICENSE`). Datasets: the README claims CC BY 4.0 (`L/README.md:180-184`). \[Docs/Interface only\]
-- **Assets have no per-item license files** (`find assets -iname '*licen*'` is empty). Asset sources can be identified from directory names: `stable_scanned_objects` (Google Scanned Objects, originally CC BY 4.0), `stable_hope_objects` (NVIDIA HOPE dataset, whose original license must be verified separately), `turbosquid_objects` (purchased TurboSquid models; the TurboSquid standard license generally does **not allow** redistribution of the original model files). LIBERO redistributes these meshes directly in the repo. \[Unverified\]: if worldcurrent packages or mirrors LIBERO assets, a license review is mandatory; the safest approach is to **not package them and only fetch them on the user side from the original repository**.
+- **Assets have no per-item license files** (`find assets -iname '*licen*'` is empty). Asset sources can be identified from directory names: `stable_scanned_objects` (Google Scanned Objects, originally CC BY 4.0), `stable_hope_objects` (NVIDIA HOPE dataset, whose original license must be verified separately), `turbosquid_objects` (purchased TurboSquid models; the TurboSquid standard license generally does **not allow** redistribution of the original model files). LIBERO redistributes these meshes directly in the repo. \[Unverified\]: if Hylo packages or mirrors LIBERO assets, a license review is mandatory; the safest approach is to **not package them and only fetch them on the user side from the original repository**.
 - BDDL files and init states are part of the code repository's content and can be treated as MIT.
 
 ## 8. Strengths, Weaknesses and Risks
@@ -229,15 +229,15 @@ Source mapping: `L/libero/lifelong/metric.py:52-161` (`evaluate_one_task_success
 1. **BDDL task files + 130 ready-made tasks** (`bddl_files/`): read directly as source data for `TaskSpec`; the parser `robosuite_parse_problem` can be reused after stripping its robosuite dependency (it only depends on `bddl.parsing.scan_tokens/package_predicates`).
 2. **Init states files**: as the authoritative source for `TaskSpec.init_state` (`episode_index → flattened state`), ensuring comparability with numbers reported by the community.
 3. **Suite definitions and task_orders** (`libero_suite_task_map.py`, `task_orders`): used directly as the benchmark manifest.
-4. **Evaluation protocol**: `reset → set_init_state → 5 zero-action steps → ≤600 steps → success=any(done)`; worldcurrent's LIBERO Evaluator should replicate it step by step (`metric.py:110-157`) to ensure comparability.
+4. **Evaluation protocol**: `reset → set_init_state → 5 zero-action steps → ≤600 steps → success=any(done)`; Hylo's LIBERO Evaluator should replicate it step by step (`metric.py:110-157`) to ensure comparability.
 5. **Geometric predicate implementations** (`object_states/`) as a reference implementation for a "physical predicate library" (thresholds for On/In/Open/TurnOn).
 
 ## 10. Capabilities Not Worth Rebuilding
 
 - Do not rewrite LIBERO's scenes/assets/robosuite env: call `OffScreenRenderEnv` as is in an isolated process.
 - Do not develop an alternative syntax for BDDL parsing; if extension is needed (Or/Not/temporal), do it in our own predicate DSL and provide a one-way BDDL→internal AST conversion.
-- Do not reuse LIBERO's lifelong algorithms and BC policy code as worldcurrent components (the models are outdated and tightly coupled to hydra/robomimic 0.2); use them only as baseline references.
-- Do not reuse `venv.py` (an early tianshou fork + gym 0.25); worldcurrent should have its own env worker/RPC layer.
+- Do not reuse LIBERO's lifelong algorithms and BC policy code as Hylo components (the models are outdated and tightly coupled to hydra/robomimic 0.2); use them only as baseline references.
+- Do not reuse `venv.py` (an early tianshou fork + gym 0.25); Hylo should have its own env worker/RPC layer.
 
 ## 11. Source Index of Key Implementations
 
@@ -291,9 +291,9 @@ Source mapping: `L/libero/lifelong/metric.py:52-161` (`evaluate_one_task_success
 | Dataset download | \[Needs model/hardware\] | `download_libero_datasets.py` |
 | Unit tests | Do not exist | No tests directory |
 
-## 12. Mapping to worldcurrent Environment/Task/Evaluator Interfaces
+## 12. Mapping to Hylo Environment/Task/Evaluator Interfaces
 
-| worldcurrent concept | LIBERO counterpart | Adaptation points |
+| Hylo concept | LIBERO counterpart | Adaptation points |
 |---|---|---|
 | `Benchmark` | `Benchmark` subclasses + `libero_task_map` | `BenchmarkSpec(id="libero_10", tasks=[...], task_order)`; `libero_90` has no order |
 | `TaskSpec.id` | `f"libero/{suite}/{task.name}"` | `task.name` is the BDDL file stem; the 130 file names have no duplicates across suites (`uniq -d` is empty), but libero_10 and libero_90 share scene prefixes such as `KITCHEN_SCENE*`, so IDs should still carry the suite prefix to express differences in evaluation protocol |
@@ -307,4 +307,4 @@ Source mapping: `L/libero/lifelong/metric.py:52-161` (`evaluate_one_task_success
 | `action_spec` | OSC_POSE delta EEF 7-D ∈ [-1,1] | `ActionSpec(type="ee_delta_pose", frame="base", dims=6+1, gripper=-1 open/+1 close)` |
 | `Evaluator` | `evaluate_one_task_success` | `LiberoEvaluator(n_eval=50 or 20, max_steps=suite-dependent, warmup_steps=5)`; metric success_rate; lifelong metrics (FWT/NBT/AUC, `main.py:141-142`) as an optional `LifelongEvaluator` |
 
-Conclusion: LIBERO is well suited to be worldcurrent's **first "Benchmark = task files + init states + evaluation protocol" template**; the Simulator layer is hosted through an RPC adapter, while the Task/Evaluator layers are re-expressed with our own data structures and reference LIBERO's files read-only.
+Conclusion: LIBERO is well suited to be Hylo's **first "Benchmark = task files + init states + evaluation protocol" template**; the Simulator layer is hosted through an RPC adapter, while the Task/Evaluator layers are re-expressed with our own data structures and reference LIBERO's files read-only.
