@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| Status | Parts 1 and 3 implemented (2026-10-31); parts 2 and 4 implemented (2026-11-01); parts 5, 6 proposed |
+| Status | Parts 1 and 3 implemented (2026-10-31); parts 2 and 4 implemented, part 5 partly (2026-11-01); part 6 proposed |
 | Scope | worldcurrent-harness (wc-core, wc-eval, wc-agents), worldcurrent-bench, worldcurrent-serve, deployments |
 | Builds on | RFC-0001 (contracts), RFC-0002 (gate), RFC-0004 (artifacts), design/repository-structure.md |
 
@@ -123,12 +123,28 @@ Six structural problems found in the code on 2026-10-31, ordered by how much the
   checkpoints under the Gemma Terms of Use, LLM plugins under the served model's licence.
 - Not yet: studio does not show maturity and licence next to the components it runs.
 
-## Part 5: split wc-agents by role (proposed)
+## Part 5: contracts in wc-core, one plugin group per role (partly implemented, 2026-11-01)
 
-- wc-agents: decision-making (policy runners, steering, memory / noise / critic steering, shadow, skills).
-- wc-instruments: success judges, value models, world models (the `instruments` group and the world-model env).
-- wc-reasoners: planners and reasoners (rule, LLM, VLM adapters move under it or stay adapters).
-- Test doubles move to `worldcurrent.testing`. The robot computer then installs decision-making only.
+Done:
+
+- Every plugin group's contract is defined in wc-core (`core.plugins.CONTRACT_OBJECTS`, checked by a test):
+  `core.benchmark` (Benchmark and the split functions, moved from wc-eval), `core.scoring` (Score, Scorer,
+  PairedComparison, GateTest), `core.improvement` (Candidate, StageResult, ArchiveEntry, Proposer) and
+  `core.reasoning` (Reasoner, Chooser, Planner, and a new Reflector contract). The old modules re-export the
+  names, so existing imports keep working. A plugin of any group now depends on wc-core alone: wc-reasoner-llm,
+  wc-env-mujoco and wc-env-libero dropped their dependencies on wc-agents and wc-eval.
+- `reasoners` was three interfaces under one version; it is now four groups, each with its own contract version:
+  `reasoners` (wc.reasoner), `choosers` (wc.chooser), `planners` (wc.planner), `reflectors` (wc.reflector).
+  Plugin names did not change.
+- One generator contract: the old `CandidateGenerator` and `GainRuleGenerator` are gone. The single-cycle loop on
+  standard splits (`improvement_cycle`, used by the demos) takes the same `Proposer` as campaigns; `rule.gain`
+  gained `adaptive` (scale up on timeouts, down on oscillation or safety aborts).
+
+Not done:
+
+- Splitting the wc-agents package itself: wc-agents (decision-making), wc-instruments (judges, value models,
+  world models), wc-reasoners (rule-based reasoners). With the contracts in core this is a packaging change only;
+  it matters once the robot computer should install decision-making alone.
 
 ## Part 6: a job layer (proposed)
 

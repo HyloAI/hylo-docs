@@ -6,7 +6,7 @@ harness is an implementation behind them.
 
 | Page | Modules | What is there |
 |---|---|---|
-| [Contracts](contracts.md) | `core.env`, `core.agent`, `core.policy`, `core.types`, `core.task`, `core.instrument`, `core.learning`, `core.safety` | what an environment, agent, policy, instrument, learner and guard must provide; the data that passes between them |
+| [Contracts](contracts.md) | `core.env`, `core.agent`, `core.policy`, `core.reasoning`, `core.types`, `core.task`, `core.instrument`, `core.learning`, `core.benchmark`, `core.scoring`, `core.improvement`, `core.safety` | what an environment, agent, policy, instrument, learner and guard must provide; the data that passes between them |
 | [Kernel](kernel.md) | `core.kernel`, `core.events`, `core.trace` | the one episode loop (sync and realtime), events and traces |
 | [Configuration](config.md) | `core.config`, `core.profile`, `core.plugins`, `core.registry` | experiment configs and their digest, execution profiles, contract versions, the plugin registry |
 | [Artifacts and store](artifacts-and-store.md) | `core.artifact`, `core.store`, `core.scorecard`, `core.deployment` | sealed artifacts and the split guard, store ids, scorecards, active versions |

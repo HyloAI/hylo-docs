@@ -138,7 +138,7 @@ A `TaskSpec` describes one task: `id` (globally unique), `version`, `instruction
 
 ```python title="src/wc_env_slider/env.py (continued)"
 def slider_benchmark(protocol: str = "rsi", n_states: int = 50):
-    from worldcurrent.eval.benchmark import Benchmark, rsi_splits
+    from worldcurrent.core.benchmark import Benchmark, rsi_splits
 
     tasks = (TaskSpec(id="slider/reach", version="1", instruction="stop on the goal", max_steps=100, tags=("slider",)),)
     splits = rsi_splits(n_states, (20, 30, 40)) if protocol == "rsi" else {"validation": tuple(range(1000, 1020))}

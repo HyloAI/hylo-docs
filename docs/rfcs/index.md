@@ -10,7 +10,7 @@ repeats it.
 | [RFC-0002](RFC-0002-physical-rsi.md) | Physical RSI on LIBERO (frozen VLA first, weights second) | Implemented (2026-10-30/31); weight-level units unverified | improvement as a gated experiment: development, gate and held-out splits of init states, a cascade and a sequential paired test, approval before promotion |
 | [RFC-0003](RFC-0003-experience-memory-skills.md) | Experience memory and skills | Draft (2026-10-30) | action memories of verified successes, lessons and skills that steer a frozen policy |
 | [RFC-0004](RFC-0004-learning-pipeline.md) | Learning pipeline and derived artifacts | Implemented (A1-A3, W1-W4; video world models and RL fine-tuning wait for a GPU) | learners build sealed artifacts with provenance and a role (behaviour, instrument, proposal); one split guard; calibrated judges |
-| [RFC-0005](RFC-0005-architecture-measurement-and-placement.md) | What is measured, where it runs, and one episode loop | Parts 1-4 implemented (2026-10-31, 2026-11-01); parts 5-6 proposed | experiments vs execution profiles, one episode loop, a run and artifact store, contract versions and plugin metadata |
+| [RFC-0005](RFC-0005-architecture-measurement-and-placement.md) | What is measured, where it runs, and one episode loop | Parts 1-4 implemented (2026-10-31, 2026-11-01); part 5 partly; part 6 proposed | experiments vs execution profiles, one episode loop, a run and artifact store, contract versions and plugin metadata |
 
 Statuses are the RFCs' own status lines.
 

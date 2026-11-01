@@ -1,6 +1,6 @@
 # Contracts
 
-What a plugin must provide, and the data that passes between the kernel, environments and agents. The
+Every plugin group's contract lives in wc-core, so a plugin depends on wc-core alone. What a plugin must provide, and the data that passes between the kernel, environments and agents. The
 [plugin system](../harness/plugin-system.md) explains how plugins are registered; the
 [interfaces](../harness/interfaces/environment.md) explain the design behind each contract; the
 [plugin catalogue](../developer-guide/plugin-catalogue.md) lists what implements them.
@@ -22,6 +22,13 @@ What a plugin must provide, and the data that passes between the kernel, environ
 ## Policies
 
 ::: worldcurrent.core.policy
+    options:
+      heading_level: 3
+      show_if_no_docstring: true
+
+## Reasoners, choosers, planners, reflectors
+
+::: worldcurrent.core.reasoning
     options:
       heading_level: 3
       show_if_no_docstring: true
@@ -50,6 +57,27 @@ What a plugin must provide, and the data that passes between the kernel, environ
 ## Learners
 
 ::: worldcurrent.core.learning
+    options:
+      heading_level: 3
+      show_if_no_docstring: true
+
+## Benchmarks
+
+::: worldcurrent.core.benchmark
+    options:
+      heading_level: 3
+      show_if_no_docstring: true
+
+## Scorers and gate tests
+
+::: worldcurrent.core.scoring
+    options:
+      heading_level: 3
+      show_if_no_docstring: true
+
+## Generators and campaign records
+
+::: worldcurrent.core.improvement
     options:
       heading_level: 3
       show_if_no_docstring: true

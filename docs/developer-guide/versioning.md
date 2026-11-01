@@ -22,6 +22,8 @@ at v0.1:
 | `agents` | `wc.agent/v0.1` | `learners` | `wc.learner/v0.1` |
 | `policies` | `wc.policy/v0.1` | `instruments` | `wc.instrument/v0.1` |
 | `reasoners` | `wc.reasoner/v0.1` | `datasources` | `wc.datasource/v0.1` |
+| `choosers` | `wc.chooser/v0.1` | `planners` | `wc.planner/v0.1` |
+| `reflectors` | `wc.reflector/v0.1` | | |
 | `memory` | `wc.memory/v0.1` | `guards` | `wc.guard/v0.1` |
 | `scorers` | `wc.scorer/v0.1` | `gate_tests` | `wc.gate_test/v0.1` |
 | `benchmarks` | `wc.benchmark/v0.1` | | |

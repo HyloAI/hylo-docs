@@ -125,6 +125,7 @@ artifact manifests, store ids, scorecards, `active.json`, the workcell API. A bo
 ## Not yet
 
 - No job layer: campaigns run in a foreground process, studio jobs are bare subprocesses (RFC-0005 part 6).
-- `wc-agents` still mixes decision-making agents, instruments and reasoners (RFC-0005 part 5).
+- Every plugin contract is in wc-core, one group per role; the wc-agents package itself still holds decision-making
+  agents, instruments and rule-based reasoners together (RFC-0005 part 5).
 - No real robot has been connected; the robot path has run with a simulated arm.
 - Weight-level learning on LIBERO (self-training, RL fine-tuning) waits for a GPU.

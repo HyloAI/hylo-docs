@@ -23,7 +23,7 @@ Digest
     computer, and two runs with the same digest are directly comparable.
 
 Benchmark, task, split
-:   A benchmark (`benchmarks` plugin, `eval.benchmark.Benchmark`) is a set of tasks plus named splits of their
+:   A benchmark (`benchmarks` plugin, `core.benchmark.Benchmark`) is a set of tasks plus named splits of their
     initial states (seeds). The `rsi` protocol of [RFC-0002](../rfcs/RFC-0002-physical-rsi.md) partitions init
     states into four splits with different readers: `search` (diagnosis; generators may read these traces),
     `search_val` (candidate selection), `gate` (confirmation, plus `gate_r1`, ... for further looks) and `heldout`
