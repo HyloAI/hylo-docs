@@ -150,6 +150,9 @@ watchdog ends the episode.
 An environment or an agent can run in another process, with another interpreter. Name a **runtime** from this
 machine's [execution profile](../configuration/profiles.md), so the config stays the same on every machine:
 
+![From the episode loop, a component runs in a subprocess of the same interpreter, in a named runtime's venv, or on another machine over a WebSocket.](../assets/diagrams/placement-light.svg){ .hylo-diagram .only-light }
+![From the episode loop, a component runs in a subprocess of the same interpreter, in a named runtime's venv, or on another machine over a WebSocket.](../assets/diagrams/placement-dark.svg){ .hylo-diagram .only-dark }
+
 === "Environment"
 
     ```yaml

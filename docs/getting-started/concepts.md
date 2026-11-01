@@ -8,6 +8,9 @@ An **experiment** names an **environment** and an **agent**. The agent decides w
 **artifacts**. A **campaign** proposes changes that use them, tests each change against the current version, and
 promotes one only if it passes the gate. A **workcell** runs the promoted version next to a robot.
 
+![The main concepts by step. Run: experiment, run, trace. Measure: protocol, scorecard, leaderboard. Improve: artifact, candidate, gate. Deploy: active version, policy server, workcell. Episodes become runs.](../assets/diagrams/concept-map-light.svg){ .hylo-diagram .only-light }
+![The main concepts by step. Run: experiment, run, trace. Measure: protocol, scorecard, leaderboard. Improve: artifact, candidate, gate. Deploy: active version, policy server, workcell. Episodes become runs.](../assets/diagrams/concept-map-dark.svg){ .hylo-diagram .only-dark }
+
 ## Run
 
 Experiment { #experiment }
@@ -50,6 +53,9 @@ Digest { #digest }
 :   A short hash of what an experiment measures. Where results go and where components run are left out, except a
     `remote.ws` URL, which is hashed. Code versions are not in it. See
     [when two runs are comparable](../user-guide/experiments.md#what-is-measured-the-digest).
+
+![One step of an episode: the environment sends an observation to the agent and its policy; the proposed action passes the safety shield; the executed action goes to the environment; the trace records every step.](../assets/diagrams/episode-step-light.svg){ .hylo-diagram .only-light }
+![One step of an episode: the environment sends an observation to the agent and its policy; the proposed action passes the safety shield; the executed action goes to the environment; the trace records every step.](../assets/diagrams/episode-step-dark.svg){ .hylo-diagram .only-dark }
 
 ## Measure
 

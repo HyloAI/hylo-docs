@@ -21,7 +21,8 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from readme_art import THEMES, Doc, Repo, improvement_loop as hylo_loop, stack_map  # noqa: E402
+from readme_art import (THEMES, Doc, Repo, bench_flow, deployments_sync, improvement_loop as hylo_loop,  # noqa: E402
+                        stack_map, studio_plane)
 
 OUT = Path(__file__).resolve().parents[2] / "docs" / "assets" / "diagrams"
 
@@ -269,6 +270,162 @@ def deployment(T: dict) -> Doc:
     return d
 
 
+
+# ---------------------------------------------------------------- 8. concepts: the words, by step
+def concept_map(T: dict) -> Doc:
+    d = Doc(960, 396, T, "The main concepts, by step",
+            "Run: an experiment gives a run, with one trace per episode. Measure: a protocol scores it into a "
+            "scorecard, and a leaderboard ranks scorecards. Improve: learners build artifacts, a campaign tests "
+            "candidates, the gate decides. Deploy: the active version is served by a policy server to a workcell, "
+            "whose episodes become runs.")
+    d.card()
+    cols = [("Run", ["Experiment", "Run", "Trace"]), ("Measure", ["Protocol", "Scorecard", "Leaderboard"]),
+            ("Improve", ["Artifact", "Candidate", "Gate"]), ("Deploy", ["Active version", "Policy server", "Workcell"])]
+    w, g, y0, ph = 198, 40, 24, 290
+    x0 = (960 - 4 * w - 3 * g) / 2
+    for i, (head, items) in enumerate(cols):
+        x = x0 + i * (w + g)
+        d.rect(x, y0, w, ph, "sunk", "line2", rx=16)
+        d.text(x + 20, y0 + 38, head, "b", 19, "accent")
+        for j, t in enumerate(items):
+            y = y0 + 62 + j * 76
+            node(d, x + 16, y, w - 32, 52, t, "accent" if t == "Gate" else "plain")
+            if j < 2:
+                d.arrow([(x + w / 2, y + 54), (x + w / 2, y + 74)], "muted", 1.6)
+        if i < 3:
+            d.arrow([(x + w + 6, y0 + ph / 2), (x + w + g - 6, y0 + ph / 2)], "accent", 2.2)
+    xa, xb, yb = x0 + 3 * (w + g) + w / 2, x0 + w / 2, y0 + ph + 52
+    d.arrow([(xa, y0 + ph + 3), (xa, yb), (xb, yb), (xb, y0 + ph + 6)], "accent", 2, dash="7 6", rounded=16)
+    d.label((xa + xb) / 2, yb + 6, "episodes become runs", fill="accent", size=16)
+    return d
+
+
+def episode_step(T: dict) -> Doc:
+    d = Doc(960, 352, T, "One step of an episode",
+            "The environment sends an observation to the agent, which asks its policy and proposes an action. The "
+            "safety shield reviews it, and the executed action goes to the environment. The trace records every "
+            "step.")
+    d.card()
+    d.rect(330, 28, 300, 124, "surface", "line2", rx=16)
+    d.text(350, 60, "Agent", "b", 18, "ink")
+    node(d, 360, 78, 240, 52, "Policy", "soft")
+    node(d, 40, 196, 220, 64, "Environment")
+    node(d, 700, 196, 220, 64, "Safety shield", "accent")
+    d.arrow([(150, 194), (150, 90), (326, 90)], "muted", rounded=14)
+    d.label(238, 96, "observation", size=15)
+    d.arrow([(632, 90), (810, 90), (810, 192)], "accent", rounded=14)
+    d.label(721, 96, "proposed action", fill="accent", size=15)
+    d.arrow([(698, 228), (264, 228)], "accent", 2.2)
+    d.label(480, 234, "executed action", fill="accent", size=15)
+    node(d, 40, 292, 880, 40, "Trace: every step recorded", "ghost", size=16)
+    for x in (150, 810):
+        d.arrow([(x, 262), (x, 288)], "faint", 1.6, dash="4 4")
+    return d
+
+
+# ---------------------------------------------------------------- 9. safety shield
+def safety_shield(T: dict) -> Doc:
+    d = Doc(960, 262, T, "The safety shield",
+            "Every action the agent proposes passes the finite check, the workspace guard, the configured guards and "
+            "the bounds clamp before it reaches the environment. A non-finite action aborts the episode.")
+    d.card()
+    names = [("Agent", "plain"), ("Finite\ncheck", "soft"), ("Workspace\nguard", "soft"),
+             ("Configured\nguards", "soft"), ("Bounds\nclamp", "soft"), ("Environment", "plain")]
+    w, g, y, h = 124, 34, 72, 70
+    x0 = (960 - 6 * w - 5 * g) / 2
+    for i, (t, k) in enumerate(names):
+        x = x0 + i * (w + g)
+        node(d, x, y, w, h, t, k, size=16)
+        if i < 5:
+            d.arrow([(x + w + 4, y + h / 2), (x + w + g - 4, y + h / 2)], "accent" if 0 < i < 5 else "muted", 2)
+    gx1, gx2 = x0 + (w + g), x0 + 4 * (w + g) + w
+    group(d, gx1, gx2, 50, "Safety shield")
+    fx = x0 + (w + g) + w / 2
+    d.arrow([(fx, y + h + 2), (fx, 196)], "accent", 1.8, dash="5 4")
+    d.label(fx + 12, 172, "not finite", "start", fill="accent", size=15)
+    node(d, fx - 90, 200, 180, 44, "Abort episode", "accent", size=16)
+    return d
+
+
+# ---------------------------------------------------------------- 10. learning: runs to a sealed artifact
+def learning_flow(T: dict) -> Doc:
+    d = Doc(960, 306, T, "From runs to a sealed artifact",
+            "A learner reads search and search_val runs and seals one artifact, recording its digest and the runs it "
+            "was built from. The split guard refuses gate and held-out runs.")
+    d.card()
+    splits_ = [("search", "soft"), ("search_val", "soft"), ("gate", "ghost"), ("heldout", "ghost")]
+    for i, (t, k) in enumerate(splits_):
+        node(d, 40, 30 + i * 62, 180, 46, t, k, size=16)
+    d.arrow([(222, 53), (290, 53), (290, 105), (356, 105)], "accent", rounded=12)
+    d.arrow([(222, 115), (290, 115), (290, 105), (356, 105)], "accent", rounded=12)
+    for y in (177, 239):
+        d.arrow([(222, y), (296, y)], "faint", 1.6, dash="4 4", head=False)
+    d.add(f'<line x1="300" y1="160" x2="300" y2="256" stroke="{d.c("accent")}" stroke-width="4" '
+          'stroke-linecap="round"/>')
+    d.text(316, 214, "split guard", "sb", 16, "accent")
+    node(d, 360, 70, 200, 70, "Learner")
+    node(d, 680, 70, 240, 70, "Sealed artifact", "kernel")
+    d.arrow([(562, 105), (676, 105)], "accent", 2.2)
+    d.label(619, 92, "seal", fill="accent", size=15)
+    return d
+
+
+# ---------------------------------------------------------------- 11. campaigns: the cascade
+def cascade(T: dict) -> Doc:
+    d = Doc(960, 330, T, "The cascade and the gate",
+            "Stage 0 checks each candidate without running it. Stage 1 runs the first pairs of search_val, stage 2 "
+            "all of search_val. Stage 3, the gate, confirms the best on the gate split. The held-out split is only "
+            "reported.")
+    d.card()
+    rows = [("Stage 0", "Checks", "no runs", 640, "plain"), ("Stage 1", "Early check", "search_val", 520, "plain"),
+            ("Stage 2", "Screen", "search_val", 400, "plain"), ("Stage 3", "Gate", "gate", 280, "accent"),
+            ("Report", "Held-out report", "heldout", 280, "ghost")]
+    for i, (stage, title, split, w, k) in enumerate(rows):
+        y = 26 + i * 58
+        d.text(40, y + 29, stage, "sb", 16, "muted")
+        node(d, 480 - w / 2, y, w, 44, title, k, size=16.5)
+        d.text(920, y + 28, split, "mono", 15, "muted", anchor="end")
+    return d
+
+
+# ---------------------------------------------------------------- 12. profiles: one name, each machine's venv
+def runtimes(T: dict) -> Doc:
+    d = Doc(960, 318, T, "Configs name runtimes",
+            "A config names a runtime, such as libero-sim. Each machine's execution profile resolves the name to its "
+            "own Python interpreter and environment variables, so the same config runs on every machine.")
+    d.card()
+    d.rect(290, 26, 380, 56, "kernel", rx=12)
+    d.text(480, 60, "remote: {runtime: libero-sim}", "mono", 16, "kernel_ink", anchor="middle")
+    for x, name in ((40, "Workstation"), (510, "GPU machine")):
+        d.rect(x, 136, 410, 160, "sunk", "line2", rx=16)
+        d.text(x + 20, 170, name, "b", 18, "ink")
+        node(d, x + 20, 196, 150, 60, "Profile")
+        node(d, x + 216, 196, 174, 60, "Python and\nenv vars", "soft", size=16)
+        d.arrow([(x + 172, 226), (x + 212, 226)], "accent")
+    d.arrow([(400, 84), (400, 110), (245, 110), (245, 132)], "muted", rounded=12)
+    d.arrow([(560, 84), (560, 110), (715, 110), (715, 132)], "muted", rounded=12)
+    d.label(480, 115, "same name", size=15)
+    return d
+
+
+# ---------------------------------------------------------------- 13. experiments: where components run
+def placement(T: dict) -> Doc:
+    d = Doc(960, 290, T, "Where components run",
+            "An environment or an agent runs in the episode loop's process by default. It can run in a subprocess, "
+            "in a named runtime's venv, or on another machine behind a WebSocket server.")
+    d.card()
+    d.rect(30, 26, 300, 238, "sunk", "line2", rx=16)
+    d.text(50, 60, "hylo run", "mono", 16, "muted")
+    node(d, 60, 116, 240, 64, "Episode loop", "accent")
+    rows = [("subprocess", "Same interpreter"), ("named runtime", "Runtime's venv"), ("WebSocket", "Another machine")]
+    for i, (how, where) in enumerate(rows):
+        y = 34 + i * 80
+        node(d, 640, y, 280, 60, where, "kernel" if i == 2 else "plain")
+        d.arrow([(302, 148), (470, 148), (470, y + 30), (636, y + 30)], "accent" if i == 2 else "muted", rounded=12)
+        d.label(552, y + 36, how, fill="accent" if i == 2 else "muted", size=15)
+    return d
+
+
 # ---------------------------------------------------------------- the home page: the loop and the stack
 def home_stack(T: dict) -> Doc:
     return stack_map(T, Repo("docs", ("hylo-", "docs"), "", set()))
@@ -276,7 +433,10 @@ def home_stack(T: dict) -> Doc:
 
 DIAGRAMS = {"architecture": architecture, "repositories": repositories, "episode-loop": episode_loop,
             "improvement-loop": improvement_cycle, "splits": splits, "store": store, "deployment": deployment,
-            "hylo-loop": hylo_loop, "stack": home_stack}
+            "hylo-loop": hylo_loop, "stack": home_stack, "concept-map": concept_map, "episode-step": episode_step,
+            "safety-shield": safety_shield, "learning-flow": learning_flow, "cascade": cascade, "runtimes": runtimes,
+            "placement": placement, "bench-flow": bench_flow, "deployments-sync": deployments_sync,
+            "studio-plane": studio_plane}
 
 
 if __name__ == "__main__":

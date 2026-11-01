@@ -91,6 +91,9 @@ they are not queued.
 
 ## Roles
 
+![The browser connects to hylo playground with a role (viewer, operator or approver); the control plane starts episodes on workcells, runs jobs and reads the catalog; it never sends actions.](../assets/diagrams/studio-plane-light.svg){ .hylo-diagram .only-light }
+![The browser connects to hylo playground with a role (viewer, operator or approver); the control plane starts episodes on workcells, runs jobs and reads the catalog; it never sends actions.](../assets/diagrams/studio-plane-dark.svg){ .hylo-diagram .only-dark }
+
 Studio binds to `127.0.0.1` by default. Without `--token` or `--role-token`, anyone who can reach the port has every
 role, including approver. Roles, tokens and what each role can do are on the [security](security.md#studio-roles)
 page.

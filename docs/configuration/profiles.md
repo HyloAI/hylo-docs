@@ -48,6 +48,9 @@ env:
   remote: {runtime: libero-sim}                  # run the environment in a subprocess with this runtime
 ```
 
+![A config names a runtime; each machine's profile resolves the name to its own Python interpreter and environment variables.](../assets/diagrams/runtimes-light.svg){ .hylo-diagram .only-light }
+![A config names a runtime; each machine's profile resolves the name to its own Python interpreter and environment variables.](../assets/diagrams/runtimes-dark.svg){ .hylo-diagram .only-dark }
+
 A remote agent names its runtime the same way ([experiments](../user-guide/experiments.md)). The `runtime:` block of
 a workcell config is something else: it holds the workcell's realtime timing settings.
 

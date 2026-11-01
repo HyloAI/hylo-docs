@@ -4,6 +4,9 @@ To compare agents fairly, score each under the same **evaluation protocol**: a f
 fixes everything except the agent being scored (the agent usually wraps a policy). Each run writes a **scorecard**.
 The scorecards of one protocol form a **leaderboard**, and any two can be compared episode by episode.
 
+![A policy and a protocol go into hylo bench run, which writes runs and a scorecard; scorecards of one protocol rank on a leaderboard and compare episode by episode.](../assets/diagrams/bench-flow-light.svg){ .hylo-diagram .only-light }
+![A policy and a protocol go into hylo bench run, which writes runs and a scorecard; scorecards of one protocol rank on a leaderboard and compare episode by episode.](../assets/diagrams/bench-flow-dark.svg){ .hylo-diagram .only-dark }
+
 The agent is passed as `--policy`. Despite the flag's name, it takes an agent spec.
 
 ## Scoring

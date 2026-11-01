@@ -74,6 +74,9 @@ The parent runs on `search`, and its failures are sorted into buckets. The gener
 config patches, each with a hypothesis. The cascade (stages 0 to 2) screens them, and the gate (stage 3) confirms the
 best against the parent:
 
+![The cascade: stage 0 checks without runs, stage 1 an early check on search_val, stage 2 a screen on all of search_val, stage 3 the gate on the gate split, then a report on heldout.](../assets/diagrams/cascade-light.svg){ .hylo-diagram .only-light }
+![The cascade: stage 0 checks without runs, stage 1 an early check on search_val, stage 2 a screen on all of search_val, stage 3 the gate on the gate split, then a report on heldout.](../assets/diagrams/cascade-dark.svg){ .hylo-diagram .only-dark }
+
 | Stage | Runs on | What happens |
 |---|---|---|
 | 0 | nothing yet | stage-0 checks: reject patches that touch a protected section, are invalid or already archived, or reference (by store id, or by a path inside a sealed artifact) an artifact that was modified, built from gate or held-out runs, or (for behaviour artifacts) is of unknown provenance; a path to a directory without `artifact.json` is not checked; optional world-model pre-screen |
@@ -92,6 +95,9 @@ not protected.
 ## Splits
 
 A campaign needs four disjoint splits, which the `rsi` split scheme provides.
+
+![The four splits: search for diagnosis and generators, search_val for screening and learners, gate for the gate, heldout for the report to the approver.](../assets/diagrams/splits-light.svg){ .hylo-diagram .only-light }
+![The four splits: search for diagnosis and generators, search_val for screening and learners, gate for the gate, heldout for the report to the approver.](../assets/diagrams/splits-dark.svg){ .hylo-diagram .only-dark }
 
 | Split | MuJoCo reach seeds | LIBERO init states | Used for |
 |---|---|---|---|

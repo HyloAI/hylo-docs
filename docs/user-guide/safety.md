@@ -17,15 +17,8 @@ The shield does not cover two cases:
 
 ## What the shield does
 
-```mermaid
-flowchart LR
-    A[agent proposes an action] --> F[finite check]
-    F --> W[workspace guard<br/>from the env spec]
-    W --> G[configured guards<br/>max_delta, guards: ...]
-    G --> B[bounds clamp]
-    B --> E[environment]
-    F -. non-finite .-> X[safety_abort]
-```
+![Every action passes the finite check, the workspace guard, the configured guards and the bounds clamp before the environment; a non-finite action aborts the episode.](../assets/diagrams/safety-shield-light.svg){ .hylo-diagram .only-light }
+![Every action passes the finite check, the workspace guard, the configured guards and the bounds clamp before the environment; a non-finite action aborts the episode.](../assets/diagrams/safety-shield-dark.svg){ .hylo-diagram .only-dark }
 
 - **Mandatory guards.** A NaN or infinite action aborts the episode. The bounds clamp runs last, so no guard can
   push an action out of the environment's action space.
