@@ -1,0 +1,112 @@
+# The public documentation site: product docs only (no research notes, strategy summary, RFCs or internal design
+# documents). Deployed to https://hyloai.github.io/hylo-docs/ with:
+#   uv run mkdocs gh-deploy -f docs/mkdocs.public.yml --force      (from the development workspace)
+INHERIT: mkdocs.yml
+site_url: https://hyloai.github.io/hylo-docs/
+site_dir: site-public
+repo_url: https://github.com/HyloAI/hylo-docs
+repo_name: HyloAI/hylo-docs
+copyright: Copyright 2026 Hylo AI · Apache License 2.0
+exclude_docs: |
+  *.inc.md
+  research/
+  rfcs/
+  EXECUTIVE-SUMMARY.md
+  design/*
+  !design/overview.md
+  assets/figures/studio-*.png
+hooks:
+  - mkdocs/public_hook.py
+
+nav:
+  - Home: index.md
+  - User Guide:
+      - Getting started:
+          - getting-started/installation.md
+          - getting-started/quickstart.md
+          - getting-started/concepts.md
+          - getting-started/examples.md
+      - Running:
+          - user-guide/experiments.md
+          - user-guide/policies.md
+          - user-guide/safety.md
+          - user-guide/security.md
+      - Learning and improvement:
+          - user-guide/learning.md
+          - user-guide/campaigns.md
+          - user-guide/store.md
+      - Deployment:
+          - user-guide/deployment.md
+          - user-guide/studio.md
+      - Configuration:
+          - configuration/profiles.md
+          - configuration/environment-variables.md
+          - configuration/deployments-repo.md
+          - Experiment config schema: harness/experiment-schema.md
+  - Benchmarking:
+      - benchmarking/index.md
+      - benchmarking/protocols.md
+      - benchmarking/leaderboard.md
+  - Developer Guide:
+      - developer-guide/contributing.md
+      - developer-guide/testing.md
+      - developer-guide/troubleshooting.md
+      - developer-guide/versioning.md
+      - developer-guide/docs.md
+      - Tutorials:
+          - developer-guide/adding-a-policy.md
+          - developer-guide/adding-an-environment.md
+          - developer-guide/adding-a-learner.md
+      - Extending:
+          - harness/extending.md
+          - harness/plugin-system.md
+          - developer-guide/plugin-catalogue.md
+      - Interfaces:
+          - harness/interfaces/environment.md
+          - harness/interfaces/agent.md
+          - harness/interfaces/reasoner.md
+          - harness/interfaces/memory.md
+          - harness/interfaces/benchmark.md
+          - harness/interfaces/improvement.md
+      - Internals:
+          - harness/execution-lifecycle.md
+          - harness/dependency-graph.md
+  - Architecture: design/overview.md
+  - API Reference:
+      - api/index.md
+      - Core contracts:
+          - api/contracts.md
+          - api/kernel.md
+          - api/config.md
+          - api/artifacts-and-store.md
+          - api/formats.md
+      - Packages:
+          - api/packages/index.md
+          - Harness:
+              - hylo-core: api/packages/hylo-core.md
+              - hylo-eval: api/packages/hylo-eval.md
+              - hylo-agents: api/packages/hylo-agents.md
+              - hylo-memory: api/packages/hylo-memory.md
+              - hylo-learn: api/packages/hylo-learn.md
+              - hylo-evolve: api/packages/hylo-evolve.md
+              - hylo-catalog: api/packages/hylo-catalog.md
+              - hylo-policies: api/packages/hylo-policies.md
+              - hylo-cli: api/packages/hylo-cli.md
+          - Harness adapters:
+              - hylo-policy-lerobot: api/packages/hylo-policy-lerobot.md
+              - hylo-policy-openpi: api/packages/hylo-policy-openpi.md
+              - hylo-reasoner-llm: api/packages/hylo-reasoner-llm.md
+              - hylo-proposer-llm: api/packages/hylo-proposer-llm.md
+              - hylo-data-video: api/packages/hylo-data-video.md
+          - Bench:
+              - hylo-bench: api/packages/hylo-bench.md
+              - hylo-env-mujoco: api/packages/hylo-env-mujoco.md
+              - hylo-env-libero: api/packages/hylo-env-libero.md
+          - Serve:
+              - hylo-serve: api/packages/hylo-serve.md
+              - hylo-env-lerobot-robot: api/packages/hylo-env-lerobot-robot.md
+          - Studio:
+              - hylo-playground: api/packages/hylo-playground.md
+          - Plugins:
+              - hylo-plugin-examples: api/packages/hylo-plugin-examples.md
+  - CLI Reference: cli/index.md

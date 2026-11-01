@@ -6,3 +6,4 @@ references/*/*.err
 __pycache__/
 
 site/
+site-public/
