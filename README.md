@@ -1,7 +1,32 @@
-# hylo-docs
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset=".github/assets/banner-dark.svg">
+    <img src=".github/assets/banner-light.svg" width="100%" alt="hylo-docs: guides, benchmarking, design, RFCs and experiment records for the Hylo stack">
+  </picture>
+</p>
+
+<p align="center">
+  <a href="LICENSE"><img alt="License: Apache-2.0" src="https://img.shields.io/badge/license-Apache--2.0-c8442d?style=flat-square"></a>
+  <img alt="MkDocs Material" src="https://img.shields.io/badge/built%20with-MkDocs%20Material-171c22?style=flat-square">
+  <a href="https://hyloai.github.io/hylo-docs/"><img alt="Public site" src="https://img.shields.io/badge/site-hyloai.github.io%2Fhylo--docs-5b6168?style=flat-square"></a>
+</p>
+
+<p align="center">
+  <a href="https://hyloai.github.io/"><b>Website</b></a> ·
+  <a href="https://hyloai.github.io/hylo-docs/"><b>Docs</b></a> ·
+  <a href="https://hyloai.github.io/hylo-docs/getting-started/quickstart/"><b>Quickstart</b></a> ·
+  <a href="https://github.com/HyloAI"><b>All repositories</b></a>
+</p>
 
 Documentation for [Hylo](https://hyloai.github.io/), the stack for physical AI: user guide, benchmarking, developer
 guide, design and RFCs, research notes and experiment records, API and CLI reference. Built with MkDocs Material.
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset=".github/assets/map-dark.svg">
+    <img src=".github/assets/map-light.svg" width="100%" alt="Eight sections: getting started, user guide, configuration, benchmarking, developer guide, design and RFCs (internal), research (internal), reference">
+  </picture>
+</p>
 
 ```bash
 # from the development workspace (the repositories side by side; hylo-harness: dev/bootstrap.sh)
@@ -15,7 +40,7 @@ uv run mkdocs build -f docs/mkdocs.yml --strict # what CI would run; output in d
 | `docs/` | the pages (Markdown) and `assets/` (diagrams, figures, stylesheet) |
 | `mkdocs.yml` | site configuration and navigation |
 | `mkdocs/gen_pages.py` | pages generated at build time from the code repositories: harness reference docs, CLI reference, plugin catalogue, examples, formats |
-| `mkdocs/figures/` | scripts that regenerate the figures from recorded runs |
+| `mkdocs/figures/` | scripts that regenerate the figures from recorded runs, and the README art of every repository (`readme_art.py`) |
 | `references/` | third-party sources studied in the research notes (read-only, gitignored; `MANIFEST.md` records URL, commit and licence) |
 
 **Public site:** https://hyloai.github.io/hylo-docs/ (product docs only: no research notes, strategy summary, RFCs
@@ -27,6 +52,13 @@ uv run mkdocs gh-deploy -f mkdocs.public.yml --force --no-history
 
 Generated pages need the code repositories checked out next to this one; without them the build still succeeds and
 those pages say what is missing.
+
+**README art:** the banners, stack maps and diagrams in each repository's `.github/assets/` (light and dark) come from
+one script; edit it, not the SVGs:
+
+```bash
+uv run --no-project --with fonttools --with uharfbuzz --with pillow python docs/mkdocs/figures/readme_art.py
+```
 
 ## License
 
