@@ -466,6 +466,239 @@ def placement(T: dict) -> Doc:
     return d
 
 
+# ---------------------------------------------------------------- 14. tool-calling agents: proposal and receipt
+def tool_agent_loop(T: dict) -> Doc:
+    d = Doc(960, 400, T, "A tool-calling agent's loop",
+            "The chat model measures with read tools and gets results back. An action goes as a proposal through the "
+            "kernel and the safety shield to the environment, and the model gets a measured receipt with new images. "
+            "The task's check scores the episode and is hidden from the model. Every event is in a hash-chained trace.")
+    d.card()
+    node(d, 40, 150, 180, 72, "Chat model")
+    d.rect(282, 36, 260, 254, "sunk", "line2", rx=16)
+    d.text(302, 68, "Tools", "b", 18, "ink")
+    node(d, 312, 88, 200, 60, "Read tools", "soft")
+    node(d, 312, 196, 200, 60, "Action tool", "accent")
+    node(d, 614, 196, 150, 60, "Kernel and\nshield", "kernel", size=16)
+    node(d, 800, 196, 120, 60, "Environment", size=16)
+    node(d, 790, 88, 140, 60, "Task check", "ghost", size=16)
+    d.text(860, 74, "hidden from model", "m", 15, "muted", anchor="middle")
+    d.arrow([(222, 172), (266, 172), (266, 118), (308, 118)], "muted", both=True, rounded=12)
+    d.label(266, 146, "measure", size=15)
+    d.arrow([(222, 202), (266, 202), (266, 226), (308, 226)], "accent", rounded=12)
+    d.arrow([(514, 226), (610, 226)], "accent", 2.2)
+    d.label(562, 214, "proposal", fill="accent", size=15)
+    d.arrow([(766, 226), (796, 226)], "accent", 2.2)
+    d.arrow([(860, 194), (860, 152)], "faint", 1.6, dash="4 4")
+    d.arrow([(860, 258), (860, 318), (130, 318), (130, 226)], "muted", rounded=14)
+    d.label(480, 324, "receipt and new images", size=15)
+    node(d, 40, 346, 880, 36, "Trace: hash-chained events", "ghost", size=16)
+    return d
+
+
+# ---------------------------------------------------------------- 17. spatial memory: write while visible
+def spatial_recall(T: dict) -> Doc:
+    d = Doc(960, 280, T, "Remembering what was seen",
+            "While the targets are visible, the reasoner perceives them and writes them to spatial memory. Once they "
+            "are hidden, it queries the memory and acts on the remembered positions.")
+    d.card()
+    d.rect(30, 26, 300, 150, "sunk", "line2", rx=16)
+    d.text(50, 58, "Visible", "b", 18, "ink")
+    d.rect(350, 26, 580, 150, "sunk", "line2", rx=16)
+    d.text(370, 58, "Hidden", "b", 18, "ink")
+    node(d, 60, 88, 240, 60, "Perceive and write", "soft")
+    node(d, 380, 88, 220, 60, "Query memory")
+    node(d, 670, 88, 230, 60, "Remembered target", "accent")
+    d.arrow([(602, 118), (666, 118)], "accent", 2.2)
+    node(d, 380, 206, 220, 50, "Spatial memory", "kernel", size=16.5)
+    d.arrow([(180, 150), (180, 231), (376, 231)], "accent", rounded=12)
+    d.label(250, 225, "write", fill="accent", size=15)
+    d.arrow([(490, 204), (490, 152)], "muted")
+    d.label(530, 186, "recall", size=15)
+    return d
+
+
+# ---------------------------------------------------------------- 18. action memory: a steered decision
+def action_steer(T: dict) -> Doc:
+    d = Doc(960, 300, T, "One decision with action memory",
+            "The policy's own key retrieves the most similar verified segments from the bank. Outliers are dropped, "
+            "the rest form a prior and a start time, and flow sampling starts from the prior while the policy still "
+            "sees the current observation. With nothing usable, the policy runs unchanged.")
+    d.card()
+    names = [("Observation", "plain"), ("Retrieve\ntop k", "soft"), ("Drop\noutliers", "soft"),
+             ("Prior and\nstart time", "soft"), ("Flow\nsampling", "accent"), ("Action\nchunk", "plain")]
+    w, g, y, h = 124, 34, 110, 70
+    x0 = (960 - 6 * w - 5 * g) / 2
+    cx = [x0 + i * (w + g) + w / 2 for i in range(6)]
+    for i, (t, k) in enumerate(names):
+        node(d, x0 + i * (w + g), y, w, h, t, k, size=16)
+        if i < 5:
+            d.arrow([(x0 + i * (w + g) + w + 4, y + h / 2), (x0 + (i + 1) * (w + g) - 4, y + h / 2)],
+                    "accent" if i else "muted", 2)
+    d.label(x0 + w + g / 2, y + h / 2 - 12, "key", size=15)
+    d.arrow([(cx[0], y - 2), (cx[0], 60), (cx[4], 60), (cx[4], y - 4)], "muted", rounded=12, dash="5 4")
+    d.label((cx[0] + cx[4]) / 2, 66, "current observation", size=15)
+    node(d, cx[1] - 75, 222, 150, 50, "Action bank", "kernel", size=16)
+    d.arrow([(cx[1], 220), (cx[1], y + h + 4)], "accent")
+    node(d, cx[3] - 80, 222, 160, 50, "Unchanged policy", "ghost", size=16)
+    d.arrow([(cx[3], y + h + 2), (cx[3], 218)], "faint", 1.6, dash="4 4")
+    d.label(cx[3] + 10, 206, "nothing usable", "start", size=15)
+    return d
+
+
+# ---------------------------------------------------------------- 19. skills: status follows evidence
+def skill_status(T: dict) -> Doc:
+    d = Doc(960, 240, T, "A skill's status",
+            "A new skill is proposed. A passed gate or a successful replay verifies it; a failed gate with no gain "
+            "refutes it; a gain that is not significant leaves it proposed. A verified skill that fails revalidation "
+            "is deprecated.")
+    d.card()
+    node(d, 40, 90, 180, 60, "Proposed")
+    node(d, 470, 40, 180, 60, "Verified", "accent")
+    node(d, 470, 150, 180, 60, "Refuted", "ghost")
+    node(d, 790, 40, 130, 60, "Deprecated", "ghost", size=16)
+    d.arrow([(222, 110), (300, 110), (300, 70), (466, 70)], "accent", rounded=12)
+    d.label(383, 62, "gate passed", fill="accent", size=15)
+    d.arrow([(222, 130), (300, 130), (300, 180), (466, 180)], "muted", rounded=12)
+    d.label(383, 172, "no gain", size=15)
+    d.arrow([(652, 70), (786, 70)], "muted")
+    d.label(719, 62, "fails later", size=15)
+    d.text(130, 182, "not significant: retest", "m", 15, "muted", anchor="middle")
+    return d
+
+
+# ---------------------------------------------------------------- 20. lessons: one experience round
+def experience_round(T: dict) -> Doc:
+    d = Doc(960, 330, T, "One round with experience",
+            "The proposer reads lessons and skill status and proposes candidates. The campaign's gate decides them and "
+            "the archive records the verdicts. From the archive, skills are derived and the lessons that candidates "
+            "cited are credited; a reflector adds lesson operations from development episodes.")
+    d.card()
+    node(d, 380, 30, 200, 60, "Proposer", "accent")
+    node(d, 720, 135, 200, 60, "Campaign gate", "kernel")
+    node(d, 380, 240, 200, 60, "Archive")
+    node(d, 40, 135, 200, 60, "Skills and lessons", "soft", size=16.5)
+    node(d, 380, 135, 200, 60, "Reflector", "ghost")
+    d.arrow([(582, 60), (820, 60), (820, 131)], "accent", rounded=14)
+    d.label(700, 66, "candidates", fill="accent", size=15)
+    d.arrow([(820, 197), (820, 270), (584, 270)], "muted", rounded=14)
+    d.label(700, 276, "verdicts", size=15)
+    d.arrow([(376, 270), (140, 270), (140, 199)], "muted", rounded=14)
+    d.label(258, 276, "derive, credit", size=15)
+    d.arrow([(140, 131), (140, 60), (376, 60)], "accent", rounded=14)
+    d.label(258, 66, "lessons, skill status", fill="accent", size=15)
+    d.arrow([(376, 165), (244, 165)], "muted", dash="5 4")
+    d.label(310, 158, "operations", size=15)
+    return d
+
+
+# ---------------------------------------------------------------- 21. memory: when it is written and read
+def memory_timeline(T: dict) -> Doc:
+    d = Doc(960, 340, T, "When memory is written and read",
+            "During an episode, spatial facts are written while visible and memory is read at every decision. After "
+            "development runs, a bank is built from verified successes. During a campaign, verdicts become skills and "
+            "credit lessons, which the proposer reads. At evaluation nothing is written: banks, skills and lessons are "
+            "frozen and only read.")
+    d.card()
+    cols = [("In an episode", 150), ("After runs", 350), ("In a campaign", 550), ("At evaluation", 750)]
+    d.arrow([(150, 40), (934, 40)], "faint", 1.6)
+    for name, x in cols:
+        d.text(x + 90, 74, name, "sb", 17, "accent" if name == "At evaluation" else "ink", anchor="middle")
+    d.text(40, 136, "Writes", "b", 17, "muted")
+    d.text(40, 250, "Reads", "b", 17, "muted")
+    writes = [("Spatial facts\nwhile visible", "soft"), ("Bank from\nverified successes", "soft"),
+              ("Skills from verdicts,\nlesson credits", "soft"), ("Nothing", "ghost")]
+    reads = [("Skills at start,\nmemory each decision", "plain"), ("Nothing", "ghost"),
+             ("Lessons and skill\nstatus, by proposer", "plain"), ("Frozen memory,\nread only", "accent")]
+    for (w, wk), (r, rk), (_, x) in zip(writes, reads, cols):
+        node(d, x, 96, 180, 70, w, wk, size=15.5)
+        node(d, x, 210, 180, 70, r, rk, size=15.5)
+    d.add(f'<line x1="742" y1="92" x2="742" y2="286" stroke="{d.c("accent")}" stroke-width="3" '
+          'stroke-linecap="round"/>')
+    d.text(742, 312, "freeze", "sb", 15, "accent", anchor="middle")
+    return d
+
+
+# ---------------------------------------------------------------- 22. worlds: from language to a world
+def world_layers(T: dict) -> Doc:
+    d = Doc(960, 470, T, "From language to a world",
+            "The chat model decides what to do and nothing else. Edits go as patches, are validated against a stage "
+            "revision, and are compiled with robot packs into a MuJoCo model; a build starts a new world generation. "
+            "Actions name that generation and run through controllers. What happened comes back as measured receipts "
+            "and checks.")
+    d.card()
+    node(d, 330, 26, 300, 54, "Chat model", "accent")
+    d.text(316, 58, "decides what", "m", 15, "muted", anchor="end")
+    for i, t in enumerate(("Patches", "Stage revisions", "Compiled model")):
+        node(d, 120, 120 + i * 80, 280, 52, t, "soft" if i == 0 else "plain", size=16.5)
+    for i, t in enumerate(("Actions", "Controllers")):
+        node(d, 560, 120 + i * 80, 280, 52, t, "soft" if i == 0 else "plain", size=16.5)
+    node(d, 330, 360, 300, 56, "World", "kernel")
+    d.arrow([(430, 82), (430, 100), (260, 100), (260, 116)], "accent", rounded=10)
+    d.label(345, 106, "edit", fill="accent", size=15)
+    d.arrow([(530, 82), (530, 100), (700, 100), (700, 116)], "accent", rounded=10)
+    d.label(615, 106, "act", fill="accent", size=15)
+    d.arrow([(260, 174), (260, 196)], "muted")
+    d.label(272, 190, "validated", "start", size=15)
+    d.arrow([(260, 254), (260, 276)], "muted")
+    d.label(272, 270, "packs by name", "start", size=15)
+    d.arrow([(260, 334), (260, 388), (326, 388)], "muted", rounded=10)
+    d.label(250, 368, "new generation", "end", size=15)
+    d.arrow([(700, 174), (700, 196)], "muted")
+    d.label(712, 190, "bound to generation", "start", size=15)
+    d.arrow([(700, 254), (700, 330), (560, 330), (560, 356)], "muted", rounded=10)
+    d.label(630, 336, "simulated steps", size=15)
+    d.arrow([(632, 400), (900, 400), (900, 53), (634, 53)], "accent", rounded=14)
+    d.label(900, 240, "measured", fill="accent", size=15)
+    d.text(480, 450, "the system decides what is valid and what happened", "m", 15, "muted", anchor="middle")
+    return d
+
+
+# ---------------------------------------------------------------- 24. memory: four layers of an agent
+def memory_layers(T: dict) -> Doc:
+    d = Doc(960, 360, T, "Memory at four layers of an agent",
+            "Each kind of memory attaches to one layer of an agent: lessons to the improvement loop's proposer, once "
+            "per round; skills to the agent's configuration, once per episode; spatial memory to the reasoner, at each "
+            "reasoning step; action memory to the policy's sampling, at each decision.")
+    d.card()
+    group(d, 200, 500, 44, "Agent layer")
+    group(d, 620, 900, 44, "Memory")
+    rows = [("per round", "Improvement loop", "Lessons", "cited"), ("per episode", "Agent configuration", "Skills", "applied"),
+            ("per step", "Reasoner", "Spatial memory", "recalled"), ("per decision", "Policy sampling", "Action memory", "biases")]
+    for i, (rate, layer, mem, verb) in enumerate(rows):
+        y = 70 + i * 70
+        d.text(40, y + 33, rate, "m", 15, "muted")
+        node(d, 200, y, 300, 52, layer, size=16.5)
+        node(d, 620, y, 280, 52, mem, "soft", size=16.5)
+        d.arrow([(618, y + 26), (504, y + 26)], "accent")
+        d.label(560, y + 20, verb, fill="accent", size=15)
+    d.arrow([(150, 72), (150, 326)], "faint", 1.6)
+    d.text(160, 348, "faster, closer to the motor command", "m", 14, "muted")
+    return d
+
+
+# ---------------------------------------------------------------- 23. skills: from evidence to reuse
+def skill_journey(T: dict) -> Doc:
+    d = Doc(960, 320, T, "From evidence to reuse",
+            "Improvement campaigns and research sessions add skills that passed a gate; role campaigns add recipes "
+            "that a model-free replay confirmed. Agents find them in the library by instruction and tags, by "
+            "similarity to the instruction, or by the reasons a goal failed.")
+    d.card()
+    srcs = [("Improvement campaign", "gate"), ("Research session", "gate"), ("Role campaign", "replay")]
+    uses = [("Skills agent", "match"), ("Code agent", "similar"), ("World worker", "by failure")]
+    for i, (s, ev) in enumerate(srcs):
+        y = 40 + i * 92
+        node(d, 40, y, 220, 60, s, "panel", size=16)
+        d.arrow([(262, y + 30), (330, y + 30), (330, 160), (396, 160)], "muted", rounded=12)
+        d.label(296, y + 16, ev, size=15)
+    node(d, 400, 110, 160, 100, "Skill library", "kernel")
+    for i, (u, how) in enumerate(uses):
+        y = 40 + i * 92
+        node(d, 720, y, 200, 60, u, size=16)
+        d.arrow([(562, 160), (630, 160), (630, y + 30), (716, y + 30)], "accent", rounded=12)
+        d.label(674, y + 16, how, fill="accent", size=15)
+    return d
+
+
 # ---------------------------------------------------------------- the home page: the loop and the stack
 def home_stack(T: dict) -> Doc:
     return stack_map(T, Repo("docs", ("hylo-", "docs"), "", set()))
@@ -477,7 +710,10 @@ DIAGRAMS = {"architecture": architecture, "strategy-development": strategy_devel
             "hylo-loop": hylo_loop, "stack": home_stack, "concept-map": concept_map, "episode-step": episode_step,
             "safety-shield": safety_shield, "learning-flow": learning_flow, "cascade": cascade, "runtimes": runtimes,
             "placement": placement, "bench-flow": bench_flow, "deployments-sync": deployments_sync,
-            "studio-plane": studio_plane}
+            "studio-plane": studio_plane, "tool-agent-loop": tool_agent_loop,
+            "spatial-recall": spatial_recall, "action-steer": action_steer,
+            "skill-status": skill_status, "experience-round": experience_round, "memory-timeline": memory_timeline,
+            "world-layers": world_layers, "memory-layers": memory_layers, "skill-journey": skill_journey}
 
 
 if __name__ == "__main__":

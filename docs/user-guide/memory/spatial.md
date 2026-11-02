@@ -5,6 +5,31 @@ table at t = 4.2 s". An agent writes what it perceives while it can see it, and 
 reference backend is `sqlite`: one SQLite file (or `:memory:` for a single run), queried by key, kind, time, place
 and text.
 
+![While the targets are visible, the reasoner perceives them and writes them to spatial memory; once they are hidden, it queries the memory and acts on the remembered positions.](../../assets/diagrams/spatial-recall-light.svg){ .hylo-diagram .only-light }
+![While the targets are visible, the reasoner perceives them and writes them to spatial memory; once they are hidden, it queries the memory and acts on the remembered positions.](../../assets/diagrams/spatial-recall-dark.svg){ .hylo-diagram .only-dark }
+
+## Design
+
+**The problem.** Perception is intermittent: objects leave the field of view, are hidden by the arm, or are
+occluded by other objects. A reasoner that decides only from what it sees right now loses its target whenever
+perception drops out. Spatial memory gives the reasoner a model of the scene that outlasts a single observation.
+
+**When it is written and read.** The reasoner writes every object it can see at each reasoning step; an unchanged
+scene writes nothing new, because identical content is skipped. It reads when perception no longer shows the
+objects. Everything is scoped to the episode, so one episode's objects never turn up in another unless a run shares
+the file on purpose.
+
+**Time and place are fields, not text.** "Where was it" is a distance query and "what was true at 4 s" is a time
+range; both need numbers with real range semantics, not positions and times dissolved into a text embedding.
+
+**A newer fact replaces an older one, and the older one is kept.** An object that moved must be found at its new
+place, but a replay must still be able to show what the agent believed at the time. So each fact has two time
+axes: when it was observed, and when it stopped being valid. A remembered place that turns out to be empty is
+expired, not trusted forever.
+
+**Seen and remembered objects take the same path.** The chooser decides among objects whatever their source, so
+memory adds no second decision path that could behave differently; only the trace says which were remembered.
+
 ## Items
 
 Every fact is a memory item:
@@ -49,6 +74,21 @@ is ever removed from the file.
 Each hit has a score (confidence and, for spatial queries, closeness) and the time it stopped being valid, if it
 did.
 
+??? info "How it is stored"
+
+    One table, `items`, with an index on kind and key, one on frame and position, and one on content hash. Each row
+    keeps both time axes:
+
+    | Columns | Holds |
+    |---|---|
+    | `t_start`, `t_end` | when the fact was observed (event time) |
+    | `valid_from`, `valid_to` | when it was true; `valid_to` is set when a newer item with the same key arrives |
+    | `recorded_at`, `expired_at` | when it was written; when `forget` expired it |
+    | `frame_id`, `px`, `py`, `pz` | position, for the bounding-box prefilter before the exact radius check |
+    | `content_hash` | for duplicate detection |
+
+    `snapshot()` hashes the content of the unexpired rows, so a run can record which state of memory it started from.
+
 ## Using it in an agent
 
 Composable agents pair a reasoner (slow, event-triggered decisions) with a policy (every step). The reasoner gets
@@ -87,6 +127,26 @@ def recall(rctx, near_xy, radius=0.2):
 ```
 
 Emit the events yourself: they are what makes a decision from memory visible in a replay.
+
+## In the trace
+
+From a recorded `touch the yellow pad` episode (abridged): three objects written at the start, then, once the pads
+are hidden, the same target chosen from memory.
+
+??? example "A recorded episode's memory events"
+
+    ```json
+    {"type": "memory.write", "seq": 3,
+     "payload": {"op": "write", "n": 3, "events": [["ADD", "048a922f…"], ["ADD", "877e2628…"], ["ADD", "8a394917…"]]}}
+    {"type": "agent.decision", "seq": 4,
+     "payload": {"kind": "subgoal", "trigger": "episode_start", "rationale": "instruction names 'yellow'; closest colour is obj_1",
+                 "inputs": {"target": "obj_1", "object_source": "seen", "n_objects": 3}}}
+    {"type": "memory.retrieval", "seq": 35,
+     "payload": {"query": {"kind": "spatial", "scope": "episode"}, "n_hits": 3, "hits": ["obj_0", "obj_1", "obj_2"]}}
+    {"type": "agent.decision", "seq": 36,
+     "payload": {"kind": "subgoal", "trigger": "perception_change", "rationale": "instruction names 'yellow'; closest colour is obj_1",
+                 "inputs": {"target": "obj_1", "object_source": "remembered", "n_objects": 3}}}
+    ```
 
 ## What it achieved
 

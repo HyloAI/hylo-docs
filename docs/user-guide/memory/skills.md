@@ -5,6 +5,61 @@ subgoal plan, a reference to trained weights or to a sealed program, or a list o
 folder with one JSON file per skill version (`<name>@<version>.json`). Agents look skills up when a task starts,
 when a code agent writes its next block, when a proposer plans a round, or when a goal fails.
 
+## Why skills
+
+The expensive part of improving an agent is not finding a change but proving it: a campaign spends hundreds of paired
+episodes to show that one change helps. Without a place to keep that result, it stays in one campaign's archive. The
+next task of the same family starts from the old configuration, a code agent writes the same grasp again, and the
+next campaign may propose a change that was already refuted. A skill is the unit in which a proven result is kept,
+found again and reused, with its proof attached.
+
+## How a skill moves through the system
+
+A skill passes through four stages, and each stage has one owner:
+
+1. **Produced** by a process that already measures: an improvement campaign, a research session whose program a
+   campaign promoted, or a role campaign. A model may suggest the change, but it never creates the skill.
+2. **Tested** by that process's own independent check: a paired gate on episodes the change was not developed on,
+   or, for recipes, a replay without any model on fresh copies of the task. The result decides the status.
+3. **Found** in the library through the condition it declares, by whichever agent can use it: by instruction and
+   tags, by similarity to the instruction, or by the reasons a goal is failing.
+4. **Applied** in the form the consuming layer understands, for one episode or one retry, and recorded as an
+   event, so that its effect can be measured again later.
+
+![Improvement campaigns and research sessions add skills that passed a gate; role campaigns add recipes that a model-free replay confirmed. Agents find them in the library by instruction and tags, by similarity to the instruction, or by the reasons a goal failed.](../../assets/diagrams/skill-journey-light.svg){ .hylo-diagram .only-light }
+![Improvement campaigns and research sessions add skills that passed a gate; role campaigns add recipes that a model-free replay confirmed. Agents find them in the library by instruction and tags, by similarity to the instruction, or by the reasons a goal failed.](../../assets/diagrams/skill-journey-dark.svg){ .hylo-diagram .only-dark }
+
+## Design
+
+**A skill is data, never code.** A skill is a configuration patch, a plan template, a rule set, a weight reference,
+a list of recorded tool calls, or a reference to a sealed program. Data can be read by a person, compared between
+versions, applied to an agent and taken back afterwards. Program skills are the one place where code is involved,
+and there the skill holds only the program's path and digest: the program runs inside the code agent's sandbox,
+and only after its digest has been checked again.
+
+**Skills come only from places that already produce evidence.** Nothing writes a verified skill directly, not even
+a model that is sure. Steering and weights skills come from improvement campaigns, program skills from research
+sessions whose programs a campaign promoted, recipe skills from role campaigns. Each source has its own test: a
+paired gate for the first two, a replay without a model on fresh copies of the task for recipes.
+
+**Status follows the evidence.** A new skill is proposed; a passed gate verifies it; a failed gate with no gain
+refutes it; a gain that was not significant leaves it proposed, with the numbers attached, so it can be tested
+again with more episodes. Refuted skills stay in the library: a proposer that sees them does not suggest them again.
+
+**A skill says when it applies.** Benchmark tasks come in families with recognisable instructions, so a trigger can
+be an instruction pattern with named slots (`put both the {a} and the {b} in the basket`), task tags or an
+environment. Worlds have no task families: the same failure turns up under many different requests. There a trigger
+is a failure signature, the reason codes a goal check reported (`NOT_LIFTED`), so a recipe is offered because the
+task is failing in the same way, not because it has the same name.
+
+**A skill applies for one episode.** The `skills` agent applies the best match of each kind when an episode starts
+and takes it back when the episode ends, so a skill that does not fit one task cannot leak into the next. One skill
+per kind keeps the outcome attributable to it, and each application is a `skill.applied` trace event.
+
+**Models see verdicts, not statistics.** A proposer sees each skill's status, but not the gate's effect sizes or
+p-values: a proposer that read them could tune its proposals to the gate split, and the gate would stop being an
+independent test.
+
 ## Skill kinds
 
 | Kind | Body | Applied by |
@@ -18,6 +73,29 @@ when a code agent writes its next block, when a proposer plans a round, or when 
 
 Every skill also has a name, a version, a description (what a language model reads first), a trigger, a status,
 usage verdicts and its evidence.
+
+??? example "The verified skill from the MuJoCo memory example (its rationale omitted)"
+
+    ```json
+    {
+      "name": "skill-290658004a",
+      "version": "1",
+      "description": "sampling noise 3.0 is too wide for this policy; 0.99 keeps samples near the data",
+      "trigger": {"instruction_pattern": null, "task_tags": ["reach"], "env": "mujoco.planar_reach"},
+      "kind": "steering",
+      "body": {"steering": {"n_samples": 1, "noise_scale": 0.99}},
+      "status": "verified",
+      "verdicts": {},
+      "evidence": {
+        "verdict": "promoted", "candidate": "cand-290658004a", "digest": "4c9a55f25df13988",
+        "generator": "examples.noise_scale@0.1",
+        "effect": 0.42, "p_value": 2.56e-12, "n_pairs": 100, "gate_split": "gate", "wins": 43, "losses": 1
+      }
+    }
+    ```
+
+    The evidence ties the skill to the campaign candidate it came from (by id and content digest) and to the gate
+    result that verified it: 43 wins and 1 loss over 100 paired episodes.
 
 ## Triggers
 
@@ -36,12 +114,10 @@ ranked by how close the instruction is to the skill's description and to the ins
 
 ## Status
 
-```text
-proposed ──► verified ──► deprecated
-    └──────► refuted
-```
+![A new skill is proposed. A passed gate or a successful replay verifies it; a failed gate with no gain refutes it; a gain that is not significant leaves it proposed. A verified skill that fails revalidation is deprecated.](../../assets/diagrams/skill-status-light.svg){ .hylo-diagram .only-light }
+![A new skill is proposed. A passed gate or a successful replay verifies it; a failed gate with no gain refutes it; a gain that is not significant leaves it proposed. A verified skill that fails revalidation is deprecated.](../../assets/diagrams/skill-status-dark.svg){ .hylo-diagram .only-dark }
 
-New skills start as `proposed`. Only evidence moves them on:
+New skills start as `proposed`. Only evidence moves them on, and no other transition is allowed:
 
 | Evidence | Status |
 |---|---|
@@ -96,6 +172,17 @@ skill of each kind is applied for that episode only:
 
 Everything is undone at the end of the episode. Each application is a `skill.applied` event, and the episode ends
 with a summary of the skills used and the outcome, so results can be attributed to the skill.
+
+??? example "A skill.applied event"
+
+    ```json
+    {"type": "skill.applied", "seq": 3,
+     "payload": {"skill": "skill-290658004a@1", "kind": "steering", "bindings": {},
+                 "description": "sampling noise 3.0 is too wide for this policy; 0.99 keeps samples near the data"}}
+    ```
+
+The agent spec names the library by digest, for example
+`library(<digest>,verified=1,kinds=steering,recovery,plan)`.
 
 ### Program skills
 

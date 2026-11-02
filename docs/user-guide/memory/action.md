@@ -6,7 +6,37 @@ then. At each decision the agent retrieves similar segments and starts the polic
 from pure noise. The policy still integrates its own velocity field from the current observation, so memory biases
 the action; it never replays one.
 
+## Design
+
+**The problem.** A frozen policy repeats the same situations many times but learns nothing from them: it cannot be
+retrained in place, and every decision samples from scratch. Yet its own past successes are a record of what works in
+situations close to the present one. Action memory lets those successes inform the next decision without changing a
+single weight.
+
+**When it is written and read.** A bank is built after development runs, from the chunks of episodes the simulator
+judged successful, and then sealed. It is read at every policy decision. Across sessions, each session loads the
+previous bank frozen and saves a new one with its own verified successes added: a new artifact, never an edit.
+
+**Steer, do not replay.** Replaying a remembered chunk ignores everything that differs between then and now. Instead
+the remembered motion becomes the starting point of the policy's own flow sampling, and the policy's velocity field,
+which sees the current observation, carries it the rest of the way.
+
+**Confidence sets the strength.** Close, consistent neighbours start sampling late in the flow (a strong bias);
+distant or disagreeing neighbours start it early (a weak one). With nothing usable, the policy runs exactly as it
+would without memory.
+
+**Agreement before averaging.** The mean of two different motions is a motion neither of them made, so segments that
+disagree with the rest are dropped first. The gripper is voted, not averaged: a half-closed gripper is neither open
+nor closed.
+
+**The policy's own key.** The retrieval key is computed inside the forward pass the policy runs anyway (for SmolVLA,
+its pooled visual tokens), so retrieval costs no extra model call and compares situations the way the policy sees
+them.
+
 ## How a decision works
+
+![The policy's own key retrieves the most similar verified segments from the bank; outliers are dropped, the rest form a prior and a start time, and flow sampling starts from the prior while the policy still sees the current observation. With nothing usable, the policy runs unchanged.](../../assets/diagrams/action-steer-light.svg){ .hylo-diagram .only-light }
+![The policy's own key retrieves the most similar verified segments from the bank; outliers are dropped, the rest form a prior and a start time, and flow sampling starts from the prior while the policy still sees the current observation. With nothing usable, the policy runs unchanged.](../../assets/diagrams/action-steer-dark.svg){ .hylo-diagram .only-dark }
 
 1. The policy computes a retrieval key inside its own forward pass (for SmolVLA, its pooled visual tokens), so
    retrieval costs no extra encoder call.
@@ -20,8 +50,40 @@ the action; it never replays one.
    `t0_min` (confident, a strong bias) and `t0_max` (weak). With nothing usable, `t0 = 1`: exactly the unchanged
    policy.
 
-Each decision emits `memory.retrieval` with the candidates found and kept, the mean similarity, the dispersion, the
-confidence, `t0` and the source episodes of the top hits.
+??? info "The arithmetic"
+
+    For the kept segments `i` with similarity `s_i` and action chunk `a_i`:
+
+    ```text
+    w_i        = softmax(s_i / temperature)
+    prior      = Σ w_i · a_i                          motion dimensions
+    vote       = Σ w_i · sign(g_i)                    gripper dimension g
+    prior_g    = sign(vote) · mean |g_i|              nearest segment's g if |vote| < 0.2
+    s̄          = clip((Σ w_i · s_i − sim_floor) / (1 − sim_floor), 0, 1)
+    confidence = s̄ · exp(−dispersion / dispersion_scale)
+    t0         = t0_max − (t0_max − t0_min) · confidence
+    x_t0       = (1 − t0) · prior + t0 · noise        then the policy integrates from t0 to 0
+    ```
+
+    `dispersion` is the mean pairwise DTW distance between the kept segments.
+
+Each decision emits `memory.retrieval`. From a recorded MuJoCo episode: five candidates above the floor, four kept,
+started at a fixed `t0` of 0.3, with the source episode, step and similarity of each kept segment.
+
+??? example "A recorded retrieval"
+
+    ```json
+    {"type": "memory.retrieval", "seq": 3,
+     "payload": {"chunk_index": 0, "step": 0, "used_prior": true, "candidates": 5, "kept": 4,
+                 "mean_sim": 0.99958, "dispersion": 0.0536, "confidence": 0.8609, "t0": 0.3,
+                 "hits": [["mujoco.planar_reach_fixed-s30141-c701ae45", 0, 1.00002],
+                          ["mujoco.planar_reach_fixed-s30141-14b63ae5", 0, 1.00002],
+                          ["mujoco.planar_reach_fixed-s30147-9924dbb2", 0, 0.99914],
+                          ["mujoco.planar_reach_fixed-s30147-52489dc1", 0, 0.99914]]}}
+    ```
+
+The chosen chunk's provenance also records `t0` and the number of segments kept, and the agent spec records the
+bank: `bank(<digest>,n=<segments>,k=10,floor=0.95,t0=[0.1,0.7])`.
 
 ## Configuration
 
@@ -64,7 +126,20 @@ lives at small `t0`.
 
 A bank is a folder with `bank.npz` (keys, chunks, lengths) and `bank.json` (schema, digest, and each segment's
 task, step, progress and source episode); no pickle. It holds at most `capacity` segments (50,000 by default),
-oldest first out. Loading checks the content against the recorded digest.
+oldest first out. Keys are stored L2-normalised as float16, so similarity is a dot product. Loading checks the
+content against the recorded digest.
+
+??? example "A bank's bank.json"
+
+    ```json
+    {"schema": "hylo.action_bank/v0.1", "digest": "b6f269909aabce26", "n": 5623, "key_dim": 8,
+     "segments": [{"task_id": "mujoco/planar_reach_fixed", "step": 0, "progress": 0.0,
+                   "source": {"run_id": "control-search_val", "episode_id": "mujoco.planar_reach_fixed-s30100-41fd994e",
+                              "split": "search_val", "judge": "sim"}}]}
+    ```
+
+    The bank after six sessions (first of 5,623 segments shown): 8-dimensional keys, each segment traced to the
+    episode it came from and to who judged that episode a success.
 
 For LeRobot policies, build from the runs of development splits, with the policy's own keys:
 
