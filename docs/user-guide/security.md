@@ -42,6 +42,20 @@ machine.
    unpickles them and refuses object dtypes. A learner or adapter that loads third-party checkpoints follows that
    library's rules, for example PyTorch's `torch.load`.
 
+## Model-written programs
+
+`code.llm`, `code.program` and research submissions use AST validation and a restricted Python namespace. Imports,
+private attributes and file operations are restricted, and a watchdog interrupts Python execution. The program
+runs in a thread in the host process: this is not an operating-system jail, memory is not limited, and a call
+blocked in C code can stop only when it returns. For untrusted programs, use a separately isolated environment
+with bounded resources. The SafetyShield checks robot actions; it is not host-process isolation.
+
+Campaign approval controls promotion after evaluation. It does not prevent a candidate from executing during
+evaluation. Sealed program artifacts should be immutable and digest-pinned. Current validation has known gaps:
+a manifest marked `mutable` bypasses the digest check, and the code-candidate check does not bind an arbitrary
+agent configuration to the actual referenced program. Treat configs and candidates as trusted inputs until
+those checks are tightened; do not describe the current gate as a host-code security boundary.
+
 ## Studio roles
 
 Studio checks the token on every API call and maps it to a role:

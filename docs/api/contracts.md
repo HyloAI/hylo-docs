@@ -48,6 +48,20 @@ plugin must provide and the data that passes between the episode loop, environme
       heading_level: 3
       show_if_no_docstring: true
 
+## Robot and scene descriptions
+
+These data contracts connect environments with task-strategy tools and program agents. They do not import a simulator.
+
+::: hylo.core.robot
+    options:
+      heading_level: 3
+      show_if_no_docstring: true
+
+::: hylo.core.scene
+    options:
+      heading_level: 3
+      show_if_no_docstring: true
+
 ## Instruments
 
 ::: hylo.core.instrument

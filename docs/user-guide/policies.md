@@ -2,6 +2,10 @@
 
 This page shows how to run your model in Hylo and which agent to wrap it in.
 
+To construct task logic using perception and motion tools, see [Developing task strategies](developing-strategies.md).
+`code.program` runs a task program, while `code.llm` writes code during an episode. They use the same agent contract
+and execution kernel as the policy agents documented here.
+
 ## Policy and agent
 
 A **policy** returns action chunks from an observation. An **agent** holds a policy and decides how to use its

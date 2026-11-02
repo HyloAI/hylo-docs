@@ -82,6 +82,26 @@ def architecture(T: dict) -> Doc:
     return d
 
 
+def strategy_development(T: dict) -> Doc:
+    d = Doc(960, 330, T, "Task strategy development in the Hylo stack",
+            "A task requirement and robot tools produce a program. The program enters the same execution kernel "
+            "as an existing policy. Runs provide task validation. A baseline comparison is a separate step for "
+            "an improvement claim, followed by the campaign gate and versioned reuse.")
+    d.card()
+    node(d, 28, 40, 210, 64, "Task requirement")
+    node(d, 300, 40, 270, 64, "Robot tools and code", "soft")
+    node(d, 632, 40, 220, 64, "Program")
+    d.arrow([(240, 72), (296, 72)], "accent")
+    d.arrow([(572, 72), (628, 72)], "accent")
+    node(d, 28, 204, 210, 64, "Existing policy")
+    node(d, 300, 204, 270, 64, "Shared execution", "kernel")
+    node(d, 632, 204, 300, 64, "Runs and validation", "soft")
+    d.arrow([(240, 236), (296, 236)], "accent")
+    d.arrow([(742, 106), (742, 154), (436, 154), (436, 200)], "accent", rounded=12)
+    d.arrow([(572, 236), (628, 236)], "accent")
+    return d
+
+
 # ---------------------------------------------------------------- 2. repositories
 def repositories(T: dict) -> Doc:
     d = Doc(960, 440, T, "Hylo repositories and how they depend on each other",
@@ -431,7 +451,8 @@ def home_stack(T: dict) -> Doc:
     return stack_map(T, Repo("docs", ("hylo-", "docs"), "", set()))
 
 
-DIAGRAMS = {"architecture": architecture, "repositories": repositories, "episode-loop": episode_loop,
+DIAGRAMS = {"architecture": architecture, "strategy-development": strategy_development,
+            "repositories": repositories, "episode-loop": episode_loop,
             "improvement-loop": improvement_cycle, "splits": splits, "store": store, "deployment": deployment,
             "hylo-loop": hylo_loop, "stack": home_stack, "concept-map": concept_map, "episode-step": episode_step,
             "safety-shield": safety_shield, "learning-flow": learning_flow, "cascade": cascade, "runtimes": runtimes,

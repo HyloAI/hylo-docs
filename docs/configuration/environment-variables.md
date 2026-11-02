@@ -68,6 +68,19 @@ templates keep the token in `HYLO_TOKEN`. [Security](../user-guide/security.md) 
 | `TOKENIZERS_PARALLELISM` | tokenizers | `false`: no fork warnings in worker processes |
 | `TORCHDYNAMO_DISABLE` | torch | `1`: no `torch.compile` |
 
+## Strategy development
+
+| Variable | Read by | Meaning | Default |
+|---|---|---|---|
+| `HYLO_ASSETS` | robot and motion asset loaders | cache for downloaded robot/character assets | `~/.cache/hylo/assets` |
+| `HYLO_TOOLS_CACHE` | tool runner | worker requests, outputs and small model assets | `~/.cache/hylo/tools` |
+| `HYLO_TOOLS_THREADS` | tool runner | CPU threads per worker | `32` |
+| `HYLO_TOOLS_UV` | tool runner | `uv` executable used for independent worker environments | `uv` on PATH |
+
+Choose chat endpoints, model names and budgets in the model/session specification. API backends can read provider
+credentials from environment variables; keep credentials out of configs and recorded prompts. Model access and
+body-model registration requirements are backend-specific. See [Developing task strategies](../user-guide/developing-strategies.md).
+
 ## Development
 
 | Variable | Read by | Meaning | Default |

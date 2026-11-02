@@ -20,8 +20,14 @@
 
 The interface-validation prototype that preceded the packages was removed on 2026-10-31; it remains in the git history.
 
-A project website (landing page, public leaderboards from bench scorecards, posts) is planned as
-**hylo-site**; it does not exist yet. It will read scorecards and link to the documentation, like docs.
+The bilingual project website exists in `site/` (the `HyloAI/hyloai.github.io` repository). It is plain HTML with
+selected recorded examples and links to the documentation. `org-profile/` holds the GitHub organisation profile.
+Both introduce the wider stack, including task-strategy development; neither is a runtime dependency.
+
+Strategy development is implemented within these boundaries: harness owns `hylo-manip`, `hylo-tools` and
+`hylo-code-agents`; bench owns robot environments and `hylo-robosuite-contract`; Studio reads session files without
+importing their producer. Development can begin with a task requirement or an existing program. Independent
+evaluation and campaign promotion remain separate stages.
 
 ## 2. Dependencies
 
@@ -48,7 +54,7 @@ Rules (checked by `harness/dev/test_boundaries.py` over a development workspace)
 
 ## 3. How the leaves cooperate without importing each other
 
-Every format that one repository writes and another reads is defined in hylo-core:
+Shared runtime contracts are defined in hylo-core. Studio also reads producer-owned session records as data:
 
 | Format | Written by → read by | Defined in |
 |---|---|---|
@@ -61,6 +67,8 @@ Every format that one repository writes and another reads is defined in hylo-cor
 | Environment protocol (EnvServer) | any env server ↔ eval | `core.remote` |
 | Workcell API (hylo.workcell/v0.1) | serve implements → studio's control plane calls | `core.remote.workcell` |
 | `hylo` subcommands (entry-point group `hylo.commands`) | each package registers → `hylo` dispatches | `core.cli` |
+| Robot and scene contracts | environments ↔ manipulation tools, program agents and scene builders | `core.robot`, `core.scene` |
+| Research and workflow session records | code-agent workflows → Studio Research | producer JSON/JSONL files; optional fields read by Studio without imports |
 
 Changing one of these is a contract change: a versioned schema, compatibility for readers, and an RFC when it
 breaks something.

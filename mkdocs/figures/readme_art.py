@@ -275,10 +275,10 @@ def _rounded_path(pts, r) -> str:
 
 # ---------------------------------------------------------------- the stack
 LAYERS = [  # top to bottom
-    ("Workbench", "Run tasks, replay episodes, approve releases", [("studio", "studio")]),
+    ("Workbench", "Inspect development, runs and releases", [("studio", "studio")]),
     ("Evolution", "Turn experience into tested, stronger versions", [("harness", "harness · learn, evolve")]),
     ("Evaluation", "Measure every policy by the same standard", [("bench", "bench"), ("harness", "harness · eval")]),
-    ("Cognition", "Use what the robot has seen and done", [("harness", "harness · agents, memory")]),
+    ("Cognition", "Robot tools, programs, policies and memory", [("harness", "harness · manip, agents")]),
     ("Runtime", "Run policies on robots, within safety limits",
      [("serve", "serve"), ("deployments-template", "deployments-template")]),
     ("Kernel", "One kernel for models, simulators and robots", [("harness", "harness · core"),
@@ -399,10 +399,11 @@ def stack_map(T: dict, r: Repo) -> Doc:
 
 # ---------------------------------------------------------------- diagrams
 def harness_architecture(T: dict) -> Doc:
-    W, H = 960, 520
+    W, H = 960, 590
     d = Doc(W, H, T, "Packages of hylo-harness",
             "The packages of hylo-harness by layer. Interface: cli. Evolution: evolve and learn. Evaluation: eval and "
-            "catalog. Cognition: agents, memory, policies, instruments and reasoners. All build on hylo-core, the "
+            "catalog. Cognition: agents, memory, policies, instruments and reasoners. Development: manip and code "
+            "agents with independent model tools. All build on hylo-core, the "
             "kernel: contracts, the episode kernel, the SafetyShield, the plugin registry and the store. Adapters to "
             "LeRobot, openpi and LLMs plug into the registry through entry points.")
     d.card()
@@ -419,7 +420,8 @@ def harness_architecture(T: dict) -> Doc:
     row(100, "Evolution", ["evolve", "learn"])
     row(172, "Evaluation", ["eval", "catalog"])
     row(244, "Cognition", ["agents", "memory", "policies", "instruments", "reasoners"])
-    ky, kh = 326, 106
+    row(316, "Development", ["manip", "code-agents", "tools"])
+    ky, kh = 398, 106
     d.text(40, ky + 40, "Kernel", "sb", 17, "accent")
     d.rect(x0, ky, x1 - x0, kh, "kernel", rx=16)
     d.text(x0 + 26, ky + 44, "core", "dx", 30, "kernel_ink")
@@ -427,7 +429,7 @@ def harness_architecture(T: dict) -> Doc:
     for c in ["contracts", "episode kernel", "SafetyShield", "plugin registry", "store"]:
         cx += d.pill(cx, ky + 60, c, face="m", size=15.5, h=32, fill="kernel", padx=14,
                      stroke=mix(T["kernel"], T["kernel_ink"], 0.35), color="kernel_ink") + 10
-    ay = 456
+    ay = 528
     d.text(40, ay + 30, "Adapters", "sb", 17, "muted")
     names = ["lerobot", "openpi", "llm"]
     w = (x1 - x0 - g * 2) / 3
@@ -439,13 +441,19 @@ def harness_architecture(T: dict) -> Doc:
 
 
 def improvement_loop(T: dict) -> Doc:
-    W, H = 960, 250
-    d = Doc(W, H, T, "Run, measure, improve, deploy",
-            "The Hylo loop. Run (hylo run), measure (hylo bench), improve through a gate (hylo evolve), deploy "
-            "(hylo serve). Episodes on the robot come back as runs.")
+    W, H = 960, 390
+    d = Doc(W, H, T, "Develop strategies; run, measure, improve and deploy",
+            "A task requirement and robot tools produce a task program that enters the shared execution loop. "
+            "Existing policies can enter that loop directly. Run, measure, improve through a gate and deploy. "
+            "Episodes on the robot come back as runs.")
     d.card()
+    d.text(40, 64, "Develop", "b", 19, "accent")
+    d.box(200, 24, 300, 62, "Task and robot tools", tsize=18)
+    d.box(570, 24, 220, 62, "Program", kind="soft", tsize=18)
+    d.arrow([(504, 55), (566, 55)], "accent", 2)
+    d.arrow([(680, 88), (680, 112), (132, 112), (132, 144)], "accent", 2, rounded=12)
     stages = [("Run", "hylo run"), ("Measure", "hylo bench"), ("Improve", "hylo evolve"), ("Deploy", "hylo serve")]
-    w, h, y, g = 196, 128, 32, 36
+    w, h, y, g = 196, 128, 148, 36
     x0 = (W - 4 * w - 3 * g) / 2
     for i, (name, cmd) in enumerate(stages):
         x = x0 + i * (w + g)
@@ -592,7 +600,7 @@ def studio_plane(T: dict) -> Doc:
     d = Doc(W, H, T, "The studio control plane",
             "The browser connects with a role (viewer, operator or approver; the e-stop is open to every role) to "
             "hylo playground, the control plane. It starts episodes on workcells, runs hylo commands as jobs, and "
-            "reads runs and campaigns through the harness's catalog. It never sends actions.")
+            "reads runs and campaigns through the catalog and development sessions from files. It never sends actions.")
     d.card()
     d.rect(28, 28, 236, 244, "sunk", "line2", rx=16)
     d.text(48, 64, "Browser", "b", 18, "ink")
@@ -601,10 +609,10 @@ def studio_plane(T: dict) -> Doc:
                fill="accent" if role == "approver" else "surface", stroke=None if role == "approver" else "line2",
                color="accent_ink" if role == "approver" else "ink")
     d.box(330, 110, 250, 80, "hylo playground", kind="accent", tface="mono", tsize=17)
-    for i, t in enumerate(["Workcells", "Jobs", "Catalog"]):
-        y = 28 + i * 88
-        d.box(648, y, 284, 68, t, tsize=17)
-        d.arrow([(582, 150), (614, 150), (614, y + 34), (644, y + 34)], "accent" if i == 0 else "muted",
+    for i, t in enumerate(["Workcells", "Jobs", "Catalog", "Research records"]):
+        y = 18 + i * 68
+        d.box(648, y, 284, 56, t, tsize=17)
+        d.arrow([(582, 150), (614, 150), (614, y + 28), (644, y + 28)], "accent" if i == 0 else "muted",
                 rounded=12)
     d.arrow([(266, 150), (326, 150)], "accent", 2.2)
     return d
@@ -613,18 +621,18 @@ def studio_plane(T: dict) -> Doc:
 # ---------------------------------------------------------------- repositories
 REPOS = [
     Repo("harness", ("hylo-", "harness"),
-         "The kernel and the shared layers on it: cognition, evaluation and evolution.",
+         "Develop task strategies, execute them, measure results and improve tested versions.",
          {"Kernel", "Cognition", "Evaluation", "Evolution"},
          [("architecture", harness_architecture), ("loop", improvement_loop)],
          {"campaign-mujoco-reach-gain.png": ("campaign-mujoco-reach-gain.png", None)}),
-    Repo("bench", ("hylo-", "bench"), "Run a policy under a fixed protocol, get a scorecard, rank it on a leaderboard.",
+    Repo("bench", ("hylo-", "bench"), "Task environments for development, fixed protocols for evaluation.",
          {"Evaluation"}, [("flow", bench_flow)],
          {"leaderboard-mujoco-reach.png": ("leaderboard-mujoco-reach.png", None),
           "libero-episode-strip.png": ("libero-episode-strip.png", None),
           "mujoco-scenes.png": ("mujoco-scenes.png", None)}),
     Repo("serve", ("hylo-", "serve"), "Policies on robots in real time, within the safety limits you set.",
          {"Runtime"}, [("topology", serve_topology)]),
-    Repo("studio", ("hylo-", "studio"), "One workbench to run tasks, replay every episode and approve releases.",
+    Repo("studio", ("hylo-", "studio"), "Inspect strategy development, replay episodes and review releases.",
          {"Workbench"}, [("control-plane", studio_plane)],
          {"studio-episode.png": ("studio-episode.png", "sidebar"),
           "studio-campaign.png": ("studio-campaign.png", "sidebar"),

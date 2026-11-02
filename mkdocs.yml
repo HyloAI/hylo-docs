@@ -63,14 +63,20 @@ plugins:
             - ../harness/packages/hylo-catalog/src
             - ../harness/packages/hylo-policies/src
             - ../harness/packages/hylo-cli/src
+            - ../harness/packages/hylo-manip/src
+            - ../harness/adapters/hylo-code-agents/src
+            - ../harness/adapters/hylo-tools/src
             - ../harness/adapters/hylo-policy-lerobot/src
             - ../harness/adapters/hylo-policy-openpi/src
             - ../harness/adapters/hylo-reasoner-llm/src
             - ../harness/adapters/hylo-proposer-llm/src
             - ../harness/adapters/hylo-data-video/src
             - ../bench/packages/hylo-bench/src
+            - ../bench/packages/hylo-robosuite-contract/src
             - ../bench/adapters/hylo-env-mujoco/src
             - ../bench/adapters/hylo-env-libero/src
+            - ../bench/adapters/hylo-env-robosuite/src
+            - ../bench/adapters/hylo-env-robocasa/src
             - ../serve/packages/hylo-serve/src
             - ../serve/adapters/hylo-env-lerobot-robot/src
             - ../studio/packages/hylo-playground/src
@@ -110,12 +116,28 @@ markdown_extensions:
 
 nav:
   - Home: index.md
+  - Showcase:
+      - showcase/index.md
+      - Core: showcase/core.md
+      - Memory: showcase/memory.md
+      - Agents: showcase/agents.md
+      - Instruments: showcase/instruments.md
+      - Learning: showcase/learning.md
+      - Evolution: showcase/evolution.md
+      - Benchmarks: showcase/benchmarks.md
+      - Plugins: showcase/plugins.md
+      - Runtime: showcase/runtime.md
+      - Studio: showcase/studio.md
+      - Tool-using agents: showcase/tool-agents.md
   - User Guide:
       - Getting started:
           - getting-started/installation.md
           - getting-started/quickstart.md
           - getting-started/concepts.md
           - getting-started/examples.md
+      - Strategy development:
+          - user-guide/developing-strategies.md
+          - user-guide/research-and-skills.md
       - Running:
           - user-guide/experiments.md
           - user-guide/policies.md
@@ -176,6 +198,7 @@ nav:
           - rfcs/RFC-0003-experience-memory-skills.md
           - rfcs/RFC-0004-learning-pipeline.md
           - rfcs/RFC-0005-architecture-measurement-and-placement.md
+          - rfcs/RFC-0006-tool-using-agents.md
   - Research:
       - research/index.md
       - EXECUTIVE-SUMMARY.md
@@ -246,7 +269,10 @@ nav:
               - hylo-catalog: api/packages/hylo-catalog.md
               - hylo-policies: api/packages/hylo-policies.md
               - hylo-cli: api/packages/hylo-cli.md
+              - hylo-manip: api/packages/hylo-manip.md
           - Harness adapters:
+              - hylo-code-agents: api/packages/hylo-code-agents.md
+              - hylo-tools: api/packages/hylo-tools.md
               - hylo-policy-lerobot: api/packages/hylo-policy-lerobot.md
               - hylo-policy-openpi: api/packages/hylo-policy-openpi.md
               - hylo-reasoner-llm: api/packages/hylo-reasoner-llm.md
@@ -254,8 +280,11 @@ nav:
               - hylo-data-video: api/packages/hylo-data-video.md
           - Bench:
               - hylo-bench: api/packages/hylo-bench.md
+              - hylo-robosuite-contract: api/packages/hylo-robosuite-contract.md
               - hylo-env-mujoco: api/packages/hylo-env-mujoco.md
               - hylo-env-libero: api/packages/hylo-env-libero.md
+              - hylo-env-robosuite: api/packages/hylo-env-robosuite.md
+              - hylo-env-robocasa: api/packages/hylo-env-robocasa.md
           - Serve:
               - hylo-serve: api/packages/hylo-serve.md
               - hylo-env-lerobot-robot: api/packages/hylo-env-lerobot-robot.md

@@ -1,7 +1,22 @@
 # Architecture overview
 
-This page shows how Run → Measure → Improve → Deploy connect inside Hylo, and what checks each hand-off.
+This page shows how strategy development connects to Run → Measure → Improve → Deploy, and what checks each hand-off.
 [Concepts](../getting-started/concepts.md) defines the terms.
+
+## From task requirements to executable strategies
+
+![Task requirements and robot tools produce a program; programs and existing policies use shared execution and recorded validation](../assets/diagrams/strategy-development-light.svg){ .hylo-diagram .only-light }
+![Task requirements and robot tools produce a program; programs and existing policies use shared execution and recorded validation](../assets/diagrams/strategy-development-dark.svg){ .hylo-diagram .only-dark }
+
+Strategy development addresses the programming and integration between a task requirement and working robot
+behaviour. The robot contract in core describes the hardware; `hylo-manip` provides perception, grasping and
+planning tools; code agents combine them into task programs. Heavy model tools run in independent workers.
+
+A new task can start with a hand-written program or model-assisted development, followed by execution and
+validation against task requirements. An existing strategy can enter an improvement campaign for a paired
+comparison and promotion. Existing model policies enter the execution loop directly. These are starting points
+into the same stack, with different validation claims. See [Developing task strategies](../user-guide/developing-strategies.md)
+and [Research and program skills](../user-guide/research-and-skills.md).
 
 ## From runs to deployed versions
 
@@ -17,8 +32,9 @@ This page shows how Run → Measure → Improve → Deploy connect inside Hylo, 
 3. **Improve: artifacts.** [Learners](../user-guide/learning.md) build artifacts from runs: memories, critics, judges, world
    models, policy weights. Each is sealed with a content digest and its source runs
    ([artifact roles](../user-guide/learning.md#artifact-roles)).
-4. **Improve: candidates.** Generators propose candidates as config patches, each with a hypothesis. Besides the
-   development splits, they can read the campaign archive, including past candidates' gate results
+4. **Improve: candidates.** Generators propose candidates as config patches, including sealed program references.
+   Research sessions develop code on development cases; their model does not see gate or held-out outcomes.
+   Other generators can read the campaign archive, including past candidates' gate results
    ([who reads which split](../user-guide/campaigns.md#splits)).
 5. **Improve: the gate.** A [campaign](../user-guide/campaigns.md)'s stage-0 checks reject candidates that touch
    protected settings. The rest are screened against the current version on `search_val`, and the best is tested
@@ -78,12 +94,14 @@ does not by itself predict the result on a robot.
 | | `hylo-evolve` | campaigns: generators, the cascade, the gate, approvals, active versions |
 | | `hylo-catalog` | read-only queries over runs, campaigns and artifacts |
 | | `hylo-cli` | the harness's `hylo` subcommands |
-| | adapters | `hylo-policy-lerobot`, `hylo-policy-openpi`, `hylo-reasoner-llm`, `hylo-proposer-llm`, `hylo-data-video` |
+| | `hylo-manip` | robot tools: perception, kinematics, grasping and planning; current kinematics backend: MuJoCo |
+| | adapters | `hylo-code-agents`, `hylo-tools`, `hylo-policy-lerobot`, `hylo-policy-openpi`, `hylo-reasoner-llm`, `hylo-proposer-llm`, `hylo-data-video` |
 | **hylo-bench** | `hylo-bench` | evaluation protocols, scorecards, leaderboards, paired comparison |
-| | adapters | `hylo-env-mujoco`, `hylo-env-libero` |
+| | `hylo-robosuite-contract` | shared robot-contract mapping for robosuite-based environments |
+| | adapters | `hylo-env-mujoco`, `hylo-env-libero`, `hylo-env-robosuite`, `hylo-env-robocasa` |
 | **hylo-serve** | `hylo-serve` | the policy server and the workcell |
 | | adapters | `hylo-env-lerobot-robot`: LeRobot robots and a simulated arm |
-| **hylo-studio** | `hylo-playground` | Studio: web UI and workcell control plane |
+| **hylo-studio** | `hylo-playground` | research/session record viewer, run explorer, web UI and workcell control plane |
 | **hylo-plugins** | `hylo-plugin-examples` | example plugins, written as a third party would |
 | **hylo-docs** | (no code) | this site |
 | **hylo-deployments-template** | (no code) | a template for a lab's private workcell configs and safety limits |
@@ -105,6 +123,11 @@ and the workcell API. A boundary lint enforces this ([contributing](../developer
 
 ## Current limits
 
+- Model-assisted development has recorded successes on specific simulated tasks. The promoted stacking program
+  improves a deliberately weak parent; from-scratch local-model research remains unsuccessful. Free-scene and
+  motion-free showcases and formal robosuite/RoboCasa program evaluations remain unrun.
+- Program execution uses an in-process restricted namespace. Artifact/candidate validation and guard ordering
+  have known gaps; see [Security](../user-guide/security.md) and [Showcase](../showcase/index.md).
 - Campaigns run in the foreground of the shell that started them. Studio starts jobs as local subprocesses; it does
   not queue them.
 - The robot path has run with a simulated arm. No physical robot has been connected.

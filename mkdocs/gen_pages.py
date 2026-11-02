@@ -6,6 +6,7 @@ the format schemas and the API reference of every package. Run by mkdocs-gen-fil
 from __future__ import annotations
 
 import json
+import posixpath
 import re
 import subprocess
 import sys
@@ -154,6 +155,55 @@ def examples() -> None:
     write("getting-started/examples.md", "\n".join(lines) + "\n")
 
 
+# ---------------------------------------------------------------- showcase
+SHOWCASE = [  # (page, repository, examples directory, title): one page per layer, from that directory's README
+    ("core", "harness", "examples/core", "Core"),
+    ("memory", "harness", "examples/memory", "Memory"),
+    ("agents", "harness", "examples/agents", "Agents"),
+    ("instruments", "harness", "examples/instruments", "Instruments"),
+    ("learning", "harness", "examples/learn", "Learning"),
+    ("evolution", "harness", "examples/evolve", "Evolution"),
+    ("benchmarks", "bench", "examples/showcase", "Benchmarks"),
+    ("plugins", "plugins", "examples", "Plugins"),
+    ("runtime", "serve", "examples", "Runtime"),
+    ("studio", "studio", "examples", "Studio"),
+    ("tool-agents", "harness", "adapters/hylo-code-agents/examples", "Tool-using agents"),
+]
+LINK = re.compile(r'(\]\(|src="|poster=")(?!https?:|#|mailto:|/)([^)"\s]+)')
+
+
+def showcase() -> None:
+    """Copy each examples README (and its assets/) into showcase/<page>.md, so the measured results live in one place:
+    next to the scripts that produce them. Image links point at the copied assets; other relative links at GitHub."""
+    for page, repo, sub, title in SHOWCASE:
+        d = WORKSPACE / repo / sub
+        readme = d / "README.md"
+        if not readme.exists():
+            write(f"showcase/{page}.md", f"# {title}\n\n" + (missing(repo) if not (WORKSPACE / repo).is_dir() else
+                  f"!!! warning \"Not written yet\"\n    `{repo}/{sub}/README.md` does not exist.\n"))
+            continue
+        for f in sorted((d / "assets").glob("*")) if (d / "assets").is_dir() else []:
+            if f.is_file():
+                with mkdocs_gen_files.open(f"showcase/assets/{page}/{f.name}", "wb") as out:
+                    out.write(f.read_bytes())
+
+        def fix(m: re.Match, page: str = page, repo: str = repo, sub: str = sub) -> str:
+            target = m.group(2)
+            if target.startswith("assets/"):
+                # MkDocs rewrites Markdown links for directory URLs (showcase/<page>/) but not raw HTML attributes
+                # (<img src>, <video src poster>): those need the extra level themselves
+                up = "" if m.group(1) == "](" else "../"
+                return f"{m.group(1)}{up}assets/{page}/{target.removeprefix('assets/')}"
+            path = posixpath.normpath((Path(sub) / target).as_posix())
+            return f"{m.group(1)}https://github.com/HyloAI/hylo-{repo}/blob/main/{path}"
+
+        note = (f"!!! note \"Source\"\n    Generated from hylo-{repo}: `{sub}/README.md`. Every number on this page was "
+                f"measured by the scripts next to it; run them to reproduce.\n\n")
+        head, _, body = readme.read_text().partition("\n")
+        write(f"showcase/{page}.md", f"{head}\n\n{note}{LINK.sub(fix, body)}")   # no edit path: the public
+        # site leaves some showcase pages out, and the source note says where each page comes from
+
+
 # ---------------------------------------------------------------- formats
 def formats() -> None:
     try:
@@ -167,7 +217,9 @@ def formats() -> None:
              "Repositories cooperate through versioned formats defined in hylo-core, never through each other's code. Each "
              "format carries its schema version; the JSON Schemas below are what `hylo schema NAME` prints.", "",
              "| Format | Version | Defined in | Used for |", "|---|---|---|---|"]
-    table = [("Experiment config", "hylo.experiment/v0.1", "core.config", "what is measured: benchmark, env, agent, timing"),
+    table = [("Robot description", "hylo.robot/v0.1", "core.robot", "arms, hands, cameras and action layout"),
+             ("Scene description", "hylo.scene/v0.1", "core.scene", "declarative task scenes and success predicates"),
+             ("Experiment config", "hylo.experiment/v0.1", "core.config", "what is measured: benchmark, env, agent, timing"),
              ("Execution profile", "hylo.profile/v0.1", "core.profile", "where runtimes and the store are on one machine"),
              ("Trace events", "core.events.TRACE_SCHEMA", "core.events, core.trace", "every episode, step by step"),
              ("Artifact manifest", "hylo.artifact/v0.1", "core.artifact", "a sealed, digest-pinned learned thing"),
@@ -194,20 +246,26 @@ def formats() -> None:
 PACKAGES = {  # repository -> package directories, in the order of the nav
     "harness": ["packages/hylo-core", "packages/hylo-eval", "packages/hylo-agents", "packages/hylo-instruments",
                 "packages/hylo-reasoners", "packages/hylo-memory", "packages/hylo-learn", "packages/hylo-evolve",
-                "packages/hylo-catalog", "packages/hylo-policies", "packages/hylo-cli",
+                "packages/hylo-catalog", "packages/hylo-policies", "packages/hylo-cli", "packages/hylo-manip",
+                "adapters/hylo-code-agents", "adapters/hylo-tools",
                 "adapters/hylo-policy-lerobot", "adapters/hylo-policy-openpi", "adapters/hylo-reasoner-llm",
                 "adapters/hylo-proposer-llm", "adapters/hylo-data-video"],
-    "bench": ["packages/hylo-bench", "adapters/hylo-env-mujoco", "adapters/hylo-env-libero"],
+    "bench": ["packages/hylo-bench", "packages/hylo-robosuite-contract", "adapters/hylo-env-mujoco",
+              "adapters/hylo-env-libero", "adapters/hylo-env-robosuite", "adapters/hylo-env-robocasa"],
     "serve": ["packages/hylo-serve", "adapters/hylo-env-lerobot-robot"],
     "studio": ["packages/hylo-playground"],
     "plugins": ["packages/hylo-plugin-examples"],
 }
-SKIP_MODULE = re.compile(r"(^|\.)(_[^.]+|tests?|static|__main__)(\.|$)")
+SKIP_MODULE = re.compile(r"(^|\.)(_[^.]+|tests?|static|workers|__main__)(\.|$)")
 
 
 def _modules(src: Path) -> list[str]:
     out = []
     for f in sorted(src.rglob("*.py")):
+        # Workers execute as scripts in their own environment (or Blender), not importable package APIs.
+        header = f.read_text()[:512]
+        if "# /// script" in header or "# hylo: worker-side" in header:
+            continue
         rel = f.relative_to(src).with_suffix("")
         parts = list(rel.parts[:-1]) if rel.name == "__init__" else list(rel.parts)
         name = ".".join(parts)
@@ -218,7 +276,9 @@ def _modules(src: Path) -> list[str]:
 
 def _first_line(src: Path, module: str) -> str:
     f = src.joinpath(*module.split("."))
-    f = f / "__init__.py" if f.is_dir() else f.with_suffix(".py")
+    # Asset directories can share a module's stem (for example motion_characters/ and motion_characters.py).
+    package_init = f / "__init__.py"
+    f = package_init if package_init.is_file() else f.with_suffix(".py")
     m = re.match(r'\s*(?:#.*\n\s*)*(?:from __future__.*\n\s*)?[rRbB]?("""|\'\'\')(.*?)(\n|\1)', f.read_text())
     return m.group(2).strip().rstrip(".") if m else ""
 
@@ -285,4 +345,5 @@ package_api()
 cli_reference()
 plugin_catalogue()
 examples()
+showcase()
 formats()

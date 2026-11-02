@@ -4,6 +4,10 @@ A learner turns recorded runs into an **artifact**: a sealed directory whose man
 it is, a digest of its content, and where it came from: the learner, its parameters, and the runs it read. External
 data enters as runs too, so every artifact traces back to runs.
 
+Task programs have a separate authoring path: a [research session](research-and-skills.md) develops code and freezes
+a program artifact. A campaign can evaluate and promote it, then derive a program skill. These are additional
+forms of strategy development and reuse; they do not require training model weights.
+
 ![A learner reads search and search_val runs and seals one artifact; the split guard refuses gate and held-out runs.](../assets/diagrams/learning-flow-light.svg){ .hylo-diagram .only-light }
 ![A learner reads search and search_val runs and seals one artifact; the split guard refuses gate and held-out runs.](../assets/diagrams/learning-flow-dark.svg){ .hylo-diagram .only-dark }
 

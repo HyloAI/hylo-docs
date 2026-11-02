@@ -8,7 +8,8 @@ simulators check what the double cannot. A boundary lint keeps the repositories 
 Run these from the workspace directory, not from `bench/`:
 
 ```bash
-uv run pytest                                   # every present repository, plus the boundary lint
+uv run pytest harness/packages harness/adapters harness/tests harness/dev \
+    bench/packages bench/adapters serve/packages serve/adapters studio/packages plugins/packages
 uv run pytest harness                           # one repository
 uv run pytest harness/packages/hylo-core        # one package
 uv run pytest harness/dev                       # the boundary lint only
@@ -25,7 +26,12 @@ bash harness/dev/bootstrap.sh                                             # writ
 uv run pytest
 ```
 
-There is no CI. Before pushing, run `uv run pytest` in a workspace with the repositories you changed, and
+List only directories present in your checkout. Explicit paths avoid collecting upstream tests in downloaded
+simulator source trees such as `bench/envs/robocasa/src-robocasa`. Some code-agent and example tests automatically
+call Ollama if a configured local model is reachable; the explicit path list above does not disable them.
+`HYLO_TEST_LLM` controls the reasoner tests, not every live-model test. Review those tests before a network-free run.
+
+There is no CI. Before pushing, run the project test directories in a workspace with the repositories you changed, and
 `uv run hylo conformance CONFIG --agent` on the MuJoCo example configs.
 
 Unit tests run on the test double or on recorded data, finish in seconds, and need nothing but the venv. Tests in

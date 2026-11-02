@@ -1,6 +1,6 @@
 # Studio
 
-Studio is Hylo's web UI. It shows your runs, campaigns and artifacts, and it is the control plane for workcells.
+Studio is Hylo's web UI. It shows research sessions, runs, campaigns and artifacts, and it is the control plane for workcells.
 Start it with `hylo playground`. It runs the same `hylo` commands a person would type, with the same checks, and
 talks to workcells through the workcell API. It never sends actions to a robot.
 
@@ -21,6 +21,7 @@ uv run hylo playground --repo bench          # http://127.0.0.1:8765
 | `--root DIR` | `runs` | the runs directory, relative to `--repo` |
 | `--workcell NAME=URL[#TOKEN]` | none | a workcell to operate; repeatable |
 | `--policy NAME=WS_URL[#TOKEN]` | none | a policy server endpoint; repeatable |
+| `--sessions [LABEL=]DIR` | none | another directory with research sessions or code-agent runs, relative to `--repo`; repeatable |
 
 `hylo playground --help` lists the rest; tokens are under [access](#roles).
 
@@ -34,6 +35,7 @@ uv run hylo playground --repo bench          # http://127.0.0.1:8765
 | Runs & replays | every recorded run, per-task success, and episode replay |
 | A/B arena | two runs compared, paired on task and init state |
 | Self-improvement | campaigns: cycles, candidates, gate statistics, the promotion ledger; approve or roll back |
+| Research | research sessions and code-agent runs: every turn's text, code, output and images, submissions, the frozen program, usage and cost |
 | Experience | skill libraries, lesson books, action memories, and sealed artifacts with provenance and calibration |
 | Jobs | `hylo run`, `hylo evolve run` and `hylo calibrate` in the background, with their logs |
 
@@ -83,6 +85,28 @@ back with a reason, which runs `hylo evolve rollback`. Both need the approver ro
 
 ![A campaign: cycles, candidates and gate statistics](../assets/figures/studio-campaign.png){ .hylo-figure }
 
+### Research
+
+Use this page to inspect strategy development records. Start sessions through
+[the research CLI](research-and-skills.md); this page does not provide an interactive authoring editor.
+
+Lists every research session under the runs directory, and the scene-builder, motion-studio and replay runs under
+each `--sessions` directory, with the model, task, best development score, turns, tokens, cost, wall time and why
+the session stopped. Opening one shows:
+
+- the timeline: for each turn, the model's text and reasoning, the code it ran, the printed output or error, and
+  the images it was shown; resets, submissions and tool calls in between;
+- a usage panel: prompt tokens (and the cached part) and model latency per turn, the turns that submitted, and the
+  totals;
+- the submissions, each with its outcome, steps and printed output per development case, and its source;
+- the frozen program: its source, digest and provenance;
+- a link to the campaign candidate the program became, found through the candidate's `evidence.session`; the
+  campaign page links back.
+
+Studio reads the session files directly (`log.jsonl` or `turns.jsonl`, `summary.json`, `submissions/`, `frozen/`),
+so a session that is still running or was interrupted shows what it has so far. It serves files only from inside a
+session directory, and only images, videos and text.
+
 ### Jobs
 
 Starts `hylo run`, `hylo evolve run` or `hylo calibrate` (and `hylo learn`, through `POST /api/jobs`) as a local
@@ -102,3 +126,4 @@ page.
 
 - [Deployment](deployment.md): bring up a workcell to operate from Studio.
 - [Campaigns](campaigns.md): what the Self-improvement page shows.
+- [Tool-using agents](../rfcs/RFC-0006-tool-using-agents.md): what research sessions are.

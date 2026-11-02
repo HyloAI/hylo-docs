@@ -1,6 +1,7 @@
 # Concepts
 
-The words the other pages use, in Run → Measure → Improve → Deploy order.
+The words the other pages use: development, then Run → Measure → Improve → Deploy. You can start by developing
+a new task strategy or by bringing an existing policy.
 
 An **experiment** names an **environment** and an **agent**. The agent decides what to do, usually by asking a
 **policy** for actions. Running the experiment gives a **run**: one recorded trace per episode, plus results. An
@@ -10,6 +11,28 @@ promotes one only if it passes the gate. A **workcell** runs the promoted versio
 
 ![The main concepts by step. Run: experiment, run, trace. Measure: protocol, scorecard, leaderboard. Improve: artifact, candidate, gate. Deploy: active version, policy server, workcell. Episodes become runs.](../assets/diagrams/concept-map-light.svg){ .hylo-diagram .only-light }
 ![The main concepts by step. Run: experiment, run, trace. Measure: protocol, scorecard, leaderboard. Improve: artifact, candidate, gate. Deploy: active version, policy server, workcell. Episodes become runs.](../assets/diagrams/concept-map-dark.svg){ .hylo-diagram .only-dark }
+
+## Develop
+
+Task strategy { #task-strategy }
+:   The logic for carrying out a task. It can be implemented by a model, controller or program. Development constructs
+    and checks that logic; improvement compares a change with an existing baseline.
+
+Robot contract and tools { #robot-tools }
+:   `RobotSpec` describes arms, hands, cameras, frames and actions. Manipulation tools use it for perception, grasping,
+    planning and execution. The agent submits tool-generated actions to the same kernel and SafetyShield.
+
+Program agent { #program-agent }
+:   `code.program` executes a Python `solve(robot)` strategy; `code.llm` writes code one turn at a time. See
+    [Developing task strategies](../user-guide/developing-strategies.md).
+
+Research session { #research-session }
+:   A model develops and submits programs using development cases. A qualifying submission is frozen as a program
+    artifact; freezing alone does not promote it or establish independent task success.
+
+Program skill { #program-skill }
+:   A reusable reference to a promoted program, with version, provenance and gate evidence. A code agent can retrieve
+    and call it. See [Research and program skills](../user-guide/research-and-skills.md).
 
 ## Run
 
@@ -24,7 +47,7 @@ Environment { #environment }
 
 Agent { #agent }
 :   The logic that decides each action. An agent usually wraps a policy, and can add memory, steering, a planner or
-    a critic around it.
+    a critic around it. A program agent instead executes task code using robot tools.
 
 Policy { #policy }
 :   The model or controller that turns an observation into actions. See [policies](../user-guide/policies.md).
@@ -68,7 +91,7 @@ Evaluation protocol { #evaluation-protocol }
 ## Improve
 
 Artifact { #artifact }
-:   Something learned from runs, such as a memory, a critic, a success judge or policy weights. It is sealed with a
+:   A derived result, such as a memory, a critic, a success judge, policy weights or a task program. It is sealed with a
     content digest and the runs it was built from. Its role (behaviour, instrument, proposal or data)
     decides how it earns trust. See [learning](../user-guide/learning.md).
 

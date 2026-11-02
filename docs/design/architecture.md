@@ -1,5 +1,12 @@
 # Hylo Architecture Design
 
+> Current implementation update (2026-11-02): strategy development is a supported path into the existing stack.
+> `core.robot` and `core.scene` define cross-repository data; `hylo-manip` implements robot tools; `hylo-code-agents`
+> implements program agents, research and experimental authoring workflows; `hylo-tools` isolates model dependencies
+> in workers. New-task development checks task requirements, while campaigns compare revisions with a baseline.
+> The original prototype sections below retain their historical annotations; the current workflow is described
+> in [Architecture overview](overview.md) and [Developing task strategies](../user-guide/developing-strategies.md).
+
 > Status: Draft v0.1 (2026-10-30) | Related: `rfcs/RFC-0001.md`, `../research/comparisons/technology-gap-analysis.md`
 > The interfaces have been validated as runnable code in an interface prototype (38 tests passing; superseded by the packages and removed on 2026-10-31, still in the git history); every part marked **[Validated in prototype]** has a corresponding implementation and tests.
 
@@ -27,7 +34,7 @@
 ```mermaid
 flowchart TB
   subgraph EVO[Evolution Layer · hylo-evolve]
-    DIAG[Failure Analysis] --> GEN[Candidate Generation]
+    DIAG[Task goals and run analysis] --> GEN[Candidate Generation]
     GEN --> CHK[Protected-scope & static checks]
     CHK --> SHD[Shadow Replay]
     SHD --> VAL[Validation Gate<br/>paired · regression · safety]
@@ -109,9 +116,14 @@ layering inside and across them is enforced by `harness/dev/test_boundaries.py`:
 | harness | hylo-evolve | improvement protocol (cascade, gate, registry, campaigns, active.json, prescreen, shadow config) and rule / learning proposers | core, eval, learn |
 | harness | hylo-catalog | read-only query API over runs, episodes, comparisons, campaigns, artifacts, skills, lessons, memories | core, eval |
 | harness | hylo-cli | the harness's `hylo` subcommands (run, evolve, learn, calibrate, ...) | core, eval, agents, instruments, reasoners, memory, evolve, learn |
+| harness | hylo-manip | perception, robot kinematics, grasping and planning tools over RobotSpec; MuJoCo backend | core |
+| harness | hylo-code-agents | program agents, research, code candidates, program skills; scene, replay and motion workflows | core, agents, manip, eval, evolve, memory, reasoner-llm, tools |
+| harness | hylo-tools | model tool adapters with independent worker environments; optional manip integration | manip (optional) |
 | harness | adapters | policy-lerobot, policy-openpi, reasoner-llm (runtime LLM / VLM), proposer-llm (evolve-time LLM proposer and reflector), data-video | core and the layer they plug into |
 | bench | hylo-bench | protocols, scorecards, leaderboards, pairwise comparison (`hylo bench`) | core, eval |
-| bench | env-libero, env-mujoco | benchmark suites and their environments | core, eval |
+| bench | env-libero, env-mujoco | benchmark suites and robot-contract environments, including Panda, ALOHA and fixed-base G1 | core |
+| bench | hylo-robosuite-contract | shared mapping for robosuite-based robot environments | core |
+| bench | env-robosuite, env-robocasa | separate simulator runtimes; task success-rate evaluation pending | core, robosuite-contract |
 | serve | hylo-serve | policy server (/wc + openpi protocols), real-time runner, workcell service (`hylo serve`) | core |
 | serve | env-lerobot-robot | real robots through LeRobot's Robot interface, a simulated arm | core |
 | studio | hylo-playground | web backend and control plane (`hylo playground`); React front end in `web/` | core, eval, catalog |

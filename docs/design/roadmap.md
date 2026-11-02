@@ -1,5 +1,23 @@
 # Roadmap: From Minimal Loop to Full System
 
+## Strategy development update (2026-11-02)
+
+Task-program development now complements execution, evaluation, improvement and deployment. Its purpose is to
+reduce the programming and integration needed to turn a task requirement into an executable strategy; it includes
+new-task development, scene adaptation and optimisation of existing programs.
+
+- **Implemented with recorded runs:** robot contract, manipulation tools, Panda/ALOHA/fixed-base G1 tasks,
+  code agents, a parent-program stacking improvement through the gate and held-out, program skill reuse, and
+  Studio research record views.
+- **Implemented, formal evaluation pending:** free-scene and motion-free showcases; robosuite/RoboCasa task programs.
+- **Known limits:** from-scratch local-model research is unsuccessful; external replay and physical motion stability
+  have failures; three primary tool models use fallback backends. See [Showcase](../showcase/tool-agents.md).
+- **Next:** validate the unrun workflows, tighten code/artifact checks and execution isolation, and measure development
+  cost and generalisation under stated observation conditions.
+
+This does not satisfy the LIBERO frozen-VLA exit below: the stacking result is on a different task and baseline.
+The 2026-11-01 status table and schedule below are retained as a dated snapshot, not a current feature inventory.
+
 > Updated 2026-11-01. The original plan (2026-10-30) put v0.1 at 2026-11-09 to 2027-01-22 and the later versions
 > after it. Most of v0.1 and parts of v0.2 and v0.3 were built in the first days, so this page now starts from what
 > exists and plans by what the experiments say is missing. Timelines are indicative for 3 engineers; each phase ends

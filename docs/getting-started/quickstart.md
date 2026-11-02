@@ -6,6 +6,10 @@ moves its fingertip to a target. You need the [workspace](installation.md) with 
 Studio step at the end also needs studio and its built web UI. Nothing here needs LIBERO, a GPU or downloaded
 weights, and every step takes under a minute on a CPU.
 
+This path starts from an existing controller. To develop a task strategy with robot tools or a code-writing model,
+follow [Developing task strategies](../user-guide/developing-strategies.md). That path has separate rendering,
+robot-asset and model requirements; the CPU example here remains a way to check the shared execution stack first.
+
 Run every command from `bench/`, so runs land in `bench/runs`, the store you registered during installation:
 
 ```bash

@@ -10,6 +10,18 @@ that will run on hardware.
 
 *One cycle. The promoted candidate is the next cycle's parent.*
 
+## Program development and code candidates
+
+New task programs can be developed and validated without a campaign. Use a campaign when you want a proposed
+change compared with a current version and promoted through the gate. A task requirement, a changed scene or an
+efficiency goal can motivate that work; failures are one source of evidence.
+
+The `research.llm` generator develops code on `search` cases, optionally starting from a `code.program` parent.
+It freezes a qualifying submission as a program artifact and proposes a `code` candidate. The same cascade,
+paired gate, held-out report and approval path apply. A program that succeeded during development has not yet
+passed these checks. See [Research and program skills](research-and-skills.md) for the recorded stacking example,
+commands and current limits.
+
 ## Run a campaign
 
 Commands on this page run from `bench/`. This is the quickstart's campaign:

@@ -16,17 +16,34 @@ exclude_docs: |
   !design/overview.md
   assets/figures/studio-*.png
   developer-guide/docs.md
+  showcase/studio.md
+  showcase/assets/studio/
 hooks:
   - mkdocs/public_hook.py
 
 nav:
   - Home: index.md
+  - Showcase:
+      - showcase/index.md
+      - Core: showcase/core.md
+      - Memory: showcase/memory.md
+      - Agents: showcase/agents.md
+      - Instruments: showcase/instruments.md
+      - Learning: showcase/learning.md
+      - Evolution: showcase/evolution.md
+      - Benchmarks: showcase/benchmarks.md
+      - Plugins: showcase/plugins.md
+      - Runtime: showcase/runtime.md
+      - Tool-using agents: showcase/tool-agents.md
   - User Guide:
       - Getting started:
           - getting-started/installation.md
           - getting-started/quickstart.md
           - getting-started/concepts.md
           - getting-started/examples.md
+      - Strategy development:
+          - user-guide/developing-strategies.md
+          - user-guide/research-and-skills.md
       - Running:
           - user-guide/experiments.md
           - user-guide/policies.md
@@ -95,7 +112,10 @@ nav:
               - hylo-catalog: api/packages/hylo-catalog.md
               - hylo-policies: api/packages/hylo-policies.md
               - hylo-cli: api/packages/hylo-cli.md
+              - hylo-manip: api/packages/hylo-manip.md
           - Harness adapters:
+              - hylo-code-agents: api/packages/hylo-code-agents.md
+              - hylo-tools: api/packages/hylo-tools.md
               - hylo-policy-lerobot: api/packages/hylo-policy-lerobot.md
               - hylo-policy-openpi: api/packages/hylo-policy-openpi.md
               - hylo-reasoner-llm: api/packages/hylo-reasoner-llm.md
@@ -103,8 +123,11 @@ nav:
               - hylo-data-video: api/packages/hylo-data-video.md
           - Bench:
               - hylo-bench: api/packages/hylo-bench.md
+              - hylo-robosuite-contract: api/packages/hylo-robosuite-contract.md
               - hylo-env-mujoco: api/packages/hylo-env-mujoco.md
               - hylo-env-libero: api/packages/hylo-env-libero.md
+              - hylo-env-robosuite: api/packages/hylo-env-robosuite.md
+              - hylo-env-robocasa: api/packages/hylo-env-robocasa.md
           - Serve:
               - hylo-serve: api/packages/hylo-serve.md
               - hylo-env-lerobot-robot: api/packages/hylo-env-lerobot-robot.md
