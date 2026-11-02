@@ -9,7 +9,7 @@ Use it to try a model on a task without writing a program, to watch how a model 
 collect conversations that worked. For a frozen, model-free implementation use `code.program`; for a model that
 writes Python against the same tools use `code.llm` (see [Developing robot skills](developing-strategies.md)).
 
-![A tools.llm episode: the model's turn, the tool it called and what came back, over the re-simulated camera view](../assets/figures/tools-llm-stack.jpg)
+<video src="../../assets/videos/tools-llm-stack.mp4" poster="../../assets/videos/tools-llm-stack.jpg" controls muted loop playsinline preload="none" width="100%" aria-label="A tools.llm stack episode with the model's turns and tool calls captioned"></video>
 
 *A `stack` episode with a local model: locate both blocks, choose a grasp option, grasp, locate the target again,
 place. Five model calls, three actions.*

@@ -5,7 +5,10 @@ let people walk past, and record what the cameras see. You describe the scene as
 simulation, run robots in it with actions, and check goals. A chat model can do all of this through the same tools,
 and so can a coding agent over MCP.
 
-![Recorded world scenes: quadrupeds, humanoids under walking policies, drones, arms, people, and exported camera data](../assets/figures/world-scenes.jpg)
+![A world built from a stage: a Panda at a table with a cube and a plate, a UR5e with a mounted Robotiq gripper, a TidyBot](../assets/figures/world-view.jpg)
+
+*A world seen from a free viewpoint (the `view` tool): a Panda at a table with a cube and a plate, a UR5e with a
+Robotiq gripper mounted on its wrist, and a TidyBot mobile manipulator, all from one stage.*
 
 ## Stages
 
@@ -44,6 +47,30 @@ take x, y and yaw from their pose and their height from the pack.
 | Humanoids | `g1`, `h1`, `t1`; `g1_legs`, `h1_legs` with walking policies | joints; policy |
 | Drones | `crazyflie`, `x2` | fly |
 | Mobile manipulator | `tidybot` | base, joints, gripper, tool pose |
+
+<div class="grid" markdown>
+
+<figure markdown>
+<video src="../../assets/videos/world-quadrupeds.mp4" poster="../../assets/videos/world-quadrupeds.jpg" controls muted loop playsinline preload="none" width="100%" aria-label="Go2, Go1, A1 and Spot trotting side by side, then turning"></video>
+<figcaption>Go2, Go1, A1 and Spot: 0.78 to 1.31 m forward in 4 s, then a turn, all in the same steps.</figcaption>
+</figure>
+
+<figure markdown>
+<video src="../../assets/videos/world-humanoids.mp4" poster="../../assets/videos/world-humanoids.jpg" controls muted loop playsinline preload="none" width="100%" aria-label="Unitree G1 and H1 walking under pretrained policies, then turning"></video>
+<figcaption>G1 and H1 leg models under pretrained walking policies: 2.2 and 2.0 m in 5 s, then a turn.</figcaption>
+</figure>
+
+<figure markdown>
+<video src="../../assets/videos/world-drones.mp4" poster="../../assets/videos/world-drones.jpg" controls muted loop playsinline preload="none" width="100%" aria-label="A Crazyflie and a Skydio X2 flying three waypoints each"></video>
+<figcaption>Crazyflie 2 and Skydio X2 flying three waypoints each.</figcaption>
+</figure>
+
+<figure markdown>
+<video src="../../assets/videos/world-arms.mp4" poster="../../assets/videos/world-arms.jpg" controls muted loop playsinline preload="none" width="100%" aria-label="A Panda picks a cube onto a plate while a UR5e with a mounted gripper and a TidyBot base move"></video>
+<figcaption>A Panda picks a cube onto a plate; a UR5e with a mounted Robotiq and a TidyBot base move in the same steps.</figcaption>
+</figure>
+
+</div>
 
 Robot models come from MuJoCo Menagerie (and the two policy leg models from Unitree's training repository), fetched
 at a pinned commit on first use and checked file by file against recorded digests; nothing is vendored. The `packs`
@@ -98,6 +125,11 @@ goals that already hold.
 - `export`: frames over time while actions run: `samples.jsonl` (step, camera pose and world state per frame),
   RGB png, depth npy in metres, segmentation png, and a calibration file.
 
+![Exported frames of a top camera while the Panda moves: RGB, depth and segmentation by entity](../assets/figures/world-dataset.jpg)
+
+*Three exported frames of a top camera while the Panda moves: RGB, depth (nearer is brighter) and segmentation by
+entity.*
+
 For meshes, `hylo tool physicalize MESH` writes collision geometry the stage can use: one box, the convex hull,
 convex parts or voxel boxes, chosen from the mesh's shape, with its mass from volume and density.
 
@@ -106,6 +138,11 @@ convex parts or voxel boxes, chosen from the mesh's shape, with its mass from vo
 A `human` entity walks its route (looping or not, with a pause at each waypoint), plans around the footprints of
 everything else, and stops for anything in front of it. The `people` tool sends a person somewhere, stops them or
 lets them walk on.
+
+<video src="../../assets/videos/world-crowd.mp4" poster="../../assets/videos/world-crowd.jpg" controls muted loop playsinline preload="none" width="100%" aria-label="Four people walking routes around two crates while a Go1 trots across"></video>
+
+*Four people on routes around two crates while a Go1 trots across: they plan around the crates and the dog and touch
+nothing.*
 
 ## A model at work
 
