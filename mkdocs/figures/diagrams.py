@@ -743,6 +743,41 @@ def trust_paths(T: dict) -> Doc:
     return d
 
 
+# ---------------------------------------------------------------- 27. architecture: the layers
+def layers(T: dict) -> Doc:
+    d = Doc(960, 500, T, "The layers and their boundaries",
+            "The core holds the episode loop, the safety shield and the trace store. The loop asks an agent for "
+            "actions and passes each through the shield to an environment, and records everything in the trace. "
+            "Evaluation runs episodes on fixed splits and scores them from traces only. Improvement proposes "
+            "candidates, evaluates them through the evaluation layer and promotes a version, which becomes the agent.")
+    d.card()
+    node(d, 100, 26, 820, 56, "Improvement: candidates, cascade, gate, versions", "soft", size=16.5)
+    node(d, 100, 116, 820, 56, "Evaluation: benchmarks, splits, scorers, statistics", "soft", size=16.5)
+    d.rect(100, 210, 820, 120, "sunk", "accent", rx=16, sw=1.6)
+    d.text(120, 240, "Core", "b", 18, "accent")
+    node(d, 180, 250, 210, 60, "Episode loop", "kernel")
+    node(d, 430, 250, 190, 60, "Safety shield", "accent")
+    node(d, 660, 250, 230, 60, "Trace store", "plain")
+    node(d, 100, 384, 380, 90, "Agents: policies, reasoners,\nmemory, instruments", size=16.5)
+    node(d, 540, 384, 380, 90, "Environments: simulators,\nrobots", size=16.5)
+    d.arrow([(510, 84), (510, 112)], "muted")
+    d.label(522, 102, "runs splits", "start", size=15)
+    d.arrow([(285, 174), (285, 246)], "muted")
+    d.label(297, 194, "episodes", "start", size=15)
+    d.arrow([(775, 248), (775, 176)], "muted")
+    d.label(763, 194, "scores read traces", "end", size=15)
+    d.arrow([(285, 312), (285, 380)], "muted", both=True)
+    d.label(297, 352, "observation, action", "start", size=15)
+    d.arrow([(392, 280), (426, 280)], "accent", 2.2)
+    d.arrow([(525, 312), (525, 346), (730, 346), (730, 380)], "accent", 2.2, rounded=10)
+    d.label(628, 352, "approved action", fill="accent", size=15)
+    d.arrow([(622, 280), (656, 280)], "faint", 1.6)
+    d.arrow([(98, 54), (70, 54), (70, 429), (96, 429)], "accent", rounded=10)
+    d.text(16, 226, "active", "m", 14, "accent")
+    d.text(16, 244, "version", "m", 14, "accent")
+    return d
+
+
 # ---------------------------------------------------------------- the home page: the loop and the stack
 def home_stack(T: dict) -> Doc:
     return stack_map(T, Repo("docs", ("hylo-", "docs"), "", set()))
@@ -758,7 +793,7 @@ DIAGRAMS = {"architecture": architecture, "strategy-development": strategy_devel
             "spatial-recall": spatial_recall, "action-steer": action_steer,
             "skill-status": skill_status, "experience-round": experience_round, "memory-timeline": memory_timeline,
             "world-layers": world_layers, "memory-layers": memory_layers, "skill-journey": skill_journey,
-            "improvement-ladder": improvement_ladder, "trust-paths": trust_paths}
+            "improvement-ladder": improvement_ladder, "trust-paths": trust_paths, "layers": layers}
 
 
 if __name__ == "__main__":

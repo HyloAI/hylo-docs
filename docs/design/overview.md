@@ -4,6 +4,19 @@ This page maps the robot-skill lifecycle onto the execution, evaluation, improve
 and explains what checks each hand-off. [Robot skills](../user-guide/skills.md) defines the user-facing lifecycle;
 [Concepts](../getting-started/concepts.md) defines the terms.
 
+## Design goals
+
+| Goal | Design response |
+|---|---|
+| A light core | `hylo-core` holds contracts, the episode loop, the safety shield, the trace and the plugin registry, and depends on a few small libraries; it contains no simulator, model, memory backend, scorer or improvement algorithm |
+| No simulator is required | an environment is a contract; simulators and robots are plugins, and those with conflicting dependencies run in their own runtime behind the same contract |
+| Not tied to a language model or a VLA | the episode loop knows only agents; policies, reasoners, memory and world models are parts of an agent |
+| Reasoning, memory and improvement can each be replaced | separate packages that meet only through core contracts and the trace |
+| Scores independent of the agent | scorers read traces only |
+| Reproducible results | versioned configs with a digest, a run manifest, and seeds partitioned so that no seed crosses splits |
+| Evidence from real simulators | a test double serves unit and conformance tests only; every example, protocol and campaign runs on a real simulator |
+| Works with existing tools | an openpi-compatible policy server, LeRobot policies, robots and datasets |
+
 ## From skill requirements to validated implementations
 
 A skill is a task capability with stated applicability, implementation, evidence and version/dependencies. The
@@ -79,6 +92,40 @@ uses a deterministic virtual clock by default; on hardware, set `clock: wall`
    ([what is protected](../user-guide/safety.md#safety-in-campaigns)).
 3. **Scoring reads traces only.** A scorer sees what happened, never the agent's internals.
 
+## Layers
+
+![The core holds the episode loop, the safety shield and the trace store. The loop asks an agent for actions and passes each through the shield to an environment, and records everything in the trace. Evaluation runs episodes on fixed splits and scores them from traces only. Improvement proposes candidates, evaluates them through the evaluation layer and promotes a version, which becomes the agent.](../assets/diagrams/layers-light.svg){ .hylo-diagram .only-light }
+![The core holds the episode loop, the safety shield and the trace store. The loop asks an agent for actions and passes each through the shield to an environment, and records everything in the trace. Evaluation runs episodes on fixed splits and scores them from traces only. Improvement proposes candidates, evaluates them through the evaluation layer and promotes a version, which becomes the agent.](../assets/diagrams/layers-dark.svg){ .hylo-diagram .only-dark }
+
+Each boundary in the picture stops one kind of coupling:
+
+- **Agents and environments meet only in the loop.** An agent never touches an environment, and an environment never
+  calls an agent. The loop passes observations one way and approved actions the other, so the shield cannot be
+  bypassed and privileged simulator state can go to the trace without reaching the agent.
+- **Evaluation sees episodes, not agents.** It decides which tasks and initial states run and scores the traces
+  afterwards. Any agent is scored the same way, and a score can be recomputed from stored traces.
+- **Improvement works through evaluation.** A campaign never measures anything itself: it asks the evaluation layer to
+  run splits, and its only output is a version that becomes the agent. Improvement methods can be added without
+  touching how anything is measured.
+- **Packages depend downwards only.** Agents, memory, evaluation and improvement depend on the core, never on each
+  other's internals; a boundary check enforces it.
+
+## What an episode records
+
+| Event | Written by | Used for |
+|---|---|---|
+| `episode.start` | episode loop | task digest, seed, split, agent component versions, guards |
+| `observation` | episode loop | replay, training-data export |
+| `agent.chunk` | episode loop | what the policy proposed, with latency and provenance |
+| `agent.decision` | the agent's reasoner or planner | following its reasoning, diagnosing failures |
+| `memory.retrieval`, `memory.write` | the agent's memory | whether memory helped or misled the agent |
+| `safety.review` | safety shield | proposed and approved action, and why it was changed |
+| `action` | episode loop | the action actually executed |
+| `step.result` | episode loop | reward, termination, success, info |
+| `privileged.state` | environment | ground truth for scorers and diagnosis only |
+| `error` | episode loop | what failed, in which phase |
+| `episode.end` | episode loop | success, failure, error, safety abort or invalid infrastructure |
+
 ## Measurement vs placement
 
 An experiment's identity is what it measures. Configs name runtimes and store ids, never paths, and each machine
@@ -136,6 +183,19 @@ and the workcell API. A boundary lint enforces this ([contributing](../developer
 | Everything learned is a sealed artifact with a role | Each role earns trust its own way, and provenance travels with the artifact ([learning](../user-guide/learning.md#design)). |
 | Measurement separated from placement; one episode loop; store ids | The same identity on every machine, and the loop a robot runs. |
 | One base repository and leaves | Changes to the base are atomic, the leaves stay independent, and the robot side stays small. |
+
+## Alternatives considered
+
+| Choice | Alternative | Why not |
+|---|---|---|
+| The episode loop owns execution | the benchmark owns the loop, or a language-model framework does | a benchmark-owned loop gives up per-step control, injected disturbances, isolation of privileged state and shadow replay; a model framework leaves safety and timing to code Hylo does not control |
+| The agent is the only intelligence the loop knows | the loop orchestrates a reasoner and a policy itself | that builds one cognitive architecture into the core, and end-to-end models need no reasoner |
+| An own event-sourced trace | a training-dataset format, service-tracing spans, or chat-model evaluation logs | none of them records reasoning, memory and safety and can also be replayed step by step; they are export targets instead |
+| A plain loop, not an agent-graph framework | running control through a graph-execution framework | its per-step overhead does not fit control at 5 to 50 Hz, and it brings a heavy dependency into the core |
+| Declarative candidates | letting a model generate and run code directly | without an isolated runtime that is unsafe; code enters only as sealed programs through research sessions, in a restricted namespace |
+| Typed contracts that refuse unknown fields | plain data classes | a typo fails loudly, every contract has a JSON schema, and one serialisation path serves traces, protocols and configs; the cost was about 5 µs per step against a 20 ms budget |
+| One base repository with leaf repositories | one repository per package, or a single package | per-package repositories need coordinated releases for every contract change; a single package cannot enforce layering or let anyone install the core alone |
+| No pickle in any protocol | pickle for convenience | loading pickle runs code; arrays travel as typed, whitelisted data |
 
 ## Current limits
 
