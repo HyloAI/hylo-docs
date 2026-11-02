@@ -47,6 +47,8 @@ nav:
           - user-guide/research-and-skills.md
           - user-guide/tool-agents.md
           - user-guide/worlds.md
+      - Memory:
+          - user-guide/memory.md
       - Running:
           - user-guide/experiments.md
           - user-guide/policies.md

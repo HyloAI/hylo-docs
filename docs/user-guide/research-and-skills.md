@@ -93,6 +93,9 @@ fresh copies of the task. Only a replay that achieves the goal admits the skill;
 propose or verify. Later workers whose goal fails for the same reasons are offered the matching skills
 (`SkillLibrary.for_failure`). Every tool call of every run is in the campaign's ledger.
 
+Program, recipe, steering and plan skills all live in the same skill library; see [Memory](memory.md#skills) for
+the other kinds and how agents apply them.
+
 ## Inspect sessions in Studio
 
 ```bash

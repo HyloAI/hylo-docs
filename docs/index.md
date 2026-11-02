@@ -86,7 +86,7 @@ these activities so that working task capabilities can be inspected, reused and 
     Derive a verified program skill from a promoted candidate and make it available to later code agents.
     Keep its applicability, program version and validation evidence attached; revalidate when conditions change.
 
-    [Skill reuse →](user-guide/research-and-skills.md#reuse-a-promoted-program) · [Skill lifecycle →](user-guide/skills.md)
+    [Skill reuse →](user-guide/research-and-skills.md#reuse-a-promoted-program) · [Memory →](user-guide/memory.md) · [Skill lifecycle →](user-guide/skills.md)
 
 </div>
 

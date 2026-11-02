@@ -71,6 +71,7 @@ operate the tooling; they do not themselves provide a robot's task behaviour.
 
 - [Developing robot skills](developing-strategies.md): tools, program agents and a reference execution.
 - [Skill research, validation and reuse](research-and-skills.md): development sessions, independent checks, campaigns and program skills.
+- [Memory](memory.md): spatial memory, action memory, skill libraries and lessons.
 - [Policies](policies.md): connect an existing model or controller.
 - [Benchmarking](../benchmarking/index.md): fixed protocols and comparable evidence.
 - [Deployment](deployment.md): policy servers, workcells and target validation.
