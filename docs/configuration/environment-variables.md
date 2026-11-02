@@ -79,7 +79,7 @@ templates keep the token in `HYLO_TOKEN`. [Security](../user-guide/security.md) 
 
 Choose chat endpoints, model names and budgets in the model/session specification. API backends can read provider
 credentials from environment variables; keep credentials out of configs and recorded prompts. Model access and
-body-model registration requirements are backend-specific. See [Developing task strategies](../user-guide/developing-strategies.md).
+body-model registration requirements are backend-specific. See [Developing robot skills](../user-guide/developing-strategies.md).
 
 ## Development
 

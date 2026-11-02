@@ -1,13 +1,18 @@
-# Developing task strategies
+# Developing robot skills
 
-Turning a robot task into an executable strategy usually means connecting perception, planning and control,
-writing the task logic, and trying it in an environment. Hylo provides reusable robot tools and code agents for
-this work, with the same execution kernel, safety checks and traces used by existing policies.
+Developing a robot skill means constructing a reusable task capability and establishing where it works. Start
+with the task, robot, observations, success conditions and constraints. Then connect perception, planning and
+control into an executable strategy, and test it across initial states. Hylo provides robot tools and code agents
+for this work, with the same kernel, safety checks and traces used by existing policies.
 
 Use this path for a new task, a changed scene, or an existing strategy you want to improve. An observed failure
 is one possible starting point; a task requirement is another.
 
-## Choose how to develop
+This guide covers the implementation and execution part of the [skill lifecycle](skills.md). Validation, versioning
+and reuse are covered in [Skill research, validation and reuse](research-and-skills.md). Programs, policies and
+controllers are ways to implement task capabilities; the broad skill concept is defined in [Robot skills](skills.md).
+
+## Choose a skill implementation
 
 ![Task requirements lead through robot tools and code to a program, which shares execution and validation with existing policies](../assets/diagrams/strategy-development-light.svg){ .hylo-diagram .only-light }
 ![Task requirements lead through robot tools and code to a program, which shares execution and validation with existing policies](../assets/diagrams/strategy-development-dark.svg){ .hylo-diagram .only-dark }
@@ -19,7 +24,11 @@ is one possible starting point; a task requirement is another.
 | `code.llm` | a chat model writes and executes code one turn at a time | interactive construction and debugging during an episode |
 | `hylo research` | a model develops and submits programs on development cases | producing a frozen program for separate evaluation |
 
-See [Policies](policies.md) for existing policies and [Research and program skills](research-and-skills.md) for
+The policy/program is the executable implementation. Task scope, robot and observation assumptions, measured
+evidence and version/dependencies complete the skill description. Store that information in the task/config,
+run/artifact records and, for reusable program skills, the skill library.
+
+See [Policies](policies.md) for existing policies and [Skill research, validation and reuse](research-and-skills.md) for
 development sessions and versioned reuse. A first program can be checked against the task requirements without
 claiming it improves a baseline. A campaign makes that comparison before promoting a change.
 
@@ -73,7 +82,7 @@ To develop your own program, use the generated config as a starting point. `code
 itself, not a Python filename. Keep the benchmark and environment fixed while changing the strategy.
 
 For a model that writes code during the episode, use `agent.type: code.llm` and a `model` specification in its
-params. For repeated development cases and frozen submissions, follow [Research and program skills](research-and-skills.md).
+params. For repeated development cases and frozen submissions, follow [Skill research, validation and reuse](research-and-skills.md).
 
 ## Model tools and further workflows
 
@@ -86,11 +95,15 @@ Scene generation, replay-to-simulation and motion authoring are additional exper
 and motion-free showcase requests remain unrun; external replay and physical motion stability have known failures.
 Their presence in the CLI is not evidence of task reliability. See [Showcase](../showcase/tool-agents.md).
 
-## Check the result
+## Validate the capability and record its scope
 
 Inspect task success, steps, safety interventions and traces across more than one initial state. Record the
 robot, task, observation conditions and program version. Development successes do not establish generalisation;
 freeze the program and evaluate separately before making that claim.
+
+For a first skill, compare the frozen implementation with the task's success and safety requirements. For an
+improved skill version, also compare it with the previous implementation. A promoted program can become a
+verified program skill for later code agents; deployment on a target workcell remains a separate check.
 
 Programs execute in a restricted Python namespace in the host process. This is not operating-system isolation
 and does not limit memory. Read [Security](security.md#model-written-programs) before running generated code.

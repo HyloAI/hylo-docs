@@ -1,5 +1,9 @@
 # Experiments
 
+Experiments record execution in the [robot-skill lifecycle](skills.md). They run an implementation (a model policy,
+controller or task program) against specified tasks and initial states. Use development runs to iterate and
+separate validation runs to support claims about the capability's scope and reliability.
+
 An experiment is one config file: a benchmark split, an environment, an agent, and optional safety, trace, timing
 and seed settings. `hylo run` evaluates it and writes a run.
 

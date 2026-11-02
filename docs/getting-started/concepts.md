@@ -1,7 +1,8 @@
 # Concepts
 
-The words the other pages use: development, then Run → Measure → Improve → Deploy. You can start by developing
-a new task strategy or by bringing an existing policy.
+The user-facing thread is the lifecycle of robot skills: development, execution, validation, deployment, reuse
+and improvement. The terms below map those activities to the current Run → Measure → Improve → Deploy mechanisms.
+Start with [Robot skills and their lifecycle](../user-guide/skills.md) for the complete picture.
 
 An **experiment** names an **environment** and an **agent**. The agent decides what to do, usually by asking a
 **policy** for actions. Running the experiment gives a **run**: one recorded trace per episode, plus results. An
@@ -12,11 +13,17 @@ promotes one only if it passes the gate. A **workcell** runs the promoted versio
 ![The main concepts by step. Run: experiment, run, trace. Measure: protocol, scorecard, leaderboard. Improve: artifact, candidate, gate. Deploy: active version, policy server, workcell. Episodes become runs.](../assets/diagrams/concept-map-light.svg){ .hylo-diagram .only-light }
 ![The main concepts by step. Run: experiment, run, trace. Measure: protocol, scorecard, leaderboard. Improve: artifact, candidate, gate. Deploy: active version, policy server, workcell. Episodes become runs.](../assets/diagrams/concept-map-dark.svg){ .hylo-diagram .only-dark }
 
-## Develop
+## Skills and development
+
+Robot skill { #robot-skill }
+:   A reusable ability to perform tasks under stated robot, scene and observation conditions. Describe its task,
+    applicability, executable implementation, validation evidence, version and dependencies. Programs, policies
+    and controllers can implement task capabilities; current skill-library records cover specific reuse paths.
 
 Task strategy { #task-strategy }
 :   The logic for carrying out a task. It can be implemented by a model, controller or program. Development constructs
-    and checks that logic; improvement compares a change with an existing baseline.
+    and checks that logic; improvement compares a change with an existing baseline. It is the executable approach
+    used to implement a skill; the skill description also states applicability and validation evidence.
 
 Robot contract and tools { #robot-tools }
 :   `RobotSpec` describes arms, hands, cameras, frames and actions. Manipulation tools use it for perception, grasping,
@@ -24,7 +31,7 @@ Robot contract and tools { #robot-tools }
 
 Program agent { #program-agent }
 :   `code.program` executes a Python `solve(robot)` strategy; `code.llm` writes code one turn at a time. See
-    [Developing task strategies](../user-guide/developing-strategies.md).
+    [Developing robot skills](../user-guide/developing-strategies.md).
 
 Research session { #research-session }
 :   A model develops and submits programs using development cases. A qualifying submission is frozen as a program
@@ -32,7 +39,11 @@ Research session { #research-session }
 
 Program skill { #program-skill }
 :   A reusable reference to a promoted program, with version, provenance and gate evidence. A code agent can retrieve
-    and call it. See [Research and program skills](../user-guide/research-and-skills.md).
+    and call it. See [Skill research, validation and reuse](../user-guide/research-and-skills.md).
+
+Coding-agent skill { #coding-agent-skill }
+:   A `SKILL.md` instruction file teaching a software agent to operate Hylo commands. These instruction files are
+    separate from the robot's task capabilities and from `Skill` records in the skill library.
 
 ## Run
 

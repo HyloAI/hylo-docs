@@ -83,12 +83,12 @@ def architecture(T: dict) -> Doc:
 
 
 def strategy_development(T: dict) -> Doc:
-    d = Doc(960, 330, T, "Task strategy development in the Hylo stack",
+    d = Doc(960, 330, T, "Robot skill development through task programs",
             "A task requirement and robot tools produce a program. The program enters the same execution kernel "
             "as an existing policy. Runs provide task validation. A baseline comparison is a separate step for "
             "an improvement claim, followed by the campaign gate and versioned reuse.")
     d.card()
-    node(d, 28, 40, 210, 64, "Task requirement")
+    node(d, 28, 40, 210, 64, "Skill goal")
     node(d, 300, 40, 270, 64, "Robot tools and code", "soft")
     node(d, 632, 40, 220, 64, "Program")
     d.arrow([(240, 72), (296, 72)], "accent")
@@ -99,6 +99,26 @@ def strategy_development(T: dict) -> Doc:
     d.arrow([(240, 236), (296, 236)], "accent")
     d.arrow([(742, 106), (742, 154), (436, 154), (436, 200)], "accent", rounded=12)
     d.arrow([(572, 236), (628, 236)], "accent")
+    return d
+
+
+def skill_lifecycle(T: dict) -> Doc:
+    d = Doc(960, 350, T, "The robot skill lifecycle",
+            "Develop, run and validate a robot skill implementation, version it, deploy it, reuse it and improve it. "
+            "Task scope, implementation, evidence and dependencies stay explicit. These are user activities mapped "
+            "to the existing mechanisms, not a universal skill status machine.")
+    d.card()
+    xs, w, h = [28, 354, 680], 250, 64
+    for x, text in zip(xs, ["Develop", "Run and validate", "Version"]):
+        node(d, x, 40, w, h, text, "accent" if text == "Run and validate" else "plain")
+    for x, text in zip(xs, ["Improve", "Reuse", "Deploy"]):
+        node(d, x, 236, w, h, text, "soft" if text == "Reuse" else "plain")
+    for a, b in zip(xs, xs[1:]):
+        d.arrow([(a + w + 2, 72), (b - 4, 72)], "accent")
+        d.arrow([(b - 2, 268), (a + w + 4, 268)], "accent")
+    d.arrow([(805, 106), (805, 232)], "accent")
+    d.arrow([(153, 234), (153, 108)], "accent", dash="6 5")
+    d.text(480, 177, "Task scope · Implementation · Evidence · Dependencies", "sb", 18, "muted", anchor="middle")
     return d
 
 
@@ -451,7 +471,7 @@ def home_stack(T: dict) -> Doc:
     return stack_map(T, Repo("docs", ("hylo-", "docs"), "", set()))
 
 
-DIAGRAMS = {"architecture": architecture, "strategy-development": strategy_development,
+DIAGRAMS = {"architecture": architecture, "strategy-development": strategy_development, "skill-lifecycle": skill_lifecycle,
             "repositories": repositories, "episode-loop": episode_loop,
             "improvement-loop": improvement_cycle, "splits": splits, "store": store, "deployment": deployment,
             "hylo-loop": hylo_loop, "stack": home_stack, "concept-map": concept_map, "episode-step": episode_step,

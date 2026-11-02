@@ -8,6 +8,10 @@
 
 ## 1. Repositories
 
+The user-facing [robot-skill lifecycle](../user-guide/skills.md) spans these repositories: harness provides
+development and improvement mechanisms, bench provides environments and validation, serve deploys implementations,
+and Studio exposes the records and operator controls. This framing leaves the dependency boundaries unchanged.
+
 | Repository | Directory today | Purpose | Depends on |
 |---|---|---|---|
 | **hylo-harness** | `harness/` | The base: contracts and kernel (hylo-core), evaluation engine (hylo-eval), agents, memory, learning (hylo-learn), improvement campaigns (hylo-evolve), run catalog (hylo-catalog), policy / LLM / data adapters, the harness's `hylo` subcommands, reference documentation | — |

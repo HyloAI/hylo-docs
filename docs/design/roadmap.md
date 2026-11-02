@@ -2,6 +2,10 @@
 
 ## Strategy development update (2026-11-02)
 
+The user-facing roadmap follows the [robot-skill lifecycle](../user-guide/skills.md). The implementation results
+below cover particular development, validation and reuse paths; broad skill transfer and unified skill management
+remain unestablished.
+
 Task-program development now complements execution, evaluation, improvement and deployment. Its purpose is to
 reduce the programming and integration needed to turn a task requirement into an executable strategy; it includes
 new-task development, scene adaptation and optimisation of existing programs.

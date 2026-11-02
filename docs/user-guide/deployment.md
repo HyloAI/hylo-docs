@@ -1,5 +1,9 @@
 # Deployment
 
+Deployment is one stage of the [robot-skill lifecycle](skills.md). It configures a selected agent or campaign
+version, its assets and runtime dependencies on a policy server/workcell. A skill-library record or successful
+simulation result does not establish compatibility or readiness on a physical robot; validate the target setup.
+
 This page takes you from a simulated arm to a real one, and back to the recorded episodes on your workstation. A
 reference section follows the steps. Commands run from the workspace directory unless a step says otherwise.
 

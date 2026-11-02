@@ -1,5 +1,5 @@
 site_name: Hylo
-site_description: "The stack for physical AI: real-time running, cognition, evaluation and evolution, built on one execution kernel."
+site_description: "Develop, validate, deploy and accumulate robot skills on one execution kernel, with explicit task scope and measured evidence."
 docs_dir: docs
 site_dir: site
 edit_uri: ""
@@ -135,7 +135,8 @@ nav:
           - getting-started/quickstart.md
           - getting-started/concepts.md
           - getting-started/examples.md
-      - Strategy development:
+      - Robot skills:
+          - user-guide/skills.md
           - user-guide/developing-strategies.md
           - user-guide/research-and-skills.md
       - Running:

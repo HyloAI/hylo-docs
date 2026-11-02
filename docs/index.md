@@ -8,9 +8,8 @@ hide:
 
 # The stack for physical AI
 
-<p class="hylo-tagline">Hylo connects robot strategy development, execution, evaluation, improvement and deployment.
-Build task programs with robot tools, or bring an existing policy; run both through one execution kernel and use
-recorded experiments to decide what to keep.</p>
+<p class="hylo-tagline">Develop, validate, deploy and accumulate robot skills with Hylo. Combine robot tools,
+programs and existing policies on one execution kernel, with recorded evidence for each tested implementation.</p>
 
 [Get started](getting-started/installation.md){ .md-button .md-button--primary }
 [Quickstart](getting-started/quickstart.md){ .md-button }
@@ -18,27 +17,29 @@ recorded experiments to decide what to keep.</p>
 
 </div>
 
-## What you do with Hylo
+## Build robot skills through experiments
 
-Turning a task requirement into an executable strategy takes programming, tool integration and repeated experiments.
-Hylo's manipulation tools and code agents reduce that work. The same stack also addresses execution safety,
-comparable evaluation and reversible deployment. Strategy development is one part of this wider workflow.
+A robot skill is a reusable ability to carry out tasks under stated conditions. Developing it takes programming,
+tool integration and experiments; using it requires reliable execution, validation and deployment. Hylo connects
+these activities so that working task capabilities can be inspected, reused and improved.
 
-![Run, measure, improve through a gate, deploy; episodes on the robot come back as runs](assets/diagrams/hylo-loop-light.svg){ .hylo-diagram .only-light }
-![Run, measure, improve through a gate, deploy; episodes on the robot come back as runs](assets/diagrams/hylo-loop-dark.svg){ .hylo-diagram .only-dark }
+[Skills and their lifecycle →](user-guide/skills.md)
+
+![Develop and run, validate, version and deploy, reuse and improve robot skills](assets/diagrams/skill-lifecycle-light.svg){ .hylo-diagram .only-light }
+![Develop and run, validate, version and deploy, reuse and improve robot skills](assets/diagrams/skill-lifecycle-dark.svg){ .hylo-diagram .only-dark }
 
 <div class="grid cards" markdown>
 
--   **Develop**
+-   **Develop skills**
 
     ---
 
     Build and debug task programs using perception, grasping and motion-planning tools. A model can write code
     interactively or develop a frozen program on development cases. Start with a new task or an existing program.
 
-    [Develop a strategy →](user-guide/developing-strategies.md) · [Research and skills →](user-guide/research-and-skills.md)
+    [Develop a skill →](user-guide/developing-strategies.md) · [Skill research →](user-guide/research-and-skills.md)
 
--   **Run**
+-   **Run implementations**
 
     ---
 
@@ -47,7 +48,7 @@ comparable evaluation and reversible deployment. Strategy development is one par
 
     [Experiments →](user-guide/experiments.md) · [Policies →](user-guide/policies.md)
 
--   **Measure**
+-   **Validate skills**
 
     ---
 
@@ -56,7 +57,7 @@ comparable evaluation and reversible deployment. Strategy development is one par
 
     [Benchmarking →](benchmarking/index.md) · [Leaderboard →](benchmarking/leaderboard.md)
 
--   **Improve**
+-   **Improve versions**
 
     ---
 
@@ -65,7 +66,7 @@ comparable evaluation and reversible deployment. Strategy development is one par
 
     [Learning →](user-guide/learning.md) · [Campaigns →](user-guide/campaigns.md)
 
--   **Deploy**
+-   **Deploy and operate**
 
     ---
 
@@ -73,6 +74,15 @@ comparable evaluation and reversible deployment. Strategy development is one par
     safety shield and an operator's stop button.
 
     [Deployment →](user-guide/deployment.md) · [Safety →](user-guide/safety.md)
+
+-   **Reuse and accumulate**
+
+    ---
+
+    Derive a verified program skill from a promoted candidate and make it available to later code agents.
+    Keep its applicability, program version and validation evidence attached; revalidate when conditions change.
+
+    [Skill reuse →](user-guide/research-and-skills.md#reuse-a-promoted-program) · [Skill lifecycle →](user-guide/skills.md)
 
 </div>
 
@@ -82,8 +92,8 @@ comparisons, campaigns and workcell controls. Start it with `hylo playground`.
 ## Choose a starting point
 
 - **Bring an existing policy:** follow the [CPU quickstart](getting-started/quickstart.md), then [connect your policy](user-guide/policies.md).
-- **Develop a task strategy:** use the [robot tools and code agents](user-guide/developing-strategies.md), then inspect the recorded results.
-- **Improve an existing strategy:** run a [research session](user-guide/research-and-skills.md) or a [campaign](user-guide/campaigns.md) against a baseline.
+- **Develop a robot skill:** use the [robot tools and code agents](user-guide/developing-strategies.md), then inspect the recorded results.
+- **Improve or reuse a skill:** run a [research session](user-guide/research-and-skills.md), compare with a baseline through a campaign, or retrieve a verified program skill.
 
 New-task development starts with execution and task validation. A claim of improvement uses a separate comparison
 with a baseline and, for campaign promotion, the gate. The [showcase](showcase/tool-agents.md) reports the conditions,

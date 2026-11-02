@@ -1,9 +1,23 @@
 # Architecture overview
 
-This page shows how strategy development connects to Run → Measure → Improve → Deploy, and what checks each hand-off.
+This page maps the robot-skill lifecycle onto the execution, evaluation, improvement and deployment mechanisms,
+and explains what checks each hand-off. [Robot skills](../user-guide/skills.md) defines the user-facing lifecycle;
 [Concepts](../getting-started/concepts.md) defines the terms.
 
-## From task requirements to executable strategies
+## From skill requirements to validated implementations
+
+A skill is a task capability with stated applicability, implementation, evidence and version/dependencies. The
+architecture supports these through existing task specs, agents, runs, artifacts, campaigns and skill-library
+records. It does not yet give every policy a common skill record or expose a universal skill dashboard.
+
+| Skill activity | Implementation | Main project |
+|---|---|---|
+| Develop | robot tools, program agents, model integration and research sessions | Harness |
+| Run | agent/environment contracts, kernel, SafetyShield and traces | Harness, Serve |
+| Validate | task environments, evaluation protocols, scorecards and gate tests | Bench, Harness Eval |
+| Improve | learning, candidate generation, paired gates and version registry | Harness Learn/Evolve |
+| Deploy | policy server, robot adapter, workcell and operator channel | Serve |
+| Inspect and reuse | research/run/campaign views, skill libraries and program-skill retrieval | Studio, Harness Memory/Code Agents |
 
 ![Task requirements and robot tools produce a program; programs and existing policies use shared execution and recorded validation](../assets/diagrams/strategy-development-light.svg){ .hylo-diagram .only-light }
 ![Task requirements and robot tools produce a program; programs and existing policies use shared execution and recorded validation](../assets/diagrams/strategy-development-dark.svg){ .hylo-diagram .only-dark }
@@ -15,8 +29,8 @@ planning tools; code agents combine them into task programs. Heavy model tools r
 A new task can start with a hand-written program or model-assisted development, followed by execution and
 validation against task requirements. An existing strategy can enter an improvement campaign for a paired
 comparison and promotion. Existing model policies enter the execution loop directly. These are starting points
-into the same stack, with different validation claims. See [Developing task strategies](../user-guide/developing-strategies.md)
-and [Research and program skills](../user-guide/research-and-skills.md).
+into the same stack, with different validation claims. See [Developing robot skills](../user-guide/developing-strategies.md)
+and [Skill research, validation and reuse](../user-guide/research-and-skills.md).
 
 ## From runs to deployed versions
 

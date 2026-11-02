@@ -1,5 +1,9 @@
 # Showcase
 
+Read these examples as evidence for the [robot-skill lifecycle](../user-guide/skills.md): development, execution,
+validation, improvement, deployment and reuse. A reference program, a model policy and a promoted program skill
+are different implementations/records. Each result applies to the robot, observations and task conditions measured.
+
 These examples exercise several parts of Hylo: strategy development, execution, measurement, improvement and
 deployment. [Tool-using agents](tool-agents.md) addresses the programming and integration needed to turn task
 requirements into executable strategies. It reports hand-written reference programs separately from model-developed

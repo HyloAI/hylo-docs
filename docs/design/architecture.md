@@ -1,11 +1,15 @@
 # Hylo Architecture Design
 
+> Product framing: the [robot-skill lifecycle](../user-guide/skills.md) connects development, validation,
+> deployment, reuse and improvement. The packages and contracts below implement those activities; they do not
+> introduce a universal skill abstraction around every policy. See [Architecture overview](overview.md) for the current mapping.
+
 > Current implementation update (2026-11-02): strategy development is a supported path into the existing stack.
 > `core.robot` and `core.scene` define cross-repository data; `hylo-manip` implements robot tools; `hylo-code-agents`
 > implements program agents, research and experimental authoring workflows; `hylo-tools` isolates model dependencies
 > in workers. New-task development checks task requirements, while campaigns compare revisions with a baseline.
 > The original prototype sections below retain their historical annotations; the current workflow is described
-> in [Architecture overview](overview.md) and [Developing task strategies](../user-guide/developing-strategies.md).
+> in [Architecture overview](overview.md) and [Developing robot skills](../user-guide/developing-strategies.md).
 
 > Status: Draft v0.1 (2026-10-30) | Related: `rfcs/RFC-0001.md`, `../research/comparisons/technology-gap-analysis.md`
 > The interfaces have been validated as runnable code in an interface prototype (38 tests passing; superseded by the packages and removed on 2026-10-31, still in the git history); every part marked **[Validated in prototype]** has a corresponding implementation and tests.

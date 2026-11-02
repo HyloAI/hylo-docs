@@ -1,5 +1,9 @@
 # Benchmarking
 
+Benchmarking provides validation evidence for the [robot-skill lifecycle](../user-guide/skills.md). Protocols score
+the agent or policy implementing a task capability under fixed conditions. Keep the task, robot, observations and
+implementation version with each result; a scorecard alone does not create a verified skill-library record.
+
 To compare agents fairly, score each under the same **evaluation protocol**: a frozen, versioned experiment that
 fixes everything except the agent being scored (the agent usually wraps a policy). Each run writes a **scorecard**.
 The scorecards of one protocol form a **leaderboard**, and any two can be compared episode by episode.

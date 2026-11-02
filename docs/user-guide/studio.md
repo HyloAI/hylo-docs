@@ -4,6 +4,10 @@ Studio is Hylo's web UI. It shows research sessions, runs, campaigns and artifac
 Start it with `hylo playground`. It runs the same `hylo` commands a person would type, with the same checks, and
 talks to workcells through the workcell API. It never sends actions to a robot.
 
+Use these views to inspect the [robot-skill lifecycle](skills.md): Research shows development, Runs and A/B arena
+show execution and validation, Self-improvement shows candidate versions, Experience shows skill-library records
+and artifacts, and Operator handles deployed execution. These remain separate views over the current records.
+
 ![The runs page: every recorded run with its benchmark, split, success and episodes](../assets/figures/studio-runs.png){ .hylo-figure }
 
 ## Starting it

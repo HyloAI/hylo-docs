@@ -1,5 +1,9 @@
 # Quickstart
 
+This example exercises the execution, validation, improvement and serving mechanisms used by the
+[robot-skill lifecycle](../user-guide/skills.md). It starts from a simple existing controller; the
+[skill development guide](../user-guide/developing-strategies.md) covers task programs and model-assisted development.
+
 This page takes one example through the four steps: run an experiment, measure a policy, improve it with a
 campaign, and deploy the promoted version to a policy server. The example is MuJoCo planar reach: a two-link arm
 moves its fingertip to a target. You need the [workspace](installation.md) with the harness and bench; the optional
@@ -7,7 +11,7 @@ Studio step at the end also needs studio and its built web UI. Nothing here need
 weights, and every step takes under a minute on a CPU.
 
 This path starts from an existing controller. To develop a task strategy with robot tools or a code-writing model,
-follow [Developing task strategies](../user-guide/developing-strategies.md). That path has separate rendering,
+follow [Developing robot skills](../user-guide/developing-strategies.md). That path has separate rendering,
 robot-asset and model requirements; the CPU example here remains a way to check the shared execution stack first.
 
 Run every command from `bench/`, so runs land in `bench/runs`, the store you registered during installation:

@@ -77,11 +77,14 @@ Small flows that change often can be Mermaid diagrams in a `mermaid` code block 
 
 ### The spine
 
-Every page belongs to one step of Run → Measure → Improve → Deploy, and says which in its first lines.
+Use the robot-skill lifecycle as the user-facing thread. Explain what activity a page supports and map it to the
+current execution, evaluation, campaign, artifact and deployment mechanisms. Keep technical contract names exact;
+distinguish the broad task-capability concept from program-skill records and coding-agent instruction files.
 
 | Step | What the reader does | Pages |
 |---|---|---|
 | Start | installs, runs one full loop, learns the nouns | Home, Installation, Quickstart, Concepts |
+| Develop and reuse skills | defines task scope, develops an implementation, validates it and reuses a program skill | Robot skills, Developing robot skills, Skill research/validation/reuse |
 | Run | writes a config, runs an experiment, picks an agent and a policy | Experiments, Policies, Store |
 | Measure | scores under a fixed protocol, compares | Benchmarking, Protocols, Leaderboard |
 | Improve | learns artifacts from runs, passes a campaign's gate | Learning, Campaigns |

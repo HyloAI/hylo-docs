@@ -4,6 +4,9 @@ A learner turns recorded runs into an **artifact**: a sealed directory whose man
 it is, a digest of its content, and where it came from: the learner, its parameters, and the runs it read. External
 data enters as runs too, so every artifact traces back to runs.
 
+In the [skill lifecycle](skills.md), learners build or improve implementations and supporting instruments. An
+artifact is a versioned output; a reusable task capability also needs applicability and validation evidence.
+
 Task programs have a separate authoring path: a [research session](research-and-skills.md) develops code and freezes
 a program artifact. A campaign can evaluate and promote it, then derive a program skill. These are additional
 forms of strategy development and reuse; they do not require training model weights.

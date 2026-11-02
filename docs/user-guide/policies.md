@@ -2,7 +2,11 @@
 
 This page shows how to run your model in Hylo and which agent to wrap it in.
 
-To construct task logic using perception and motion tools, see [Developing task strategies](developing-strategies.md).
+In the [robot-skill lifecycle](skills.md), a policy is one possible executable implementation of task capabilities.
+An agent runs it; task/config records state its scope, and runs and scorecards record validation evidence. Adding
+a policy does not automatically create a verified skill-library record.
+
+To construct task logic using perception and motion tools, see [Developing robot skills](developing-strategies.md).
 `code.program` runs a task program, while `code.llm` writes code during an episode. They use the same agent contract
 and execution kernel as the policy agents documented here.
 

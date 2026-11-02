@@ -3,7 +3,7 @@
 !!! note "Historical design snapshot"
     This document records the 2026-10-30 prototype and decisions as they stood then. Implementation, package counts
     and candidate support have since changed. For the current product workflow see [Home](index.md),
-    [Architecture](design/overview.md) and [Developing task strategies](user-guide/developing-strategies.md).
+    [Architecture](design/overview.md) and [Developing robot skills](user-guide/developing-strategies.md).
 
 > 2026-10-30 | Basis: source-level study of 20 open-source repositories (14 assigned + 6 verified memory projects), 8 cross-project comparisons, and a runnable prototype (about 2.7k lines, 38 tests passing).
 > All third-party code was only read statically; "existing implementation" in this document means the code exists and is traceable, **not that we have run and verified it**.

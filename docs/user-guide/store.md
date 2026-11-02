@@ -1,5 +1,9 @@
 # Run and artifact store
 
+The store holds evidence and implementation artifacts used across the [robot-skill lifecycle](skills.md).
+Skill-library records and campaign versions can reference those artifacts; store registration alone does not
+verify a skill or deploy it.
+
 Configs name runs and artifacts by **id**, not by path, so the same config works on every machine. Each machine has
 one **store**: a directory tree that maps ids to local paths. It protects entries that other entries still name from
 deletion, and copies entries between machines.

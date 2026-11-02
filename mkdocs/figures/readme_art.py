@@ -275,11 +275,11 @@ def _rounded_path(pts, r) -> str:
 
 # ---------------------------------------------------------------- the stack
 LAYERS = [  # top to bottom
-    ("Workbench", "Inspect development, runs and releases", [("studio", "studio")]),
-    ("Evolution", "Turn experience into tested, stronger versions", [("harness", "harness · learn, evolve")]),
-    ("Evaluation", "Measure every policy by the same standard", [("bench", "bench"), ("harness", "harness · eval")]),
-    ("Cognition", "Robot tools, programs, policies and memory", [("harness", "harness · manip, agents")]),
-    ("Runtime", "Run policies on robots, within safety limits",
+    ("Workbench", "Inspect skill development and execution", [("studio", "studio")]),
+    ("Evolution", "Improve skill implementations and versions", [("harness", "harness · learn, evolve")]),
+    ("Evaluation", "Validate skills under stated conditions", [("bench", "bench"), ("harness", "harness · eval")]),
+    ("Cognition", "Implement skills with tools and policies", [("harness", "harness · manip, agents")]),
+    ("Runtime", "Run skill implementations within limits",
      [("serve", "serve"), ("deployments-template", "deployments-template")]),
     ("Kernel", "One kernel for models, simulators and robots", [("harness", "harness · core"),
                                                                   ("plugins", "plugins")]),
@@ -442,12 +442,12 @@ def harness_architecture(T: dict) -> Doc:
 
 def improvement_loop(T: dict) -> Doc:
     W, H = 960, 390
-    d = Doc(W, H, T, "Develop strategies; run, measure, improve and deploy",
+    d = Doc(W, H, T, "Develop robot skills; run, measure, improve and deploy",
             "A task requirement and robot tools produce a task program that enters the shared execution loop. "
             "Existing policies can enter that loop directly. Run, measure, improve through a gate and deploy. "
             "Episodes on the robot come back as runs.")
     d.card()
-    d.text(40, 64, "Develop", "b", 19, "accent")
+    d.text(40, 64, "Develop skills", "b", 19, "accent")
     d.box(200, 24, 300, 62, "Task and robot tools", tsize=18)
     d.box(570, 24, 220, 62, "Program", kind="soft", tsize=18)
     d.arrow([(504, 55), (566, 55)], "accent", 2)
@@ -621,18 +621,18 @@ def studio_plane(T: dict) -> Doc:
 # ---------------------------------------------------------------- repositories
 REPOS = [
     Repo("harness", ("hylo-", "harness"),
-         "Develop task strategies, execute them, measure results and improve tested versions.",
+         "Develop robot skills, validate implementations and improve tested versions.",
          {"Kernel", "Cognition", "Evaluation", "Evolution"},
          [("architecture", harness_architecture), ("loop", improvement_loop)],
          {"campaign-mujoco-reach-gain.png": ("campaign-mujoco-reach-gain.png", None)}),
-    Repo("bench", ("hylo-", "bench"), "Task environments for development, fixed protocols for evaluation.",
+    Repo("bench", ("hylo-", "bench"), "Task environments and measured evidence for robot skills.",
          {"Evaluation"}, [("flow", bench_flow)],
          {"leaderboard-mujoco-reach.png": ("leaderboard-mujoco-reach.png", None),
           "libero-episode-strip.png": ("libero-episode-strip.png", None),
           "mujoco-scenes.png": ("mujoco-scenes.png", None)}),
-    Repo("serve", ("hylo-", "serve"), "Policies on robots in real time, within the safety limits you set.",
+    Repo("serve", ("hylo-", "serve"), "Run skill implementations on robots within configured safety limits.",
          {"Runtime"}, [("topology", serve_topology)]),
-    Repo("studio", ("hylo-", "studio"), "Inspect strategy development, replay episodes and review releases.",
+    Repo("studio", ("hylo-", "studio"), "Inspect skill development, validation evidence and deployed execution.",
          {"Workbench"}, [("control-plane", studio_plane)],
          {"studio-episode.png": ("studio-episode.png", "sidebar"),
           "studio-campaign.png": ("studio-campaign.png", "sidebar"),

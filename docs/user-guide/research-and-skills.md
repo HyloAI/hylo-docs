@@ -1,8 +1,13 @@
-# Research sessions and program skills
+# Skill research, validation and reuse
 
-A research session helps develop a task program through repeated experiments. The model can inspect development
-cases, try robot actions, reset cases and submit `solve(robot)` programs. The best qualifying submission is frozen
-as a program artifact. Separate evaluation establishes what that program can do beyond its development cases.
+This guide follows a robot skill implemented as a task program: develop it, freeze an implementation, validate
+it independently, compare an improvement with its parent, and reuse a promoted version as a program skill.
+Other implementations, such as model policies and controllers, use the same execution and evaluation infrastructure.
+See [Robot skills and their lifecycle](skills.md) for the wider concept and current implementation boundaries.
+
+A research session supports the development step. The model can inspect development cases, try robot actions,
+reset cases and submit `solve(robot)` programs. The best qualifying submission is frozen as a program artifact.
+Separate evaluation establishes what that implementation can do beyond its development cases.
 
 This supports both new-task development and revision of an existing program. The recorded promotion example
 improves an existing stacking program; from-scratch local-model sessions have not yet produced a successful
@@ -63,6 +68,10 @@ and 1.00 against 0.60 on held-out (20 pairs). This was one task and a deliberate
 simulator segmentation. It is evidence for that program improvement, not for general autonomous task development.
 
 ## Reuse a promoted program
+
+The current program-skill path creates an explicit skill-library record. It binds a name/version, applicability,
+the sealed implementation and gate evidence. Policies and controllers can also implement robot skills, but the
+CLI below specifically derives records for promoted program candidates.
 
 Derive program skills from the campaign's promoted candidates:
 
