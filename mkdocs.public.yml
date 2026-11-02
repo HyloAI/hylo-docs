@@ -48,7 +48,11 @@ nav:
           - user-guide/tool-agents.md
           - user-guide/worlds.md
       - Memory:
-          - user-guide/memory.md
+          - user-guide/memory/index.md
+          - user-guide/memory/spatial.md
+          - user-guide/memory/action.md
+          - user-guide/memory/skills.md
+          - user-guide/memory/lessons.md
       - Running:
           - user-guide/experiments.md
           - user-guide/policies.md
