@@ -72,7 +72,8 @@ templates keep the token in `HYLO_TOKEN`. [Security](../user-guide/security.md) 
 
 | Variable | Read by | Meaning | Default |
 |---|---|---|---|
-| `HYLO_ASSETS` | robot and motion asset loaders | cache for downloaded robot/character assets | `~/.cache/hylo/assets` |
+| `HYLO_ASSETS` | robot and motion asset loaders | cache for downloaded robot/character assets, robot packs and policy files | `~/.cache/hylo/assets` |
+| `HYLO_STAGES` | `hylo stage` | where stages are kept | `runs/stages` |
 | `HYLO_TOOLS_CACHE` | tool runner | worker requests, outputs and small model assets | `~/.cache/hylo/tools` |
 | `HYLO_TOOLS_THREADS` | tool runner | CPU threads per worker | `32` |
 | `HYLO_TOOLS_UV` | tool runner | `uv` executable used for independent worker environments | `uv` on PATH |

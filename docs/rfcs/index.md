@@ -12,12 +12,14 @@ repeats it.
 | [RFC-0004](RFC-0004-learning-pipeline.md) | Learning pipeline and derived artifacts | Implemented (A1-A3, W1-W4; video world models and RL fine-tuning wait for a GPU) | learners build sealed artifacts with provenance and a role (behaviour, instrument, proposal); one split guard; calibrated judges |
 | [RFC-0005](RFC-0005-architecture-measurement-and-placement.md) | What is measured, where it runs, and one episode loop | Parts 1-4 implemented (2026-10-31, 2026-11-01); part 5 partly; part 6 proposed | experiments vs execution profiles, one episode loop, a run and artifact store, contract versions and plugin metadata |
 | [RFC-0006](RFC-0006-tool-using-agents.md) | Tool-using agents, program candidates and the manipulation toolkit | All parts implemented (2026-11-01/02) | agents that write programs against robot tools, programs as gated candidates and skills, a Panda tabletop task set |
+| [RFC-0007](RFC-0007-tool-calling-robot-agents.md) | Tool-calling robot agents, run evidence and perturbed LIBERO | Parts 1-9 implemented (2026-11-02) | a model calls typed robot tools one checked action at a time; lossless context; hash-chained, sealed runs; watching and steering; seven LIBERO perturbations |
+| [RFC-0008](RFC-0008-stage-worlds.md) | Stages, worlds and robot packs for model-driven robotics | Parts 1-11 implemented (2026-11-02) | scenes as revisioned entity trees, a MuJoCo world with 24 robot packs, actions with receipts, checks with reason codes, people, pretrained walking policies, role campaigns, the Studio world page |
 
 Statuses are the RFCs' own status lines.
 
 ## Writing an RFC
 
-- Number it next (`RFC-0007-<slug>.md`) and add it to this table and to the navigation in `mkdocs.yml`.
+- Number it next (`RFC-0009-<slug>.md`) and add it to this table and to the navigation in `mkdocs.yml`.
 - Start with a status table (status, scope, what it builds on), then the motivation: the concrete problem, found in
   the code or in a result.
 - Give each part its own section with what changes, what it costs (for example, digests that change once), and how

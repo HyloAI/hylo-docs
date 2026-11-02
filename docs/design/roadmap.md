@@ -16,8 +16,13 @@ new-task development, scene adaptation and optimisation of existing programs.
 - **Implemented, formal evaluation pending:** free-scene and motion-free showcases; robosuite/RoboCasa task programs.
 - **Known limits:** from-scratch local-model research is unsuccessful; external replay and physical motion stability
   have failures; three primary tool models use fallback backends. See [Showcase](../showcase/tool-agents.md).
-- **Next:** validate the unrun workflows, tighten code/artifact checks and execution isolation, and measure development
-  cost and generalisation under stated observation conditions.
+- **Added later the same day (RFC-0007, RFC-0008):** `tools.llm` (a model calling typed robot tools, one checked
+  action at a time; 8 of 9 pick_place, put_in_bowl and stack episodes zero-shot with a local model), hash-chained and
+  sealed runs, `hylo watch` / `preflight` / `mcp` / `chats`, seven LIBERO perturbations (not yet evaluated with an
+  agent), stages and worlds with 24 robot packs, pretrained humanoid walking policies on the CPU, people, role
+  campaigns with recipe skills, and the Studio World page. Push and press tasks and model-built worlds remain weak.
+- **Next:** validate the unrun workflows, evaluate agents on the perturbed LIBERO tasks, tighten code/artifact checks
+  and execution isolation, and measure development cost and generalisation under stated observation conditions.
 
 This does not satisfy the LIBERO frozen-VLA exit below: the stacking result is on a different task and baseline.
 The 2026-11-01 status table and schedule below are retained as a dated snapshot, not a current feature inventory.

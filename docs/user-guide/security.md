@@ -56,6 +56,17 @@ a manifest marked `mutable` bypasses the digest check, and the code-candidate ch
 agent configuration to the actual referenced program. Treat configs and candidates as trusted inputs until
 those checks are tightened; do not describe the current gate as a host-code security boundary.
 
+## Worlds and MCP
+
+- `hylo mcp` serves the world tools over stdio to the program that started it: whoever controls that agent can
+  edit stages, run robots and write exports under the stage's output folder. It opens no network port.
+- The Studio's World page starts `hylo world chat` subprocesses with the configured model; give it a role token
+  when the port is reachable by others.
+- Pretrained policies are never deserialised by a general unpickler: their tensors are read with a reader that
+  knows only tensor rebuilding and refuses any other object, and they run with numpy.
+- Robot models and policy files are fetched from pinned commits and checked file by file against recorded digests;
+  a changed cached file is refused.
+
 ## Studio roles
 
 Studio checks the token on every API call and maps it to a role:

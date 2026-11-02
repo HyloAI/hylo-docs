@@ -42,6 +42,7 @@ uv run hylo playground --repo bench          # http://127.0.0.1:8765
 | Research | research sessions and code-agent runs: every turn's text, code, output and images, submissions, the frozen program, usage and cost |
 | Experience | skill libraries, lesson books, action memories, and sealed artifacts with provenance and calibration |
 | Jobs | `hylo run`, `hylo evolve run` and `hylo calibrate` in the background, with their logs |
+| World | stages and the worlds built from them: a view to orbit, actions and checks by hand, chat sessions with a model |
 
 ### Live sandbox
 
@@ -111,6 +112,21 @@ Studio reads the session files directly (`log.jsonl` or `turns.jsonl`, `summary.
 so a session that is still running or was interrupted shows what it has so far. It serves files only from inside a
 session directory, and only images, videos and text.
 
+### World
+
+![The World page: entities, a free view, actions by hand and a chat session's transcript](../assets/figures/studio-world.png)
+
+Lists the stages under `runs/world/stages` (create one from the page), and for a stage:
+
+- the entities with their kind and position, and a button that builds the newest revision into a world;
+- a view of the world you orbit by dragging and zoom with the wheel;
+- an action box and a goal box: any [world action](worlds.md#running-a-world) and any check, run on the current
+  generation, with the receipt shown;
+- a chat panel: a message starts `hylo world chat` on the stage in the background, or, while a session runs, goes to
+  its inbox; the transcript shows the model's words, each tool call with its result, and the view after each action.
+
+Sessions are written to `runs/world/sessions/<stage>` and can be followed with `hylo watch`.
+
 ### Jobs
 
 Starts `hylo run`, `hylo evolve run` or `hylo calibrate` (and `hylo learn`, through `POST /api/jobs`) as a local
@@ -131,3 +147,4 @@ page.
 - [Deployment](deployment.md): bring up a workcell to operate from Studio.
 - [Campaigns](campaigns.md): what the Self-improvement page shows.
 - [Tool-using agents](../rfcs/RFC-0006-tool-using-agents.md): what research sessions are.
+- [Worlds](worlds.md): what the World page builds and runs.

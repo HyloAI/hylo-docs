@@ -61,6 +61,7 @@ activity to the mechanisms available today.
 |---|---|
 | Robot skill | the task capability used to explain the product workflow |
 | Program skill | a `Skill(kind="program")` record referencing a sealed program, applicability and gate evidence; a code agent can retrieve and call it |
+| Recipe skill | a `Skill(kind="recipe")` record: the tool calls that solved a world task, keyed by the reasons its goal failed at the start, admitted only after a replay without a model achieved the goal |
 | Coding-agent skill | a `SKILL.md` instruction file under `harness/agent-skills/` teaching a software agent to operate Hylo commands |
 
 Program skills are one implementation/reuse path for robot capabilities. The instruction files document how to

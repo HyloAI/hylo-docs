@@ -37,7 +37,11 @@ these activities so that working task capabilities can be inspected, reused and 
     Build and debug task programs using perception, grasping and motion-planning tools. A model can write code
     interactively or develop a frozen program on development cases. Start with a new task or an existing program.
 
-    [Develop a skill →](user-guide/developing-strategies.md) · [Skill research →](user-guide/research-and-skills.md)
+    A model can also operate the robot one checked tool call at a time, or build a world with other robots to try
+    a task in.
+
+    [Develop a skill →](user-guide/developing-strategies.md) · [Skill research →](user-guide/research-and-skills.md) ·
+    [Tool-calling agents →](user-guide/tool-agents.md) · [Worlds →](user-guide/worlds.md)
 
 -   **Run implementations**
 
@@ -87,12 +91,16 @@ these activities so that working task capabilities can be inspected, reused and 
 </div>
 
 [Studio](user-guide/studio.md) shows research sessions, code and development outcomes alongside runs, replays,
-comparisons, campaigns and workcell controls. Start it with `hylo playground`.
+comparisons, campaigns and workcell controls, and its World page builds and runs stages with a chat model. Start it with `hylo playground`.
 
 ## Choose a starting point
 
 - **Bring an existing policy:** follow the [CPU quickstart](getting-started/quickstart.md), then [connect your policy](user-guide/policies.md).
 - **Develop a robot skill:** use the [robot tools and code agents](user-guide/developing-strategies.md), then inspect the recorded results.
+- **Try robots in a scene:** describe a [world](user-guide/worlds.md) with any of 24 robot packs, run it by hand or
+  with `hylo world chat`, and record camera data.
+- **Let a model operate the robot:** run [`tools.llm`](user-guide/tool-agents.md) on a benchmark task, watch it with
+  `hylo watch`, and seal the run.
 - **Improve or reuse a skill:** run a [research session](user-guide/research-and-skills.md), compare with a baseline through a campaign, or retrieve a verified program skill.
 
 New-task development starts with execution and task validation. A claim of improvement uses a separate comparison

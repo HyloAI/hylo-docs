@@ -139,6 +139,8 @@ nav:
           - user-guide/skills.md
           - user-guide/developing-strategies.md
           - user-guide/research-and-skills.md
+          - user-guide/tool-agents.md
+          - user-guide/worlds.md
       - Running:
           - user-guide/experiments.md
           - user-guide/policies.md
@@ -200,6 +202,8 @@ nav:
           - rfcs/RFC-0004-learning-pipeline.md
           - rfcs/RFC-0005-architecture-measurement-and-placement.md
           - rfcs/RFC-0006-tool-using-agents.md
+          - rfcs/RFC-0007-tool-calling-robot-agents.md
+          - rfcs/RFC-0008-stage-worlds.md
   - Research:
       - research/index.md
       - EXECUTIVE-SUMMARY.md

@@ -23,6 +23,7 @@ controllers are ways to implement task capabilities; the broad skill concept is 
 | `code.program` | a Python `solve(robot)` program, without a model call | a hand-written or frozen task strategy |
 | `code.llm` | a chat model writes and executes code one turn at a time | interactive construction and debugging during an episode |
 | `hylo research` | a model develops and submits programs on development cases | producing a frozen program for separate evaluation |
+| `tools.llm` | a chat model calls typed robot tools, one checked action at a time | trying a model on a task, watching and steering it, collecting conversations that worked |
 
 The policy/program is the executable implementation. Task scope, robot and observation assumptions, measured
 evidence and version/dependencies complete the skill description. Store that information in the task/config,
@@ -94,6 +95,16 @@ The [tools README](https://github.com/HyloAI/hylo-harness/tree/main/adapters/hyl
 Scene generation, replay-to-simulation and motion authoring are additional experimental workflows. Free-scene
 and motion-free showcase requests remain unrun; external replay and physical motion stability have known failures.
 Their presence in the CLI is not evidence of task reliability. See [Showcase](../showcase/tool-agents.md).
+
+## Tool calls instead of code
+
+`code.llm` and `tools.llm` use the same robot tools. `code.llm` writes Python blocks, which suits tasks a program
+can express in a few lines and keeps the code for reuse. `tools.llm` calls one tool at a time with JSON arguments;
+every action is refused or confirmed with a measured receipt before the model decides again, which suits models
+trained for tool calls and makes each step visible. See [Tool-calling agents](tool-agents.md).
+
+To try a task with another robot or in another scene first, build it as a [world](worlds.md): 24 robot packs,
+cameras, people, goals checked with reason codes.
 
 ## Validate the capability and record its scope
 

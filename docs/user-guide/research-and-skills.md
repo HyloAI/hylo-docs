@@ -84,6 +84,15 @@ by instruction similarity and made available as `skills.<name>(robot)`. A skill 
 its gate evidence; it is not a new trained checkpoint. Applicability and validation are limited to the recorded
 robot, task and observation conditions. Revalidate when those conditions change.
 
+## Recipe skills from role campaigns
+
+For tasks built as [worlds](worlds.md), `hylo roles run CAMPAIGN.yaml` develops and checks skills without a gate
+statistic: a worker session solves a development task, its actions become a recipe keyed by the failure reasons the
+task's goal reported at the start (for example `NOT_LIFTED`), and a verifier replays the recipe without a model on
+fresh copies of the task. Only a replay that achieves the goal admits the skill; held-out tasks are never used to
+propose or verify. Later workers whose goal fails for the same reasons are offered the matching skills
+(`SkillLibrary.for_failure`). Every tool call of every run is in the campaign's ledger.
+
 ## Inspect sessions in Studio
 
 ```bash
