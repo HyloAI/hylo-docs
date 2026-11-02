@@ -7,6 +7,32 @@ separate validation runs to support claims about the capability's scope and reli
 An experiment is one config file: a benchmark split, an environment, an agent, and optional safety, trace, timing
 and seed settings. `hylo run` evaluates it and writes a run.
 
+## Design
+
+**One episode loop for everything.** Evaluation, campaigns, the Studio's sandbox and a workcell next to a robot run
+the same loop. When deployment had a loop of its own, what the gate approved in simulation was not what the robot
+ran; with one loop it is.
+
+**Everything an episode does is recorded, and everything else reads the record.** Each episode writes an append-only
+event stream: observations, the agent's chunks and decisions, memory retrievals, every safety review, every executed
+action, results. Scoring, diagnosis, replay, learners and the Studio read only these traces. Formats made for
+training data, for service calls or for chat messages each miss some of this (reasoning, memory, safety) or cannot be
+replayed, so the trace is Hylo's own and those formats are export targets.
+
+**An experiment's identity is what it measures.** The digest covers the benchmark, environment, agent, safety, trace
+and timing settings, and leaves out where the experiment runs: output directories, worker counts, interpreters and
+paths. Configs name runtimes and store ids, and each machine resolves them, so the same experiment has the same
+identity on a workstation, a GPU machine and a robot computer.
+
+**Timing is part of the experiment.** In `sync` timing the world waits for every policy call; in `realtime` it does
+not, and actions that went stale while the policy computed are dropped. A slow policy behaves differently on a robot
+than in a waiting simulation, so the difference is something to measure, not to hide. Realtime runs on a
+deterministic virtual clock in simulation, so it can be repeated.
+
+**Problems surface before the first step.** The agent and the environment are checked for compatibility (control
+mode, rotation format, action dimensions) when they are bound, and privileged simulator state goes to the trace for
+scoring, never to the agent.
+
 ## Run a config
 
 Commands on this page run from `bench/`, so runs land in the store registered during

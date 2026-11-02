@@ -10,6 +10,32 @@ services retain their technical responsibilities.
 ![Develop and run a skill, validate it, version and deploy the implementation, reuse it and improve it with new evidence](../assets/diagrams/skill-lifecycle-light.svg){ .hylo-diagram .only-light }
 ![Develop and run a skill, validate it, version and deploy the implementation, reuse it and improve it with new evidence](../assets/diagrams/skill-lifecycle-dark.svg){ .hylo-diagram .only-dark }
 
+## Design
+
+**A skill is a claim, not a piece of code.** The same capability can have several implementations (a program, a
+model policy, a controller), and one model policy can carry several capabilities. What makes something a skill is
+the claim that it does a class of tasks under stated conditions, and the evidence for that claim. So a skill is
+defined by five parts, of which the implementation is only one.
+
+**Evidence holds only for the conditions it was measured under.** A success rate measured in simulation, with
+privileged segmentation, on one robot, says nothing yet about a different camera or a real arm. The conditions
+travel with every result, and a change in conditions calls for validation again, not for trust.
+
+**Developing and validating are separate acts.** Whatever an implementation was tuned on cannot be its evidence.
+An implementation is frozen first and then tested on cases it was never developed on. A first skill is checked
+against its task requirements; an improvement is compared with the version it replaces, through the gate. These are
+two different questions and need two different tests.
+
+**Frozen, verified and deployed are three different states.** Freezing keeps an implementation unchanged; it does not
+mean it works. Verification records that it passed a test; it changes nothing on a robot. Deployment happens only
+when a person points a policy server and a workcell at a version. Each step is owned by a different mechanism, so
+none of them can be skipped by accident.
+
+**The lifecycle maps onto existing mechanisms instead of wrapping them.** Policies, programs and configurations are
+validated and deployed in different ways. Hylo does not force one skill wrapper around all of them; it connects the
+records each mechanism already keeps (sessions, runs, artifacts, campaign versions, skill-library records), so the
+difference between them stays visible.
+
 ## What defines a skill
 
 | Part | Questions it answers | Current mechanisms |

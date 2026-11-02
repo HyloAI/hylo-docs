@@ -10,6 +10,50 @@ that will run on hardware.
 
 *One cycle. The promoted candidate is the next cycle's parent.*
 
+## Design
+
+**An improvement is an experiment, not an edit.** A rule, a learner or a language model can propose a change; none of
+them is trusted. A change is kept only when a paired test on initial states that played no part in proposing or
+choosing it agrees, and every kept change can be undone. The proposer's confidence counts for nothing.
+
+**Four splits, one job each.** Data that has been used to make a decision is no longer an independent test of that
+decision. So the initial states are divided by job: `search` to diagnose failures (proposers see these),
+`search_val` to choose among candidates, `gate` for one confirmatory test of the chosen candidate, and `heldout` for
+the report to the person who approves, never used to choose. Choosing on gate data would turn the gate into one more
+selection step; reporting on selection data would overstate the gain.
+
+**Spend episodes where they can matter.** Episodes are the expensive resource, so the cascade orders its checks by
+cost. Stage 0 costs nothing: protected settings, validity, novelty, the provenance of any artifact the candidate
+names. Stage 1 runs a few pairs to drop clear losers. Stage 2 screens on all of `search_val`. Only the best reach the
+gate.
+
+**Pair everything.** Parent and candidate run on the same initial states with the same seeds and the same policy
+noise, so a difference between them comes from the change, not from luck. The test counts only the pairs in which
+exactly one of them succeeded, which needs far fewer episodes than comparing two success rates.
+
+**One error budget per cycle.** A cycle tests several candidates and may look at the gate more than once. Holm
+correction across candidates and an alpha-spending schedule across looks keep the chance of promoting a change that
+does not help at `alpha` per cycle.
+
+**Better on average is not enough.** A candidate that raises the mean but breaks one task, or needs more safety
+interventions, is vetoed: success on any task may not fall beyond a tolerance, and interventions may not rise beyond
+one per episode.
+
+**Changes are declarative, and the goalposts are protected.** A candidate is a config patch, which may name a sealed
+artifact or a sealed program. It may not touch safety, the benchmark, the trace, the scorers, the environment or the
+campaign's own settings: a change that raises its score by loosening safety or editing the scorer has improved
+nothing.
+
+**Cheap and reversible first.** Improvements form a ladder by cost and risk. A frozen policy is improved from the
+bottom up, and every rung passes the same gate.
+
+![Improvements are ordered by cost and risk. Steering settings and recovery rules need only rollouts and change nothing permanent. Learned components need training. Policy weights need hours of training and change the most. A frozen policy is improved from the bottom up; every rung goes through the same gate.](../assets/diagrams/improvement-ladder-light.svg){ .hylo-diagram .only-light }
+![Improvements are ordered by cost and risk. Steering settings and recovery rules need only rollouts and change nothing permanent. Learned components need training. Policy weights need hours of training and change the most. A frozen policy is improved from the bottom up; every rung goes through the same gate.](../assets/diagrams/improvement-ladder-dark.svg){ .hylo-diagram .only-dark }
+
+**Every promotion can be undone.** A candidate can be promoted only over the version that is active; the ledger
+records every promotion and rollback, with who and why. Anything that will run on hardware waits for a person, who
+sees the held-out report before approving.
+
 ## Program development and code candidates
 
 A campaign supports the improvement stage of the [skill lifecycle](skills.md): compare implementations and manage

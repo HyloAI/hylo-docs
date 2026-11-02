@@ -13,6 +13,35 @@ The scorecards of one protocol form a **leaderboard**, and any two can be compar
 
 The agent is passed as `--policy`. Despite the flag's name, it takes an agent spec.
 
+## Design
+
+**Only the agent may differ.** A comparison means something only when everything except the agent was the same: the
+tasks and their initial states, the environment, the safety settings, the timing, the scorers. A protocol fixes all
+of these and leaves the agent as its single free input. It is versioned and digested, and changing anything in it
+makes a new protocol rather than a different result under the old name.
+
+**Scorers read traces, never agents.** A scorer sees what happened in an episode, recorded in its trace, and nothing
+of the agent's internals. A vision-language-action model, a language-model agent and a hand-written program are
+therefore scored in exactly the same way, and a score can be recomputed later from the stored traces. Privileged
+simulator state goes into the trace for scoring and is never shown to the agent.
+
+**Pair, do not pool.** Two agents are compared on the same tasks with the same seeds, episode by episode. Which
+situations happened to be hard then cancels out, and only the pairs where exactly one agent succeeded carry
+information. That is why two agents whose intervals overlap can still differ clearly, and why the same paired test
+decides promotion in campaigns.
+
+**Honest intervals at the edges.** Success rates are reported with Wilson intervals, which stay inside 0 to 1 and do
+not collapse to a point at 100 of 100.
+
+**What is measured, not where.** The digest covers what defines the measurement and leaves out where it ran
+(machine paths, interpreters, worker counts), so the same protocol has the same identity on every machine. Code
+versions are recorded beside each scorecard rather than inside the digest. Scorecards from different protocol
+digests are refused, not compared.
+
+**Timing is part of the measurement.** A policy that waits for the world (`sync`) and one that runs while the world
+moves (`realtime`) are different measurements. A protocol can score what a robot would run, with a fixed latency;
+never with a measured one, which would depend on the machine and its load.
+
 ## Scoring
 
 Commands on this page run from `bench/`.

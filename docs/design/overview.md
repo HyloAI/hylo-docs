@@ -129,9 +129,11 @@ and the workcell API. A boundary lint enforces this ([contributing](../developer
 | Decision | Why |
 |---|---|
 | A light core with contracts and plugins; heavy stacks out of process | No simulator, LLM or VLA is mandatory. Components with conflicting dependencies run in their own venvs. |
-| Improvement is a gated experiment | A change is kept only if a paired test on unseen initial states agrees. |
-| Experience as memory and skills, not only weights | Retrieved successes, lessons and skills steer a frozen policy and are cheap to roll back. |
-| Everything learned is a sealed artifact with a role | Each role earns trust its own way, and provenance travels with the artifact. |
+| Improvement is a gated experiment | A change is kept only if a paired test on unseen initial states agrees ([campaigns](../user-guide/campaigns.md#design)). |
+| Experience as memory and skills, not only weights | Retrieved successes, lessons and skills steer a frozen policy and are cheap to roll back. Each kind of memory serves one layer of an agent, is built only from verified development data, and is frozen during evaluation ([memory](../user-guide/memory/index.md#memory-at-four-layers-of-an-agent)). |
+| A model decides what; deterministic layers decide what is valid and what happened | A language model edits a world through checked patches, acts through controllers, and learns the result only from measured receipts and checks, so its mistakes cannot make the world inconsistent ([worlds](../user-guide/worlds.md#from-language-to-a-world)). |
+| Looking is separate from acting | A tool-calling agent may measure freely, but each action is a proposal tied to what was seen, answered by a measured receipt; the task's check, hidden from the model, decides success ([tool-calling agents](../user-guide/tool-agents.md#design)). |
+| Everything learned is a sealed artifact with a role | Each role earns trust its own way, and provenance travels with the artifact ([learning](../user-guide/learning.md#design)). |
 | Measurement separated from placement; one episode loop; store ids | The same identity on every machine, and the loop a robot runs. |
 | One base repository and leaves | Changes to the base are atomic, the leaves stay independent, and the robot side stays small. |
 

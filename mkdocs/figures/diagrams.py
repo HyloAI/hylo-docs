@@ -699,6 +699,50 @@ def skill_journey(T: dict) -> Doc:
     return d
 
 
+# ---------------------------------------------------------------- 25. campaigns: the improvement ladder
+def improvement_ladder(T: dict) -> Doc:
+    d = Doc(960, 330, T, "The improvement ladder",
+            "Improvements are ordered by cost and risk. Steering settings and recovery rules need only rollouts and "
+            "change nothing permanent. Learned components need training. Policy weights need hours of training and "
+            "change the most. A frozen policy is improved from the bottom up; every rung goes through the same gate.")
+    d.card()
+    rungs = [("Policy weights", "hours of training", "accent"), ("Learned components", "training and rollouts", "soft"),
+             ("Recovery rules", "rollouts only", "plain"), ("Steering settings", "rollouts only", "plain")]
+    for i, (t, cost, k) in enumerate(rungs):
+        y = 30 + i * 70
+        node(d, 200, y, 300, 52, t, k, size=16.5)
+        d.text(530, y + 32, cost, "m", 15, "muted")
+    d.arrow([(150, 300), (150, 36)], "faint", 1.6)
+    d.text(40, 50, "more cost,", "m", 15, "muted")
+    d.text(40, 70, "more risk", "m", 15, "muted")
+    node(d, 720, 100, 200, 130, "Same gate\nfor every rung", "kernel", size=16.5)
+    for i in range(4):
+        y = 30 + i * 70 + 26
+        d.arrow([(680, y), (700, y), (700, 165), (716, 165)], "faint", 1.4, rounded=8, head=(i == 3))
+    return d
+
+
+# ---------------------------------------------------------------- 26. learning: three roles, three trust paths
+def trust_paths(T: dict) -> Doc:
+    d = Doc(960, 290, T, "Three roles, three ways to earn trust",
+            "A behaviour artifact changes what the robot does and is trusted only through the gate. An instrument "
+            "measures or labels and is trusted through calibration against ground truth. A proposal artifact changes "
+            "what gets proposed and is trusted through outcome votes.")
+    d.card()
+    group(d, 40, 330, 44, "Role")
+    group(d, 640, 920, 44, "Trusted through")
+    rows = [("Behaviour", "changes what the robot does", "The gate", "accent"),
+            ("Instrument", "measures and labels", "Calibration", "kernel"),
+            ("Proposal", "changes what is proposed", "Outcome votes", "soft")]
+    for i, (role, what, trust, k) in enumerate(rows):
+        y = 70 + i * 70
+        node(d, 40, y, 290, 52, role, "panel", size=16.5)
+        d.arrow([(332, y + 26), (636, y + 26)], "muted")
+        d.label(484, y + 20, what, size=15)
+        node(d, 640, y, 280, 52, trust, k, size=16.5)
+    return d
+
+
 # ---------------------------------------------------------------- the home page: the loop and the stack
 def home_stack(T: dict) -> Doc:
     return stack_map(T, Repo("docs", ("hylo-", "docs"), "", set()))
@@ -713,7 +757,8 @@ DIAGRAMS = {"architecture": architecture, "strategy-development": strategy_devel
             "studio-plane": studio_plane, "tool-agent-loop": tool_agent_loop,
             "spatial-recall": spatial_recall, "action-steer": action_steer,
             "skill-status": skill_status, "experience-round": experience_round, "memory-timeline": memory_timeline,
-            "world-layers": world_layers, "memory-layers": memory_layers, "skill-journey": skill_journey}
+            "world-layers": world_layers, "memory-layers": memory_layers, "skill-journey": skill_journey,
+            "improvement-ladder": improvement_ladder, "trust-paths": trust_paths}
 
 
 if __name__ == "__main__":

@@ -26,6 +26,31 @@ the policy server is slow, the arm holds its position, and if it stops answering
 e-stop stays latched in the workcell until an operator clears it. Where these layers stop is on the
 [safety](safety.md#safety-on-robots) page.
 
+## Design
+
+**Three roles in three places.** Computation goes where the accelerators are (the policy server); safety, timing and
+the record go where the robot is (the workcell); people can watch and operate from anywhere (the control plane), but
+the control plane holds nothing that moves and never sends actions. The roles can share one laptop or use three
+machines without changing anything else.
+
+**The robot runs the loop the gate approved.** The workcell runs the same episode loop as evaluation, in realtime
+timing. What a campaign promoted in simulation is executed by the same code on the robot.
+
+**The robot keeps moving while the policy thinks.** Inference takes time, and a robot can neither stop the world
+nor execute actions that were planned for a moment that has passed. An action queue is refilled before it runs out,
+actions that went stale during inference are dropped, the arm holds its position when the queue is empty, and a
+watchdog ends the episode when the policy stops answering.
+
+**Promotion changes nothing on a robot by itself.** A promoted version reaches the robot only when a policy server
+follows the campaign's active version and a workcell connects to that server. Anything that runs on hardware should
+be approved by a person first.
+
+**Robot episodes never claim success.** There is no ground truth on a robot. An episode is labelled by the operator's
+verdict or by a calibrated judge, and the label records which.
+
+**The robot side stays small.** The serving package depends on the core alone, so the robot computer installs little,
+and its episodes come back to the workstation as ordinary runs that can be scored, learned from and improved on.
+
 ## 1. Bring-up without hardware
 
 Clone the deployments template next to the other repositories, once. Studio's web UI also needs a one-time build

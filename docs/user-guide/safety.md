@@ -15,6 +15,30 @@ The shield does not cover two cases:
     The shield is a software layer. On a real robot, keep the robot's own limits (for example LeRobot's
     `max_relative_target` and torque limits) and a hardware e-stop within reach.
 
+## Design
+
+**One checkpoint, owned by the loop.** Actions come from many sources: policies, language models, recovery rules,
+campaign candidates, hold actions. They all pass the same shield, and the shield belongs to the episode loop, not to
+any agent. Letting a benchmark or a model framework own the loop instead would leave safety and timing to code Hylo
+does not control.
+
+**An order that cannot be undone by configuration.** The finite check comes first, because a NaN cannot be repaired.
+The bounds clamp comes last, so no configured guard can push an action out of the action space. Guards added in a
+config sit in between: they can make an action safer, never loosen the mandatory limits.
+
+**Correct in simulation, stop on a robot.** In simulation a small correction is recorded and the episode goes on,
+without the rest of the agent's plan, which no longer matches what will happen. On a real robot any intervention ends
+the episode: a policy that had to be corrected once is not one to keep running on hardware.
+
+**Safety runs where the robot is.** On a workcell the shield runs in the process next to the robot, so a network
+fault between the policy server and the robot cannot bypass it.
+
+**Improvements cannot buy their score with safety.** Campaign candidates may not change the safety settings, and the
+gate vetoes a candidate that needs noticeably more interventions than its parent.
+
+**Every review is evidence.** Each review is a trace event with the proposed and the approved action and the reason,
+and interventions are counted in every score, so safety is measured as well as enforced.
+
 ## What the shield does
 
 ![Every action passes the finite check, the workspace guard, the configured guards and the bounds clamp before the environment; a non-finite action aborts the episode.](../assets/diagrams/safety-shield-light.svg){ .hylo-diagram .only-light }
