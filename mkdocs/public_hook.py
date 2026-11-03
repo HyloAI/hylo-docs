@@ -1,5 +1,5 @@
 """MkDocs hook for the public site (mkdocs.public.yml): internal pages are left out, links to them become plain
-text, studio screenshots and videos are dropped, mentions of research notes are generic."""
+text, studio screenshots are dropped, mentions of research notes are generic."""
 
 import posixpath
 import re
@@ -8,7 +8,6 @@ INTERNAL = ("rfcs/", "research/", "EXECUTIVE-SUMMARY.md", "design/", "developer-
 KEEP = ("design/overview.md",)
 LINK = re.compile(r"(?<!!)\[([^\]]+)\]\(([^)\s]+)\)")
 STUDIO_SHOT = re.compile(r"^!\[[^\]]*\]\([^)]*studio-[a-z]+\.png\)(\{[^}]*\})?\s*\n(\s*\n)?(\*[^\n]*\*\s*\n)?", re.M)
-STUDIO_VIDEO = re.compile(r"^<video [^\n]*studio-[a-z-]+\.mp4[^\n]*</video>\s*\n(\s*\n)?(\*[^\n]*\*\s*\n)?", re.M)
 
 
 def _internal(page_uri: str, target: str) -> bool:
@@ -25,7 +24,6 @@ def on_page_markdown(markdown, page, config, files):
     uri = page.file.src_uri
     markdown = LINK.sub(lambda m: m.group(1) if _internal(uri, m.group(2)) else m.group(0), markdown)
     markdown = STUDIO_SHOT.sub("", markdown)
-    markdown = STUDIO_VIDEO.sub("", markdown)
     if uri == "index.md":
         markdown = markdown.replace("this site: design, RFCs, research notes and experiment records",
                                     "this documentation")
