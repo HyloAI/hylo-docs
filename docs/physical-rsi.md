@@ -1,8 +1,9 @@
 # Physical RSI
 
-AI systems have started to improve themselves: software agents rewrite their own code, tune their own prompts and
-build their own skill libraries. Recursive self-improvement (RSI) has become the next frontier of AI, and that wave
-has not yet reached the physical world. Hylo is built to bring it there: **robots that build on their own progress.**
+Physical recursive self-improvement uses task outcomes to propose changes, verify their effects and carry adopted
+changes into later rounds. Hylo connects four capabilities in this loop: [agents](user-guide/agents.md) act in
+[worlds](user-guide/worlds.md), [memory](user-guide/memory/index.md) carries experience forward, and
+[skills](user-guide/skills.md) make verified capabilities reusable. People define the goals and boundaries.
 
 ![The Physical RSI loop: Build, Run, Improve, Verify and Deploy, with RSI campaigns over Improve and Verify and Serve beneath all five](assets/diagrams/physical-rsi-light.svg){ .hylo-diagram .only-light }
 ![The Physical RSI loop: Build, Run, Improve, Verify and Deploy, with RSI campaigns over Improve and Verify and Serve beneath all five](assets/diagrams/physical-rsi-dark.svg){ .hylo-diagram .only-dark }

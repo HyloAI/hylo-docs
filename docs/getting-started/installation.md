@@ -92,7 +92,7 @@ API configured in the model specification. A local model must already be availab
 
 Heavy perception and motion tools use `uv` worker environments: their first call can install separate dependencies
 and download weights. Some primary backends require model access or registered body-model files; the tools expose
-fallbacks and record the backend actually used. See [Developing robot skills](../user-guide/developing-strategies.md)
+fallbacks and record the backend actually used. See [Developing programs](../user-guide/developing-strategies.md)
 and the [environment variables](../configuration/environment-variables.md#strategy-development).
 
 robosuite and RoboCasa have their own setup scripts under `bench/envs/robosuite` and `bench/envs/robocasa`.

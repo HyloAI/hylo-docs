@@ -1,35 +1,22 @@
 # Architecture overview
 
-This page maps the Physical RSI loop and the robot-skill lifecycle onto the execution, evaluation, improvement and
-deployment mechanisms, and explains what checks each hand-off. [Robot skills](../user-guide/skills.md) defines the
-user-facing lifecycle; [Concepts](../getting-started/concepts.md) defines the terms.
+This page maps [Physical RSI, Worlds, Agents, Memory and Skills](../getting-started/concepts.md) to their
+implementation: execution, recorded evidence, evaluation, improvement and deployment.
 
 ## At a glance
 
 ![Hylo architecture at a glance: proposers, candidates, gate and versions; the store; the agent, shield and environment loop; Serve; five properties](../assets/diagrams/architecture-glance-light.svg){ .hylo-diagram .only-light }
 ![Hylo architecture at a glance: proposers, candidates, gate and versions; the store; the agent, shield and environment loop; Serve; five properties](../assets/diagrams/architecture-glance-dark.svg){ .hylo-diagram .only-dark }
 
-## The Physical RSI loop
+## Concepts and components
 
-[Physical RSI](../physical-rsi.md) describes the loop Hylo is built around: build worlds, run tasks, improve, verify
-against physical outcomes and deploy what passes. Each activity is a set of mechanisms in the repositories;
-campaigns connect Improve to Verify, and Serve provides model serving across the loop.
-
-![The Physical RSI loop: Build, Run, Improve, Verify and Deploy, with RSI campaigns over Improve and Verify and Serve beneath all five](../assets/diagrams/physical-rsi-light.svg){ .hylo-diagram .only-light }
-![The Physical RSI loop: Build, Run, Improve, Verify and Deploy, with RSI campaigns over Improve and Verify and Serve beneath all five](../assets/diagrams/physical-rsi-dark.svg){ .hylo-diagram .only-dark }
-
-| Activity | Mechanisms | Packages |
+| Concept | Implementation | Details |
 |---|---|---|
-| Build | stages with revisions, worlds composed from robot packs, people, checks with reason codes; benchmark environments and perturbations; replay to simulation; outside data entering as runs | `hylo-core` (stage), `hylo-env-*`, `hylo-data-video`, `hylo-tools`, Bench |
-| Run | robot contract, manipulation tools, tool-calling and program agents, policies, reasoners; the episode loop, the safety shield, receipts and traces | `hylo-core`, `hylo-manip`, `hylo-code-agents`, `hylo-reasoner-llm`, `hylo-agents`, `hylo-policy-*` |
-| Improve | the learning pipeline (data, labellers, learners, sealed artifacts with provenance and a split guard); memory; research sessions and proposers; skill derivation | `hylo-learn`, `hylo-memory`, `hylo-evolve`, `hylo-proposer-llm`, `hylo-code-agents` |
-| Verify | splits, cascade, paired gate with non-regression and protected scope, held-out reports; protocols and scorecards; calibration for instruments; replay checks for recipes; sealed runs | `hylo-eval`, `hylo-evolve`, `hylo-core`, Bench |
-| Deploy | promotion ledger, active versions and rollback; skill library; policy server, robot adapter, workcell and operator channel | `hylo-evolve`, `hylo-memory`, Serve |
-
-Across the loop: **Serve** serves models (today policies to robots; by design every model the loop uses), the
-**kernel** runs every episode with the safety shield and the trace, and **Studio**, the CLI and the MCP server let
-people and external agents drive and inspect it. Measurement happens inside Run (scores from traces) and Verify
-(decisions from scores); it is not a separate activity.
+| RSI | learning jobs, candidate generation, evaluation gates, version registry | [Campaigns](../user-guide/campaigns.md), [Learning](../user-guide/learning.md) |
+| Worlds | stage descriptions, robot packs, simulator environments and goal checks | [Worlds](../user-guide/worlds.md) |
+| Agents | policy agents, programs and typed tool calls through the episode loop | [Agents](../user-guide/agents.md) |
+| Memory | spatial facts, action banks and lesson books, with provenance and read/write boundaries | [Memory](../user-guide/memory/index.md) |
+| Skills | versioned library records, verification evidence, retrieval and application by supported agents | [Skills](../user-guide/skills.md) |
 
 ## Design goals
 
@@ -44,34 +31,6 @@ people and external agents drive and inspect it. Measurement happens inside Run 
 | Evidence from real simulators | a test double serves unit and conformance tests only; every example, protocol and campaign runs on a real simulator |
 | Works with existing tools | an openpi-compatible policy server, LeRobot policies, robots and datasets |
 
-## From skill requirements to validated implementations
-
-A skill is a task capability with stated applicability, implementation, evidence and version/dependencies. The
-architecture supports these through existing task specs, agents, runs, artifacts, campaigns and skill-library
-records. It does not yet give every policy a common skill record or expose a universal skill dashboard.
-
-| Skill activity | Implementation | Main project |
-|---|---|---|
-| Develop | robot tools, program agents, model integration and research sessions | Harness |
-| Run | agent/environment contracts, kernel, SafetyShield and traces | Harness, Serve |
-| Validate | task environments, evaluation protocols, scorecards and gate tests | Bench, Harness Eval |
-| Improve | learning, candidate generation, paired gates and version registry | Harness Learn/Evolve |
-| Deploy | policy server, robot adapter, workcell and operator channel | Serve |
-| Inspect and reuse | research/run/campaign views, skill libraries and program-skill retrieval | Studio, Harness Memory/Code Agents |
-
-![Task requirements and robot tools produce a program; programs and existing policies use shared execution and recorded validation](../assets/diagrams/strategy-development-light.svg){ .hylo-diagram .only-light }
-![Task requirements and robot tools produce a program; programs and existing policies use shared execution and recorded validation](../assets/diagrams/strategy-development-dark.svg){ .hylo-diagram .only-dark }
-
-Strategy development addresses the programming and integration between a task requirement and working robot
-behaviour. The robot contract in core describes the hardware; `hylo-manip` provides perception, grasping and
-planning tools; code agents combine them into task programs. Heavy model tools run in independent workers.
-
-A new task can start with a hand-written program or model-assisted development, followed by execution and
-validation against task requirements. An existing strategy can enter an improvement campaign for a paired
-comparison and promotion. Existing model policies enter the execution loop directly. These are starting points
-into the same stack, with different validation claims. See [Developing robot skills](../user-guide/developing-strategies.md)
-and [Skill research, validation and reuse](../user-guide/research-and-skills.md).
-
 ## From runs to deployed versions
 
 ![Data flow: an experiment produces a run and traces, which give a scorecard; learners turn runs into artifacts, which candidates use; the gate decides, the active version goes to a workcell, and its episodes become runs](../assets/diagrams/architecture-light.svg){ .hylo-diagram .only-light }
@@ -79,27 +38,11 @@ and [Skill research, validation and reuse](../user-guide/research-and-skills.md)
 
 *The data flow behind Run, Improve, Verify and Deploy: the workcell's episodes become new runs.*
 
-1. **Run.** An [experiment](../user-guide/experiments.md) runs one split of a benchmark. It records one trace per
-   episode and the results, and the store files the run under an id.
-2. **Verify: scores.** An evaluation protocol fixes everything except the agent being scored, and writes a
-   [scorecard](../benchmarking/index.md). A leaderboard ranks the scorecards of one protocol.
-3. **Improve: artifacts.** [Learners](../user-guide/learning.md) build artifacts from runs: memories, critics, judges, world
-   models, policy weights. Each is sealed with a content digest and its source runs
-   ([artifact roles](../user-guide/learning.md#artifact-roles)).
-4. **Improve: candidates.** Generators propose candidates as config patches, including sealed program references.
-   Research sessions develop code on development cases; their model does not see gate or held-out outcomes.
-   Other generators can read the campaign archive, including past candidates' gate results
-   ([who reads which split](../user-guide/campaigns.md#splits)).
-5. **Verify: the gate.** A [campaign](../user-guide/campaigns.md)'s stage-0 checks reject candidates that touch
-   protected settings. The rest are screened against the current version on `search_val`, and the best is tested
-   by the gate on the `gate` split. The gate never reads `heldout`.
-6. **Deploy: promotion.** A candidate that passes becomes the campaign's active version (`active.json`), which a policy
-   server can follow. By default this is automatic. Use `approval: manual` for anything that runs on hardware, so a
-   person approves first. `hylo evolve rollback` undoes a promotion.
-7. **Deploy: the robot.** Promotion alone changes nothing on a robot. A policy server must follow the campaign's
-   `active.json`, and a [workcell](../user-guide/deployment.md) must connect to that server. The workcell runs the
-   active version through the same episode loop, and its episodes are recorded as runs that flow back through the
-   store to step 1.
+Experiments produce runs and traces. Evaluation scores them; learners turn permitted data into sealed artifacts.
+Campaigns propose changes, test candidates and record promotions in `active.json`. A policy server can follow
+that version, and a workcell records new episodes as ordinary runs. Promotion alone changes nothing on a robot:
+the server and workcell must be configured, and hardware deployment requires human review and target validation.
+See [Campaigns](../user-guide/campaigns.md) and [Deployment](../user-guide/deployment.md) for the operational rules.
 
 ## One episode loop
 
@@ -204,7 +147,7 @@ and the workcell API. A boundary lint enforces this ([contributing](../developer
 |---|---|
 | A light core with contracts and plugins; heavy stacks out of process | No simulator, LLM or VLA is mandatory. Components with conflicting dependencies run in their own venvs. |
 | Improvement is a gated experiment | A change is kept only if a paired test on unseen initial states agrees ([campaigns](../user-guide/campaigns.md#design)). |
-| Experience as memory and skills, not only weights | Retrieved successes, lessons and skills steer a frozen policy and are cheap to roll back. Each kind of memory serves one layer of an agent, is built only from verified development data, and is frozen during evaluation ([memory](../user-guide/memory/index.md#memory-at-four-layers-of-an-agent)). |
+| Experience as memory and skills, not only weights | Retrieved successes, lessons and skills steer a frozen policy and are cheap to roll back. Each kind of memory serves one layer of an agent, is built only from verified development data, and is frozen during evaluation ([memory](../user-guide/memory/index.md#memory-and-its-consumers)). |
 | A model decides what; deterministic layers decide what is valid and what happened | A language model edits a world through checked patches, acts through controllers, and learns the result only from measured receipts and checks, so its mistakes cannot make the world inconsistent ([worlds](../user-guide/worlds.md#from-language-to-a-world)). |
 | Looking is separate from acting | A tool-calling agent may measure freely, but each action is a proposal tied to what was seen, answered by a measured receipt; the task's check, hidden from the model, decides success ([tool-calling agents](../user-guide/tool-agents.md#design)). |
 | Everything learned is a sealed artifact with a role | Each role earns trust its own way, and provenance travels with the artifact ([learning](../user-guide/learning.md#design)). |

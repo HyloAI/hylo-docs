@@ -2,13 +2,8 @@
 
 This page shows how to run your model in Hylo and which agent to wrap it in.
 
-In the [robot-skill lifecycle](skills.md), a policy is one possible executable implementation of task capabilities.
-An agent runs it; task/config records state its scope, and runs and scorecards record validation evidence. Adding
-a policy does not automatically create a verified skill-library record.
-
-To construct task logic using perception and motion tools, see [Developing robot skills](developing-strategies.md).
-`code.program` runs a task program, while `code.llm` writes code during an episode. They use the same agent contract
-and execution kernel as the policy agents documented here.
+A policy is a model or controller used by an [agent](agents.md). This guide covers configuring policy agents;
+the agent overview also covers programs and typed tool calls.
 
 ## Design
 
@@ -38,11 +33,7 @@ determinism before it is used.
 A **policy** returns action chunks from an observation. An **agent** holds a policy and decides how to use its
 chunks ([concepts](../getting-started/concepts.md)). Any policy runs under any of the agents below.
 
-Policies are one of three control modes. A general model can also call robot tools or write programs
-([tool-calling agents](tool-agents.md)), and a planner can set sub-goals for a policy (`planner.subgoal`).
-
-![Three control modes: general models with tools, a planner with a VLA, and action models, all through the Hylo kernel in one loop](../assets/diagrams/control-modes-light.svg){ .hylo-diagram .only-light }
-![Three control modes: general models with tools, a planner with a VLA, and action models, all through the Hylo kernel in one loop](../assets/diagrams/control-modes-dark.svg){ .hylo-diagram .only-dark }
+See [Agents](agents.md) for the control modes and their relationship to programs and tool calls.
 
 ## Agents that run a policy
 

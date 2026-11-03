@@ -1,65 +1,33 @@
 # Memory
 
-A robot agent without memory starts every episode from nothing. It looks for an object that it saw a moment ago
-and that is now behind the gripper, it rediscovers a motion that worked yesterday in the same scene, and an
-improvement campaign proposes again a change that last week's campaign already measured and refuted. Memory is
-how Hylo carries experience forward: from one step to the next, from one episode to the next, and from one
-campaign to the next.
+Memory carries observations and experience into later decisions. Spatial memory recalls where something was;
+action memory retrieves motions that succeeded; lessons help a proposer use previous experience when choosing
+its next change.
 
-## The problem with memory
+[Skills](../skills.md) are a related, distinct capability: reusable procedures and agent changes with applicability
+and verification evidence. Their library lives in the memory package; its kinds, status and reuse rules are
+documented under [Skill library](skills.md).
 
-Remembering is easy; remembering safely is not. Each of these failures has been seen in practice:
+## Memory and its consumers
 
-- **Unverified memory is worse than none.** A bank that stores what the agent did, rather than what worked, steers
-  the agent back towards its own failures.
-- **Memory can leak the test.** If episodes of the split that decides promotion are written into memory, the agent
-  is scored on situations it has already been shown, and the gain is an artefact.
-- **A model that grades its own notes reinforces its mistakes.** A note survives because the model likes it, not
-  because it helped.
-- **Memory that cannot be traced makes results unexplainable.** Two runs that look identical may have used
-  different memories, and nobody can say which decision came from where.
+| Memory | What it keeps | Who uses it |
+|---|---|---|
+| [Spatial](spatial.md) | facts about objects and places, with time and frame information | a reasoner recalling an observation |
+| [Action](action.md) | motion segments from successful development episodes | a frozen flow policy retrieving a sampling prior |
+| [Lessons](lessons.md) | notes distilled from experience and credited by outcomes | a proposer planning its next change |
 
-The design therefore answers four questions for every kind of memory: what is worth remembering, when it is
-written, when it is read, and who decides that it can be trusted.
-
-## Memory at four layers of an agent
-
-An agent in Hylo is built in layers that work at different rates: a policy that samples a motion at every decision,
-a reasoner that decides at every reasoning step, a configuration that holds for an episode, and an improvement loop
-that proposes changes once per round. Experience is useful at each of these layers, but in a different form, and it
-must arrive at the rate the layer works at. So instead of one store for everything, each layer has its own kind of
-memory, shaped for what that layer consumes.
-
-![Each kind of memory attaches to one layer of an agent: lessons to the improvement loop's proposer, once per round; skills to the agent's configuration, once per episode; spatial memory to the reasoner, at each reasoning step; action memory to the policy's sampling, at each decision.](../../assets/diagrams/memory-layers-light.svg){ .hylo-diagram .only-light }
-![Each kind of memory attaches to one layer of an agent: lessons to the improvement loop's proposer, once per round; skills to the agent's configuration, once per episode; spatial memory to the reasoner, at each reasoning step; action memory to the policy's sampling, at each decision.](../../assets/diagrams/memory-layers-dark.svg){ .hylo-diagram .only-dark }
-
-| Layer | Consumes | So its memory holds | Memory |
-|---|---|---|---|
-| Policy sampling | a starting point for the next motion | motion segments from successful episodes, keyed the way the policy sees a situation | [action memory](action.md) |
-| Reasoner | facts about the scene | positions and times of what was perceived | [spatial memory](spatial.md) |
-| Agent configuration | settings, plans and rules for one episode | verified changes and procedures, with the condition under which they apply | [skills](skills.md) |
-| Improvement loop | ideas for the next change | short written lessons, ranked by how the changes that relied on them fared | [lessons](lessons.md) |
-
-The lower the layer, the more concrete the memory and the more often it is read; the higher the layer, the more
-abstract it is and the longer it lives. Each memory talks only to its own layer, through that layer's existing
-interface: action memory gives the sampler a starting point, spatial memory answers the reasoner's queries, a skill
-is a configuration patch, a lesson is text in a proposer's prompt. No layer needs to know that memory exists in
-order to work without it.
+Each kind serves a different decision and has its own retrieval mechanism. A policy can use action memory
+without a lesson book, and a reasoner can recall spatial facts without changing the policy.
+[Skills](../skills.md) provide the related path for retrieving and applying verified procedures or agent changes.
 
 ## Design space
 
-Every memory system makes the same handful of choices. These are Hylo's, and why.
-
-| Question | Options | Choice | Why |
-|---|---|---|---|
-| What is stored? | everything the agent did, or only what worked | only experience the simulator, a gate or a replay verified | unverified memory steers an agent back towards its failures |
-| From which data? | any episode, or development data only | development splits only | memory built from the splits that decide promotion would leak the test |
-| Who decides it is right? | the model that wrote it, or the outcomes | outcomes: gate verdicts, replays, credit from cited candidates | a model grading its own notes reinforces its mistakes |
-| When is it written? | continuously, or between runs | between runs and campaign rounds; frozen during evaluation | results must not depend on the order in which parallel episodes finished |
-| How does it act? | replace the agent's decision, or bias it | bias: a prior for sampling, a patch for one episode, text for a proposer | a wrong memory should cost a little, not everything |
-| What form does it take? | code, or data | data (configuration, templates, segments, text); programs only as sealed artifacts run in a sandbox | data can be inspected, compared, applied and undone |
-| What happens to old memory? | delete, or invalidate | invalidate facts, keep refuted skills and retired lessons | queries "as of" a time, and proposers that do not repeat refuted ideas |
-| Can its effect be traced? | opaque, or recorded | digests in the agent spec, events in the trace | an outcome must be attributable to the memory that influenced it |
+- **Keep provenance.** Spatial facts record what was observed and when. Action banks use successful development
+  episodes; skills and lessons carry the evidence appropriate to their source.
+- **Respect evaluation boundaries.** Development builds persistent banks and libraries. During evaluation they
+  are frozen, while spatial observations can still be written within an episode.
+- **Make use inspectable.** Memory digests and trace events identify what influenced a decision. Refuted skills
+  and retired lessons remain available as records of what did not work.
 
 ## When it is written and read
 
@@ -95,23 +63,9 @@ finish. So writing and reading are separated in time.
 
 ## What it achieved
 
-Paired comparisons on MuJoCo tasks, the same agent with and without memory on the same episodes, on a CPU
-workstation (commands and full tables on the [showcase](../../showcase/memory.md)):
-
-![Success with and without memory in the four MuJoCo memory examples](../../assets/figures/memory-results.png)
-
-| Experiment | Result |
-|---|---|
-| Spatial memory, targets visible for 5 steps | 0.00 → 0.75 (300 pairs, p = 4e-68); no effect when targets stay visible |
-| A verified skill from a campaign, on fresh scenes | 0.47 → 0.86 (200 pairs, p = 6e-19) |
-| Action memory, revisited and new scenes | +6 points on both, not significant |
-| Action memory carried across six sessions | gains that grow with the bank until session 5, pooled +5.6 points |
-| Action memory on LIBERO-10 (SmolVLA) | −0.08 on unseen start states; +0.08 on the same scenes with a fixed t0 (p = 0.10) |
-
-The results follow the design's own logic. Spatial memory helps exactly when perception fails and not otherwise. A
-skill helps on fresh scenes because it carries a verdict, not a guess. Action memory helps where the retrieval key
-says something about the outcome (a low-dimensional state) and not where it does not (pooled image features on a
-layout the bank has never seen); because it only biases the policy, the cost of a poor retrieval stays small.
+The [memory examples](../../showcase/memory.md) report paired measurements and reproduction commands. Spatial
+memory helped when targets became occluded, and a verified steering skill helped on fresh MuJoCo scenes.
+Action-memory gains depend on retrieval quality; the recorded LIBERO results do not establish a reliable gain.
 
 ## In the Studio
 

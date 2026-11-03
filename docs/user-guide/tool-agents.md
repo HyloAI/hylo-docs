@@ -7,7 +7,7 @@ receipt and fresh camera images. The task's own check decides success; the model
 
 Use it to try a model on a task without writing a program, to watch how a model approaches a robot problem, and to
 collect conversations that worked. For a frozen, model-free implementation use `code.program`; for a model that
-writes Python against the same tools use `code.llm` (see [Developing robot skills](developing-strategies.md)).
+writes Python against the same tools use `code.llm` (see [Developing programs](developing-strategies.md)).
 
 <video src="../../assets/videos/tools-llm-stack.mp4" poster="../../assets/videos/tools-llm-stack.jpg" controls muted loop playsinline preload="none" width="100%" aria-label="A tools.llm stack episode with the model's turns and tool calls captioned"></video>
 
@@ -250,5 +250,5 @@ tool agents.
 ## Next
 
 - [Worlds](worlds.md): build scenes with other robots and let a model run them.
-- [Developing robot skills](developing-strategies.md): programs and code agents with the same tools.
+- [Developing programs](developing-strategies.md): programs and code agents with the same tools.
 - [Showcase](../showcase/tool-agents.md#tool-calling-agents): measured results and what does not work yet.

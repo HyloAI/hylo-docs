@@ -23,7 +23,43 @@ hooks:
 
 nav:
   - Home: index.md
-  - Physical RSI: physical-rsi.md
+  - Get started:
+      - getting-started/installation.md
+      - getting-started/quickstart.md
+      - getting-started/examples.md
+  - Concepts:
+      - Overview: getting-started/concepts.md
+      - RSI: physical-rsi.md
+      - Worlds: user-guide/worlds.md
+      - Agents: user-guide/agents.md
+      - Memory:
+          - user-guide/memory/index.md
+          - user-guide/memory/spatial.md
+          - user-guide/memory/action.md
+          - user-guide/memory/lessons.md
+      - Skills:
+          - user-guide/skills.md
+          - Skill library: user-guide/memory/skills.md
+  - Guides:
+      - Running agents:
+          - user-guide/policies.md
+          - user-guide/developing-strategies.md
+          - user-guide/research-and-skills.md
+          - user-guide/tool-agents.md
+          - user-guide/experiments.md
+      - Improving agents:
+          - user-guide/campaigns.md
+          - user-guide/learning.md
+      - Evaluation:
+          - benchmarking/index.md
+          - benchmarking/protocols.md
+          - benchmarking/leaderboard.md
+      - Deployment and operation:
+          - user-guide/deployment.md
+          - user-guide/studio.md
+          - user-guide/safety.md
+          - user-guide/security.md
+          - user-guide/store.md
   - Showcase:
       - showcase/index.md
       - Core: showcase/core.md
@@ -36,46 +72,8 @@ nav:
       - Plugins: showcase/plugins.md
       - Runtime: showcase/runtime.md
       - Tool-using agents: showcase/tool-agents.md
-  - User Guide:
-      - Getting started:
-          - getting-started/installation.md
-          - getting-started/quickstart.md
-          - getting-started/concepts.md
-          - getting-started/examples.md
-      - Robot skills:
-          - user-guide/skills.md
-          - user-guide/developing-strategies.md
-          - user-guide/research-and-skills.md
-          - user-guide/tool-agents.md
-          - user-guide/worlds.md
-      - Memory:
-          - user-guide/memory/index.md
-          - user-guide/memory/spatial.md
-          - user-guide/memory/action.md
-          - user-guide/memory/skills.md
-          - user-guide/memory/lessons.md
-      - Running:
-          - user-guide/experiments.md
-          - user-guide/policies.md
-          - user-guide/safety.md
-          - user-guide/security.md
-      - Learning and improvement:
-          - user-guide/learning.md
-          - user-guide/campaigns.md
-          - user-guide/store.md
-      - Deployment:
-          - user-guide/deployment.md
-          - user-guide/studio.md
-      - Configuration:
-          - configuration/profiles.md
-          - configuration/environment-variables.md
-          - configuration/deployments-repo.md
-          - Experiment config schema: harness/experiment-schema.md
-  - Benchmarking:
-      - benchmarking/index.md
-      - benchmarking/protocols.md
-      - benchmarking/leaderboard.md
   - Developer Guide:
+      - Architecture: design/overview.md
       - developer-guide/contributing.md
       - developer-guide/testing.md
       - developer-guide/troubleshooting.md
@@ -99,9 +97,14 @@ nav:
       - Internals:
           - harness/execution-lifecycle.md
           - harness/dependency-graph.md
-  - Architecture: design/overview.md
-  - API Reference:
-      - api/index.md
+  - Reference:
+      - Configuration:
+          - configuration/profiles.md
+          - configuration/environment-variables.md
+          - configuration/deployments-repo.md
+          - Experiment config schema: harness/experiment-schema.md
+      - CLI: cli/index.md
+      - API overview: api/index.md
       - Core contracts:
           - api/contracts.md
           - api/kernel.md
@@ -145,4 +148,3 @@ nav:
               - hylo-playground: api/packages/hylo-playground.md
           - Plugins:
               - hylo-plugin-examples: api/packages/hylo-plugin-examples.md
-  - CLI Reference: cli/index.md

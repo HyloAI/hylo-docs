@@ -1,14 +1,10 @@
 # Showcase
 
-Read these examples as evidence for the [robot-skill lifecycle](../user-guide/skills.md): development, execution,
-validation, improvement, deployment and reuse. A reference program, a model policy and a promoted program skill
-are different implementations/records. Each result applies to the robot, observations and task conditions measured.
+These examples report evidence for RSI, Worlds, Agents, Memory and Skills, with the supporting execution,
+evaluation and deployment mechanisms. Each result applies to the robot, observations and task conditions measured.
 
-These examples exercise several parts of Hylo: strategy development, execution, measurement, improvement and
-deployment. [Tool-using agents](tool-agents.md) addresses the programming and integration needed to turn task
-requirements into executable strategies. It reports hand-written reference programs separately from model-developed
-programs, and records observation privileges, failures and unrun workflows. Start with the
-[development guide](../user-guide/developing-strategies.md) for the user path behind these examples.
+[Tool-using agents](tool-agents.md) distinguishes hand-written programs from model-developed programs and records
+observation privileges, failures and unrun paths. Use the [agent guide](../user-guide/agents.md) to choose a starting point.
 
 One runnable example set per layer of the stack, each with the result it measured. Every number here was produced
 by the scripts on the layer's page, on a 128-core CPU workstation with no GPU (2026-11-01), with fixed seeds; each

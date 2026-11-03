@@ -1,37 +1,11 @@
-# Developing robot skills
+# Developing programs
 
-Developing a robot skill means constructing a reusable task capability and establishing where it works. Start
-with the task, robot, observations, success conditions and constraints. Then connect perception, planning and
-control into an executable strategy, and test it across initial states. Hylo provides robot tools and code agents
-for this work, with the same kernel, safety checks and traces used by existing policies.
+Write and run a task program using Hylo's perception, grasping and motion-planning tools. Start with the task,
+robot, observations and success conditions, then test the program across initial states.
 
-Use this path for a new task, a changed scene, or an existing strategy you want to improve. An observed failure
-is one possible starting point; a task requirement is another.
-
-This guide covers the implementation and execution part of the [skill lifecycle](skills.md). Validation, versioning
-and reuse are covered in [Skill research, validation and reuse](research-and-skills.md). Programs, policies and
-controllers are ways to implement task capabilities; the broad skill concept is defined in [Robot skills](skills.md).
-
-## Choose a skill implementation
-
-![Task requirements lead through robot tools and code to a program, which shares execution and validation with existing policies](../assets/diagrams/strategy-development-light.svg){ .hylo-diagram .only-light }
-![Task requirements lead through robot tools and code to a program, which shares execution and validation with existing policies](../assets/diagrams/strategy-development-dark.svg){ .hylo-diagram .only-dark }
-
-| Approach | What runs | Use it for |
-|---|---|---|
-| Existing policy | a model or controller through a policy agent | evaluating or deploying a policy you already have |
-| `code.program` | a Python `solve(robot)` program, without a model call | a hand-written or frozen task strategy |
-| `code.llm` | a chat model writes and executes code one turn at a time | interactive construction and debugging during an episode |
-| `hylo research` | a model develops and submits programs on development cases | producing a frozen program for separate evaluation |
-| `tools.llm` | a chat model calls typed robot tools, one checked action at a time | trying a model on a task, watching and steering it, collecting conversations that worked |
-
-The policy/program is the executable implementation. Task scope, robot and observation assumptions, measured
-evidence and version/dependencies complete the skill description. Store that information in the task/config,
-run/artifact records and, for reusable program skills, the skill library.
-
-See [Policies](policies.md) for existing policies and [Skill research, validation and reuse](research-and-skills.md) for
-development sessions and versioned reuse. A first program can be checked against the task requirements without
-claiming it improves a baseline. A campaign makes that comparison before promoting a change.
+`code.program` executes a hand-written or frozen `solve(robot)` program. `code.llm` writes and executes code
+one turn at a time during an episode. For policy and tool-calling alternatives, see [Agents](agents.md).
+For repeated development cases and frozen submissions, follow [Program research](research-and-skills.md).
 
 ## Prepare the environment
 
@@ -83,7 +57,7 @@ To develop your own program, use the generated config as a starting point. `code
 itself, not a Python filename. Keep the benchmark and environment fixed while changing the strategy.
 
 For a model that writes code during the episode, use `agent.type: code.llm` and a `model` specification in its
-params. For repeated development cases and frozen submissions, follow [Skill research, validation and reuse](research-and-skills.md).
+params. For repeated development cases and frozen submissions, follow [Program research](research-and-skills.md).
 
 ## Model tools and further workflows
 
@@ -118,3 +92,9 @@ verified program skill for later code agents; deployment on a target workcell re
 
 Programs execute in a restricted Python namespace in the host process. This is not operating-system isolation
 and does not limit memory. Read [Security](security.md#model-written-programs) before running generated code.
+
+## Next
+
+- [Program research](research-and-skills.md): develop and freeze a program with a model.
+- [Experiments](experiments.md): run a program under explicit task conditions.
+- [Skills](skills.md): retain and reuse verified capabilities.

@@ -75,25 +75,33 @@ Small flows that change often can be Mermaid diagrams in a `mermaid` code block 
 
 ## Style
 
-### The spine
+### The concepts and the guides
 
-Use the robot-skill lifecycle as the user-facing thread. Explain what activity a page supports and map it to the
-current execution, evaluation, campaign, artifact and deployment mechanisms. Keep technical contract names exact;
-distinguish the broad task-capability concept from program-skill records and coding-agent instruction files.
+The five product concepts are **Physical RSI, Worlds, Agents, Memory and Skills**. Physical RSI connects the
+other four. Home introduces that relationship; Concepts defines it; each topic page explains its own capability.
+Skills have a separate navigation entry even though the library is implemented in the memory package.
 
-| Step | What the reader does | Pages |
-|---|---|---|
-| Start | installs, runs one full loop, learns the nouns | Home, Installation, Quickstart, Concepts |
-| Develop and reuse skills | defines task scope, develops an implementation, validates it and reuses a program skill | Robot skills, Developing robot skills, Skill research/validation/reuse |
-| Run | writes a config, runs an experiment, picks an agent and a policy | Experiments, Policies, Store |
-| Measure | scores under a fixed protocol, compares | Benchmarking, Protocols, Leaderboard |
-| Improve | learns artifacts from runs, passes a campaign's gate | Learning, Campaigns |
-| Deploy | puts a promoted version on a workcell and runs it safely | Deployment, Safety, Security, Studio |
-| Extend and reference | adds plugins, looks up settings | tutorials, Configuration, API, Troubleshooting |
+| Content | Responsibility |
+|---|---|
+| Home | a brief product introduction, the five concepts and starting points |
+| Concepts | how the five concepts relate; supporting command/config terms are secondary |
+| RSI | the improvement loop, what can change and how outcomes support those changes |
+| Worlds | scenes, robots, interactions and goal checks |
+| Agents | choosing policies, programs or tool calls |
+| Memory | observations and experience, storage, retrieval and data boundaries |
+| Skills | reusable task capabilities, applicability, verification and reuse |
+| Guides | concrete operations: run, evaluate, learn, improve, deploy and inspect |
+| Showcase | measured results, conditions, reproduction commands and failures |
+| Developer Guide and Reference | implementation, extension, configuration, API and CLI details |
+| Design and Research (internal) | decisions, roadmap, studies and historical records |
+
+Do not retell the full improvement loop or skill lifecycle at the start of each guide. State the page's task and
+link to the relevant concept. Distinguish robot capabilities, concrete library records and coding-agent instructions.
+Historical design snapshots belong under the archive, with a link to the current documentation.
 
 ### Page order
 
-Each page follows the same order:
+Operational guides follow this order; concept pages lead with the capability and link to the relevant operations:
 
 1. **Purpose**: one or two sentences on what the page lets the reader do.
 2. **Do**: commands and their expected output, ready to copy.
@@ -104,7 +112,7 @@ Each page follows the same order:
 
 ### Nouns
 
-Nine core nouns. Introduce any other term on the page that needs it.
+RSI, Worlds, Agents, Memory and Skills are the primary concepts. Introduce these supporting operational terms only where needed:
 
 | Noun | Meaning |
 |---|---|
@@ -118,8 +126,9 @@ Nine core nouns. Introduce any other term on the page that needs it.
 | campaign | the loop that proposes changes, evaluates them, gates them and promotes them |
 | workcell | the process next to a robot that runs a promoted version with the same episode loop and takes operator commands |
 
-Do not use: RSI, evolution or improvement loop (say campaign, except in the `hylo evolve` command), cognition,
-workbench (say Studio), kernel (say episode loop), runtime layer, numbered layers.
+Use Physical RSI for the overall improvement concept and campaign for the concrete comparison and promotion
+process. Use Studio for the UI and episode loop in operational prose; kernel remains an implementation term.
+Do not introduce numbered layers as a second product taxonomy.
 
 Some words have several meanings. Say which one on first use:
 
@@ -138,6 +147,10 @@ Each fact lives on one page. Other pages give one sentence and a link.
 
 | Fact | Home |
 |---|---|
+| the five concepts and their relationship | Concepts |
+| agent selection and control modes | Agents |
+| skill kinds, status, matching and application | Skill library |
+| measured example results | Showcase, generated from the example READMEs |
 | the splits, and who reads which | Campaigns |
 | sync and realtime timing | Experiments |
 | digest and placement | Concepts defines them, Experiments gives the rules |

@@ -1,17 +1,12 @@
-# Skill research, validation and reuse
+# Program research
 
-This guide follows a robot skill implemented as a task program: develop it, freeze an implementation, validate
-it independently, compare an improvement with its parent, and reuse a promoted version as a program skill.
-Other implementations, such as model policies and controllers, use the same execution and evaluation infrastructure.
-See [Robot skills and their lifecycle](skills.md) for the wider concept and current implementation boundaries.
+Use a model to develop a task program on development cases, freeze a qualifying submission and evaluate it
+separately. A session can inspect the scene, try robot actions, reset cases and submit `solve(robot)` programs.
+Freezing preserves the implementation; subsequent checks establish its capability and whether a revision improves
+its parent.
 
-A research session supports the development step. The model can inspect development cases, try robot actions,
-reset cases and submit `solve(robot)` programs. The best qualifying submission is frozen as a program artifact.
-Separate evaluation establishes what that implementation can do beyond its development cases.
-
-This supports both new-task development and revision of an existing program. The recorded promotion example
-improves an existing stacking program; from-scratch local-model sessions have not yet produced a successful
-development program. See [the results and limitations](../showcase/tool-agents.md).
+The recorded promotion example improves an existing stacking program. From-scratch local-model sessions have
+not produced a successful development program in the recorded evaluation; see [results and limitations](../showcase/tool-agents.md).
 
 ## Start a development session
 
@@ -63,9 +58,8 @@ The shipped example uses one cycle and automatic approval in simulation. Its out
 working directory. Keep them consistent when resuming. For deployment, review
 [approval and rollback](campaigns.md) and [Security](security.md); an approval happens after candidate evaluation.
 
-In the recorded stacking campaign, the candidate scored 0.95 against 0.50 at the gate (20 pairs, p = 0.002),
-and 1.00 against 0.60 on held-out (20 pairs). This was one task and a deliberately weak hand-written parent, with
-simulator segmentation. It is evidence for that program improvement, not for general autonomous task development.
+The [recorded stacking campaign](../showcase/tool-agents.md) reports the gate and held-out results, including
+its deliberately weak parent and privileged simulator observations.
 
 ## Reuse a promoted program
 
@@ -86,15 +80,8 @@ robot, task and observation conditions. Revalidate when those conditions change.
 
 ## Recipe skills from role campaigns
 
-For tasks built as [worlds](worlds.md), `hylo roles run CAMPAIGN.yaml` develops and checks skills without a gate
-statistic: a worker session solves a development task, its actions become a recipe keyed by the failure reasons the
-task's goal reported at the start (for example `NOT_LIFTED`), and a verifier replays the recipe without a model on
-fresh copies of the task. Only a replay that achieves the goal admits the skill; held-out tasks are never used to
-propose or verify. Later workers whose goal fails for the same reasons are offered the matching skills
-(`SkillLibrary.for_failure`). Every tool call of every run is in the campaign's ledger.
-
-Program, recipe, steering and plan skills all live in the same skill library; see [Memory: skills](memory/skills.md) for
-the other kinds and how agents apply them.
+World tasks have a separate development and replay-verification path. See [role campaigns](worlds.md#tasks-with-roles)
+and [recipe skills](memory/skills.md#recipe-skills) for how their results enter the same library.
 
 ## Inspect sessions in Studio
 
@@ -109,3 +96,8 @@ not provide an interactive model-development editor or start research sessions f
 <video src="../../assets/videos/studio-research.mp4" poster="../../assets/videos/studio-research.jpg" controls muted playsinline preload="none" width="100%" aria-label="The Studio's Research page: a session's turns, submissions and frozen program, the campaign that promoted it, the program skill"></video>
 
 *A research session's turns, submissions and frozen program; the campaign that promoted it; the verified program skill in the library.*
+
+## Next
+
+- [Skill library](memory/skills.md): retrieve and apply program skills.
+- [Campaigns](campaigns.md): promotion, approval and rollback.

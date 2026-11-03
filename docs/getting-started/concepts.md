@@ -1,182 +1,98 @@
 # Concepts
 
-The user-facing thread is the lifecycle of robot skills: development, execution, validation, deployment, reuse
-and improvement. The terms below map those activities to the mechanisms of the [Physical RSI](../physical-rsi.md)
-loop: Build, Run, Improve, Verify and Deploy. Start with [Robot skills and their lifecycle](../user-guide/skills.md)
-for the complete picture.
+Hylo is organised around **Physical RSI, Worlds, Agents, Memory and Skills**. Physical RSI is the improvement
+loop connecting the other four: agents act in worlds, memory carries experience forward, and skills make verified
+capabilities reusable. The operational terms used by commands and configs are listed below.
 
-An **experiment** names an **environment** and an **agent**. The agent decides what to do, usually by asking a
-**policy** for actions. Running the experiment gives a **run**: one recorded trace per episode, plus results. An
-**evaluation protocol** fixes everything except the agent being scored, so it scores every agent the same way. Learners turn runs into
-**artifacts**. A **campaign** proposes changes that use them, tests each change against the current version, and
-promotes one only if it passes the gate. A **workcell** runs the promoted version next to a robot.
+## Physical RSI
 
-![The main concepts by step. Run: experiment, run, trace. Improve: learner, artifact, candidate. Verify: protocol, scorecard, gate. Deploy: active version, policy server, workcell. Episodes become runs.](../assets/diagrams/concept-map-light.svg){ .hylo-diagram .only-light }
-![The main concepts by step. Run: experiment, run, trace. Improve: learner, artifact, candidate. Verify: protocol, scorecard, gate. Deploy: active version, policy server, workcell. Episodes become runs.](../assets/diagrams/concept-map-dark.svg){ .hylo-diagram .only-dark }
+Physical recursive self-improvement uses task outcomes to propose changes, verify them and carry adopted changes
+into later rounds. A campaign implements the comparison and promotion process; learning supplies new artifacts.
+Read [Physical RSI](../physical-rsi.md) for the loop and its boundaries, then
+[Campaigns](../user-guide/campaigns.md) to run an improvement experiment.
 
-## Skills and development
+## Worlds
 
-Robot skill { #robot-skill }
-:   A reusable ability to perform tasks under stated robot, scene and observation conditions. Describe its task,
-    applicability, executable implementation, validation evidence, version and dependencies. Programs, policies
-    and controllers can implement task capabilities; current skill-library records cover specific reuse paths.
+A world is a simulation built from a scene description with robots, objects, cameras and goals. It provides a place
+for agents to act and receive measured feedback. Benchmark environments provide fixed tasks for comparison;
+robot adapters connect execution to hardware. See [Worlds](../user-guide/worlds.md).
 
-Task strategy { #task-strategy }
-:   The logic for carrying out a task. It can be implemented by a model, controller or program. Development constructs
-    and checks that logic; improvement compares a change with an existing baseline. It is the executable approach
-    used to implement a skill; the skill description also states applicability and validation evidence.
+## Agents
 
-Robot contract and tools { #robot-tools }
-:   `RobotSpec` describes arms, hands, cameras, frames and actions. Manipulation tools use it for perception, grasping,
-    planning and execution. The agent submits tool-generated actions to the same kernel and SafetyShield.
+An agent decides actions from observations and instructions. It can run a policy, execute a program or let a model
+call typed tools. Policies, planners and memory are components an agent may use. See
+[Agents](../user-guide/agents.md) to choose an approach.
 
-Program agent { #program-agent }
-:   `code.program` executes a Python `solve(robot)` strategy; `code.llm` writes code one turn at a time. See
-    [Developing robot skills](../user-guide/developing-strategies.md).
+## Memory
 
-Research session { #research-session }
-:   A model develops and submits programs using development cases. A qualifying submission is frozen as a program
-    artifact; freezing alone does not promote it or establish independent task success.
+Memory carries observations and experience into later decisions: spatial facts, successful action segments and
+lessons from previous attempts. Different memories have different write and retrieval rules; evaluation must
+respect their data boundaries. See [Memory](../user-guide/memory/index.md).
 
-Program skill { #program-skill }
-:   A reusable reference to a promoted program, with version, provenance and gate evidence. A code agent can retrieve
-    and call it. See [Skill research, validation and reuse](../user-guide/research-and-skills.md).
+## Skills
 
-Coding-agent skill { #coding-agent-skill }
-:   A `SKILL.md` instruction file teaching a software agent to operate Hylo commands. These instruction files are
-    separate from the robot's task capabilities and from `Skill` records in the skill library.
+A skill is a reusable task capability with stated applicability and evidence. Supported library records let agents
+reuse programs, recipes and other verified changes. Memory answers what was observed or learned; skills describe
+what can be applied to do a task. See [Skills](../user-guide/skills.md) and the
+[Skill library](../user-guide/memory/skills.md). Library support depends on the implementation and consuming agent.
 
-## Run
+## Working terms
 
-Experiment { #experiment }
-:   What you want to measure: a benchmark split, an environment, an agent, and optional safety limits, timing and
-    seed. You write it as a YAML config and run it with `hylo run`; every execution gives a new run. See
-    [experiments](../user-guide/experiments.md).
+These terms name the mechanisms used to operate the five concepts. Follow the linked guides for their rules.
 
-Environment { #environment }
-:   What the agent observes and acts on: a simulator or a robot. It declares its observations, actions and control
-    rate.
+??? info "Execution: experiments, agents and records"
 
-Agent { #agent }
-:   The logic that decides each action. An agent usually wraps a policy, and can add memory, steering, a planner or
-    a critic around it. A program agent instead executes task code using robot tools.
+    | Term | Meaning |
+    |---|---|
+    | <span id="experiment"></span>Experiment | A config naming the benchmark split, environment, agent, safety and timing; each execution produces a run. See [Experiments](../user-guide/experiments.md). |
+    | <span id="environment"></span>Environment | The simulator or robot interface supplying observations, actions and control rate. |
+    | <span id="agent"></span>Agent | The logic deciding actions, using a policy, program or model with tools. |
+    | <span id="policy"></span>Policy | A model or controller producing actions from observations. See [Policies](../user-guide/policies.md). |
+    | <span id="run"></span>Run | The record of an execution: manifest, episode results and traces. |
+    | <span id="episode"></span>Episode | One attempt at a task from an initial state until termination. |
+    | <span id="trace"></span>Trace | The episode's event log: observations, proposed and executed actions, checks and outcomes. |
+    | <span id="safety-shield"></span>Safety shield | The action checkpoint between the agent and environment. See [Safety](../user-guide/safety.md). |
+    | <span id="timing"></span>Timing | Whether simulation waits for inference (`sync`) or continues while it computes (`realtime`). See [Timing](../user-guide/experiments.md#timing-sync-and-realtime). |
+    | <span id="digest"></span>Digest | A hash of measured config settings; it excludes most placement settings but includes a `remote.ws` URL. It does not cover code versions. See [comparability](../user-guide/experiments.md#what-is-measured-the-digest). |
 
-Policy { #policy }
-:   The model or controller that turns an observation into actions. See [policies](../user-guide/policies.md).
+??? info "Development and reuse"
 
-Run { #run }
-:   The record of one execution of an experiment: per-episode results, a manifest (config, digest, package
-    versions) and one trace per episode.
+    | Term | Meaning |
+    |---|---|
+    | <span id="robot-skill"></span>Robot skill | A task capability under stated robot, scene and observation conditions, with implementation and evidence. |
+    | <span id="task-strategy"></span>Task strategy | The task logic implemented by a policy, controller or program. |
+    | <span id="robot-tools"></span>Robot contract and tools | The robot description and tools for perception, grasping, planning and execution. |
+    | <span id="program-agent"></span>Program agent | `code.program` executes a task program; `code.llm` writes code during an episode. See [Developing programs](../user-guide/developing-strategies.md). |
+    | <span id="research-session"></span>Research session | Model-assisted program development on development cases, producing a qualifying frozen submission. See [Program research](../user-guide/research-and-skills.md). |
+    | <span id="program-skill"></span>Program skill | A library record referencing a promoted program, its applicability and evidence. |
+    | <span id="coding-agent-skill"></span>Coding-agent skill | A `SKILL.md` instruction file teaching a software agent to operate Hylo. |
 
-Supporting terms:
+??? info "Improvement and evaluation"
 
-Episode { #episode }
-:   One attempt at one task from one initial state, from reset until success, failure or timeout.
+    | Term | Meaning |
+    |---|---|
+    | <span id="artifact"></span>Artifact | A sealed derived result with a digest and provenance, such as weights, a memory bank or a program. See [Learning](../user-guide/learning.md). |
+    | <span id="campaign"></span>Campaign | A process proposing changes, evaluating them and promoting at most one per cycle after its gate. See [Campaigns](../user-guide/campaigns.md). |
+    | <span id="learner"></span>Learner | A plugin producing an artifact from permitted data; the split guard refuses gate and held-out runs. |
+    | <span id="judge"></span>Judge | An instrument labelling outcomes without ground truth, calibrated against known outcomes. |
+    | <span id="generator"></span>Generator and candidate | A generator proposes candidate config changes; the YAML key is `proposer`. Protected settings cannot be changed by candidates. |
+    | <span id="split"></span>Split | A named set of initial states. Campaigns use `search`, `search_val`, `gate` and `heldout`; see [access rules](../user-guide/campaigns.md#splits). |
+    | <span id="gate"></span>Gate | The confirmatory paired test on the gate split, with regression and safety vetoes. |
+    | <span id="active-version"></span>Active version | The campaign version recorded in `active.json`; manual approval delays activation. Activation alone does not deploy a robot. |
+    | <span id="evaluation-protocol"></span>Evaluation protocol | Fixed episodes, seeds, timing and scoring for comparable scorecards. A leaderboard ranks results under one protocol. See [Benchmarking](../benchmarking/index.md). |
 
-Trace { #trace }
-:   The event log of one episode: observations, the actions the agent proposed, the safety shield's decisions, the
-    executed actions and the outcome. Scores are computed from traces only.
+??? info "Deployment and configuration"
 
-Safety shield { #safety-shield }
-:   The checkpoint every action passes between agent and environment. See [safety](../user-guide/safety.md).
-
-Timing { #timing }
-:   Whether the world waits for the policy (`sync`, the default) or keeps moving while it computes (`realtime`).
-    See [timing](../user-guide/experiments.md#timing-sync-and-realtime).
-
-Digest { #digest }
-:   A short hash of what an experiment measures. Where results go and where components run are left out, except a
-    `remote.ws` URL, which is hashed. Code versions are not in it. See
-    [when two runs are comparable](../user-guide/experiments.md#what-is-measured-the-digest).
-
-![One step of an episode: the environment sends an observation to the agent and its policy; the proposed action passes the safety shield; the executed action goes to the environment; the trace records every step.](../assets/diagrams/episode-step-light.svg){ .hylo-diagram .only-light }
-![One step of an episode: the environment sends an observation to the agent and its policy; the proposed action passes the safety shield; the executed action goes to the environment; the trace records every step.](../assets/diagrams/episode-step-dark.svg){ .hylo-diagram .only-dark }
-
-When a language model drives the robot, it and the robot meet only through the record. The model proposes actions
-and reads receipts; controllers and the safety shield execute them and measure what happened; the task's own check,
-which the model never sees, decides success. See [tool-calling agents](../user-guide/tool-agents.md) and
-[worlds](../user-guide/worlds.md).
-
-![Model side, record and robot side: the model proposes and reads, the robot side executes and measures, and the task check decides](../assets/diagrams/model-and-robot-light.svg){ .hylo-diagram .only-light }
-![Model side, record and robot side: the model proposes and reads, the robot side executes and measures, and the task check decides](../assets/diagrams/model-and-robot-dark.svg){ .hylo-diagram .only-dark }
-
-## Improve
-
-Artifact { #artifact }
-:   A derived result, such as a memory, a critic, a success judge, policy weights or a task program. It is sealed with a
-    content digest and the runs it was built from. Its role (behaviour, instrument, proposal or data)
-    decides how it earns trust. See [learning](../user-guide/learning.md).
-
-Campaign { #campaign }
-:   The loop that improves an experiment. Each cycle asks a generator for candidate changes, evaluates them, and
-    promotes at most one that passes the gate. See
-    [campaigns](../user-guide/campaigns.md).
-
-Supporting terms:
-
-Learner { #learner }
-:   A plugin that turns runs into one sealed artifact (`hylo learn`). By default, learners read only the development
-    splits, `search` and `search_val`. They never read gate or held-out runs.
-
-Judge { #judge }
-:   An instrument that labels episodes as success or failure without ground truth, once calibrated on runs whose
-    outcome is known.
-
-Generator, candidate { #generator }
-:   A generator proposes candidates: config changes, each with a hypothesis. It is configured under the `proposer`
-    key of the campaign YAML. Candidates may not change the protected settings listed in
-    [safety](../user-guide/safety.md).
-
-Split { #split }
-:   A named set of initial states. A campaign uses four disjoint splits: `search`, `search_val`, `gate` and
-    `heldout`. [Campaigns](../user-guide/campaigns.md#splits) says who reads which.
-
-Gate { #gate }
-:   The test that decides promotion: a paired comparison with the current version on the `gate` split, with vetoes
-    for task regressions and extra safety interventions.
-
-Active version { #active-version }
-:   The campaign's current version, written to `active.json`. By default a candidate that passes the
-    gate becomes active at once; with `approval: manual` it waits for `hylo evolve approve`. This record alone does
-    not mean a workcell is running it.
-
-## Verify
-
-Evaluation protocol { #evaluation-protocol }
-:   Fixes everything except the agent being scored: episodes, seeds, timing and scoring. The agent usually wraps
-    a policy. Scoring an agent under a protocol gives a **scorecard**: the success rate with a 95% confidence
-    interval, and every episode. A **leaderboard** ranks the scorecards of one protocol. See
-    [benchmarking](../benchmarking/index.md).
-
-## Deploy
-
-Workcell { #workcell }
-:   The process next to a robot or simulator. It runs the active version with the same episode loop the benchmark
-    used, records every episode as a run, and takes operator commands such as stop and reset. See
-    [deployment](../user-guide/deployment.md).
-
-Policy server { #policy-server }
-:   Serves an agent over the network, usually from a GPU machine (`hylo serve policy`). With `--campaign` it
-    follows the active version. A workcell asks it for actions.
-
-## Placement and storage
-
-Store id { #store-id }
-:   The name of a run or artifact in the store: `run:<run_id>` or `artifact:<name>@<digest>`. Each machine
-    resolves ids to local paths. See [store](../user-guide/store.md).
-
-Runtime, execution profile { #runtime }
-:   A runtime is a named Python interpreter plus environment variables, for example `libero-sim`. The machine's
-    execution profile lists its runtimes and store location. Configs name runtimes, never paths. See [profiles](../configuration/profiles.md).
-
-## Extending
-
-Plugin { #plugin }
-:   Every environment, agent, policy, learner or generator is a plugin, found by name through a `hylo.<group>`
-    entry point. See [extending](../harness/extending.md) and the
-    [plugin catalogue](../developer-guide/plugin-catalogue.md).
+    | Term | Meaning |
+    |---|---|
+    | <span id="workcell"></span>Workcell | The process next to a robot or simulator that runs episodes, records them and accepts operator commands. See [Deployment](../user-guide/deployment.md). |
+    | <span id="policy-server"></span>Policy server | Serves an agent over the network; with `--campaign`, it follows the active version. |
+    | <span id="store-id"></span>Store id | A run or artifact reference resolved to a local path on each machine. See [Store](../user-guide/store.md). |
+    | <span id="runtime"></span>Runtime and execution profile | A runtime names an interpreter and environment; the profile locates runtimes and the store on a machine. See [Profiles](../configuration/profiles.md). |
+    | <span id="plugin"></span>Plugin | An installed implementation found through a registered name. See [Extending](../harness/extending.md). |
 
 ## Next
 
-- [Experiments](../user-guide/experiments.md): write and run your own experiment.
-- [Architecture](../design/overview.md): how the four steps connect inside Hylo.
+- [Quickstart](quickstart.md): run the CPU example through execution, evaluation and improvement.
+- [Agents](../user-guide/agents.md): choose how to act in a world or benchmark.
+- [Architecture](../design/overview.md): how the implementation connects these concepts.

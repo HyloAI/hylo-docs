@@ -1,5 +1,9 @@
 # MVP v0.1: Minimal Credible Loop
 
+!!! note "Historical scope"
+    This is the original v0.1 planning snapshot. For current implementation boundaries, see
+    [Architecture](overview.md); for current priorities, see [Roadmap](roadmap.md).
+
 > Goal: with the fewest components, prove that the **Execute → Trace → Score → Diagnose → Improve → Validate → Promote/Rollback** loop holds in real simulation (MuJoCo) and on one external benchmark, with all actions passing through the same safety checkpoint.
 > Non-goals: full RSI, an in-house world model, distributed training, real robots.
 > Starting point: the interface prototype (about 2.7k lines, 38 tests; removed 2026-10-31, in the git history) has validated the interface shape of the test double + MuJoCo + remote Env + memory + offline improvement loop.

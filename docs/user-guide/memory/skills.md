@@ -1,33 +1,9 @@
-# Skills
+# Skill library
 
-A skill is a verified procedure for a family of tasks, stored as data, never as code: a configuration change, a
-subgoal plan, a reference to trained weights or to a sealed program, or a list of tool calls. A skill library is a
+The library stores versioned [skills](../skills.md), their applicability, status and evidence. Its records hold data:
+a configuration change, a subgoal plan, a reference to trained weights or to a sealed program, or a list of tool calls. A skill library is a
 folder with one JSON file per skill version (`<name>@<version>.json`). Agents look skills up when a task starts,
 when a code agent writes its next block, when a proposer plans a round, or when a goal fails.
-
-## Why skills
-
-The expensive part of improving an agent is not finding a change but proving it: a campaign spends hundreds of paired
-episodes to show that one change helps. Without a place to keep that result, it stays in one campaign's archive. The
-next task of the same family starts from the old configuration, a code agent writes the same grasp again, and the
-next campaign may propose a change that was already refuted. A skill is the unit in which a proven result is kept,
-found again and reused, with its proof attached.
-
-## How a skill moves through the system
-
-A skill passes through four stages, and each stage has one owner:
-
-1. **Produced** by a process that already measures: an improvement campaign, a research session whose program a
-   campaign promoted, or a role campaign. A model may suggest the change, but it never creates the skill.
-2. **Tested** by that process's own independent check: a paired gate on episodes the change was not developed on,
-   or, for recipes, a replay without any model on fresh copies of the task. The result decides the status.
-3. **Found** in the library through the condition it declares, by whichever agent can use it: by instruction and
-   tags, by similarity to the instruction, or by the reasons a goal is failing.
-4. **Applied** in the form the consuming layer understands, for one episode or one retry, and recorded as an
-   event, so that its effect can be measured again later.
-
-![Improvement campaigns and research sessions add skills that passed a gate; role campaigns add recipes that a model-free replay confirmed. Agents find them in the library by instruction and tags, by similarity to the instruction, or by the reasons a goal failed.](../../assets/diagrams/skill-journey-light.svg){ .hylo-diagram .only-light }
-![Improvement campaigns and research sessions add skills that passed a gate; role campaigns add recipes that a model-free replay confirmed. Agents find them in the library by instruction and tags, by similarity to the instruction, or by the reasons a goal failed.](../../assets/diagrams/skill-journey-dark.svg){ .hylo-diagram .only-dark }
 
 ## Design
 
@@ -199,7 +175,7 @@ agent:
 The most similar verified program skills are offered to the model as functions, `skills.<name>(robot, **kw)`, with
 their descriptions and preconditions. Before a skill is offered, its program is read back, its digest compared with
 the one in the skill, and its source checked by the sandbox; a skill that fails is skipped and reported. See
-[Skill research, validation and reuse](../research-and-skills.md#reuse-a-promoted-program).
+[Program research](../research-and-skills.md#reuse-a-promoted-program).
 
 ### Recipe skills
 
