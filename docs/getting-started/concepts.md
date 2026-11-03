@@ -1,8 +1,9 @@
 # Concepts
 
 The user-facing thread is the lifecycle of robot skills: development, execution, validation, deployment, reuse
-and improvement. The terms below map those activities to the current Run → Measure → Improve → Deploy mechanisms.
-Start with [Robot skills and their lifecycle](../user-guide/skills.md) for the complete picture.
+and improvement. The terms below map those activities to the mechanisms of the [Physical RSI](../physical-rsi.md)
+loop: Build, Run, Improve, Verify and Deploy. Start with [Robot skills and their lifecycle](../user-guide/skills.md)
+for the complete picture.
 
 An **experiment** names an **environment** and an **agent**. The agent decides what to do, usually by asking a
 **policy** for actions. Running the experiment gives a **run**: one recorded trace per episode, plus results. An
@@ -10,8 +11,8 @@ An **experiment** names an **environment** and an **agent**. The agent decides w
 **artifacts**. A **campaign** proposes changes that use them, tests each change against the current version, and
 promotes one only if it passes the gate. A **workcell** runs the promoted version next to a robot.
 
-![The main concepts by step. Run: experiment, run, trace. Measure: protocol, scorecard, leaderboard. Improve: artifact, candidate, gate. Deploy: active version, policy server, workcell. Episodes become runs.](../assets/diagrams/concept-map-light.svg){ .hylo-diagram .only-light }
-![The main concepts by step. Run: experiment, run, trace. Measure: protocol, scorecard, leaderboard. Improve: artifact, candidate, gate. Deploy: active version, policy server, workcell. Episodes become runs.](../assets/diagrams/concept-map-dark.svg){ .hylo-diagram .only-dark }
+![The main concepts by step. Run: experiment, run, trace. Improve: learner, artifact, candidate. Verify: protocol, scorecard, gate. Deploy: active version, policy server, workcell. Episodes become runs.](../assets/diagrams/concept-map-light.svg){ .hylo-diagram .only-light }
+![The main concepts by step. Run: experiment, run, trace. Improve: learner, artifact, candidate. Verify: protocol, scorecard, gate. Deploy: active version, policy server, workcell. Episodes become runs.](../assets/diagrams/concept-map-dark.svg){ .hylo-diagram .only-dark }
 
 ## Skills and development
 
@@ -91,13 +92,13 @@ Digest { #digest }
 ![One step of an episode: the environment sends an observation to the agent and its policy; the proposed action passes the safety shield; the executed action goes to the environment; the trace records every step.](../assets/diagrams/episode-step-light.svg){ .hylo-diagram .only-light }
 ![One step of an episode: the environment sends an observation to the agent and its policy; the proposed action passes the safety shield; the executed action goes to the environment; the trace records every step.](../assets/diagrams/episode-step-dark.svg){ .hylo-diagram .only-dark }
 
-## Measure
+When a language model drives the robot, it and the robot meet only through the record. The model proposes actions
+and reads receipts; controllers and the safety shield execute them and measure what happened; the task's own check,
+which the model never sees, decides success. See [tool-calling agents](../user-guide/tool-agents.md) and
+[worlds](../user-guide/worlds.md).
 
-Evaluation protocol { #evaluation-protocol }
-:   Fixes everything except the agent being scored: episodes, seeds, timing and scoring. The agent usually wraps
-    a policy. Scoring an agent under a protocol gives a **scorecard**: the success rate with a 95% confidence
-    interval, and every episode. A **leaderboard** ranks the scorecards of one protocol. See
-    [benchmarking](../benchmarking/index.md).
+![Model side, record and robot side: the model proposes and reads, the robot side executes and measures, and the task check decides](../assets/diagrams/model-and-robot-light.svg){ .hylo-diagram .only-light }
+![Model side, record and robot side: the model proposes and reads, the robot side executes and measures, and the task check decides](../assets/diagrams/model-and-robot-dark.svg){ .hylo-diagram .only-dark }
 
 ## Improve
 
@@ -138,6 +139,14 @@ Active version { #active-version }
 :   The campaign's current version, written to `active.json`. By default a candidate that passes the
     gate becomes active at once; with `approval: manual` it waits for `hylo evolve approve`. This record alone does
     not mean a workcell is running it.
+
+## Verify
+
+Evaluation protocol { #evaluation-protocol }
+:   Fixes everything except the agent being scored: episodes, seeds, timing and scoring. The agent usually wraps
+    a policy. Scoring an agent under a protocol gives a **scorecard**: the success rate with a 95% confidence
+    interval, and every episode. A **leaderboard** ranks the scorecards of one protocol. See
+    [benchmarking](../benchmarking/index.md).
 
 ## Deploy
 

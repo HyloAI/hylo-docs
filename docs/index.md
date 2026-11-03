@@ -27,14 +27,14 @@ Physical tasks give self-improvement an external test: whether an action produce
 Hylo keeps the changes that measured outcomes support and rejects the rest, so the loop advances on demonstrated
 capability.
 
-![The Physical RSI loop: Build, Run, Improve, Verify and Deploy, with RSI campaigns over Improve and Verify and Serve beneath all five](assets/diagrams/physical-rsi-light.svg){ .hylo-diagram .only-light }
-![The Physical RSI loop: Build, Run, Improve, Verify and Deploy, with RSI campaigns over Improve and Verify and Serve beneath all five](assets/diagrams/physical-rsi-dark.svg){ .hylo-diagram .only-dark }
+![Hylo at a glance: three control modes run through the episode loop, safety shield and traces on worlds, benchmarks and real robots; Physical RSI turns outcomes into improvements, verifies them and deploys them; Serve lies beneath](assets/diagrams/at-a-glance-light.svg){ .hylo-diagram .only-light }
+![Hylo at a glance: three control modes run through the episode loop, safety shield and traces on worlds, benchmarks and real robots; Physical RSI turns outcomes into improvements, verifies them and deploys them; Serve lies beneath](assets/diagrams/at-a-glance-dark.svg){ .hylo-diagram .only-dark }
 
 [Why Physical RSI →](physical-rsi.md)
 
 <div class="grid cards" markdown>
 
--   **Worlds** · Build
+-   **Worlds**
 
     ---
 
@@ -43,7 +43,7 @@ capability.
 
     [Worlds →](user-guide/worlds.md)
 
--   **Agents and policies** · Run
+-   **Agents and policies**
 
     ---
 
@@ -53,7 +53,7 @@ capability.
     [Tool-calling agents →](user-guide/tool-agents.md) · [Develop a skill →](user-guide/developing-strategies.md) ·
     [Policies →](user-guide/policies.md)
 
--   **Training** · Improve
+-   **Training**
 
     ---
 
@@ -62,7 +62,7 @@ capability.
 
     [Learning →](user-guide/learning.md)
 
--   **Memory** · Improve
+-   **Memory**
 
     ---
 
@@ -71,7 +71,7 @@ capability.
 
     [Memory →](user-guide/memory/index.md)
 
--   **Campaigns** · Improve and Verify
+-   **Campaigns**
 
     ---
 
@@ -80,7 +80,7 @@ capability.
 
     [Campaigns →](user-guide/campaigns.md) · [Skill research →](user-guide/research-and-skills.md)
 
--   **Evaluation** · Verify
+-   **Evaluation**
 
     ---
 
@@ -90,7 +90,7 @@ capability.
     [Experiments →](user-guide/experiments.md) · [Benchmarking →](benchmarking/index.md) ·
     [Leaderboard →](benchmarking/leaderboard.md)
 
--   **Skills** · Improve and Deploy
+-   **Skills**
 
     ---
 
@@ -99,7 +99,7 @@ capability.
 
     [Skills →](user-guide/skills.md) · [Skill reuse →](user-guide/research-and-skills.md#reuse-a-promoted-program)
 
--   **Serve and deployment** · Deploy
+-   **Serve and deployment**
 
     ---
 
@@ -109,6 +109,15 @@ capability.
     [Deployment →](user-guide/deployment.md) · [Safety →](user-guide/safety.md)
 
 </div>
+
+## Control modes
+
+A robot can be driven by a general model that calls tools or writes programs, by a model that plans for a
+vision-language-action model, or by an action model alone. All three run through the same kernel and safety shield,
+so each is improved and verified in the same loop.
+
+![Three control modes: general models with tools, a planner with a VLA, and action models, all through the Hylo kernel in one loop](assets/diagrams/control-modes-light.svg){ .hylo-diagram .only-light }
+![Three control modes: general models with tools, a planner with a VLA, and action models, all through the Hylo kernel in one loop](assets/diagrams/control-modes-dark.svg){ .hylo-diagram .only-dark }
 
 [Studio](user-guide/studio.md) shows worlds, research sessions, runs, replays, comparisons, campaigns and workcell
 controls in one place. Start it with `hylo playground`.

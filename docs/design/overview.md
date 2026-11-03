@@ -4,6 +4,11 @@ This page maps the Physical RSI loop and the robot-skill lifecycle onto the exec
 deployment mechanisms, and explains what checks each hand-off. [Robot skills](../user-guide/skills.md) defines the
 user-facing lifecycle; [Concepts](../getting-started/concepts.md) defines the terms.
 
+## At a glance
+
+![Hylo architecture at a glance: proposers, candidates, gate and versions; the store; the agent, shield and environment loop; Serve; five properties](../assets/diagrams/architecture-glance-light.svg){ .hylo-diagram .only-light }
+![Hylo architecture at a glance: proposers, candidates, gate and versions; the store; the agent, shield and environment loop; Serve; five properties](../assets/diagrams/architecture-glance-dark.svg){ .hylo-diagram .only-dark }
+
 ## The Physical RSI loop
 
 [Physical RSI](../physical-rsi.md) describes the loop Hylo is built around: build worlds, run tasks, improve, verify

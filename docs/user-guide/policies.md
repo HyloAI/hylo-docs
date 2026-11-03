@@ -38,6 +38,12 @@ determinism before it is used.
 A **policy** returns action chunks from an observation. An **agent** holds a policy and decides how to use its
 chunks ([concepts](../getting-started/concepts.md)). Any policy runs under any of the agents below.
 
+Policies are one of three control modes. A general model can also call robot tools or write programs
+([tool-calling agents](tool-agents.md)), and a planner can set sub-goals for a policy (`planner.subgoal`).
+
+![Three control modes: general models with tools, a planner with a VLA, and action models, all through the Hylo kernel in one loop](../assets/diagrams/control-modes-light.svg){ .hylo-diagram .only-light }
+![Three control modes: general models with tools, a planner with a VLA, and action models, all through the Hylo kernel in one loop](../assets/diagrams/control-modes-dark.svg){ .hylo-diagram .only-dark }
+
 ## Agents that run a policy
 
 | Agent | Runs the policy | Key params |

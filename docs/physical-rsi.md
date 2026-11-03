@@ -7,10 +7,6 @@ has not yet reached the physical world. Hylo is built to bring it there: **robot
 ![The Physical RSI loop: Build, Run, Improve, Verify and Deploy, with RSI campaigns over Improve and Verify and Serve beneath all five](assets/diagrams/physical-rsi-light.svg){ .hylo-diagram .only-light }
 ![The Physical RSI loop: Build, Run, Improve, Verify and Deploy, with RSI campaigns over Improve and Verify and Serve beneath all five](assets/diagrams/physical-rsi-dark.svg){ .hylo-diagram .only-dark }
 
-*Build worlds, run tasks, improve, verify candidates and deploy approved versions. Active versions feed later runs,
-and run outcomes can guide new worlds. Campaigns connect proposals to gates, while Serve supports model inference
-across the loop. The safety shield applies wherever actions execute; promotion to hardware requires human approval.*
-
 ## The bottleneck
 
 Robots can act autonomously while still depending on people to drive their improvement. Teams collect runs, diagnose

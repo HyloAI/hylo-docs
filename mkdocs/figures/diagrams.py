@@ -21,6 +21,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+from glance import architecture_glance, at_a_glance, chips, control_modes, model_and_robot  # noqa: E402
 from readme_art import (THEMES, Doc, Repo, bench_flow, deployments_sync, improvement_loop as hylo_loop,  # noqa: E402
                         stack_map, studio_plane)
 
@@ -295,13 +296,12 @@ def deployment(T: dict) -> Doc:
 # ---------------------------------------------------------------- 8. concepts: the words, by step
 def concept_map(T: dict) -> Doc:
     d = Doc(960, 396, T, "The main concepts, by step",
-            "Run: an experiment gives a run, with one trace per episode. Measure: a protocol scores it into a "
-            "scorecard, and a leaderboard ranks scorecards. Improve: learners build artifacts, a campaign tests "
-            "candidates, the gate decides. Deploy: the active version is served by a policy server to a workcell, "
-            "whose episodes become runs.")
+            "Run: an experiment gives a run, with one trace per episode. Improve: learners build artifacts, which "
+            "candidates use. Verify: a protocol scores runs into a scorecard, and the gate decides on candidates. "
+            "Deploy: the active version is served by a policy server to a workcell, whose episodes become runs.")
     d.card()
-    cols = [("Run", ["Experiment", "Run", "Trace"]), ("Measure", ["Protocol", "Scorecard", "Leaderboard"]),
-            ("Improve", ["Artifact", "Candidate", "Gate"]), ("Deploy", ["Active version", "Policy server", "Workcell"])]
+    cols = [("Run", ["Experiment", "Run", "Trace"]), ("Improve", ["Learner", "Artifact", "Candidate"]),
+            ("Verify", ["Protocol", "Scorecard", "Gate"]), ("Deploy", ["Active version", "Policy server", "Workcell"])]
     w, g, y0, ph = 198, 40, 24, 290
     x0 = (960 - 4 * w - 3 * g) / 2
     for i, (head, items) in enumerate(cols):
@@ -761,33 +761,36 @@ def layers(T: dict) -> Doc:
 
 # ---------------------------------------------------------------- the home page and Physical RSI: the loop
 def physical_rsi(T: dict) -> Doc:
-    d = Doc(960, 340, T, "The Physical RSI loop",
+    d = Doc(960, 318, T, "The Physical RSI loop",
             "Build worlds, run tasks, improve, verify candidates and deploy approved versions. Active versions feed "
             "later runs, and run outcomes can guide new worlds. Failed candidates go back to Improve. Campaigns "
             "connect proposals to gates, and Serve provides model serving across the loop.")
     d.card()
-    xs, y, w, h = [24, 214, 404, 594, 784], 62, 160, 100
-    stages = [("Build", "Worlds", "Reconstruction"), ("Run", "Policies", "Agents"),
-              ("Improve", "Training · Memory", "Programs · Skills"), ("Verify", "Evaluation", "Gates"),
-              ("Deploy", "Versions", "Workcells")]
-    for x, (name, l1, l2) in zip(xs, stages):
+    stages = [("Build", ["Worlds", "Data"], 152), ("Run", ["Policies", "Agents"], 152),
+              ("Improve", ["Training", "Memory", "Programs", "Skills"], 200), ("Verify", ["Benchmarks", "Gates"], 152),
+              ("Deploy", ["Versions", "Workcells"], 152)]
+    gap, y, h = 26, 62, 112
+    xs, x = [], 24
+    for name, parts, w in stages:
+        xs.append(x)
         d.rect(x, y, w, h, "surface", "line2", rx=12)
-        d.text(x + w / 2, y + 32, name, "b", 18, "ink", anchor="middle")
-        d.text(x + w / 2, y + 62, l1, "m", 15, "muted", anchor="middle")
-        d.text(x + w / 2, y + 82, l2, "m", 15, "muted", anchor="middle")
-    mid = y + h / 2
-    d.arrow([(xs[0] + w + 3, mid), (xs[1] - 3, mid)], "accent", both=True)
-    d.arrow([(xs[1] + w + 2, mid - 12), (xs[2] - 4, mid - 12)], "accent")
-    d.arrow([(xs[2] + w + 2, mid - 12), (xs[3] - 4, mid - 12)], "accent")
-    d.arrow([(xs[3] - 2, mid + 14), (xs[2] + w + 4, mid + 14)], "accent", dash="5 4")
-    d.arrow([(xs[3] + w + 2, mid - 12), (xs[4] - 4, mid - 12)], "accent")
-    d.arrow([(xs[4] + w / 2, y + h + 2), (xs[4] + w / 2, 202), (xs[1] + w / 2, 202), (xs[1] + w / 2, y + h + 4)],
-            "accent", rounded=12)
-    d.label(579, 207, "active version", fill="accent", size=15)
-    d.add(f'<line x1="{xs[2]}" y1="40" x2="{xs[3] + w}" y2="40" stroke="{d.c("accent")}" stroke-width="2"/>')
-    d.text(xs[2] + 185, 30, "RSI campaigns: proposals and gates", "sb", 15, "accent", anchor="middle")
-    d.rect(24, 248, 920, 60, "kernel", "kernel", rx=12)
-    d.text(484, 284, "Serve: model serving across the loop", "sb", 17, "kernel_ink", anchor="middle")
+        d.text(x + w / 2, y + 28, name, "b", 18, "ink", anchor="middle")
+        chips(d, x + 10, y + 42, w - 20, parts, "line2", fill="sunk", size=14.5, h=26)
+        x += w + gap
+    ws = [w for _, _, w in stages]
+    mid = y + 30
+    d.arrow([(xs[0] + ws[0] + 3, mid), (xs[1] - 3, mid)], "accent", both=True)
+    d.arrow([(xs[1] + ws[1] + 2, mid - 8), (xs[2] - 4, mid - 8)], "accent")
+    d.arrow([(xs[2] + ws[2] + 2, mid - 8), (xs[3] - 4, mid - 8)], "accent")
+    d.arrow([(xs[3] - 2, mid + 14), (xs[2] + ws[2] + 4, mid + 14)], "accent", dash="5 4")
+    d.arrow([(xs[3] + ws[3] + 2, mid - 8), (xs[4] - 4, mid - 8)], "accent")
+    d.arrow([(xs[4] + ws[4] / 2, y + h + 2), (xs[4] + ws[4] / 2, 214), (xs[1] + ws[1] / 2, 214),
+             (xs[1] + ws[1] / 2, y + h + 4)], "accent", rounded=12)
+    d.label((xs[4] + ws[4] / 2 + xs[1] + ws[1] / 2) / 2, 219, "active version", fill="accent", size=15)
+    d.add(f'<line x1="{xs[2]}" y1="40" x2="{xs[3] + ws[3]}" y2="40" stroke="{d.c("accent")}" stroke-width="2"/>')
+    d.text((xs[2] + xs[3] + ws[3]) / 2, 30, "Campaigns", "b", 15.5, "accent", anchor="middle")
+    d.rect(24, 258, 912, 44, "kernel", "kernel", rx=12)
+    d.text(480, 286, "Serve", "b", 17, "kernel_ink", anchor="middle")
     return d
 
 
@@ -807,7 +810,8 @@ DIAGRAMS = {"architecture": architecture, "strategy-development": strategy_devel
             "skill-status": skill_status, "experience-round": experience_round, "memory-timeline": memory_timeline,
             "world-layers": world_layers, "memory-layers": memory_layers, "skill-journey": skill_journey,
             "improvement-ladder": improvement_ladder, "trust-paths": trust_paths, "layers": layers,
-            "physical-rsi": physical_rsi}
+            "physical-rsi": physical_rsi, "at-a-glance": at_a_glance, "control-modes": control_modes,
+            "architecture-glance": architecture_glance, "model-and-robot": model_and_robot}
 
 
 if __name__ == "__main__":
