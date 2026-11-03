@@ -19,18 +19,21 @@ Statuses are the RFCs' own status lines.
 
 ## RFCs on the loop
 
-Each RFC builds part of the [Physical RSI](../physical-rsi.md) loop. RFC-0001 is the base every stage runs on: the
-contracts, the kernel, the safety shield and the trace.
+Each RFC builds part of the [Physical RSI](../physical-rsi.md) loop: Build, Run, Improve, Verify and Deploy. An RFC
+can contribute to several activities.
 
-| Stage | RFCs | What they contribute |
+| Activity | RFCs | What they contribute |
 |---|---|---|
-| Practise | [RFC-0008](RFC-0008-stage-worlds.md) | stages with revisions, worlds from 24 robot packs, people, checks with reason codes |
-| Act | [RFC-0006](RFC-0006-tool-using-agents.md), [RFC-0007](RFC-0007-tool-calling-robot-agents.md) | the robot contract and manipulation tools; program agents; one checked tool call at a time |
-| Remember | [RFC-0003](RFC-0003-experience-memory-skills.md) | action memory, lessons, only verified experience written |
-| Improve | [RFC-0002](RFC-0002-physical-rsi.md), [RFC-0004](RFC-0004-learning-pipeline.md), [RFC-0006](RFC-0006-tool-using-agents.md) | the improvement ladder and campaigns; learners and sealed artifacts; programs as candidates |
-| Verify | [RFC-0002](RFC-0002-physical-rsi.md), [RFC-0005](RFC-0005-architecture-measurement-and-placement.md), [RFC-0007](RFC-0007-tool-calling-robot-agents.md) | splits, cascade and paired gate; one episode loop and the run store; sealed runs and perturbations |
-| Share | [RFC-0003](RFC-0003-experience-memory-skills.md), [RFC-0006](RFC-0006-tool-using-agents.md), [RFC-0008](RFC-0008-stage-worlds.md) | the skill library; program skills from promoted candidates; recipe skills keyed by failure reasons |
-| Deploy | [RFC-0001](RFC-0001.md), [RFC-0005](RFC-0005-architecture-measurement-and-placement.md) | the kernel and shield on a workcell; execution profiles and placement |
+| Build | [RFC-0008](RFC-0008-stage-worlds.md), [RFC-0006](RFC-0006-tool-using-agents.md), [RFC-0007](RFC-0007-tool-calling-robot-agents.md), [RFC-0004](RFC-0004-learning-pipeline.md) | revisioned worlds from 24 robot packs, people and checks with reason codes; manipulation task sets, scene building and replay to simulation; LIBERO perturbations; outside data entering as runs |
+| Run | [RFC-0006](RFC-0006-tool-using-agents.md), [RFC-0007](RFC-0007-tool-calling-robot-agents.md), [RFC-0005](RFC-0005-architecture-measurement-and-placement.md) | the robot contract, manipulation tools and program agents; one checked tool call at a time; one episode loop for every context |
+| Improve | [RFC-0002](RFC-0002-physical-rsi.md), [RFC-0004](RFC-0004-learning-pipeline.md), [RFC-0003](RFC-0003-experience-memory-skills.md), [RFC-0006](RFC-0006-tool-using-agents.md) | campaigns and the improvement ladder; learners and sealed artifacts; memory and lessons from verified development experience; research sessions and programs as candidates |
+| Verify | [RFC-0002](RFC-0002-physical-rsi.md), [RFC-0004](RFC-0004-learning-pipeline.md), [RFC-0005](RFC-0005-architecture-measurement-and-placement.md), [RFC-0007](RFC-0007-tool-calling-robot-agents.md), [RFC-0008](RFC-0008-stage-worlds.md) | splits, cascade and the paired gate; trust by artifact role; the run store and protocols; sealed runs; replay checks for recipes |
+| Deploy | [RFC-0002](RFC-0002-physical-rsi.md), [RFC-0003](RFC-0003-experience-memory-skills.md), [RFC-0005](RFC-0005-architecture-measurement-and-placement.md) | promotion with approval and rollback; the skill library; execution profiles, placement and workcells |
+
+Across the loop, [RFC-0001](RFC-0001.md) provides the contracts, the kernel, the safety shield and the trace, and
+[RFC-0005](RFC-0005-architecture-measurement-and-placement.md) the placement of runtimes and model servers. Skills
+connect Improve and Deploy: RFC-0003 defines the library, RFC-0006 supplies program skills and RFC-0008 supplies
+replay-verified recipes.
 
 ## Writing an RFC
 

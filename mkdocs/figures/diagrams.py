@@ -56,13 +56,13 @@ def group(d: Doc, x1, x2, y, s, below=False) -> None:
 # ---------------------------------------------------------------- 1. architecture: the data flow
 def architecture(T: dict) -> Doc:
     d = Doc(960, 440, T, "How data flows through Hylo",
-            "Run: an experiment produces a run with its traces. Measure: an evaluation protocol scores runs into a "
-            "scorecard. Improve: a learner turns runs into an artifact, which becomes a candidate, and the gate "
+            "Run: an experiment produces a run with its traces. Verify: an evaluation protocol scores runs into a "
+            "scorecard. Improve: a learner turns runs into an artifact, which becomes a candidate. Verify: the gate "
             "decides. Deploy: the promoted active version runs on a workcell, whose episodes come back as runs.")
     d.card()
     top, bot, h = 96, 296, 64
     group(d, 40, 490, 62, "Run")
-    group(d, 580, 760, 62, "Measure")
+    group(d, 580, 760, 62, "Verify")
     node(d, 40, top, 170, h, "Experiment")
     node(d, 300, top, 190, h, "Run and traces")
     node(d, 580, top, 180, h, "Scorecard", "soft")
@@ -73,7 +73,8 @@ def architecture(T: dict) -> Doc:
         node(d, x, bot, w, h, n, "accent" if n == "Gate" else "plain")
     for a, b in zip(xs, xs[1:]):
         d.arrow([(a + w + 2, bot + h / 2), (b - 4, bot + h / 2)])
-    group(d, 26, 550, 392, "Improve", below=True)
+    group(d, 26, 358, 392, "Improve", below=True)
+    group(d, 410, 550, 392, "Verify", below=True)
     group(d, 602, 934, 392, "Deploy", below=True)
     d.arrow([(350, top + h + 2), (350, 228), (96, 228), (96, bot - 4)], "accent")
     d.label(223, 233, "learn", fill="accent", size=15)
@@ -99,26 +100,6 @@ def strategy_development(T: dict) -> Doc:
     d.arrow([(240, 236), (296, 236)], "accent")
     d.arrow([(742, 106), (742, 154), (436, 154), (436, 200)], "accent", rounded=12)
     d.arrow([(572, 236), (628, 236)], "accent")
-    return d
-
-
-def skill_lifecycle(T: dict) -> Doc:
-    d = Doc(960, 350, T, "The robot skill lifecycle",
-            "Develop, run and validate a robot skill implementation, version it, deploy it, reuse it and improve it. "
-            "Task scope, implementation, evidence and dependencies stay explicit. These are user activities mapped "
-            "to the existing mechanisms, not a universal skill status machine.")
-    d.card()
-    xs, w, h = [28, 354, 680], 250, 64
-    for x, text in zip(xs, ["Develop", "Run and validate", "Version"]):
-        node(d, x, 40, w, h, text, "accent" if text == "Run and validate" else "plain")
-    for x, text in zip(xs, ["Improve", "Reuse", "Deploy"]):
-        node(d, x, 236, w, h, text, "soft" if text == "Reuse" else "plain")
-    for a, b in zip(xs, xs[1:]):
-        d.arrow([(a + w + 2, 72), (b - 4, 72)], "accent")
-        d.arrow([(b - 2, 268), (a + w + 4, 268)], "accent")
-    d.arrow([(805, 106), (805, 232)], "accent")
-    d.arrow([(153, 234), (153, 108)], "accent", dash="6 5")
-    d.text(480, 177, "Task scope · Implementation · Evidence · Dependencies", "sb", 18, "muted", anchor="middle")
     return d
 
 
@@ -780,26 +761,33 @@ def layers(T: dict) -> Doc:
 
 # ---------------------------------------------------------------- the home page and Physical RSI: the loop
 def physical_rsi(T: dict) -> Doc:
-    d = Doc(960, 350, T, "The Physical RSI loop",
-            "A robot practises in worlds, acts through tools, remembers what happened and improves its own "
-            "behaviour. Each improvement is verified against physical outcomes on cases it was not developed on, "
-            "shared as a skill and deployed; deployment brings new experience back into the loop. Physical "
-            "outcomes ground every step.")
+    d = Doc(960, 340, T, "The Physical RSI loop",
+            "Build worlds, run tasks, improve, verify candidates and deploy approved versions. Active versions feed "
+            "later runs, and run outcomes can guide new worlds. Failed candidates go back to Improve. Campaigns "
+            "connect proposals to gates, and Serve provides model serving across the loop.")
     d.card()
-    top, bot, w, h = 40, 236, 190, 64
-    xs = [28, 266, 504, 742]
-    for x, text in zip(xs, ["Practise in worlds", "Act with tools", "Remember", "Improve"]):
-        node(d, x, top, w, h, text)
-    for a, b in zip(xs, xs[1:]):
-        d.arrow([(a + w + 2, top + h / 2), (b - 4, top + h / 2)], "accent")
-    bx = [742, 385, 28]
-    for x, text, k in zip(bx, ["Verify", "Share skills", "Deploy"], ["accent", "soft", "plain"]):
-        node(d, x, bot, w, h, text, k)
-    d.arrow([(837, top + h + 2), (837, bot - 4)], "accent")
-    d.arrow([(740, bot + h / 2), (385 + w + 4, bot + h / 2)], "accent")
-    d.arrow([(383, bot + h / 2), (28 + w + 4, bot + h / 2)], "accent")
-    d.arrow([(123, bot - 2), (123, top + h + 4)], "accent", dash="6 5")
-    d.text(480, 177, "Physical outcomes ground every step", "sb", 18, "muted", anchor="middle")
+    xs, y, w, h = [24, 214, 404, 594, 784], 62, 160, 100
+    stages = [("Build", "Worlds", "Reconstruction"), ("Run", "Policies", "Agents"),
+              ("Improve", "Training · Memory", "Programs · Skills"), ("Verify", "Evaluation", "Gates"),
+              ("Deploy", "Versions", "Workcells")]
+    for x, (name, l1, l2) in zip(xs, stages):
+        d.rect(x, y, w, h, "surface", "line2", rx=12)
+        d.text(x + w / 2, y + 32, name, "b", 18, "ink", anchor="middle")
+        d.text(x + w / 2, y + 62, l1, "m", 15, "muted", anchor="middle")
+        d.text(x + w / 2, y + 82, l2, "m", 15, "muted", anchor="middle")
+    mid = y + h / 2
+    d.arrow([(xs[0] + w + 3, mid), (xs[1] - 3, mid)], "accent", both=True)
+    d.arrow([(xs[1] + w + 2, mid - 12), (xs[2] - 4, mid - 12)], "accent")
+    d.arrow([(xs[2] + w + 2, mid - 12), (xs[3] - 4, mid - 12)], "accent")
+    d.arrow([(xs[3] - 2, mid + 14), (xs[2] + w + 4, mid + 14)], "accent", dash="5 4")
+    d.arrow([(xs[3] + w + 2, mid - 12), (xs[4] - 4, mid - 12)], "accent")
+    d.arrow([(xs[4] + w / 2, y + h + 2), (xs[4] + w / 2, 202), (xs[1] + w / 2, 202), (xs[1] + w / 2, y + h + 4)],
+            "accent", rounded=12)
+    d.label(579, 207, "active version", fill="accent", size=15)
+    d.add(f'<line x1="{xs[2]}" y1="40" x2="{xs[3] + w}" y2="40" stroke="{d.c("accent")}" stroke-width="2"/>')
+    d.text(xs[2] + 185, 30, "RSI campaigns: proposals and gates", "sb", 15, "accent", anchor="middle")
+    d.rect(24, 248, 920, 60, "kernel", "kernel", rx=12)
+    d.text(484, 284, "Serve: model serving across the loop", "sb", 17, "kernel_ink", anchor="middle")
     return d
 
 
@@ -808,7 +796,7 @@ def home_stack(T: dict) -> Doc:
     return stack_map(T, Repo("docs", ("hylo-", "docs"), "", set()))
 
 
-DIAGRAMS = {"architecture": architecture, "strategy-development": strategy_development, "skill-lifecycle": skill_lifecycle,
+DIAGRAMS = {"architecture": architecture, "strategy-development": strategy_development,
             "repositories": repositories, "episode-loop": episode_loop,
             "improvement-loop": improvement_cycle, "splits": splits, "store": store, "deployment": deployment,
             "hylo-loop": hylo_loop, "stack": home_stack, "concept-map": concept_map, "episode-step": episode_step,

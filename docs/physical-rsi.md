@@ -1,82 +1,80 @@
 # Physical RSI
 
-AI systems have started to improve themselves. Software agents rewrite their own code, tune their own prompts and
-build their own skill libraries; recursive self-improvement (RSI) has become the next frontier of AI. That wave has
-not yet reached the physical world. Hylo is built to bring it there: **an engine for Physical RSI, in which robots
-drive their own improvement from their own physical experience.**
+AI systems have started to improve themselves: software agents rewrite their own code, tune their own prompts and
+build their own skill libraries. Recursive self-improvement (RSI) has become the next frontier of AI, and that wave
+has not yet reached the physical world. Hylo is built to bring it there: **robots that build on their own progress.**
 
-![The Physical RSI loop: practise in worlds, act with tools, remember, improve, verify, share skills, deploy](assets/diagrams/physical-rsi-light.svg){ .hylo-diagram .only-light }
-![The Physical RSI loop: practise in worlds, act with tools, remember, improve, verify, share skills, deploy](assets/diagrams/physical-rsi-dark.svg){ .hylo-diagram .only-dark }
+![The Physical RSI loop: Build, Run, Improve, Verify and Deploy, with RSI campaigns over Improve and Verify and Serve beneath all five](assets/diagrams/physical-rsi-light.svg){ .hylo-diagram .only-light }
+![The Physical RSI loop: Build, Run, Improve, Verify and Deploy, with RSI campaigns over Improve and Verify and Serve beneath all five](assets/diagrams/physical-rsi-dark.svg){ .hylo-diagram .only-dark }
+
+*Build worlds, run tasks, improve, verify candidates and deploy approved versions. Active versions feed later runs,
+and run outcomes can guide new worlds. Campaigns connect proposals to gates, while Serve supports model inference
+across the loop. The safety shield applies wherever actions execute; promotion to hardware requires human approval.*
 
 ## The bottleneck
 
-Robots do get better. Policies are fine-tuned, fleets send data home and new versions ship over the air. But
-people drive every turn of that loop:
+Robots can act autonomously while still depending on people to drive their improvement. Teams collect runs, diagnose
+failures, choose changes, evaluate candidates and decide what to deploy. When people must coordinate every turn,
+robots improve only as fast as those teams can close the loop.
 
-- people collect the data and teleoperate the demonstrations;
-- people read the failures and work out their causes;
-- people retrain the model or rewrite the integration code;
-- people evaluate the new version and decide whether to ship it.
+Physical RSI puts the system to work on that loop: a robot system uses the outcomes of physical tasks to propose and
+evaluate changes, and carries the changes it adopts into the next rounds of execution and improvement. People set
+the goals and boundaries and approve promotion to hardware.
 
-**A robot improves only as fast as the team working on it.** And there is essentially one way to improve it: more
-data and another training run. That route is heavy, slow and prone to fixing one task while breaking another. A
-trick a robot discovered on site has nowhere to go except into the next dataset.
-
-Surveys of self-evolving agents describe the same picture from the other side: the field has moved from static
-models towards agents that keep improving after deployment, yet almost all of that work is on software agents, and
-embodied systems are still largely trained offline and then frozen until the next release [1, 2, 3].
+Surveys of self-evolving agents describe the same shift from the other side: the field has moved from static models
+towards agents that keep improving after deployment, yet almost all of that work is on software agents, while
+embodied systems are still largely trained offline and updated release by release [1, 2, 3].
 
 ## Grounding
 
-The recognised limit of RSI is grounding. A system that grades its own work drifts: it learns to satisfy its own
-judge rather than the goal. How far self-improvement goes tracks how trustworthy its evaluation signal is, from
-formal verifiers at the strong end to self-assessment at the weak end [4].
+The recognised limit of self-improvement is its evaluation signal. A system that grades its own work drifts; how far
+self-improvement goes tracks how trustworthy the signal is, from formal verifiers and execution feedback down to
+self-assessment [4].
 
-For RSI, the physical world is the best possible teacher. Whether the cup was lifted or the tower stands is
-settled by physics, not by the model's opinion of its own work. Simulation makes that answer cheap enough to ask
-for thousands of times. So robots are not the hardest place for RSI; **they may be the first place where it
-genuinely works**, because they have the firmest ground truth. What has been missing is a system that lets the
-loop turn by itself.
+Physical tasks give self-improvement an external test: whether an action produced the intended result in the world.
+Measured outcomes, checked under stated conditions and independently of the agent's own account, provide evidence
+for keeping useful changes and rejecting failed ones. This makes physical AI a promising setting for recursive
+self-improvement: the loop advances on demonstrated capability.
 
 ## The loop
 
-Hylo turns "people improve the robot" into "the robot improves itself". The loop follows the way people learn a
-craft:
-
-| Stage | How people learn a craft | In Hylo |
+| Activity | What it does | In Hylo |
 |---|---|---|
-| **Practise** | rehearse in a training ground | [Worlds](user-guide/worlds.md): scenes described in words, any of two dozen robots, people and disturbances |
-| **Act** | do the work with tools | [Tool-calling agents](user-guide/tool-agents.md) and [program agents](user-guide/developing-strategies.md): a model acts through robot tools, one checked action at a time, or writes a program |
-| **Remember** | remember what worked and what went wrong | [Memory](user-guide/memory/index.md): spatial memory, action memory, lessons |
-| **Improve** | practise deliberately and refine the method | [Learning](user-guide/learning.md) and [campaigns](user-guide/campaigns.md): diagnose failures, propose changes, build learned components |
-| **Verify** | pass the exam before taking the job | [Experiments](user-guide/experiments.md), [benchmarking](benchmarking/index.md) and the gate: tested on cases the change was not developed on, and reversible |
-| **Share** | write the craft down so others can use it | [Skills](user-guide/skills.md): verified programs and recipes in a library any agent can retrieve |
-| **Deploy** | do the job and bring back new experience | [Deployment](user-guide/deployment.md): the same episode loop on a workcell, behind the [safety shield](user-guide/safety.md) |
+| **Build** | Create, adapt or reconstruct the worlds and task conditions for development and evaluation. | [Worlds](user-guide/worlds.md) built from text with two dozen robot packs and people; benchmark environments and perturbations; recorded episodes rebuilt in simulation; outside data such as demonstrations and videos |
+| **Run** | Execute policies or agents in simulation or on robots, recording actions, conditions and measured outcomes. | [Policies](user-guide/policies.md), [tool-calling agents](user-guide/tool-agents.md) and [program agents](user-guide/developing-strategies.md) on one episode loop behind the [safety shield](user-guide/safety.md) |
+| **Improve** | Use development outcomes and experience to train models, update memory or change settings, prompts, programs and skills, then freeze candidates. | [Learning](user-guide/learning.md): policies, critics, world models and judges trained from runs; [memory](user-guide/memory/index.md); research sessions that write programs; [skills](user-guide/skills.md) |
+| **Verify** | Evaluate frozen candidates with checks that suit their claims, kept separate from their development. | [Experiments](user-guide/experiments.md), [benchmarking](benchmarking/index.md), the campaign gate and held-out reports, sealed runs |
+| **Deploy** | Activate approved versions for later runs and improvement; promotion to hardware requires human approval. | Versions and rollback, the [skill library](user-guide/memory/skills.md), [policy servers and workcells](user-guide/deployment.md) |
 
-Every action goes through one kernel and one safety shield, and every step is recorded as a trace that can be
-replayed and verified afterwards. [Studio](user-guide/studio.md) shows the loop as it turns.
+The main path runs from Run through Improve, Verify and Deploy back to Run: each round starts from the versions the
+last one adopted. Build connects to Run in both directions. New worlds go into execution, and the tasks, failures
+and recordings that execution produces guide which worlds to build next. A candidate that fails verification goes
+back to Improve, and the cases that rejected it never become development data.
 
-## Recursion
+[Studio](user-guide/studio.md) shows the loop as it turns, and the CLI and an MCP server let people and external
+agents drive it.
 
-The loop is recursive because what each turn produces becomes material for the next. Hylo's improvement works at
-three levels:
+## Campaigns
 
-| Level | What improves | What it means |
-|---|---|---|
-| **Behaviour** | how the robot does a task | the same task, done better each round |
-| **Learning** | the skills and experience the robot draws on | verified skills become building blocks for the next task, so new tasks are learned faster |
-| **Practice** | what the robot practises | failures are recorded with their reasons, and those reasons point to what to practise and which skill to reach for |
+An improvement [campaign](user-guide/campaigns.md) is the RSI engine: it connects proposals to gates. Rules,
+learners and language models propose changes; a campaign tests them against the current version on cases that
+played no part in proposing or choosing them, promotes only what passes, and records every promotion so it can be
+rolled back. What a candidate may change is bounded: never the safety settings, the scorers, the benchmark or the
+campaign itself.
 
-Stacked, the three levels compound. A robot that only reflects on its last task improves its behaviour; a robot
-that improves its learning and its practice gets better at getting better.
+## Serve
 
-## Levers
+Serve is Hylo's model-serving layer. It serves policies to robots and runs workcells next to them, and it is designed
+to provide high-performance inference for every model the loop uses: policies and vision-language-action models,
+language and vision models, perception and generation models, world models and judges. As fewer turns of the loop
+wait for people, more of its pace depends on how fast those models answer.
 
-Retraining is one lever among many. A behaviour can change through runtime settings, recovery rules, prompts,
-programs, skills, memory, learned components or the policy weights themselves. Hylo orders them by
-[cost and risk](user-guide/campaigns.md) and holds every one to the same verification, so improvement happens at the
-cheapest layer that works. A trick discovered on site becomes a skill today instead of waiting for the next
-training run.
+## What improves
+
+Improvement is not only retraining. A round can change runtime settings, recovery rules, prompts, programs, memory,
+skills, learned components or the policy weights themselves, and the worlds the robot practises in. Each is versioned
+and verified in the way that suits it, and each can carry progress into the next round: a trick found on site can
+become a program or a skill now instead of waiting for the next training run.
 
 ## What you bring
 
@@ -85,39 +83,31 @@ You bring a starting point and a goal:
 - **a robot**, described to Hylo by its arms, hands, cameras and action layout;
 - **a task**, and the check that decides whether it succeeded;
 - **anything you already have**, optionally: a vision-language-action model or other policy, task programs,
-  demonstrations, videos, logs from other robots. The more you bring, the higher the loop starts.
+  demonstrations, videos, logs from other robots.
 
-You take away a capability that keeps growing:
-
-- a stronger version you can deploy and roll back;
-- skills that any later task and agent can reuse;
-- experience that makes the next round faster;
-- the evidence for every step of the improvement.
-
-What one round produces is the input to the next. The second time you come back, the skills and the experience
-are already there.
+You take away versions you can deploy and roll back, with the evidence for each, and the models, programs, memory
+and skills that the next round builds on.
 
 ## Control
 
-The danger of self-improvement is self-deception: a system that grades itself and drifts. In Hylo the task's own
-check decides success, never the model; every change is tested on cases it was not developed on; every run is
-sealed and can be checked afterwards; and every promotion can be rolled back. The loop can be left to turn on its
-own because every step is verifiable and reversible.
+The loop can be left to turn because each step is bounded. The task's own check decides success, never the model;
+every candidate is tested on cases it was not developed on; runs are recorded as traces that can be sealed and audited;
+versions can be rolled back; and promotion to hardware requires human approval. Rollback changes the active version;
+it does not undo physical actions, which is why every action passes the safety shield first.
 
 ## Why now
 
-Until recently each stage of the loop needed a person, because only people could read a failure, write the code
-and build the scene. Language and vision models can now understand a task, plan, write programs and call tools,
-and a simulator can build a world from a sentence. For the first time the loop can turn without a person at every
-step: people set the goals and approve what ships.
+Until recently each turn of the loop needed a person, because only people could read a failure, write the code and
+build the scene. Language and vision models can now understand a task, plan, write programs and call tools, and a
+simulator can build a world from a sentence. The loop can now turn without a person at every step: people set the
+goals and approve what ships.
 
 ## Direction
 
-From one robot improving to all robots improving. Skills move between tasks and between robots; what one robot
-learns, every robot can use. Robot capability stops being bounded by engineering hours and grows with compute and
-experience.
-
-Robots never had an internet to learn from. Physical RSI lets them grow one of their own.
+The direction is progress that carries over: from one round to the next, and from one task and robot to the next.
+Each version, program and skill carries its implementation, applicability and evidence, so later runs and agents
+can build on what already works and verify it in new settings. What one robot learns becomes a starting point for
+others, and each verified advance becomes material for further improvement.
 
 ## Further reading
 

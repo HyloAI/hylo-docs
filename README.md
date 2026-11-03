@@ -21,9 +21,9 @@
 Documentation for [Hylo](https://hyloai.github.io/), the stack for physical AI: user guide, benchmarking, developer
 guide, design and RFCs, research notes and experiment records, API and CLI reference. Built with MkDocs Material.
 
-The story is [Physical RSI](docs/physical-rsi.md): robots that practise, act, remember, improve, verify each change
-against physical outcomes, share skills and deploy; the home page, the architecture overview and the RFC index are
-organised around that loop. The user-facing thread is [robot skills and their lifecycle](docs/user-guide/skills.md): developing, validating,
+The story is [Physical RSI](docs/physical-rsi.md): robots that build on their own progress through one loop, Build,
+Run, Improve, Verify and Deploy, with campaigns connecting Improve to Verify and Serve providing model serving across
+it. The home page, the architecture overview, the skills guide and the RFC index use that loop. The user-facing thread is [robot skills and their lifecycle](docs/user-guide/skills.md): developing, validating,
 deploying, reusing and improving task capabilities. Guides connect those activities to the current program/policy,
 research, evaluation, campaign, skill-library and workcell mechanisms, with their implementation boundaries stated.
 Showcase pages are generated from each repository's example README; update those sources to change measured

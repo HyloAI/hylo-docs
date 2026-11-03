@@ -6,10 +6,10 @@ hide:
 
 <div class="hylo-hero" markdown>
 
-# Robots that improve themselves
+# Physical RSI: robots that build on their own progress
 
-<p class="hylo-tagline">Hylo is an engine for Physical RSI. Robots practise in worlds, act through tools, remember,
-improve, verify every change against physical outcomes, and share what they learn as skills.</p>
+<p class="hylo-tagline">Hylo turns robot improvement into a loop the system can drive: build worlds, run tasks,
+improve, verify against physical outcomes and deploy what passes. Each round starts from what the last one adopted.</p>
 
 [Get started](getting-started/installation.md){ .md-button .md-button--primary }
 [Quickstart](getting-started/quickstart.md){ .md-button }
@@ -19,97 +19,99 @@ improve, verify every change against physical outcomes, and share what they lear
 
 ## Physical RSI
 
-AI has started to improve itself, but robots still improve only as fast as the people working on them: people
-collect the data, read the failures, retrain and decide what ships. Hylo hands that loop to the robot. People set
-the goals and approve what ships; the robot practises, acts, remembers, improves and proves each change.
+Robots can act autonomously while still depending on people to drive their improvement: teams collect runs, diagnose
+failures, choose changes, evaluate candidates and decide what to deploy. Hylo puts the system to work on that loop.
+People set the goals and boundaries and approve promotion to hardware.
 
-Recursive self-improvement is limited by grounding: a system that grades itself drifts. Robots have the firmest
-ground truth there is. Whether the cup was lifted is settled by physics, not by the model's opinion, so every step
-of the loop is checked against physical outcomes.
+Physical tasks give self-improvement an external test: whether an action produced the intended result in the world.
+Hylo keeps the changes that measured outcomes support and rejects the rest, so the loop advances on demonstrated
+capability.
 
-![The Physical RSI loop: practise in worlds, act with tools, remember, improve, verify, share skills, deploy](assets/diagrams/physical-rsi-light.svg){ .hylo-diagram .only-light }
-![The Physical RSI loop: practise in worlds, act with tools, remember, improve, verify, share skills, deploy](assets/diagrams/physical-rsi-dark.svg){ .hylo-diagram .only-dark }
+![The Physical RSI loop: Build, Run, Improve, Verify and Deploy, with RSI campaigns over Improve and Verify and Serve beneath all five](assets/diagrams/physical-rsi-light.svg){ .hylo-diagram .only-light }
+![The Physical RSI loop: Build, Run, Improve, Verify and Deploy, with RSI campaigns over Improve and Verify and Serve beneath all five](assets/diagrams/physical-rsi-dark.svg){ .hylo-diagram .only-dark }
 
 [Why Physical RSI →](physical-rsi.md)
 
 <div class="grid cards" markdown>
 
--   **Practise in worlds**
+-   **Worlds** · Build
 
     ---
 
     Describe a scene in words, place any of 24 robot packs in it, add people and disturbances, and edit it in
-    small checked steps. Every revision is kept; checks report why a goal is not met.
+    small checked steps. Checks report why a goal is not met. Recorded episodes can be rebuilt in simulation.
 
     [Worlds →](user-guide/worlds.md)
 
--   **Act with tools**
+-   **Agents and policies** · Run
 
     ---
 
     A model operates the robot one checked tool call at a time, or writes a task program against perception,
-    grasping and motion-planning tools. Existing policies run on the same execution kernel.
+    grasping and motion-planning tools. Vision-language-action models and other policies run on the same loop.
 
     [Tool-calling agents →](user-guide/tool-agents.md) · [Develop a skill →](user-guide/developing-strategies.md) ·
     [Policies →](user-guide/policies.md)
 
--   **Remember**
+-   **Training** · Improve
 
     ---
 
-    Spatial memory, action memory and lessons keep what the robot saw and what worked. Every read and write is
-    recorded, so an outcome can be traced to the memory that shaped it.
+    Learners turn recorded runs into sealed artifacts: policies, fine-tuned weights, value critics, world models
+    and success judges, each with the runs and splits it was built from.
+
+    [Learning →](user-guide/learning.md)
+
+-   **Memory** · Improve
+
+    ---
+
+    Spatial memory, action memory and lessons keep what the robot saw and what worked, built only from verified
+    development experience. Every read and write is recorded.
 
     [Memory →](user-guide/memory/index.md)
 
--   **Improve**
+-   **Campaigns** · Improve and Verify
 
     ---
 
-    Learners turn runs into sealed artifacts. A campaign diagnoses failures and proposes changes, from runtime
-    settings and programs to learned components and policy weights.
+    The RSI engine: rules, learners and language models propose changes, from runtime settings and programs to
+    policy weights, and a campaign promotes only those that pass its gate.
 
-    [Learning →](user-guide/learning.md) · [Campaigns →](user-guide/campaigns.md) ·
-    [Skill research →](user-guide/research-and-skills.md)
+    [Campaigns →](user-guide/campaigns.md) · [Skill research →](user-guide/research-and-skills.md)
 
--   **Verify**
+-   **Evaluation** · Verify
 
     ---
 
-    A change is tested on episodes it was not developed on and promoted only if it passes the gate. Every run is
-    recorded as a trace you can replay step by step, and sealed so it can be checked afterwards.
+    A protocol fixes everything except the agent being scored. Candidates are tested on episodes they were not
+    developed on; every run is a trace you can replay step by step.
 
     [Experiments →](user-guide/experiments.md) · [Benchmarking →](benchmarking/index.md) ·
     [Leaderboard →](benchmarking/leaderboard.md)
 
--   **Share skills**
+-   **Skills** · Improve and Deploy
 
     ---
 
-    A verified program or recipe becomes a skill in the library, with its applicability, version and evidence
-    attached. Later agents retrieve it by instruction or by the reason a goal failed.
+    A verified program or recipe becomes a skill with its applicability, version and evidence attached. Later
+    agents retrieve it by instruction or by the reason a goal failed.
 
     [Skills →](user-guide/skills.md) · [Skill reuse →](user-guide/research-and-skills.md#reuse-a-promoted-program)
 
--   **Deploy**
+-   **Serve and deployment** · Deploy
 
     ---
 
-    A workcell runs the promoted version on a robot with the same episode loop the benchmark used, behind the
-    safety shield and an operator's stop button. Its episodes come back as new experience.
+    Serve runs the active version behind a policy server and a workcell next to the robot, with the safety shield
+    and an operator's stop button, and is designed to serve every model the loop uses.
 
     [Deployment →](user-guide/deployment.md) · [Safety →](user-guide/safety.md)
 
--   **Watch the loop**
-
-    ---
-
-    Studio shows worlds, research sessions, runs, replays, comparisons, campaigns and workcell controls in one
-    place. Start it with `hylo playground`.
-
-    [Studio →](user-guide/studio.md)
-
 </div>
+
+[Studio](user-guide/studio.md) shows worlds, research sessions, runs, replays, comparisons, campaigns and workcell
+controls in one place. Start it with `hylo playground`.
 
 ## Choose a starting point
 
