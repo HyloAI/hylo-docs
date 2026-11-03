@@ -6,8 +6,8 @@ capabilities reusable. The operational terms used by commands and configs are li
 
 ## Physical RSI
 
-Physical recursive self-improvement uses task outcomes to propose changes, verify them and carry adopted changes
-into later rounds. A campaign implements the comparison and promotion process; learning supplies new artifacts.
+Physical recursive self-improvement uses task outcomes to propose changes, verify their effects and carry adopted
+changes into later rounds. A campaign implements the comparison and promotion process; learning supplies new artifacts.
 Read [Physical RSI](../physical-rsi.md) for the loop and its boundaries, then
 [Campaigns](../user-guide/campaigns.md) to run an improvement experiment.
 

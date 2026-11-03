@@ -61,10 +61,9 @@ campaign itself.
 
 ## Serve
 
-Serve is Hylo's model-serving layer. It serves policies to robots and runs workcells next to them, and it is designed
-to provide high-performance inference for every model the loop uses: policies and vision-language-action models,
-language and vision models, perception and generation models, world models and judges. As fewer turns of the loop
-wait for people, more of its pace depends on how fast those models answer.
+Serve runs agents behind policy servers and workcells next to a robot or simulator. A workcell owns execution,
+safety checks and the recorded episode; Studio provides operator controls. The recorded robot-adapter bring-up
+uses a simulated arm. Follow [Deployment](user-guide/deployment.md) to configure and validate a target setup.
 
 ## What improves
 

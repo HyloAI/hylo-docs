@@ -1,5 +1,5 @@
 site_name: Hylo
-site_description: "Develop, validate, deploy and accumulate robot skills on one execution kernel, with explicit task scope and measured evidence."
+site_description: "Agents act in worlds, learn from experience and reuse verified skills. Hylo connects those capabilities through a measured improvement loop."
 docs_dir: docs
 site_dir: site
 edit_uri: ""

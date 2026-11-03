@@ -19,8 +19,8 @@ Hylo connects those capabilities through a measured improvement loop.</p>
 
 ## Physical RSI
 
-Physical recursive self-improvement uses task outcomes to propose changes, test them and carry useful changes
-into later rounds. People define the goals, evaluation conditions and boundaries. Hylo's campaigns compare
+Physical recursive self-improvement uses task outcomes to propose changes, verify their effects and carry adopted
+changes into later rounds. People define the goals, evaluation conditions and boundaries. Hylo's campaigns compare
 candidates with the current version before promotion; hardware deployment needs human review and target validation.
 
 ![The Physical RSI loop: Build, Run, Improve, Verify and Deploy, with campaigns connecting improvement to verification](assets/diagrams/physical-rsi-light.svg){ .hylo-diagram .only-light }

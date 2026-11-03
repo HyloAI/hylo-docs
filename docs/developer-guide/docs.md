@@ -99,6 +99,36 @@ Do not retell the full improvement loop or skill lifecycle at the start of each 
 link to the relevant concept. Distinguish robot capabilities, concrete library records and coding-agent instructions.
 Historical design snapshots belong under the archive, with a link to the current documentation.
 
+### Shared website wording
+
+The website and docs use the same product introduction:
+
+> Agents act in worlds, learn from experience and reuse verified skills. Hylo connects those capabilities through
+> a measured improvement loop.
+
+Chinese: 智能体在世界中行动，从经验中学习，并复用已验证的技能。Hylo 通过有实测依据的改进循环，将这些能力连接起来。
+
+| English | Chinese | Scope |
+|---|---|---|
+| Physical RSI | Physical RSI（物理递归自我改进） | the overall improvement loop |
+| Worlds | 世界 | scenes, robots, tasks and physical feedback |
+| Agents | 智能体 | policy, program and tool-calling approaches |
+| Memory | 记忆 | observations and experience used in later decisions |
+| Skills | 技能 | reusable task capabilities with applicability and evidence |
+| Campaign | 改进任务（Campaign） | candidate comparison and promotion |
+| Gate | 准入评测（gate） | the confirmatory paired test, not every form of verification |
+| Program skill / recipe skill | 程序技能 / 动作配方技能 | promoted programs / recipes verified by replay without a model |
+| Studio | Studio | the UI; do not rename it Workbench |
+| Developing programs / Program research | 开发程序 / 程序研发 | the manual and model-assisted program guides |
+
+Website concept descriptions follow the docs home page. Buttons name their destination: Quickstart, Agents,
+Developing programs, Program research, Deployment. Keep the website's English markup, Chinese dictionary and
+metadata aligned when changing these terms. Its brand headline can differ from a documentation heading.
+
+State what each verification path proves: campaign candidates pass a gate; recipes pass replay checks. Promotion
+and deployment remain separate, and hardware requires target validation. Describe current Serve behaviour in
+product copy; keep broader model-serving ambitions in design planning.
+
 ### Page order
 
 Operational guides follow this order; concept pages lead with the capability and link to the relevant operations:
