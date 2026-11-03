@@ -778,6 +778,31 @@ def layers(T: dict) -> Doc:
     return d
 
 
+# ---------------------------------------------------------------- the home page and Physical RSI: the loop
+def physical_rsi(T: dict) -> Doc:
+    d = Doc(960, 350, T, "The Physical RSI loop",
+            "A robot practises in worlds, acts through tools, remembers what happened and improves its own "
+            "behaviour. Each improvement is verified against physical outcomes on cases it was not developed on, "
+            "shared as a skill and deployed; deployment brings new experience back into the loop. Physical "
+            "outcomes ground every step.")
+    d.card()
+    top, bot, w, h = 40, 236, 190, 64
+    xs = [28, 266, 504, 742]
+    for x, text in zip(xs, ["Practise in worlds", "Act with tools", "Remember", "Improve"]):
+        node(d, x, top, w, h, text)
+    for a, b in zip(xs, xs[1:]):
+        d.arrow([(a + w + 2, top + h / 2), (b - 4, top + h / 2)], "accent")
+    bx = [742, 385, 28]
+    for x, text, k in zip(bx, ["Verify", "Share skills", "Deploy"], ["accent", "soft", "plain"]):
+        node(d, x, bot, w, h, text, k)
+    d.arrow([(837, top + h + 2), (837, bot - 4)], "accent")
+    d.arrow([(740, bot + h / 2), (385 + w + 4, bot + h / 2)], "accent")
+    d.arrow([(383, bot + h / 2), (28 + w + 4, bot + h / 2)], "accent")
+    d.arrow([(123, bot - 2), (123, top + h + 4)], "accent", dash="6 5")
+    d.text(480, 177, "Physical outcomes ground every step", "sb", 18, "muted", anchor="middle")
+    return d
+
+
 # ---------------------------------------------------------------- the home page: the loop and the stack
 def home_stack(T: dict) -> Doc:
     return stack_map(T, Repo("docs", ("hylo-", "docs"), "", set()))
@@ -793,7 +818,8 @@ DIAGRAMS = {"architecture": architecture, "strategy-development": strategy_devel
             "spatial-recall": spatial_recall, "action-steer": action_steer,
             "skill-status": skill_status, "experience-round": experience_round, "memory-timeline": memory_timeline,
             "world-layers": world_layers, "memory-layers": memory_layers, "skill-journey": skill_journey,
-            "improvement-ladder": improvement_ladder, "trust-paths": trust_paths, "layers": layers}
+            "improvement-ladder": improvement_ladder, "trust-paths": trust_paths, "layers": layers,
+            "physical-rsi": physical_rsi}
 
 
 if __name__ == "__main__":

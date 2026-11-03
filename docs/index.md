@@ -6,92 +6,110 @@ hide:
 
 <div class="hylo-hero" markdown>
 
-# The stack for physical AI
+# Robots that improve themselves
 
-<p class="hylo-tagline">Develop, validate, deploy and accumulate robot skills with Hylo. Combine robot tools,
-programs and existing policies on one execution kernel, with recorded evidence for each tested implementation.</p>
+<p class="hylo-tagline">Hylo is an engine for Physical RSI. Robots practise in worlds, act through tools, remember,
+improve, verify every change against physical outcomes, and share what they learn as skills.</p>
 
 [Get started](getting-started/installation.md){ .md-button .md-button--primary }
 [Quickstart](getting-started/quickstart.md){ .md-button }
-[Concepts](getting-started/concepts.md){ .md-button }
+[Physical RSI](physical-rsi.md){ .md-button }
 
 </div>
 
-## Build robot skills through experiments
+## Physical RSI
 
-A robot skill is a reusable ability to carry out tasks under stated conditions. Developing it takes programming,
-tool integration and experiments; using it requires reliable execution, validation and deployment. Hylo connects
-these activities so that working task capabilities can be inspected, reused and improved.
+AI has started to improve itself, but robots still improve only as fast as the people working on them: people
+collect the data, read the failures, retrain and decide what ships. Hylo hands that loop to the robot. People set
+the goals and approve what ships; the robot practises, acts, remembers, improves and proves each change.
 
-[Skills and their lifecycle →](user-guide/skills.md)
+Recursive self-improvement is limited by grounding: a system that grades itself drifts. Robots have the firmest
+ground truth there is. Whether the cup was lifted is settled by physics, not by the model's opinion, so every step
+of the loop is checked against physical outcomes.
 
-![Develop and run, validate, version and deploy, reuse and improve robot skills](assets/diagrams/skill-lifecycle-light.svg){ .hylo-diagram .only-light }
-![Develop and run, validate, version and deploy, reuse and improve robot skills](assets/diagrams/skill-lifecycle-dark.svg){ .hylo-diagram .only-dark }
+![The Physical RSI loop: practise in worlds, act with tools, remember, improve, verify, share skills, deploy](assets/diagrams/physical-rsi-light.svg){ .hylo-diagram .only-light }
+![The Physical RSI loop: practise in worlds, act with tools, remember, improve, verify, share skills, deploy](assets/diagrams/physical-rsi-dark.svg){ .hylo-diagram .only-dark }
+
+[Why Physical RSI →](physical-rsi.md)
 
 <div class="grid cards" markdown>
 
--   **Develop skills**
+-   **Practise in worlds**
 
     ---
 
-    Build and debug task programs using perception, grasping and motion-planning tools. A model can write code
-    interactively or develop a frozen program on development cases. Start with a new task or an existing program.
+    Describe a scene in words, place any of 24 robot packs in it, add people and disturbances, and edit it in
+    small checked steps. Every revision is kept; checks report why a goal is not met.
 
-    A model can also operate the robot one checked tool call at a time, or build a world with other robots to try
-    a task in.
+    [Worlds →](user-guide/worlds.md)
 
-    [Develop a skill →](user-guide/developing-strategies.md) · [Skill research →](user-guide/research-and-skills.md) ·
-    [Tool-calling agents →](user-guide/tool-agents.md) · [Worlds →](user-guide/worlds.md)
-
--   **Run implementations**
+-   **Act with tools**
 
     ---
 
-    An experiment config names an environment, an agent and a set of episodes. Run it, and every episode is
-    recorded as a trace you can replay step by step.
+    A model operates the robot one checked tool call at a time, or writes a task program against perception,
+    grasping and motion-planning tools. Existing policies run on the same execution kernel.
 
-    [Experiments →](user-guide/experiments.md) · [Policies →](user-guide/policies.md)
+    [Tool-calling agents →](user-guide/tool-agents.md) · [Develop a skill →](user-guide/developing-strategies.md) ·
+    [Policies →](user-guide/policies.md)
 
--   **Validate skills**
-
-    ---
-
-    An evaluation protocol fixes everything except the agent being scored: episodes, seeds and timing. Each result
-    is a scorecard, and a leaderboard ranks the scorecards of one protocol.
-
-    [Benchmarking →](benchmarking/index.md) · [Leaderboard →](benchmarking/leaderboard.md)
-
--   **Improve versions**
+-   **Remember**
 
     ---
 
-    Learners turn runs into sealed artifacts. A campaign proposes changes, tests them against the current version
-    on episodes it did not choose them on, and promotes a change only if it passes the gate.
+    Spatial memory, action memory and lessons keep what the robot saw and what worked. Every read and write is
+    recorded, so an outcome can be traced to the memory that shaped it.
 
-    [Learning →](user-guide/learning.md) · [Campaigns →](user-guide/campaigns.md)
+    [Memory →](user-guide/memory/index.md)
 
--   **Deploy and operate**
+-   **Improve**
+
+    ---
+
+    Learners turn runs into sealed artifacts. A campaign diagnoses failures and proposes changes, from runtime
+    settings and programs to learned components and policy weights.
+
+    [Learning →](user-guide/learning.md) · [Campaigns →](user-guide/campaigns.md) ·
+    [Skill research →](user-guide/research-and-skills.md)
+
+-   **Verify**
+
+    ---
+
+    A change is tested on episodes it was not developed on and promoted only if it passes the gate. Every run is
+    recorded as a trace you can replay step by step, and sealed so it can be checked afterwards.
+
+    [Experiments →](user-guide/experiments.md) · [Benchmarking →](benchmarking/index.md) ·
+    [Leaderboard →](benchmarking/leaderboard.md)
+
+-   **Share skills**
+
+    ---
+
+    A verified program or recipe becomes a skill in the library, with its applicability, version and evidence
+    attached. Later agents retrieve it by instruction or by the reason a goal failed.
+
+    [Skills →](user-guide/skills.md) · [Skill reuse →](user-guide/research-and-skills.md#reuse-a-promoted-program)
+
+-   **Deploy**
 
     ---
 
     A workcell runs the promoted version on a robot with the same episode loop the benchmark used, behind the
-    safety shield and an operator's stop button.
+    safety shield and an operator's stop button. Its episodes come back as new experience.
 
     [Deployment →](user-guide/deployment.md) · [Safety →](user-guide/safety.md)
 
--   **Reuse and accumulate**
+-   **Watch the loop**
 
     ---
 
-    Derive a verified program skill from a promoted candidate and make it available to later code agents.
-    Keep its applicability, program version and validation evidence attached; revalidate when conditions change.
+    Studio shows worlds, research sessions, runs, replays, comparisons, campaigns and workcell controls in one
+    place. Start it with `hylo playground`.
 
-    [Skill reuse →](user-guide/research-and-skills.md#reuse-a-promoted-program) · [Memory →](user-guide/memory/index.md) · [Skill lifecycle →](user-guide/skills.md)
+    [Studio →](user-guide/studio.md)
 
 </div>
-
-[Studio](user-guide/studio.md) shows research sessions, code and development outcomes alongside runs, replays,
-comparisons, campaigns and workcell controls, and its World page builds and runs stages with a chat model. Start it with `hylo playground`.
 
 ## Choose a starting point
 
@@ -116,6 +134,7 @@ Six layers, from the kernel at the base to the workbench on top, and the reposit
 
 ## Where next
 
+- [Physical RSI](physical-rsi.md): the problem Hylo addresses and how the loop works.
 - [Architecture](design/overview.md): how development, execution, evaluation and deployment connect.
 - [Extending](harness/extending.md): add your own environment, policy, learner or generator.
 - [CLI reference](cli/index.md): every `hylo` command and its options.

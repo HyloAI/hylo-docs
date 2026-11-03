@@ -4,6 +4,25 @@ This page maps the robot-skill lifecycle onto the execution, evaluation, improve
 and explains what checks each hand-off. [Robot skills](../user-guide/skills.md) defines the user-facing lifecycle;
 [Concepts](../getting-started/concepts.md) defines the terms.
 
+## The Physical RSI loop
+
+[Physical RSI](../physical-rsi.md) describes the loop Hylo is built around: robots practise, act, remember, improve,
+verify, share skills and deploy, with every step checked against physical outcomes. Each stage is a set of
+mechanisms in one of the repositories.
+
+![The Physical RSI loop: practise in worlds, act with tools, remember, improve, verify, share skills, deploy](../assets/diagrams/physical-rsi-light.svg){ .hylo-diagram .only-light }
+![The Physical RSI loop: practise in worlds, act with tools, remember, improve, verify, share skills, deploy](../assets/diagrams/physical-rsi-dark.svg){ .hylo-diagram .only-dark }
+
+| Stage | Mechanisms | Packages |
+|---|---|---|
+| Practise | stages with revisions, worlds composed from robot packs, people, checks with reason codes | `hylo-core` (stage), `hylo-env-mujoco`, Studio |
+| Act | robot contract, manipulation tools, tool-calling and program agents, policies, reasoners | `hylo-manip`, `hylo-code-agents`, `hylo-reasoner-llm`, `hylo-agents`, `hylo-policy-*` |
+| Remember | spatial memory, action memory, lessons | `hylo-memory`, `hylo-reasoners` |
+| Improve | learners and sealed artifacts, diagnosis, candidate generation, campaigns | `hylo-learn`, `hylo-evolve`, `hylo-proposer-llm` |
+| Verify | episode loop, safety shield, traces and seals, splits, scorers, paired gate, held-out reports | `hylo-core`, `hylo-eval`, `hylo-evolve`, Bench |
+| Share | skill library: program skills from promoted candidates, recipe skills from verified replays | `hylo-memory`, `hylo-code-agents` |
+| Deploy | policy server, robot adapter, workcell and operator channel | Serve |
+
 ## Design goals
 
 | Goal | Design response |

@@ -23,6 +23,7 @@ hooks:
 
 nav:
   - Home: index.md
+  - Physical RSI: physical-rsi.md
   - Showcase:
       - showcase/index.md
       - Core: showcase/core.md
