@@ -113,6 +113,14 @@ skill helps on fresh scenes because it carries a verdict, not a guess. Action me
 says something about the outcome (a low-dimensional state) and not where it does not (pooled image features on a
 layout the bank has never seen); because it only biases the policy, the cost of a poor retrieval stays small.
 
+## In the Studio
+
+The Experience page shows every skill library, lesson book and action bank under the runs directory, with status and evidence.
+
+<video src="../../assets/videos/studio-experience.mp4" poster="../../assets/videos/studio-experience.jpg" controls muted playsinline preload="none" width="100%" aria-label="The Studio's Experience page: skill libraries with gate evidence, lesson books and their curation log, an action bank"></video>
+
+*Skill libraries with their gate evidence, lesson books with their curation log, and an action bank.*
+
 ## Limits
 
 - Action memory has not given a reliable gain on LIBERO.

@@ -105,3 +105,7 @@ uv run hylo playground --repo . --sessions research=runs/research
 The [Research page](studio.md#research) reads recorded sessions: turns, code, output, camera views, submissions,
 frozen source, usage and cost. It also links campaign candidates when their evidence names the session. It does
 not provide an interactive model-development editor or start research sessions from this page.
+
+<video src="../../assets/videos/studio-research.mp4" poster="../../assets/videos/studio-research.jpg" controls muted playsinline preload="none" width="100%" aria-label="The Studio's Research page: a session's turns, submissions and frozen program, the campaign that promoted it, the program skill"></video>
+
+*A research session's turns, submissions and frozen program; the campaign that promoted it; the verified program skill in the library.*

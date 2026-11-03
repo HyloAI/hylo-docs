@@ -15,6 +15,7 @@ exclude_docs: |
   design/*
   !design/overview.md
   assets/figures/studio-*.png
+  assets/videos/studio-*
   developer-guide/docs.md
   showcase/studio.md
   showcase/assets/studio/

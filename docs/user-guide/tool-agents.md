@@ -124,6 +124,10 @@ Models: any OpenAI-compatible endpoint (Ollama, vLLM, DeepSeek), the Anthropic A
 without native tool calls get the tools described in the prompt and write calls as fenced blocks. For local
 reasoning models, `reasoning_effort: none` keeps replies short.
 
+<video src="../../assets/videos/studio-live.mp4" poster="../../assets/videos/studio-live.jpg" controls muted playsinline preload="none" width="100%" aria-label="A tool-calling agent running one MuJoCo stack episode from the Studio's Live sandbox"></video>
+
+*The same agent started from the Studio's Live sandbox: cameras (RGB, depth, segmentation) and the event log while a local model stacks two blocks, then the replay.*
+
 ## Tools
 
 | Tool | Kind | What it does |
@@ -161,6 +165,10 @@ uv run hylo watch --say "the target is the small cup" --inbox runs/steer/inbox.j
 Each model turn, tool call, receipt and operator message is one line. A message sent to the inbox reaches the model
 before its next call. Any message marks the episode `human_assisted`; such episodes do not count as autonomous
 results and are left out of training exports.
+
+<video src="../../assets/videos/terminal-watch.mp4" poster="../../assets/videos/terminal-watch.jpg" controls muted playsinline preload="none" width="100%" aria-label="hylo watch replaying a recorded tool-calling episode in a terminal"></video>
+
+*`hylo watch --replay` on a recorded episode: each model turn, read calls in blue, actions in orange with their receipts, a refused call in red that the model then corrects, and the verdict.*
 
 ## Read the results
 

@@ -295,6 +295,10 @@ development and held-out tasks.
 The World page lists stages, builds a stage's world, shows a view you can orbit, runs actions and checks by hand, and
 runs chat sessions with their transcript. See [Studio](studio.md#world).
 
+<video src="../../assets/videos/studio-world.mp4" poster="../../assets/videos/studio-world.jpg" controls muted playsinline preload="none" width="100%" aria-label="The Studio's World page: building a stage, orbiting the view, an action and a goal check by hand, a chat transcript"></video>
+
+*A stage built into a world, the free view, an action by hand with its receipt, a goal check with its reason code, and a recorded chat session's transcript.*
+
 ## Next
 
 - [Tool-calling agents](tool-agents.md): a model operating a robot in benchmark tasks.

@@ -214,6 +214,10 @@ How far each is tested: [plugin catalogue](../developer-guide/plugin-catalogue.m
 
 ## Approve, roll back, shadow
 
+<video src="../../assets/videos/studio-campaigns.mp4" poster="../../assets/videos/studio-campaigns.jpg" controls muted playsinline preload="none" width="100%" aria-label="The Studio's self-improvement pages: a candidate's cascade, an approval, the rollback form and the A/B arena"></video>
+
+*In the Studio: each candidate's path through the cascade, a campaign whose candidates all failed the gate, a candidate approved by hand, the rollback form, and the parent and promoted version paired on held-out states.*
+
 ```bash
 uv run hylo evolve approve runs/evolve/my-campaign          # recorded with your user name
 uv run hylo evolve run runs/evolve/my-campaign              # continue after approval
