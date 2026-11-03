@@ -646,8 +646,15 @@ REPOS = [
     Repo("docs", ("hylo-", "docs"), "Guides, benchmarking, design, RFCs and experiment records for the Hylo stack.",
          set()),
     Repo("site", ("hyloai", ".github.io"), "The Hylo website. Plain HTML, no build step.", set()),
-    Repo("org-profile", ("", "Hylo"), "The stack for physical AI: every layer on one execution kernel.", set(), [("loop", improvement_loop)]),
+    Repo("org-profile", ("", "Hylo"), "Physical RSI: robots that build on their own progress.", set(),
+         [("loop", lambda T: _physical_rsi(T))]),
 ]
+
+
+def _physical_rsi(T: dict) -> Doc:
+    """The docs' Physical RSI loop (diagrams.py), so the organisation profile and the site share one loop figure."""
+    from diagrams import physical_rsi
+    return physical_rsi(T)
 
 
 def _copy_figure(src: Path, dst: Path, crop: str | None) -> None:
