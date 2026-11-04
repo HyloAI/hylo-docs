@@ -4,6 +4,13 @@ A robot skill is a reusable ability to carry out a task under stated robot, scen
 Hylo keeps reusable implementations with their applicability, version and validation evidence, so later agents
 can build on what has already worked.
 
+## Watch skill development and reuse
+
+[Watch the recorded sorting-skill demo](research-and-skills.md#recorded-skill-development-demo): an AI model
+extends an existing program, submits it for independent execution, passes a paired promotion gate and creates a
+verified program skill that a later agent calls on new layouts. The full English walkthrough includes measured
+results, observation conditions and replay provenance.
+
 ## Memory and skills
 
 [Memory](memory/index.md) carries observations and experience forward. Skills express what can be reused to

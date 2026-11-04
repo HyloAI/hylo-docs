@@ -1,0 +1,319 @@
+{
+  "title": "From Experience to Verified Skills",
+  "experiment": {
+    "task": "sort_by_colour",
+    "baseline": "Explicitly limited one-object-per-colour starter, derived from the existing hand-written reference helpers. The complete reference solve function is not supplied to the model.",
+    "goal": "Improve the starter to sort every object, including duplicate colours, into matching trays.",
+    "development_cases": 4,
+    "splits": "search 24 / search_val 12 / gate 12 / heldout 12; rsi_states=60",
+    "gate": "Paired McNemar, alpha .05; one candidate, one look",
+    "heldout": "report only; never used to edit or select this candidate",
+    "observation": "Two 160x120 RGB-D cameras, front and side, with simulator instance segmentation. Evaluation uses the same conditions for both programs. Video cameras are re-rendered separately.",
+    "model": "claude:sonnet",
+    "execution": "Program development, not model weight training",
+    "infrastructure_pilots": "EGL unavailable; CPU rendering pilot interrupted before any episode completed. Neither pilot was used for candidate development or selection.",
+    "development_attempts": [
+      {
+        "model": "gpt-oss:20b",
+        "result": "No qualifying program in 12 model calls and 4 submissions; no gate or held-out evaluation."
+      },
+      {
+        "model": "qwen3.5:35b-a3b",
+        "guidance": "Explicit task requirement: all blocks inside tray at floor height, no stacking; development-only feedback from first attempt.",
+        "result": "Stopped after two failed submissions (0/4 each); no candidate, gate or held-out evaluation."
+      },
+      {
+        "model": "claude:sonnet",
+        "backend": "Configured Claude CLI used as a text-only inference backend with tools disabled; all program execution occurs in Hylo.",
+        "guidance": "Same task constraints and original starter as the preceding session; development feedback only."
+      }
+    ],
+    "parent_evaluation_reuse": "Identical configuration digest required to reuse the measured starter search and search_val runs.",
+    "development_budget": {
+      "turns": 12,
+      "resets": 4,
+      "submits": 8,
+      "cost_usd": 5.0
+    },
+    "candidate_policy": "All four development cases must pass to qualify for freezing; one candidate is evaluated on the independent gate.",
+    "selection_result_is_not_gate": "search_val is used for selection; the final held-out split is reporting only."
+  },
+  "candidate_id": "cand-a7b1825f58",
+  "program_digest": "33387ae26b8c9df8",
+  "program_sha256": "54142432ed0ff1841ab167a4d0b358e240158649a286b3228b8b2d33a1cea06f",
+  "baseline_source": "\"\"\"sort_by_colour: put every block in the tray of its colour (perception only: cameras and segmentation).\"\"\"\nimport math\n\nimport numpy as np\n\nARM = \"arm\"\n\n\ndef detect(robot, view, table, label):\n    dets = robot.objects(view, robot.find(view, label), table)\n    dets = [d for d in dets if len(d.points) >= 20]\n    return max(dets, key=lambda d: (d.score, len(d.points))) if dets else None\n\n\ndef up(robot, dz, table, scene=None):\n    t = robot.status()[\"tcp\"][ARM].copy()\n    t[2, 3] += dz\n    p = robot.plan(robot.Goal(\"lift\", ARM, tcp=t), table, scene)\n    return robot.run(p) if p is not None else None\n\n\ndef pick_at(robot, label, xy, table, tries=3):\n    \"\"\"Grasp and lift the instance of `label` nearest `xy`; returns (grasp tcp, box) or None.\"\"\"\n    for attempt in range(tries):\n        view = robot.look()\n        dets = [d for d in robot.objects(view, robot.find(view, label), table) if len(d.points) >= 20]\n        det = min(dets, key=lambda d: np.linalg.norm(d.points.mean(0)[:2] - xy)) if dets else None\n        if det is None:\n            print(\"cannot see\", label)\n            return None\n        box = robot.box(det.points, table)\n        plan = robot.plan(robot.grasps(ARM, det.points, table, scene=view.points), table, view.points)\n        if plan is None:\n            print(\"no grasp plan:\", robot.why())\n            return None\n        out = robot.run(plan)\n        if out.get(\"ended\"):\n            return None\n        held = robot.holding(ARM)\n        up(robot, 0.12, table)\n        if held and robot.holding(ARM):\n            return plan.goal.tcp, box\n        print(\"grasp attempt\", attempt, \"missed; retrying\")\n        p = robot.plan(robot.Goal(\"retreat\", ARM, tcp=robot.status()[\"tcp\"][ARM], hand=(1.0,)), table)\n        if p is not None:\n            robot.run(p)\n    return None\n\n\ndef place_yaw(robot, grasp_tcp, box, ref, across=None):\n    \"\"\"Object yaw for placing: lined up with `ref` (a cube turns by quarter turns), the fingers' closing axis\n    across `across` (a world xy direction) when given, else the turn nearest the object's yaw now.\"\"\"\n    obj_in_tcp = np.linalg.inv(grasp_tcp) @ box.pose\n    closing = np.linalg.inv(obj_in_tcp)[:3, 1]                  # the closing axis in the object frame\n    T = robot.status()[\"tcp\"][ARM] @ obj_in_tcp\n    now = math.atan2(T[1, 0], T[0, 0])\n    best = None\n    for k in range(4):\n        yaw = ref + k * math.pi / 2\n        yaw = now + math.remainder(yaw - now, 2 * math.pi)\n        c, s = math.cos(yaw), math.sin(yaw)\n        axis = np.array([c * closing[0] - s * closing[1], s * closing[0] + c * closing[1]])\n        cost = abs(yaw - now)\n        if across is not None:\n            cost += 10 * abs(float(axis @ across)) / (np.linalg.norm(axis) + 1e-9)\n        if best is None or cost < best[0]:\n            best = (cost, yaw)\n    return best[1]\n\n\ndef colour_of(label):\n    return label.split()[0]\n\n\ndef in_tray(xy, tray, margin=0.04):\n    ax = np.array([math.cos(tray.yaw), math.sin(tray.yaw)])\n    local = (xy - tray.center[:2]) @ np.array([ax, [-ax[1], ax[0]]]).T\n    return bool(np.all(np.abs(local) < margin))\n\n\ndef blocks_seen(robot, view, table, labels):\n    \"\"\"(label, xy) of every block instance in view (two blocks of one colour share a label).\"\"\"\n    out = []\n    for lab in sorted(set(labels)):\n        for det in robot.objects(view, robot.find(view, lab), table):\n            if len(det.points) >= 20:\n                out.append((lab, robot.box(det.points, table).center[:2]))\n    return out\n\n\ndef solve(robot):\n    \"\"\"Starter: handles one object per colour; extend this to all instances.\"\"\"\n    view = robot.look()\n    table = robot.table(view)\n    labels = sorted(set(v for v in view.segments.values() if v not in (\"table\", \"robot\")))\n    trays = {colour_of(lab): lab for lab in labels if \"tray\" in lab}\n    blocks = [lab for lab in labels if \"tray\" not in lab and colour_of(lab) in trays]\n    print(\"one-per-colour baseline\", blocks)\n    for lab in blocks:\n        view = robot.look()\n        tray_det = detect(robot, view, table, trays[colour_of(lab)])\n        obj = detect(robot, view, table, lab)\n        if tray_det is None or obj is None:\n            continue\n        tray = robot.box(tray_det.points, table)\n        xy = robot.box(obj.points, table).center[:2]\n        if in_tray(xy, tray):\n            continue\n        got = pick_at(robot, lab, xy, table)\n        if got is None:\n            continue\n        yaw = place_yaw(robot, got[0], got[1], tray.yaw)\n        view = robot.look()\n        goal = robot.place_at(ARM, np.linalg.inv(got[0]) @ got[1].pose, got[1], tray.center[:2],\n                              yaw=yaw, table=table, hover=0.008, scene=view.points)\n        plan = robot.plan(goal, table, view.points)\n        if plan is None:\n            print(\"no place plan:\", robot.why())\n            continue\n        out = robot.run(plan)\n        up(robot, 0.10, table)\n        if out.get(\"ended\"):\n            return\n    print(\"starter complete; independently check whether every instance was sorted\")\n",
+  "candidate_source": "import math\nimport numpy as np\n\nARM = \"arm\"\n\n\ndef detect(robot, view, table, label):\n    dets = robot.objects(view, robot.find(view, label), table)\n    dets = [d for d in dets if len(d.points) >= 20]\n    return max(dets, key=lambda d: (d.score, len(d.points))) if dets else None\n\n\ndef up(robot, dz, table, scene=None):\n    t = robot.status()[\"tcp\"][ARM].copy()\n    t[2, 3] += dz\n    p = robot.plan(robot.Goal(\"lift\", ARM, tcp=t), table, scene)\n    return robot.run(p) if p is not None else None\n\n\ndef pick_at(robot, label, xy, table, tries=3):\n    \"\"\"Grasp and lift the instance of `label` nearest `xy`; returns (grasp tcp, box) or None.\"\"\"\n    for attempt in range(tries):\n        view = robot.look()\n        dets = [d for d in robot.objects(view, robot.find(view, label), table) if len(d.points) >= 20]\n        det = min(dets, key=lambda d: np.linalg.norm(d.points.mean(0)[:2] - xy)) if dets else None\n        if det is None:\n            print(\"cannot see\", label)\n            return None\n        box = robot.box(det.points, table)\n        plan = robot.plan(robot.grasps(ARM, det.points, table, scene=view.points), table, view.points)\n        if plan is None:\n            print(\"no grasp plan:\", robot.why())\n            return None\n        out = robot.run(plan)\n        if out.get(\"ended\"):\n            return None\n        held = robot.holding(ARM)\n        up(robot, 0.12, table)\n        if held and robot.holding(ARM):\n            return plan.goal.tcp, box\n        print(\"grasp attempt\", attempt, \"missed; retrying\")\n        p = robot.plan(robot.Goal(\"retreat\", ARM, tcp=robot.status()[\"tcp\"][ARM], hand=(1.0,)), table)\n        if p is not None:\n            robot.run(p)\n    return None\n\n\ndef place_yaw(robot, grasp_tcp, box, ref, across=None):\n    \"\"\"Object yaw for placing: lined up with `ref` (a cube turns by quarter turns), the fingers' closing axis\n    across `across` (a world xy direction) when given, else the turn nearest the object's yaw now.\"\"\"\n    obj_in_tcp = np.linalg.inv(grasp_tcp) @ box.pose\n    closing = np.linalg.inv(obj_in_tcp)[:3, 1]                  # the closing axis in the object frame\n    T = robot.status()[\"tcp\"][ARM] @ obj_in_tcp\n    now = math.atan2(T[1, 0], T[0, 0])\n    best = None\n    for k in range(4):\n        yaw = ref + k * math.pi / 2\n        yaw = now + math.remainder(yaw - now, 2 * math.pi)\n        c, s = math.cos(yaw), math.sin(yaw)\n        axis = np.array([c * closing[0] - s * closing[1], s * closing[0] + c * closing[1]])\n        cost = abs(yaw - now)\n        if across is not None:\n            cost += 10 * abs(float(axis @ across)) / (np.linalg.norm(axis) + 1e-9)\n        if best is None or cost < best[0]:\n            best = (cost, yaw)\n    return best[1]\n\n\ndef colour_of(label):\n    return label.split()[0]\n\n\ndef in_tray(xy, tray, margin=0.04):\n    ax = np.array([math.cos(tray.yaw), math.sin(tray.yaw)])\n    local = (xy - tray.center[:2]) @ np.array([ax, [-ax[1], ax[0]]]).T\n    return bool(np.all(np.abs(local) < margin))\n\n\ndef blocks_seen(robot, view, table, labels):\n    \"\"\"(label, xy) of every block instance in view (two blocks of one colour share a label).\"\"\"\n    out = []\n    for lab in sorted(set(labels)):\n        for det in robot.objects(view, robot.find(view, lab), table):\n            if len(det.points) >= 20:\n                out.append((lab, robot.box(det.points, table).center[:2]))\n    return out\n\n\ndef solve(robot):\n    view = robot.look()\n    table = robot.table(view)\n    labels = sorted(set(v for v in view.segments.values() if v not in (\"table\", \"robot\")))\n    trays = {colour_of(l): l for l in labels if \"tray\" in l}\n    blocks = [l for l in labels if \"tray\" not in l and colour_of(l) in trays]\n    print(\"blocks\", blocks)\n    failed = {}\n    for it in range(10):\n        view = robot.look()\n        seen = blocks_seen(robot, view, table, blocks)\n        tray_boxes = {}\n        for c, tl in trays.items():\n            d = detect(robot, view, table, tl)\n            if d is not None:\n                tray_boxes[c] = robot.box(d.points, table)\n        pending = []\n        for lab, xy in seen:\n            tb = tray_boxes.get(colour_of(lab))\n            if tb is None or in_tray(xy, tb, 0.05):\n                continue\n            key = (lab, round(float(xy[0]), 2), round(float(xy[1]), 2))\n            if failed.get(key, 0) >= 2:\n                continue\n            pending.append((lab, xy, key))\n        print(\"iter\", it, \"pending\", [(p[0], np.round(p[1], 3)) for p in pending])\n        if not pending:\n            break\n        lab, xy, key = pending[0]\n        tray = tray_boxes[colour_of(lab)]\n        got = pick_at(robot, lab, xy, table)\n        if got is None:\n            failed[key] = failed.get(key, 0) + 1\n            continue\n        # choose a free slot in the tray\n        others = [o for l2, o in seen if in_tray(o, tray, 0.06)]\n        ax = np.array([math.cos(tray.yaw), math.sin(tray.yaw)])\n        ay = np.array([-ax[1], ax[0]])\n        best = None\n        for sx in (-1, 1):\n            for sy in (-1, 1):\n                p = tray.center[:2] + 0.025 * sx * ax + 0.025 * sy * ay\n                dmin = min([np.linalg.norm(p - o) for o in others] + [1.0])\n                if best is None or dmin > best[0]:\n                    best = (dmin, p)\n        target = best[1]\n        yaw = place_yaw(robot, got[0], got[1], tray.yaw)\n        view = robot.look()\n        goal = robot.place_at(ARM, np.linalg.inv(got[0]) @ got[1].pose, got[1], target,\n                              yaw=yaw, table=table, hover=0.008, scene=view.points)\n        plan = robot.plan(goal, table, view.points)\n        if plan is None:\n            print(\"no place plan:\", robot.why())\n            failed[key] = failed.get(key, 0) + 1\n            continue\n        out = robot.run(plan)\n        up(robot, 0.10, table)\n        if out.get(\"ended\"):\n            return\n    print(\"done\")\n",
+  "model": "claude:sonnet",
+  "development": {
+    "model_calls": 4,
+    "elapsed_seconds": 324.9,
+    "submissions": [
+      {
+        "submission": 1,
+        "successes": 1,
+        "cases": 4,
+        "outcomes": [
+          {
+            "case": 0,
+            "success": false,
+            "steps": 493,
+            "reason": "agent_done: solve returned"
+          },
+          {
+            "case": 1,
+            "success": false,
+            "steps": 494,
+            "reason": "agent_done: solve returned"
+          },
+          {
+            "case": 2,
+            "success": true,
+            "steps": 512,
+            "reason": "terminated"
+          },
+          {
+            "case": 3,
+            "success": false,
+            "steps": 356,
+            "reason": "agent_done: solve returned"
+          }
+        ]
+      },
+      {
+        "submission": 2,
+        "successes": 4,
+        "cases": 4,
+        "outcomes": [
+          {
+            "case": 0,
+            "success": true,
+            "steps": 684,
+            "reason": "terminated"
+          },
+          {
+            "case": 1,
+            "success": true,
+            "steps": 597,
+            "reason": "terminated"
+          },
+          {
+            "case": 2,
+            "success": true,
+            "steps": 495,
+            "reason": "terminated"
+          },
+          {
+            "case": 3,
+            "success": true,
+            "steps": 838,
+            "reason": "terminated"
+          }
+        ]
+      }
+    ]
+  },
+  "gate": {
+    "parent": 0.08333333333333333,
+    "candidate": 0.9166666666666666,
+    "n": 12,
+    "p": 0.0009765625,
+    "wins": 10,
+    "losses": 0
+  },
+  "heldout": {
+    "parent": 0.08333333333333333,
+    "candidate": 0.8333333333333334,
+    "n": 12,
+    "used_for_selection": false
+  },
+  "skill": {
+    "id": "sort_by_colour@1",
+    "kind": "program",
+    "status": "verified",
+    "entry": "solve",
+    "digest": "33387ae26b8c9df8",
+    "family": "sort_by_colour"
+  },
+  "reuse_model": "claude:sonnet",
+  "reuse": [
+    {
+      "seed": 10000,
+      "success": true,
+      "steps": 555,
+      "skill_call": "out = skills.sort_by_colour(robot)\nprint(out)\nview = robot.look()\ntable = robot.table(view)\nfor label in [\"orange block\", \"yellow block\", \"orange tray\", \"yellow tray\"]:\n    masks = robot.find(view, label)\n    dets = robot.objects(view, masks, table) if masks else []\n    for d in dets:\n        b = robot.box(d.points, table)\n        print(label, np.round(b.center, 3), np.round(b.size, 3))\nprint(robot.status()[\"step\"], robot.status()[\"ended\"])",
+      "trace_sha256": "ed1c6422cdfc7468aa1365e9e7d32dec0bdc9f40badeab2bc367690f3b99f9e5",
+      "model_turns": 1
+    },
+    {
+      "seed": 10001,
+      "success": true,
+      "steps": 794,
+      "skill_call": "out = skills.sort_by_colour(robot)\nprint(out)\nview = robot.look()\ntable = robot.table(view)\nfor label in [\"blue block\", \"purple block\", \"blue tray\", \"purple tray\"]:\n    masks = robot.find(view, label)\n    dets = robot.objects(view, masks, table) if masks else []\n    for d in dets:\n        c = d.points.mean(axis=0)\n        print(label, np.round(c, 3), len(d.points))\nprint(robot.status()[\"step\"], robot.status()[\"hand\"])",
+      "trace_sha256": "6dc42e407e417c4bfd4db85fa81c7aa10286433462fd706497ed06a8331b72a6",
+      "model_turns": 1
+    },
+    {
+      "seed": 10002,
+      "success": true,
+      "steps": 464,
+      "skill_call": "out = skills.sort_by_colour(robot)\nprint(out)\nview = robot.look()\ntable = robot.table(view)\nfor c in [\"blue\", \"green\", \"orange\"]:\n    for kind in [\"block\", \"tray\"]:\n        ms = robot.find(view, f\"{c} {kind}\")\n        dets = robot.objects(view, ms, table) if ms else []\n        for d in dets:\n            b = robot.box(d.points, table)\n            print(c, kind, np.round(b.center, 3), len(d.points))\nprint(robot.status()[\"step\"], robot.status()[\"ended\"])",
+      "trace_sha256": "4b2748958f9d8c8de84f2daaa97663e60467c1f5363a3883ad422c9752d8aa6a",
+      "model_turns": 1
+    }
+  ],
+  "physics_replays": [
+    {
+      "name": "baseline",
+      "seed": 30000,
+      "steps": 493,
+      "success": false,
+      "trace_sha256": "e3788aabfc0a071ea47c63005973ac009370ecf2aa507f3da3364b2b32f0f4e9",
+      "chain": {
+        "lines": 1989,
+        "chained": 1989,
+        "ok": true,
+        "broken_at": null,
+        "head": "3d5b5380b021e283913c1afa9f6b7ccfb44e3a00439eef280fa782ba2adf6f4d"
+      },
+      "max_joint_hand_error": 0,
+      "per_step_task_progress_matches": true,
+      "render": "MuJoCo physics replay of original approved actions; high-resolution presentation camera, full visual meshes, table colour and lighting. Original observations unchanged."
+    },
+    {
+      "name": "candidate",
+      "seed": 30000,
+      "steps": 684,
+      "success": true,
+      "trace_sha256": "c6db801a48b5d84638197837bb6af2e1ffb792adcf0241d968a230f17f4ee135",
+      "chain": {
+        "lines": 2756,
+        "chained": 2756,
+        "ok": true,
+        "broken_at": null,
+        "head": "57b19296a37c698d0d5688b0a9c10445d4ce7cf300cb221c05c6f922b348b62a"
+      },
+      "max_joint_hand_error": 0,
+      "per_step_task_progress_matches": true,
+      "render": "MuJoCo physics replay of original approved actions; high-resolution presentation camera, full visual meshes, table colour and lighting. Original observations unchanged."
+    },
+    {
+      "name": "reuse",
+      "seed": 10000,
+      "steps": 555,
+      "success": true,
+      "trace_sha256": "ed1c6422cdfc7468aa1365e9e7d32dec0bdc9f40badeab2bc367690f3b99f9e5",
+      "chain": {
+        "lines": 2238,
+        "chained": 2238,
+        "ok": true,
+        "broken_at": null,
+        "head": "77e9c1bd4616f49674e8f463d967ff7f80df7ad970fdb85cf1219dc4734e8652"
+      },
+      "max_joint_hand_error": 0,
+      "per_step_task_progress_matches": true,
+      "render": "MuJoCo physics replay of original approved actions; high-resolution presentation camera, full visual meshes, table colour and lighting. Original observations unchanged."
+    },
+    {
+      "name": "reuse_2",
+      "seed": 10001,
+      "steps": 794,
+      "success": true,
+      "trace_sha256": "6dc42e407e417c4bfd4db85fa81c7aa10286433462fd706497ed06a8331b72a6",
+      "chain": {
+        "lines": 3201,
+        "chained": 3201,
+        "ok": true,
+        "broken_at": null,
+        "head": "e3b8512a881b12a4a42cecaabcaf56dd743831eb89dcc08b1da52daebb7ddb1b"
+      },
+      "max_joint_hand_error": 0,
+      "per_step_task_progress_matches": true,
+      "render": "MuJoCo physics replay of original approved actions; high-resolution presentation camera, full visual meshes, table colour and lighting. Original observations unchanged."
+    },
+    {
+      "name": "reuse_3",
+      "seed": 10002,
+      "steps": 464,
+      "success": true,
+      "trace_sha256": "4b2748958f9d8c8de84f2daaa97663e60467c1f5363a3883ad422c9752d8aa6a",
+      "chain": {
+        "lines": 1874,
+        "chained": 1874,
+        "ok": true,
+        "broken_at": null,
+        "head": "dec2cbc58ef044231fc5a6054c9ea264691977a4e308018769570451f6b28670"
+      },
+      "max_joint_hand_error": 0,
+      "per_step_task_progress_matches": true,
+      "render": "MuJoCo physics replay of original approved actions; high-resolution presentation camera, full visual meshes, table colour and lighting. Original observations unchanged."
+    }
+  ],
+  "presentation": "Recorded research walkthrough, not a live Studio authoring interface. Model waits shortened; motion timing edited. MuJoCo visuals restyled only for presentation.",
+  "source_revisions": {
+    "harness": "76510d241f4cea7234e4995b8b38de631d40a0bb",
+    "bench": "f6aa505b1dde62632ec7671f5529166b02c0d49f",
+    "studio": "512be17a1745d12bc4b6b0700e70340ea2ec2c10"
+  },
+  "runtime_source_sha256": {
+    "harness/adapters/hylo-code-agents/src/hylo/codeagents/research.py": "902d6e11de3d418eee66d89c93bd50bcf28db03a17f766abd6d43340dc5e9ed1",
+    "harness/adapters/hylo-code-agents/src/hylo/codeagents/skills.py": "a4be0e7b087596ecf5b4a67c558ab8decb0774fa113f35734a596c95df2679ac",
+    "harness/adapters/hylo-code-agents/src/hylo/codeagents/agents.py": "7c4413d1ff29f7912c56ea071d65c8f0b374821cd8cce52a3835fe9fcca8bebc",
+    "harness/packages/hylo-evolve/src/hylo/evolve/protocol.py": "6f983d0c18c711c66889c73edf70f27f72b37fdff8914e4406503c2cfa221684",
+    "harness/packages/hylo-core/src/hylo/core/trace.py": "3e6f8f335139eb18df16155260d149156f1b512f23a6c018fb2310b34ac5635e",
+    "harness/adapters/hylo-reasoner-llm/src/hylo/reasoners/llm/chat.py": "e46122b7fa6d477d7513418a84d3d6a95c4f2804d39a2665781e50a1693fa8ba"
+  },
+  "revision_note": "Repository revisions are base commits; runtime_source_sha256 records the listed executed working-tree files.",
+  "media": {
+    "videos": {
+      "skills-sorting-full.mp4": {
+        "seconds": 152.76,
+        "resolution": [
+          1920,
+          1080
+        ],
+        "sha256": "49db967d86cbca150c43a9cef21f0c9d840987b8a6fc3db34a0fd4b14f6675c2",
+        "bytes": 9218229
+      },
+      "skills-sorting-highlights.mp4": {
+        "seconds": 45.0,
+        "resolution": [
+          1920,
+          1080
+        ],
+        "sha256": "dd23461a4769a6641ee4d37493db3e42d9b2f9bc06f50de452dd51c1c191d1ee",
+        "bytes": 2702229
+      }
+    },
+    "highlight_segments": [
+      [
+        1,
+        7
+      ],
+      [
+        27,
+        33
+      ],
+      [
+        45,
+        51
+      ],
+      [
+        74,
+        81
+      ],
+      [
+        87,
+        95
+      ],
+      [
+        109,
+        113
+      ],
+      [
+        136,
+        144
+      ]
+    ],
+    "decode_checks": "passed"
+  }
+}
