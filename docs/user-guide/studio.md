@@ -59,6 +59,11 @@ sandbox needs the operator role.
 Live episodes are saved under `runs/playground/live/<run_id>` with the split `playground`, which learners do not
 read by default.
 
+For a step-by-step illustration, [watch the recorded AI robot-control demo](tool-agents.md#recorded-robot-control-demo):
+an English stacking instruction, model tool calls, grasp and place motions, and the task verdict. This is a
+presentation of a recorded episode; the [Live sandbox recording](tool-agents.md#run-it) shows how to launch an agent
+in Studio.
+
 ### Operator station
 
 Operates a workcell (`--workcell`) with a policy server (`--policy`): start episodes, follow the live stream,
@@ -114,16 +119,19 @@ session directory, and only images, videos and text.
 
 ### World
 
-![The World page: entities, a free view, actions by hand and a chat session's transcript](../assets/figures/studio-world.png)
+[![World Studio: a dual-arm scene beside its recorded chat, with Chat, Scene and Controls tabs](../assets/videos/studio-world.jpg)](worlds.md#chat-to-world-demo)
+
+[Watch the full English demo · 2:10](worlds.md#chat-to-world-demo). Recorded AI session replay; waits are shortened.
 
 Lists the stages under `runs/world/stages` (create one from the page), and for a stage:
 
-- the entities with their kind and position, and a button that builds the newest revision into a world;
-- a view of the world you orbit by dragging and zoom with the wheel;
-- an action box and a goal box: any [world action](worlds.md#running-a-world) and any check, run on the current
-  generation, with the receipt shown;
-- a chat panel: a message starts `hylo world chat` on the stage in the background, or, while a session runs, goes to
-  its inbox; the transcript shows the model's words, each tool call with its result, and the view after each action.
+- **Scene view:** orbit by dragging, zoom with the wheel, choose Perspective, Top or Front, fit the scene,
+  save a snapshot or enter fullscreen. Build world compiles the newest stage revision;
+- **Chat:** a message starts `hylo world chat` in the background, or goes to the inbox of a running session.
+  Read model messages and expand grouped tool activity, including failures; scene changes update the view;
+- **Scene:** search the object collection, filter robots, inspect an object's position and focus the camera on it;
+- **Controls:** run any [world action](worlds.md#running-a-world) or goal check on the current generation and inspect
+  the returned result.
 
 Sessions are written to `runs/world/sessions/<stage>` and can be followed with `hylo watch`.
 

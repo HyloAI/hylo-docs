@@ -1,0 +1,58 @@
+{
+  "source_run": "tools-llm-qwen-stack-validation-3f082eac39a59efc-af39d8",
+  "source_episode": "mujoco.manip_stack-s10000-8c84e655",
+  "source_sha256": "bb45332429f3f8127b3bcf5d2e71860c8bb6d34ec73d83e58f2c7b9e8e994960",
+  "source_chain": {
+    "lines": 531,
+    "chained": 531,
+    "ok": true,
+    "broken_at": null,
+    "head": "808552ee143da16db4c3e34b23036250b6ba04df7c7f040cd68b8d7342be1ec3"
+  },
+  "source_model": "qwen3.5:35b-a3b",
+  "seed": 10000,
+  "steps": 127,
+  "model_calls": 5,
+  "robot_actions": 2,
+  "human_assisted": false,
+  "original_wall_seconds": 92.6,
+  "replayed_success": true,
+  "max_recorded_joint_and_hand_state_error": 0,
+  "render": "MuJoCo cameras re-rendered from original recorded actions; camera resolution increased; no new model inference",
+  "presentation": "Recorded-episode walkthrough; model waits shortened and robot motion slowed for clarity",
+  "full_video_seconds": 105.12,
+  "highlight_seconds": 42,
+  "highlight_segments": [
+    [
+      1,
+      8
+    ],
+    [
+      9,
+      14
+    ],
+    [
+      29,
+      35
+    ],
+    [
+      46,
+      56
+    ],
+    [
+      79,
+      86
+    ],
+    [
+      95,
+      102
+    ]
+  ],
+  "video_resolution": [
+    1920,
+    1080
+  ],
+  "full_video_sha256": "df8d9c4f31169666ac4f961db7d2395ca97f06e2ec8e346c7f4405bde115f43e",
+  "highlight_video_sha256": "471b9a527bffa531dd89983d57ba2ebdd6d6fe35d241a142cc739fba76183080",
+  "decode_checks": "both videos passed"
+}

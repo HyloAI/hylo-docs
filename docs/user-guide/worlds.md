@@ -20,6 +20,8 @@ programs and skills are developed before they become benchmark tasks.
 
 ## From language to a world
 
+[Watch the English chat-to-world demo](#chat-to-world-demo): build and refine a dual-arm workbench in World Studio.
+
 The design starts from a division of labour. A language model is good at deciding what a scene should contain and
 what to do next; it is unreliable at exact geometry, at remembering field names, and at judging its own results. A
 simulator is exact, but knows nothing about what anyone wants. So the model decides what, and a chain of
@@ -292,12 +294,21 @@ development and held-out tasks.
 
 ## In the Studio
 
-The World page lists stages, builds a stage's world, shows a view you can orbit, runs actions and checks by hand, and
-runs chat sessions with their transcript. See [Studio](studio.md#world).
+World Studio pairs a large scene view with Chat, Scene and Controls panels. Describe a scene in chat, inspect
+objects and their positions, or run actions and goal checks from Controls. The view supports orbit, zoom, camera
+presets, object focus, snapshots and fullscreen. See [Studio](studio.md#world).
 
-<video src="../../assets/videos/studio-world.mp4" poster="../../assets/videos/studio-world.jpg" controls muted playsinline preload="none" width="100%" aria-label="The Studio's World page: building a stage, orbiting the view, an action and a goal check by hand, a chat transcript"></video>
+### Chat to world demo
 
-*A stage built into a world, the free view, an action by hand with its receipt, a goal check with its reason code, and a recorded chat session's transcript.*
+<video src="../../assets/videos/studio-world.mp4" poster="../../assets/videos/studio-world.jpg" controls muted playsinline preload="none" width="100%" aria-label="Recorded AI session replay: three English chat sessions build and refine a dual-arm workbench, followed by scene inspection in World Studio"></video>
+
+*2:10 · English · Recorded AI session replay, with waits shortened. From an empty world through three build and
+refinement sessions to a scene with 23 objects, including two Panda arms, followed by camera and object inspection.*
+
+Recorded model edits are re-executed through the World API. The selected sessions retain their original messages
+and tool failures; the resulting stage matches the recorded source. Two startup attempts without successful scene
+changes are omitted. This demo shows scene construction and inspection; it does not demonstrate robot task execution.
+The [robot-pack videos](#robot-packs) show separate recorded examples of robots moving in a world.
 
 ## Next
 
