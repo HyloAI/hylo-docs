@@ -71,7 +71,7 @@ test episodes.
 
 ## What it achieved
 
-The [memory examples](../../showcase/memory.md) report paired measurements and reproduction commands. Spatial
+The [memory examples](../../developer-guide/validation/memory.md) report paired measurements and reproduction commands. Spatial
 memory helped when targets became occluded, and a verified steering skill helped on fresh MuJoCo scenes.
 Action-memory gains depend on retrieval quality; the recorded LIBERO results do not establish a reliable gain.
 

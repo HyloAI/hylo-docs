@@ -16,5 +16,5 @@ are possible experiments, not implemented or validated improvements.
 ## Reproduce
 
 The [adapter reproduction instructions](https://github.com/HyloAI/hylo-harness/tree/main/adapters/hylo-policy-simplememvla#reproduction)
-identify the pinned model environment and opt-in differential checks. Follow [Video memory](../user-guide/memory/video.md)
+identify the pinned model environment and opt-in differential checks. Follow [Video memory](../../user-guide/memory/video.md)
 for the native agent configuration and its integration boundary.

@@ -17,8 +17,8 @@ exclude_docs: |
   !design/overview.md
   assets/figures/studio-*.png
   developer-guide/docs.md
-  showcase/studio.md
-  showcase/assets/studio/
+  developer-guide/validation/studio.md
+  developer-guide/validation/assets/studio/
 hooks:
   - mkdocs/redirects.py
   - mkdocs/public_hook.py

@@ -41,7 +41,9 @@ pages are reached through their indexes and listed under `not_in_nav` so they do
 | [Formats and schemas](../api/formats.md) | the format table and `hylo schema` | the code |
 | API Reference: the core pages | a short hand-written intro in `docs/api/`, then the docstrings | the intro here, the rest in the code |
 | API package indexes and module pages | the docstrings of every package | the code |
-| Examples and results | curated case pages plus generated example README records | the case page or source README |
+| Use Cases | curated recorded workflows | `docs/use-cases/` |
+| Validation records | generated example README records | the source README |
+| Public Research | website articles and benchmark results | the website repository |
 
 `mkdocs/gen_pages.py` writes the generated pages. API pages are short hand-written intros; mkdocstrings fills them
 from the code's docstrings, which therefore appear on the public site verbatim. Docstrings follow the same writing
@@ -100,16 +102,17 @@ operations form a supporting section in User Guides.
 | Memory | observations and experience, storage, retrieval and data boundaries |
 | Skills | reusable task capabilities, applicability, verification and reuse |
 | Deploy and operate | deployment, Studio, stores, safety and security |
-| Examples and results | measured results, conditions, reproduction commands and failures |
-| Developers | architecture, extension tutorials and contributing |
+| Use Cases | recorded task workflows and reproduction entry points |
+| Public Research (website) | experimental findings, conditions, limitations and benchmark results |
+| Developers | architecture, extension tutorials, system validation and contributing |
 | Reference | exact CLI, configuration, contracts, formats and module API details |
 | Internal | current direction, decisions, research conclusions, experiment records and historical archive |
 
 Get started contains the minimal installation, first run, first improvement and task chooser. Optional runtime
 setup lives on its own page. Within each User Guides topic, the concept page explains a capability and the
 operational guides complete tasks. Physical RSI contains experiments, benchmarking, learning and campaigns;
-Skills contains library management and program-skill development. Examples and results owns the measured
-evidence. Keep each fact in its primary page and link from the other contexts.
+Skills contains library management and program-skill development. The separate website Research section owns public experimental analysis; developer validation pages retain
+reproduction records. Keep each fact in its primary page and link from the other contexts.
 
 Do not retell the full improvement loop or skill lifecycle at the start of each guide. State the page's task and
 link to the relevant concept. Distinguish robot capabilities, concrete library records and coding-agent instructions.

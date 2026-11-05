@@ -8,6 +8,7 @@ exclude_docs: |
 
 theme:
   name: material
+  custom_dir: overrides
   logo: assets/logo.svg
   favicon: assets/logo.svg
   palette:
@@ -38,6 +39,9 @@ theme:
     - search.highlight
     - search.share
     - toc.follow
+
+extra:
+  homepage: https://hyloai.github.io/
 
 extra_css:
   - assets/stylesheets/extra.css
@@ -125,7 +129,15 @@ markdown_extensions:
 not_in_nav: |
   api/modules/
   cli/commands/
-  showcase/tool-agents-*.md
+  developer-guide/validation/tool-agents-*.md
+  developer-guide/validation/memory.md
+  developer-guide/validation/agents.md
+  developer-guide/validation/learning.md
+  developer-guide/validation/evolution.md
+  developer-guide/validation/benchmarks.md
+  developer-guide/validation/studio.md
+  developer-guide/validation/tool-agents.md
+  developer-guide/validation/phase-guided.md
 
 nav:
 - Home: index.md
@@ -143,7 +155,7 @@ nav:
     - Run experiments: user-guide/experiments.md
     - Benchmarking:
       - benchmarking/index.md
-      - Leaderboard: benchmarking/leaderboard.md
+      - Run and compare evaluations: benchmarking/leaderboard.md
     - Learn from runs: user-guide/learning.md
     - Run campaigns: user-guide/campaigns.md
   - Worlds:
@@ -173,28 +185,21 @@ nav:
     - user-guide/store.md
     - user-guide/safety.md
     - user-guide/security.md
-- Examples and results:
-  - showcase/index.md
-  - showcase/worlds.md
-  - showcase/robot-control.md
-  - showcase/program-skills.md
-  - Program and tool experiments: showcase/tool-agents.md
-  - showcase/video-memory.md
-  - showcase/phase-guided.md
-  - System measurements:
-    - showcase/system-results.md
-    - Core: showcase/core.md
-    - Memory: showcase/memory.md
-    - Agents: showcase/agents.md
-    - Instruments: showcase/instruments.md
-    - Learning: showcase/learning.md
-    - Evolution: showcase/evolution.md
-    - Benchmarks: showcase/benchmarks.md
-    - Plugins: showcase/plugins.md
-    - Runtime: showcase/runtime.md
-    - Studio: showcase/studio.md
+- Use Cases:
+  - use-cases/index.md
+  - use-cases/worlds.md
+  - use-cases/robot-control.md
+  - use-cases/program-skills.md
 - Developers:
   - Architecture: design/overview.md
+  - Validation:
+    - developer-guide/validation/index.md
+    - Core: developer-guide/validation/core.md
+    - Runtime: developer-guide/validation/runtime.md
+    - Plugins: developer-guide/validation/plugins.md
+    - Instruments: developer-guide/validation/instruments.md
+    - Video-memory integration: developer-guide/validation/video-memory.md
+    - Reproduction records: developer-guide/validation/records.md
   - developer-guide/execution-model.md
   - Extension tutorials:
     - developer-guide/adding-a-policy.md

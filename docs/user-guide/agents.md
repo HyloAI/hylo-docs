@@ -40,7 +40,7 @@ comparison. A [campaign](campaigns.md) can propose and test changes to an existi
 
 Program agents execute generated code with in-process restrictions; read the
 [execution boundaries](security.md#model-written-programs). Measured successes and current failures are recorded
-in the [Showcase](../showcase/tool-agents.md).
+in the [Showcase](../developer-guide/validation/tool-agents.md).
 
 ## Next
 

@@ -25,5 +25,6 @@ for the target setup.
 
 ## Next
 
-[Examples and results](../showcase/index.md) describes measured outcomes and their limits.
+[Use Cases](../use-cases/index.md) shows recorded workflows.
+[Research](https://hyloai.github.io/research/) presents experimental results and their limits.
 [Reference](../reference/index.md) provides exact fields and interfaces.

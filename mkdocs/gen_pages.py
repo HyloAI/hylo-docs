@@ -38,6 +38,8 @@ def harness_docs() -> None:
     for f in sorted(src.rglob("*.md")) if src.is_dir() else []:
         rel = f.relative_to(src).as_posix()
         text = f.read_text()
+        # Source READMEs can retain published legacy documentation URLs.
+        text = text.replace("../../showcase/", "../../developer-guide/validation/")
         note = f"!!! note \"Source\"\n    Maintained in hylo-harness: `docs/{rel}`.\n\n"
         title, _, body = text.partition("\n")
         write(f"harness/{rel}", f"{title}\n\n{note}{body}", f)
@@ -183,31 +185,31 @@ LINK = re.compile(r'(\]\(|src="|poster=")(?!https?:|#|mailto:|/)([^)"\s]+)')
 
 
 def showcase() -> None:
-    """Copy each examples README (and its assets/) into showcase/<page>.md, so the measured results live in one place:
+    """Copy each examples README (and its assets/) into developer-guide/validation/<page>.md, so the measured results live in one place:
     next to the scripts that produce them. Image links point at the copied assets; other relative links at GitHub."""
     for page, repo, sub, title in SHOWCASE:
         d = WORKSPACE / repo / sub
         readme = d / "README.md"
         if not readme.exists():
-            write(f"showcase/{page}.md", f"# {title}\n\n" + (missing(repo) if not (WORKSPACE / repo).is_dir() else
+            write(f"developer-guide/validation/{page}.md", f"# {title}\n\n" + (missing(repo) if not (WORKSPACE / repo).is_dir() else
                   f"!!! warning \"Not written yet\"\n    `{repo}/{sub}/README.md` does not exist.\n"))
             continue
         for f in sorted((d / "assets").glob("*")) if (d / "assets").is_dir() else []:
             if f.is_file():
-                with mkdocs_gen_files.open(f"showcase/assets/{page}/{f.name}", "wb") as out:
+                with mkdocs_gen_files.open(f"developer-guide/validation/assets/{page}/{f.name}", "wb") as out:
                     out.write(f.read_bytes())
 
         def fix(m: re.Match, page: str = page, repo: str = repo, sub: str = sub) -> str:
             target = m.group(2)
             if target.startswith("assets/"):
-                # MkDocs rewrites Markdown links for directory URLs (showcase/<page>/) but not raw HTML attributes
+                # MkDocs rewrites Markdown links for directory URLs (developer-guide/validation/<page>/) but not raw HTML attributes
                 # (<img src>, <video src poster>): those need the extra level themselves
                 up = "" if m.group(1) == "](" else "../"
                 return f"{m.group(1)}{up}assets/{page}/{target.removeprefix('assets/')}"
             path = posixpath.normpath((Path(sub) / target).as_posix())
             return f"{m.group(1)}https://github.com/HyloAI/hylo-{repo}/blob/main/{path}"
 
-        note = (f"!!! note \"Source\"\n    Generated from hylo-{repo}: `{sub}/README.md`. Every number on this page was "
+        note = (f"!!! note \"Source\"\n    Reproduction record from hylo-{repo}: `{sub}/README.md`. Every number on this page was "
                 f"measured by the scripts next to it; run them to reproduce.\n\n")
         head, _, body = readme.read_text().partition("\n")
         rendered = LINK.sub(fix, body)
@@ -223,7 +225,7 @@ def showcase() -> None:
                 target = f"tool-agents-{slug}.md"
                 # A section may refer to another section of the original README.
                 content = re.sub(r"\]\(#([^)]*)\)", r"](tool-agents.md#\1)", content)
-                write(f"showcase/{target}", f"# {title}\n\n{note}"
+                write(f"developer-guide/validation/{target}", f"# {title}\n\n{note}"
                       f"[All program and tool experiments](tool-agents.md)\n\n{content}")
                 index += [heading, "", f"[Read the results, conditions and reproduction source]({target}).", ""]
                 for child in re.findall(r"(?m)^### (.+)$", content):
@@ -232,7 +234,7 @@ def showcase() -> None:
             rendered = "\n".join(index)
         else:
             rendered = f"{head}\n\n{note}{rendered}"
-        write(f"showcase/{page}.md", rendered)   # no edit path: the public
+        write(f"developer-guide/validation/{page}.md", rendered)   # no edit path: the public
         # site leaves some showcase pages out, and the source note says where each page comes from
 
 

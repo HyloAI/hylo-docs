@@ -15,7 +15,7 @@ new-task development, scene adaptation and optimisation of existing programs.
   Studio research record views.
 - **Implemented, formal evaluation pending:** free-scene and motion-free showcases; robosuite/RoboCasa task programs.
 - **Known limits:** from-scratch local-model research is unsuccessful; external replay and physical motion stability
-  have failures; three primary tool models use fallback backends. See [Showcase](../showcase/tool-agents.md).
+  have failures; three primary tool models use fallback backends. See [Showcase](../developer-guide/validation/tool-agents.md).
 - **Added later the same day (RFC-0007, RFC-0008):** `tools.llm` (a model calling typed robot tools, one checked
   action at a time; 8 of 9 pick_place, put_in_bowl and stack episodes zero-shot with a local model), hash-chained and
   sealed runs, `hylo watch` / `preflight` / `mcp` / `chats`, seven LIBERO perturbations (not yet evaluated with an

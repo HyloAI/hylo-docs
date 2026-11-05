@@ -72,4 +72,4 @@ uv run python bench/adapters/hylo-env-mujoco/examples/world/showcase.py --out ru
 ```
 
 The first run downloads robot assets. Inspect `results.json` and the generated videos under the output directory.
-The [full results](tool-agents.md#worlds) include conditions and other robot families.
+The [full results](../developer-guide/validation/tool-agents.md#worlds) include conditions and other robot families.

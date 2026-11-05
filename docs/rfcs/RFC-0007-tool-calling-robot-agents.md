@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| Status | Parts 1-9 implemented (2026-11-02); first evaluations on the [showcase](../showcase/tool-agents.md#tool-calling-agents) |
+| Status | Parts 1-9 implemented (2026-11-02); first evaluations on the [showcase](../developer-guide/validation/tool-agents.md#tool-calling-agents) |
 | Scope | hylo-harness (hylo-core: tooling, trace chain, seal; hylo-reasoner-llm: native tool calls; hylo-code-agents: `tools.llm`, sessions, `hylo watch`, `hylo preflight`, `hylo mcp`), hylo-bench (hylo-env-libero perturbations) |
 | Builds on | RFC-0005 (one episode loop, store), RFC-0006 (robot contract, manipulation toolkit, code agents) |
 

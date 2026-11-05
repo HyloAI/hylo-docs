@@ -17,7 +17,7 @@ a configured chat backend, such as a local Ollama endpoint or a supported API.
 
 Start with a supported MuJoCo manipulation task. Panda, ALOHA and the fixed-base G1 have recorded program runs.
 LIBERO uses a separate runtime. robosuite and RoboCasa have adapters and interface checks, while their formal
-program success-rate evaluations remain unrun. See the [measured showcase](../showcase/tool-agents.md).
+program success-rate evaluations remain unrun. See the [measured showcase](../developer-guide/validation/tool-agents.md).
 
 ## Robot tools
 
@@ -68,7 +68,7 @@ The [tools README](https://github.com/HyloAI/hylo-harness/tree/main/adapters/hyl
 
 Scene generation, replay-to-simulation and motion authoring are additional experimental workflows. Free-scene
 and motion-free showcase requests remain unrun; external replay and physical motion stability have known failures.
-Their presence in the CLI is not evidence of task reliability. See [Showcase](../showcase/tool-agents.md).
+Their presence in the CLI is not evidence of task reliability. See [Showcase](../developer-guide/validation/tool-agents.md).
 
 ## Tool calls instead of code
 

@@ -171,7 +171,7 @@ tool agents.
 
 ## Recorded robot-control demo
 
-[Watch the recorded case, including results, conditions and provenance](../showcase/robot-control.md).
+[Watch the recorded case, including results, conditions and provenance](../use-cases/robot-control.md).
 
 ## Why tool calls
 
@@ -190,4 +190,4 @@ tool calls, and evidence.
 
 - [Worlds](worlds.md): build scenes with other robots and let a model run them.
 - [Developing programs](developing-strategies.md): programs and code agents with the same tools.
-- [Showcase](../showcase/tool-agents.md#tool-calling-agents): measured results and what does not work yet.
+- [Showcase](../developer-guide/validation/tool-agents.md#tool-calling-agents): measured results and what does not work yet.

@@ -54,3 +54,9 @@
   color: var(--md-primary-fg-color--light);
   border-color: var(--md-primary-fg-color--light);
 }
+
+/* Global website destinations remain separate from the documentation topics. */
+.hylo-global-links { display: flex; gap: .8rem; align-items: center; font-size: .7rem; }
+.hylo-global-links a { white-space: nowrap; padding: .5rem .1rem; }
+.hylo-global-links a:hover { color: var(--md-accent-fg-color); }
+@media (max-width: 600px) { .hylo-global-links { gap: .5rem; font-size: .65rem; } .hylo-global-links a:first-child { display: none; } }

@@ -102,7 +102,7 @@ development and held-out tasks.
 
 ### Chat to world demo
 
-[Watch the recorded scene-construction case](../showcase/worlds.md#chat-to-world-demo).
+[Watch the recorded scene-construction case](../use-cases/worlds.md#chat-to-world-demo).
 
 ## Why worlds
 
@@ -143,5 +143,5 @@ development and held-out tasks.
 ## Next
 
 - [Tool-calling agents](tool-agents.md): run a model on a benchmark task.
-- [World examples](../showcase/worlds.md): recorded scenes and measured outcomes.
+- [World examples](../use-cases/worlds.md): recorded scenes and measured outcomes.
 - [Security](security.md#worlds-and-mcp): world-tool execution and access boundaries.

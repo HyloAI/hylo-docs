@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| Status | Parts 1-11 implemented (2026-11-02); recorded runs on the [showcase](../showcase/tool-agents.md#worlds) |
+| Status | Parts 1-11 implemented (2026-11-02); recorded runs on the [showcase](../developer-guide/validation/tool-agents.md#worlds) |
 | Scope | hylo-core (stage contract and store), hylo-bench (hylo-env-mujoco: packs, composition, world, controllers, checks, crowds, policies, the `mujoco.world` surface), hylo-harness (hylo-code-agents: `hylo world`, role campaigns; hylo-tools: physicalize; hylo-memory: failure-signature skills), hylo-studio (world page) |
 | Builds on | RFC-0003 (skills), RFC-0006 (scene contract, manipulation environments), RFC-0007 (tool surfaces, sessions, MCP) |
 

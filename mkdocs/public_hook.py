@@ -15,7 +15,7 @@ def on_config(config):
     def public_nav(node):
         if isinstance(node, str):
             excluded = node.startswith(INTERNAL) and node not in KEEP
-            return None if excluded or node == "showcase/studio.md" else node
+            return None if excluded or node == "developer-guide/validation/studio.md" else node
         if isinstance(node, list):
             return [value for child in node if (value := public_nav(child))]
         return {title: value for title, child in node.items()

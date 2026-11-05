@@ -5,7 +5,7 @@
 | Status | Core workflows implemented with recorded runs (2026-11-01/02); Panda, LIBERO, ALOHA and fixed-base G1 measured. Free-scene/motion-free showcases and robosuite/RoboCasa formal program evaluations remain pending; see the showcase for per-workflow limits. |
 | Scope | hylo-harness (hylo-core, new hylo-manip, hylo-agents, hylo-evolve, hylo-memory, hylo-reasoner-llm, new tool adapters), hylo-bench (manipulation environments), hylo-studio |
 | Builds on | RFC-0001 (contracts, kernel), RFC-0002 (splits, gate), RFC-0003 (skills), RFC-0005 (one episode loop, store) |
-| Results | Recorded runs, numbers and videos of the finished workflows: [Showcase > Tool-using agents](../showcase/tool-agents.md) |
+| Results | Recorded runs, numbers and videos of the finished workflows: [Showcase > Tool-using agents](../developer-guide/validation/tool-agents.md) |
 
 ## Motivation
 
@@ -184,7 +184,7 @@ Ollama is priced at $0; research summaries and the Studio research page show tok
 
 The original six workflows below have implementations and recorded examples, including fallbacks and unsuccessful
 results. Later free-scene and motion-free showcase extensions remain unrun. Measured results and remaining failures are on
-[Showcase > Tool-using agents](../showcase/tool-agents.md).
+[Showcase > Tool-using agents](../developer-guide/validation/tool-agents.md).
 
 - **Scene builder**: a model writes a MuJoCo scene from a natural-language task (objects, poses, success predicate),
   a checker validates it (loads, settles, reachable, predicate false at start), then `code.llm` solves it with

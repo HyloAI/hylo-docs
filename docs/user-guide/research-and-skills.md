@@ -12,8 +12,8 @@ in simulation. All commands below run from the **workspace root** and write unde
 Use a fresh output directory for a new experiment; reusing an existing campaign directory can resume its state.
 
 The model receives the parent's source and develops on three `search` cases. The campaign evaluates frozen
-programs as `code.program`, without model calls during their execution. The [recorded case](../showcase/tool-agents.md#program-improvement)
-reports the conditions and results; the [sorting demo](../showcase/program-skills.md) is a separate experiment.
+programs as `code.program`, without model calls during their execution. The [recorded case](../developer-guide/validation/tool-agents.md#program-improvement)
+reports the conditions and results; the [sorting demo](../use-cases/program-skills.md) is a separate experiment.
 
 ## 1. Develop and evaluate a candidate { #improve-an-existing-program-through-a-campaign }
 
@@ -30,7 +30,7 @@ The shipped example uses one cycle and automatic approval in simulation. Its out
 working directory. Keep them consistent when resuming. For deployment, review
 [approval and rollback](campaigns.md) and [Security](security.md); an approval happens after candidate evaluation.
 
-The [recorded stacking campaign](../showcase/tool-agents.md) reports the gate and held-out results, including
+The [recorded stacking campaign](../developer-guide/validation/tool-agents.md) reports the gate and held-out results, including
 its deliberately weak parent and privileged simulator observations.
 
 ## 2. Check the promotion
@@ -170,7 +170,7 @@ another task remains unverified even when its containing program passed a gate.
 The phase plan is guidance for generated code, not a centrally enforced phase interpreter.
 Using a frozen VLA requires a toolkit that exposes one; there is no automatic SimpleMemVLA
 handover. The recorded real-model probes produced no promoted candidate. See the
-[phase-guided example and probe results](../showcase/phase-guided.md) before choosing this experimental path.
+[phase-guided example and probe results](../developer-guide/validation/phase-guided.md) before choosing this experimental path.
 
 The example campaign, workflow diagram and probe runner are under
 `harness/adapters/hylo-code-agents/examples/harness_evolution/` in the workspace.
@@ -184,7 +184,7 @@ and [recipe skills](memory/skills.md#recipe-skills) for how their results enter 
 
 ## Recorded skill-development demo
 
-[Watch the recorded case, including results, conditions and provenance](../showcase/program-skills.md).
+[Watch the recorded case, including results, conditions and provenance](../use-cases/program-skills.md).
 
 ## Next
 

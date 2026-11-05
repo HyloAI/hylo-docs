@@ -54,4 +54,4 @@ operate Hylo; it does not itself implement the robot's task behaviour.
 - [Skill library](memory/skills.md): build a library, match skills and apply them.
 - [Program research](research-and-skills.md): develop, freeze and validate a program.
 - [Deployment](deployment.md): configure an implementation on a workcell.
-- [Recorded results](../showcase/tool-agents.md): measured scope, failures and unrun workflows.
+- [Recorded results](../developer-guide/validation/tool-agents.md): measured scope, failures and unrun workflows.

@@ -90,7 +90,7 @@ dependency; the memory backend alone can run on CPU without loading it.
 
 ## Verification
 
-[Recorded integration checks](../../showcase/video-memory.md) cover upstream parity and regression episodes,
+[Recorded integration checks](../../developer-guide/validation/video-memory.md) cover upstream parity and regression episodes,
 with their scope and limitations. They do not establish a gain over another memory method.
 
 ## Next

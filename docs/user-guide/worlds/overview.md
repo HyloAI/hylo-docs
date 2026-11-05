@@ -28,4 +28,4 @@ separate evaluation protocol; a world session alone is not that comparison.
 
 - [Create and run a world](../worlds.md): build a small scene and check a physical outcome.
 - [World reference](../../reference/worlds.md): stage fields, robot packs, actions and goals.
-- [World examples](../../showcase/worlds.md): recorded scenes, robot motions and their conditions.
+- [World examples](../../use-cases/worlds.md): recorded scenes, robot motions and their conditions.

@@ -1,4 +1,6 @@
-# Leaderboards
+# Run and compare evaluations
+
+<span id="leaderboards"></span>
 
 A leaderboard is every scorecard of one evaluation protocol (name, version and digest), ranked by success. There is
 no server: scorecards are JSON files, and `hylo bench leaderboard` collects them from directories.
@@ -65,37 +67,19 @@ shared with campaigns). The test is explained in [compare two scorecards](index.
 
 ## The reference-policy leaderboard
 
-`examples/policies/compare.py` records demonstrations from the IK controller and random-action runs on the campaign
-`search` and `search_val` seeds (30000–30059, disjoint from the protocol's 20000–20049). It trains one
-[learner](../user-guide/learning.md) per policy family on the demonstrations, plus a world model on both kinds of data
-for MPC. It scores each under `mujoco-reach` with the `policy`, `temporal_ensemble` or `steered`
-[agent](../user-guide/policies.md) (steered: four seeded samples, the medoid executed), and the IK controller itself
-as the demonstrator.
+Published rankings now live in [Research → Benchmarks](https://hyloai.github.io/research/benchmarks/).
+The [MuJoCo reach benchmark](https://hyloai.github.io/research/benchmarks/mujoco-reach/)
+separates the recorded protocol versions and links their source records.
+
+To generate your own reference-policy scorecards, run from `bench/`:
 
 ```bash
 uv run python examples/policies/compare.py --out runs/policies
 uv run hylo bench leaderboard runs/policies/scorecards
 ```
 
-![The mujoco-reach leaderboard](../assets/figures/leaderboard-mujoco-reach.png){ .hylo-figure }
-
-These scorecards were recorded under mujoco-reach v1 with protocol digest `5e0c57ef414a0b21`. The current digest of
-mujoco-reach v1 is `a76c7037efb84660` (`hylo bench list`). Scorecards you write now form a separate board and cannot
-be compared with these.
-
-| # | Name | Agent | Success % | 95% CI | Mean steps |
-|---|---|---|---|---|---|
-| 1 | expert-ik | `baseline.planar_ik` (the demonstrator) | 100.0 | 96.3–100.0 | 36 |
-| 2 | mpc-cem | `policy` with `policy.mpc` (CEM in the learned world model) | 86.0 | 77.9–91.5 | 60 |
-| 3 | flow+steering-4 | `steered` with `policy.flow` | 84.0 | 75.6–89.9 | 54 |
-| 4 | bc+temporal-ensemble | `temporal_ensemble` with `policy.bc` | 83.0 | 74.5–89.1 | 56 |
-| 5 | flow | `policy` with `policy.flow` | 83.0 | 74.5–89.1 | 56 |
-| 6 | bc | `policy` with `policy.bc` | 71.0 | 61.5–79.0 | 68 |
-| 7 | tokens | `policy` with `policy.tokens` | 68.0 | 58.3–76.3 | 74 |
-| 8 | knn | `policy` with `policy.knn` | 64.0 | 54.2–72.7 | 76 |
-
-Paired, flow + steering beats plain BC 18 to 5 (p = 0.005), although their intervals overlap. This is one small
-reach benchmark, not a ranking of policy families.
+Compare only scorecards with the same protocol name, version and digest. A published historical ranking
+may use a different digest from your current installation.
 
 ## Publishing results
 

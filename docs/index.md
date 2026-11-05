@@ -13,7 +13,7 @@ Hylo connects those capabilities through a measured improvement loop.</p>
 
 [Get started](getting-started/installation.md){ .md-button .md-button--primary }
 [Quickstart](getting-started/quickstart.md){ .md-button }
-[See results](showcase/index.md){ .md-button }
+[Explore use cases](use-cases/index.md){ .md-button }
 
 </div>
 
@@ -43,8 +43,8 @@ For hardware use, configure manual campaign approval and validate the target dep
 | [Memory](user-guide/memory/index.md) | observations and experience that inform later decisions |
 | [Skills](user-guide/skills.md) | reusable implementations with applicability and verification evidence |
 
-[Concepts](user-guide/overview.md) explains their relationship. [Examples and results](showcase/index.md)
-records measured outcomes, conditions, failures and reproduction sources. A simulation result applies to its
+[Concepts](user-guide/overview.md) explains their relationship. [Use Cases](use-cases/index.md)
+shows complete workflows. [Research](https://hyloai.github.io/research/) publishes measured outcomes and analysis. A simulation result applies to its
 stated task and observation conditions; it does not establish readiness on hardware.
 
 ## Go deeper

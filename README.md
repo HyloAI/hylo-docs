@@ -27,15 +27,15 @@ Physical RSI connects agents acting in worlds with accumulated memory and reusab
 concepts; task guides explain execution, evaluation, learning, campaigns and deployment. Skills have their own
 navigation entry even though the library is implemented in the memory package. Architecture describes the
 implementation; historical designs are grouped under the internal archive.
-The public navigation has five sections: **Get started, User Guides, Examples and results, Developers,
+The public navigation has five sections: **Get started, User Guides, Use Cases, Developers,
 and Reference**. Home is the entry page. **User Guides** groups concept explanations and practical guides under
 **Physical RSI, Worlds, Agents, Memory and Skills**, followed by deployment and operations.
 The full site adds **Internal** for current direction, decisions,
 research, experiments and historical records. `mkdocs.yml` owns the navigation; the public build inherits it
 and filters internal/excluded entries with `mkdocs/public_hook.py`.
 
-Recorded case introductions live in `docs/showcase/`; detailed result pages are generated from repository example
-READMEs. Edit those sources to change measured results. API package indexes link to generated module pages;
+Recorded case introductions live in `docs/use-cases/`; reproduction records under `docs/developer-guide/validation/` are generated from repository example
+READMEs. Public Research articles and benchmark results live at https://hyloai.github.io/research/, in the website repository. Edit those sources to change measured results. API package indexes link to generated module pages;
 the CLI index links to generated command-family pages. New packages need entries in the generator's package list
 and the shared navigation. Keep implemented, measured and unrun capabilities distinct.
 
