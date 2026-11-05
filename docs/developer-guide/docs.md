@@ -242,6 +242,9 @@ Keep current limitations: write them as current behaviour.
 ### Reviewing structural changes
 
 - Preserve existing page URLs and useful section anchors when moving content; leave a short link at the old anchor.
+- User Guides explanations live under `user-guide/`, alongside their operational guides. When a URL changes,
+  update incoming links and add the old path to `mkdocs/redirects.py`; redirects preserve query strings and anchors
+  and stay out of navigation and search.
 - Rebuild both sites and run `check_site.py` on each output. The checker does not fetch external URLs.
 - Execute new CPU-only tutorial snippets in an isolated output directory. Validate complete configuration examples;
   do not present an untested model or hardware workflow as a newly measured result.

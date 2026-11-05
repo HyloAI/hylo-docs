@@ -20,7 +20,7 @@ explains the expected result. To use your own compatible policy, replace the `ag
 ## Policy and agent
 
 A **policy** returns action chunks from an observation. An **agent** holds a policy and decides how to use its
-chunks ([concepts](../getting-started/concepts.md)). Each wrapper requires a compatible policy contract.
+chunks ([concepts](overview.md)). Each wrapper requires a compatible policy contract.
 
 See [Agents](agents.md) for the control modes and their relationship to programs and tool calls.
 

@@ -1,7 +1,7 @@
 # Reference
 
 Look up exact commands, fields and interfaces here. To complete a task, start with a
-[guide](../user-guide/index.md); to understand the product, read [Concepts](../getting-started/concepts.md).
+[guide](../user-guide/index.md); to understand the product, read [Concepts](../user-guide/overview.md).
 
 | Reference | What to look up |
 |---|---|

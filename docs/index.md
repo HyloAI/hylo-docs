@@ -38,12 +38,12 @@ For hardware use, configure manual campaign approval and validate the target dep
 
 | Concept | What it provides |
 |---|---|
-| [Worlds](concepts/worlds.md) | scenes, robots, observations and physical goal checks |
+| [Worlds](user-guide/worlds/overview.md) | scenes, robots, observations and physical goal checks |
 | [Agents](user-guide/agents.md) | policies, programs or model tool calls that decide actions |
 | [Memory](user-guide/memory/index.md) | observations and experience that inform later decisions |
 | [Skills](user-guide/skills.md) | reusable implementations with applicability and verification evidence |
 
-[Concepts](getting-started/concepts.md) explains their relationship. [Examples and results](showcase/index.md)
+[Concepts](user-guide/overview.md) explains their relationship. [Examples and results](showcase/index.md)
 records measured outcomes, conditions, failures and reproduction sources. A simulation result applies to its
 stated task and observation conditions; it does not establish readiness on hardware.
 

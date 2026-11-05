@@ -1,7 +1,7 @@
 # World reference
 
 Stage fields, robot packs, controls and goal checks. Start with [Create and run a world](../user-guide/worlds.md)
-for a complete example. [Worlds](../concepts/worlds.md) explains the concepts.
+for a complete example. [Worlds](../user-guide/worlds/overview.md) explains the concepts.
 
 ## Stages
 

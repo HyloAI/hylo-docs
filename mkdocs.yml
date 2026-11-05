@@ -45,6 +45,9 @@ extra_css:
 extra_javascript:
   - assets/javascripts/reference-links.js
 
+hooks:
+  - mkdocs/redirects.py
+
 plugins:
   - search
   - glightbox
@@ -134,7 +137,7 @@ nav:
   - Optional environments: getting-started/optional-environments.md
 - User Guides:
   - user-guide/index.md
-  - How Hylo fits together: getting-started/concepts.md
+  - How Hylo fits together: user-guide/overview.md
   - Physical RSI:
     - Overview: physical-rsi.md
     - Run experiments: user-guide/experiments.md
@@ -144,7 +147,7 @@ nav:
     - Learn from runs: user-guide/learning.md
     - Run campaigns: user-guide/campaigns.md
   - Worlds:
-    - Overview: concepts/worlds.md
+    - Overview: user-guide/worlds/overview.md
     - Create a world: user-guide/worlds.md
   - Agents:
     - Overview: user-guide/agents.md

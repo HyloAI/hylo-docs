@@ -106,7 +106,7 @@ development and held-out tasks.
 
 ## Why worlds
 
-[Read the concept and design explanation](../concepts/worlds.md).
+[Read the concept and design explanation](worlds/overview.md).
 
 ## From language to a world
 

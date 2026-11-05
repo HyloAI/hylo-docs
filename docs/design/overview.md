@@ -1,6 +1,6 @@
 # Architecture overview
 
-This page maps [Physical RSI, Worlds, Agents, Memory and Skills](../getting-started/concepts.md) to their
+This page maps [Physical RSI, Worlds, Agents, Memory and Skills](../user-guide/overview.md) to their
 implementation: execution, recorded evidence, evaluation, improvement and deployment.
 
 ## At a glance

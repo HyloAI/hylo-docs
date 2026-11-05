@@ -1,6 +1,6 @@
 # Research
 
-We study the source code and architecture of existing open-source Physical AI projects, and use it to design our own Physical AI Stack. The [executive summary](../EXECUTIVE-SUMMARY.md) records the original design snapshot; start with [Concepts](../getting-started/concepts.md) for the current product framing.
+We study the source code and architecture of existing open-source Physical AI projects, and use it to design our own Physical AI Stack. The [executive summary](../EXECUTIVE-SUMMARY.md) records the original design snapshot; start with [Concepts](../user-guide/overview.md) for the current product framing.
 
 Source-level reports on the open-source projects Hylo learns from, cross-project comparisons, and dated
 experiment records. Third-party sources are cloned read-only under `references/` at the root of this repository

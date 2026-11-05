@@ -20,6 +20,7 @@ exclude_docs: |
   showcase/studio.md
   showcase/assets/studio/
 hooks:
+  - mkdocs/redirects.py
   - mkdocs/public_hook.py
 
 # Navigation is inherited; public_hook removes the internal section and excluded pages.

@@ -158,7 +158,7 @@ episode, and **Self-improvement** to follow the campaign ([Studio](../user-guide
 
 ## Next
 
-- [Concepts](concepts.md): the vocabulary used everywhere else.
+- [Concepts](../user-guide/overview.md): the vocabulary used everywhere else.
 - [Campaigns](../user-guide/campaigns.md): splits, the gate, approval and rollback.
 - [Deployment](../user-guide/deployment.md): run the promoted version on a workcell.
 - [Next steps](next-steps.md): choose another task.

@@ -21,7 +21,7 @@
 Documentation for [Hylo](https://hyloai.github.io/), the stack for physical AI: user guide, benchmarking, developer
 guide, design and RFCs, research notes and experiment records, API and CLI reference. Built with MkDocs Material.
 
-The product concepts are [Physical RSI](docs/physical-rsi.md), [Worlds](docs/concepts/worlds.md),
+The product concepts are [Physical RSI](docs/physical-rsi.md), [Worlds](docs/user-guide/worlds/overview.md),
 [Agents](docs/user-guide/agents.md), [Memory](docs/user-guide/memory/index.md) and [Skills](docs/user-guide/skills.md).
 Physical RSI connects agents acting in worlds with accumulated memory and reusable skills. Home introduces the
 concepts; task guides explain execution, evaluation, learning, campaigns and deployment. Skills have their own
