@@ -2,7 +2,7 @@
 
 The variables Hylo reads, and the third-party variables its setup relies on.
 
-## Where to set them
+## Setup { #where-to-set-them }
 
 === "In the profile (recommended)"
 
@@ -68,7 +68,7 @@ templates keep the token in `HYLO_TOKEN`. [Security](../user-guide/security.md) 
 | `TOKENIZERS_PARALLELISM` | tokenizers | `false`: no fork warnings in worker processes |
 | `TORCHDYNAMO_DISABLE` | torch | `1`: no `torch.compile` |
 
-## Strategy development
+## Program development { #strategy-development }
 
 | Variable | Read by | Meaning | Default |
 |---|---|---|---|

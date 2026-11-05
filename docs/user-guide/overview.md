@@ -36,7 +36,7 @@ reuse programs, recipes and other verified changes. Memory answers what was obse
 what can be applied to do a task. See [Skills](skills.md) and the
 [Skill library](memory/skills.md). Library support depends on the implementation and consuming agent.
 
-## Working terms
+## Terminology { #working-terms }
 
 These terms name the mechanisms used to operate the five concepts. Follow the linked guides for their rules.
 
@@ -62,8 +62,8 @@ These terms name the mechanisms used to operate the five concepts. Follow the li
     | <span id="robot-skill"></span>Robot skill | A task capability under stated robot, scene and observation conditions, with implementation and evidence. |
     | <span id="task-strategy"></span>Task strategy | The task logic implemented by a policy, controller or program. |
     | <span id="robot-tools"></span>Robot contract and tools | The robot description and tools for perception, grasping, planning and execution. |
-    | <span id="program-agent"></span>Program agent | `code.program` executes a task program; `code.llm` writes code during an episode. See [Developing programs](developing-strategies.md). |
-    | <span id="research-session"></span>Research session | Model-assisted program development on development cases, producing a qualifying frozen submission. See [Program research](research-and-skills.md). |
+    | <span id="program-agent"></span>Program agent | `code.program` executes a task program; `code.llm` writes code during an episode. See [Programs](developing-strategies.md). |
+    | <span id="research-session"></span>Research session | Model-assisted program development on development cases, producing a qualifying frozen submission. See [Program skills](research-and-skills.md). |
     | <span id="program-skill"></span>Program skill | A library record referencing a promoted program, its applicability and evidence. |
     | <span id="coding-agent-skill"></span>Coding-agent skill | A `SKILL.md` instruction file teaching a software agent to operate Hylo. |
 

@@ -1,4 +1,4 @@
-# Adding a learner
+# Add a learner { #adding-a-learner }
 
 You will write a learner, build a sealed artifact from development runs, and let a campaign's gate decide on a
 candidate that uses it. A learner turns recorded runs into an artifact. For success judges see
@@ -6,7 +6,7 @@ candidate that uses it. A learner turns recorded runs into an artifact. For succ
 
 You need the [development workspace](../getting-started/installation.md) with hylo-bench.
 
-## 1. Scaffold the package
+## 1. Create a package { #1-scaffold-the-package }
 
 From the workspace root, create the package in `plugins/packages/`:
 
@@ -36,7 +36,7 @@ uv run hylo run examples/configs/mujoco_reach.yaml --split search --output runs/
     --set benchmark.params.protocol=rsi
 ```
 
-## 2. The contract
+## 2. Implement the contract { #2-the-contract }
 
 A learner has a `name` and one method, `fit(job) -> ArtifactManifest`. This example groups development runs by the
 agent's gain and seals an artifact that records the gain with the highest success rate:
@@ -89,7 +89,7 @@ Choose `kind` and `role`
     `role="instrument"` means it measures, and it is trusted only after calibration
     ([artifact roles](../user-guide/learning.md#artifact-roles)).
 
-## 3. Check it
+## 3. Validate { #3-check-it }
 
 ```bash
 uv run hylo plugin check learner my-recap
@@ -107,7 +107,7 @@ The check records the `search`, `search_val` and `gate` runs of MuJoCo planar re
 PASS means it seals a valid artifact from development data and refuses gate data; whether the artifact is useful is
 step 5's job. The generated test in `tests/` runs the same check under pytest.
 
-## 4. Run a job
+## 4. Run { #4-run-a-job }
 
 A job names the learner, inputs, output and params ([train an artifact](../user-guide/learning.md#run-a-learner-job)):
 
@@ -153,7 +153,7 @@ artifact:recap@e3d96ccc61cef0ae
 
 Configs reference artifacts by this id; keep the `@digest` ([use ids in configs](../user-guide/store.md#reference-artifacts-in-configs)).
 
-## 5. Use it in a campaign
+## 5. Integrate { #5-use-it-in-a-campaign }
 
 The built-in `learn` generator connects a learner to a campaign. Each cycle it runs your learner on development runs,
 checks the artifact's metrics, and proposes a config patch that uses them. A campaign configures its generator under

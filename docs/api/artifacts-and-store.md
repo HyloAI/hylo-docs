@@ -6,7 +6,7 @@ active versions are the formats bench and serve exchange. User guides: [learning
 [the store](../user-guide/store.md), [benchmarking](../benchmarking/index.md),
 [deployment](../user-guide/deployment.md).
 
-## Artifacts and the split guard
+## Artifacts { #artifacts-and-the-split-guard }
 
 ::: hylo.core.artifact
     options:

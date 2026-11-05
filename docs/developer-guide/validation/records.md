@@ -6,6 +6,7 @@ for the findings in context.
 
 | Record | Public analysis |
 |---|---|
+| [Capability results](guide-results.md) | Memory and skill measurements collected from the usage guides |
 | [Memory](memory.md) | [When memory helps](https://hyloai.github.io/research/articles/when-memory-helps/) |
 | [Learning](learning.md) | [Learning and measured improvement](https://hyloai.github.io/research/articles/measuring-improvement/) |
 | [Evolution](evolution.md) | [Learning and measured improvement](https://hyloai.github.io/research/articles/measuring-improvement/) |

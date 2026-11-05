@@ -1,4 +1,4 @@
-# System validation
+# Validation { #system-validation }
 
 <span id="system-measurements"></span>
 
@@ -15,7 +15,7 @@ the implementation and conditions tested; they are not a hardware certification 
 
 <span id="running-them"></span>
 
-## Reproduce a check
+## Run a check { #reproduce-a-check }
 
 Run from the workspace root:
 
@@ -27,7 +27,7 @@ uv run pytest harness/tests/test_examples_core.py
 The linked records identify source scripts, full-run conditions and known failures. Their results are dated
 observations; use the scripts to check a different implementation or environment.
 
-## Experimental results
+## Results { #experimental-results }
 
 For analysis and measured outcomes, visit [Research](https://hyloai.github.io/research/) and
 [Benchmarks](https://hyloai.github.io/research/benchmarks/). The [reproduction records](records.md) retain
@@ -35,7 +35,7 @@ full tables and commands next to the originating scripts.
 
 <span id="what-the-examples-found"></span>
 
-## Known issues in the recorded system checks
+## Recorded issues { #known-issues-in-the-recorded-system-checks }
 
 The earlier system measurements reported these implementation gaps; consult the current code and issue records
 before assuming they have been resolved:

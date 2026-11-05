@@ -1,4 +1,4 @@
-# Video Memory
+# Video memory { #video-memory }
 
 SimpleMemVLA is an optional visual-memory agent in Hylo. It keeps sampled episode video
 and lets a compatible frozen video-conditioned model use that history when producing
@@ -76,19 +76,12 @@ The native agent derives a seed for each decision. Upstream-style shared-stream 
 can draw different noise when batch composition changes. Fix the batching and RNG protocol
 when comparing variants; matching initial scene seeds alone does not ensure matching actions.
 
-## Sources
+<span id="sources"></span>
 
-- Upstream source: `OpenBMB/SimpleMemVLA@453d6ec293e63318bbc2bce545d0b9256ab1bc51`.
-- Checkpoint: `yinchenghust/simplememvla_robomme@6bf7204311496b93f12889cad0eaf3fcbddc35e4`.
-- [Memory API](../../api/packages/hylo-memory.md) and [adapter API](../../api/packages/hylo-policy-simplememvla.md).
-- Implementation diagrams and reproduction instructions:
-  `harness/packages/hylo-memory/docs/simplememvla/README.md` and
-  `harness/adapters/hylo-policy-simplememvla/README.md` in the workspace.
+[Pinned dependencies](../../developer-guide/validation/video-memory.md#dependencies) lists source and checkpoint
+revisions, attribution and reproduction instructions.
 
-The packages retain upstream MIT attribution. Model processing remains a separate pinned
-dependency; the memory backend alone can run on CPU without loading it.
-
-## Verification
+<span id="verification"></span>
 
 [Recorded integration checks](../../developer-guide/validation/video-memory.md) cover upstream parity and regression episodes,
 with their scope and limitations. They do not establish a gain over another memory method.

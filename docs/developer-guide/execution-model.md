@@ -1,4 +1,4 @@
-# Execution and improvement model
+# Execution model { #execution-and-improvement-model }
 
 How execution, evaluation, learning and deployment fit together. For a first run, use the
 [quickstart](../getting-started/quickstart.md); for system boundaries, read [Architecture](../design/overview.md).
@@ -30,7 +30,6 @@ deterministic virtual clock in simulation, so it can be repeated.
 mode, rotation format, action dimensions) when they are bound, and privileged simulator state goes to the trace for
 scoring, never to the agent.
 
-
 ## Policy agents
 
 
@@ -54,7 +53,6 @@ model is required by the core.
 
 **The contract is checked, not assumed.** A conformance check runs every policy through shape, finiteness and seed
 determinism before it is used.
-
 
 ## Evaluation
 
@@ -85,7 +83,6 @@ digests are refused, not compared.
 **Timing is part of the measurement.** A policy that waits for the world (`sync`) and one that runs while the world
 moves (`realtime`) are different measurements. A protocol can score what a robot would run, with a fixed latency;
 never with a measured one, which would depend on the machine and its load.
-
 
 ## Campaigns
 
@@ -133,7 +130,6 @@ bottom up, and every rung passes the same gate.
 records every promotion and rollback, with who and why. Configure `approval: manual` for hardware deployment so
 a person can review the held-out report before activation; the current campaign default is `auto`.
 
-
 ## Learning
 
 
@@ -165,7 +161,6 @@ itself in the screen that uses `search_val`; the gate split stays clean.
 licence and how their labels were made, and are checked against the gate and held-out initial states, so they follow
 the same rules as everything else.
 
-
 ## Deployment
 
 
@@ -191,7 +186,6 @@ verdict or by a calibrated judge, and the label records which.
 
 **The robot side stays small.** The serving package depends on the core alone, so the robot computer installs little,
 and its episodes come back to the workstation as ordinary runs that can be scored, learned from and improved on.
-
 
 ## Tool-calling agents
 
@@ -310,7 +304,6 @@ measurements. What the layers cannot prevent is a model that misreports its resu
 model was recorded lowering its own threshold until the check passed). That is why a goal that decides success is
 defined outside the session, as in [role campaigns](../user-guide/worlds.md#tasks-with-roles), and why results are read from receipts and
 checks rather than from the model's summary.
-
 
 
 **Actions are bound to what was seen.** A model decides on a picture of the past. An action names the generation it

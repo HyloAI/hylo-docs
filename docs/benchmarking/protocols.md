@@ -54,7 +54,7 @@ The LIBERO protocols need the `libero-sim` runtime
 
 To change anything in the digest, write a new protocol version.
 
-## The digest
+## Comparability { #the-digest }
 
 `hylo bench show NAME` prints the protocol and its current digest: the first 16 hex characters of a sha256 over the
 fields marked "yes" above. Renaming a protocol or changing its version changes it. `env.remote` (where the simulator
@@ -67,7 +67,7 @@ protocol edited without a new version therefore starts a new board instead of mi
 `hylo bench run --set` accepts only keys outside the digest: `env.remote.*`, `workers` and `output_dir`. Anything
 else is refused, because the scorecard would no longer belong to the protocol.
 
-## Writing a protocol
+## Create a protocol { #writing-a-protocol }
 
 Copy a built-in protocol and change what you measure:
 

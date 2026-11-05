@@ -1,4 +1,4 @@
-# World construction and robot motion
+# Build worlds { #world-construction-and-robot-motion }
 
 Recorded scene construction and robot motions in MuJoCo. The chat-to-world recording demonstrates scene
 construction and inspection; the robot-pack recordings are separate motion examples.
@@ -29,17 +29,9 @@ construction and inspection; the robot-pack recordings are separate motion examp
 
 </div>
 
-## Measured motion
+<span id="measured-motion"></span>
 
-The receipts behind the quadruped video: one `walk` forward, then one with a turn, for all four robots in the same
-steps.
-
-| Robot | Forward | Turned | Upright | Base height |
-|---|---|---|---|---|
-| Go2 | 0.78 m, then 0.30 m | −0.6°, then 49.9° | yes | 0.252 m |
-| Go1 | 1.27 m, then 0.37 m | −0.8°, then 79.2° | yes | 0.261 m |
-| A1 | 1.22 m, then 0.43 m | −0.6°, then 75.0° | yes | 0.249 m |
-| Spot | 1.31 m, then 0.50 m | −1.1°, then 36.9° | yes | 0.422 m |
+[Motion measurements](../developer-guide/validation/guide-results.md#world-motion) record distance, turn and posture for the robot-pack demo.
 
 ## People
 
@@ -48,7 +40,7 @@ steps.
 *Four people on routes around two crates while a Go1 trots across: they plan around the crates and the dog and touch
 nothing.*
 
-## Chat to world demo
+## Scene construction { #chat-to-world-demo }
 
 
 <video src="../../assets/videos/studio-world.mp4" poster="../../assets/videos/studio-world.jpg" controls muted playsinline preload="none" width="100%" aria-label="Recorded AI session replay: three English chat sessions build and refine a dual-arm workbench, followed by scene inspection in World Studio"></video>
@@ -60,7 +52,6 @@ Recorded model edits are re-executed through the World API. The selected session
 and tool failures; the resulting stage matches the recorded source. Two startup attempts without successful scene
 changes are omitted. This demo shows scene construction and inspection; it does not demonstrate robot task execution.
 The [robot-pack videos](#robot-packs) show separate recorded examples of robots moving in a world.
-
 
 ## Reproduce
 

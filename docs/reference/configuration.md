@@ -5,6 +5,7 @@ Choose the configuration you are editing. Each reference lists its fields, defau
 | Configuration | What it controls |
 |---|---|
 | [Experiment](../harness/experiment-schema.md) | environment, agent, benchmark split, timing and recorded outputs |
+| [Campaign](../configuration/campaigns.md) | candidate generation, evaluation gates, approval and cycle budgets |
 | [Execution profile](../configuration/profiles.md) | this machine's named Python runtimes and store location |
 | [Environment variables](../configuration/environment-variables.md) | paths, rendering, model caches and process settings |
 | [Evaluation protocol](../benchmarking/protocols.md) | the fixed conditions used to compare agents |

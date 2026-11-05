@@ -10,7 +10,7 @@ and artifacts, and Operator handles deployed execution. These remain separate vi
 
 ![The runs page: every recorded run with its benchmark, split, success and episodes](../assets/figures/studio-runs.png){ .hylo-figure }
 
-## Starting it
+## Setup { #starting-it }
 
 Build the web UI once first ([installation](../getting-started/installation.md)). Until then, Studio answers
 "frontend not built". Then start Studio from the workspace directory:

@@ -1,11 +1,11 @@
-# Create and run a world
+# Create a world { #create-and-run-a-world }
 
 Create a small stage, compile it into a MuJoCo world, advance the simulation and check an outcome. This first
 example uses a falling cube, so it needs no model endpoint, downloaded robot assets or camera renderer.
 
 Complete [Installation](../getting-started/installation.md). Run commands from the **workspace root**.
 
-## Build your first world
+## Build a stage { #build-your-first-world }
 
 Create a `runs/` directory if needed. Save the following as `runs/first_world.py`:
 
@@ -49,7 +49,7 @@ Expected output includes `movable: ['cube']` and `cube touches table: True`. The
 are saved under `runs/stages/first_world/`. Rerunning rebuilds that saved stage. Use another stage name for a
 separate example if you have edited this one.
 
-## Add a robot and inspect the world
+## Add a robot { #add-a-robot-and-inspect-the-world }
 
 Add an entity with a `robot` pack through `stage_edit`, then rebuild before acting. Use the
 [pack and action reference](../reference/worlds.md#robot-packs) to select controls supported by that robot.
@@ -59,7 +59,7 @@ For an interactive view, build the [Studio frontend](../getting-started/optional
 and run `uv run hylo playground --repo .` from the workspace root. Open **World** and select `first_world`.
 Rebuild it in Studio: the Python process above has closed its simulation, while the saved stage remains.
 
-## A model at work
+## Model control { #a-model-at-work }
 
 Configure a chat backend and camera rendering first. The following uses the default model configuration;
 `hylo world chat --help` lists the model options. Run it from the workspace root.
@@ -83,7 +83,7 @@ Coding agents can use the same tools over the Model Context Protocol:
 Models do make mistakes here: forgetting to make an object movable, or weakening a check until it passes. Read the
 receipts and run the checks yourself before relying on a session's own summary.
 
-## Tasks with roles
+## Role campaigns { #tasks-with-roles }
 
 `hylo roles run CAMPAIGN.yaml` works through a set of tasks, each a stage, a request and a goal, split into
 development and held-out tasks.
@@ -96,49 +96,28 @@ development and held-out tasks.
 - Held-out tasks run last; they are never used to propose or verify skills. When a task's goal fails with the
   same reasons, the matching skills are offered to the worker.
 
-## In the Studio
+## Studio { #in-the-studio }
 
 [Use the World page to inspect and operate the scene](studio.md#world).
 
-### Chat to world demo
+<span id="chat-to-world-demo"></span>
 
 [Watch the recorded scene-construction case](../use-cases/worlds.md#chat-to-world-demo).
 
-## Why worlds
+<span id="why-worlds"></span>
+<span id="from-language-to-a-world"></span>
+<span id="principles"></span>
+<span id="stages"></span>
+<span id="robot-packs"></span>
+<span id="running-a-world"></span>
+<span id="checking-goals"></span>
+<span id="cameras-and-data"></span>
+<span id="people"></span>
 
-[Read the concept and design explanation](worlds/overview.md).
+## Reference
 
-## From language to a world
-
-[Read the concept and design explanation](../developer-guide/execution-model.md#worlds).
-
-## Principles
-
-[Read the concept and design explanation](../developer-guide/execution-model.md#worlds).
-
-## Stages
-
-[See the world reference](../reference/worlds.md#stages).
-
-## Robot packs
-
-[See the world reference](../reference/worlds.md#robot-packs).
-
-## Running a world
-
-[See the world reference](../reference/worlds.md#running-a-world).
-
-## Checking goals
-
-[See the world reference](../reference/worlds.md#checking-goals).
-
-## Cameras and data
-
-[See the world reference](../reference/worlds.md#cameras-and-data).
-
-## People
-
-[See the world reference](../reference/worlds.md#people).
+[Worlds & tools](../reference/worlds.md) covers stages, robot packs, execution, goals, cameras and people.
+[World concepts](worlds/overview.md) explains the model; [execution design](../developer-guide/execution-model.md#worlds) covers implementation.
 
 ## Next
 

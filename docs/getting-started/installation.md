@@ -5,7 +5,7 @@ This page sets up a workspace that can run the [quickstart](quickstart.md), and 
 You need Linux, Python 3.10 or newer and [uv](https://docs.astral.sh/uv/). The first CPU experiment needs no GPU, language model, camera renderer or downloaded weights.
 Run the setup commands below from the new workspace root.
 
-## The development workspace
+## Workspace { #the-development-workspace }
 
 Clone the harness into a new directory and run its bootstrap script there:
 
@@ -20,7 +20,7 @@ this directory a uv workspace, and runs `uv sync`, which installs every package,
 deployments template is cloned separately; see [deployment](../user-guide/deployment.md). Rerun the script after you
 add or remove a repository.
 
-## The run and artifact store
+## Store { #the-run-and-artifact-store }
 
 Register `bench/runs` as this machine's [store](../user-guide/store.md). The quickstart writes its runs there:
 
@@ -32,7 +32,7 @@ uv run hylo store ls
 `$HYLO_STORE`, when set, overrides the registered store. [Profiles](../configuration/profiles.md) has the full
 lookup order.
 
-## Check the installation
+## Verify { #check-the-installation }
 
 ```bash
 uv run hylo --help              # the subcommands of the installed packages

@@ -10,7 +10,7 @@ that will run on hardware.
 
 *One cycle. The promoted candidate is the next cycle's parent.*
 
-## Run a campaign
+## Run { #run-a-campaign }
 
 Commands on this page run from `bench/`. This is the quickstart's campaign:
 
@@ -42,11 +42,6 @@ run every `hylo evolve` command for a campaign from `bench/`. That also keeps th
 ran the quickstart, `status` shows its result and `run` continues the same campaign from its state file, up to
 `cycles`. `--set KEY=VALUE` overrides a key of the campaign config.
 
-![MuJoCo gain campaign](../assets/figures/campaign-mujoco-reach-gain.png){ .hylo-figure }
-
-*Example output. In cycle 1, `kp: 0.04` passes the gate at the first look (26 wins, 0 losses, p = 1.5e-8). Cycle 2
-finds nothing better and the campaign stops.*
-
 ## Results
 
 `hylo evolve status` prints the campaign state, the active version and its lineage, the combined patch, any pending
@@ -68,7 +63,7 @@ Archive verdicts: `rejected` (stage 0 or 1), `archived` (not sent to the gate), 
 (confirmed, not promoted, for example while waiting for approval) and `promoted`. Ids and paths in the archive and
 ledger protect the runs and artifacts they name from deletion ([store](store.md)).
 
-## The cascade and the gate
+## Candidate evaluation { #the-cascade-and-the-gate }
 
 The parent runs on `search`, and its failures are sorted into buckets. The generator returns up to `max_candidates`
 config patches, each with a hypothesis. The cascade (stages 0 to 2) screens them, and the gate (stage 3) confirms the
@@ -153,24 +148,18 @@ How far each is tested: [plugin catalogue](../developer-guide/plugin-catalogue.m
 `hylo plugin new generator NAME` and see
 [adding a generator](../developer-guide/adding-a-generator.md).
 
-## Program development and code candidates
+## Program candidates { #program-development-and-code-candidates }
 
 Developing a first program and comparing a revision with a baseline have different evidence requirements.
-Use [Program research](research-and-skills.md) for development and independent evaluation; use a campaign to
+Use [Program skills](research-and-skills.md) for development and independent evaluation; use a campaign to
 compare a proposed change with the current version and promote it through the gate.
 
 The `research.llm` generator develops code on `search` cases, optionally starting from a `code.program` parent.
 It freezes a qualifying submission as a program artifact and proposes a `code` candidate. The same cascade,
 paired gate, held-out report and approval path apply. A program that succeeded during development has not yet
-passed these checks. See [Program research](research-and-skills.md) for the recorded stacking example,
-commands and current limits.
+passed these checks. Follow [Program skills](research-and-skills.md) for the development and reuse steps.
 
-The optional `harness.program` generator adds phase-guided development and repair-note
-recall. It automatically evaluates completed program revisions within the submission
-budget, requires all selected development cases to pass, and proposes a sealed program
-with evidence-linked notes. The shared campaign still controls selection, gate, approval
-and activation. Notes enter recall only through active promoted lineages; rollback removes
-the retired branch from recall. See [Phase-guided evolution](research-and-skills.md#phase-guided-evolution).
+For experimental phase-guided repair and note recall, see [Program repair](../developer-guide/program-repair.md).
 
 | Proposer | Changes | Training |
 | --- | --- | --- |
@@ -185,7 +174,7 @@ Select one proposer through `proposer.type`; additional packages provide the mod
 options. These choices do not automatically combine into one algorithm. See the
 [campaign API](../api/packages/hylo-evolve.md) for implementation details.
 
-## Approve, roll back, shadow
+## Version control { #approve-roll-back-shadow }
 
 <video src="../../assets/videos/studio-campaigns.mp4" poster="../../assets/videos/studio-campaigns.jpg" controls muted playsinline preload="none" width="100%" aria-label="The Studio's self-improvement pages: a candidate's cascade, an approval, the rollback form and the A/B arena"></video>
 
@@ -208,7 +197,7 @@ The target is the campaign config or the campaign directory.
   report says how often and how far it would have acted differently. Run it before trying a candidate on a robot.
   The candidate may change only `agent.*` keys.
 
-## LIBERO-10 campaigns
+## LIBERO campaigns { #libero-10-campaigns }
 
 `examples/evolve/` has three campaigns on frozen SmolVLA in LIBERO-10: `libero10_steering.yaml` (rule-based
 steering), `libero10_llm.yaml` (an LLM proposes steering) and `libero10_selftrain.yaml` (expert iteration, manual
@@ -216,46 +205,14 @@ approval). They need `envs/libero/setup.sh`. `libero10_steering.yaml` and `liber
 (8 hours), `libero10_selftrain.yaml` 43200 (12 hours): no new cycle starts after that. It is a limit, not an
 estimate.
 
-## Reference
-
-Campaign keys:
-
-| Key | Default | Meaning |
-|---|---|---|
-| `experiment` | required | the experiment config to improve, relative to the campaign file |
-| `experiment_overrides` | `{}` | dotted-path overrides applied to it |
-| `proposer` | `rule.steering` | the generator (`{type, params}`) |
-| `diagnosis` | `{}` | options for sorting failures, for example `stall_steps`, `regrasp` |
-| `protocol` | see below | the gate settings |
-| `cycles` | 1 | maximum cycles |
-| `stop_after_no_progress` | 2 | stop after this many consecutive cycles without a promotion |
-| `budget_s` | none | wall-clock limit for the campaign, checked before each cycle |
-| `approval` | `auto` | or `manual` |
-| `out_dir` | `runs/evolve` | the campaign directory, relative to the working directory |
-
-Gate settings (`protocol:`):
-
-| Key | Default | Meaning |
-|---|---|---|
-| `alpha` | 0.05 | false-promotion rate per cycle, Holm-corrected across that cycle's candidates |
-| `stage1_pairs` | 10 | pairs used for early rejection |
-| `stage1_max_deficit` | 2 | reject in stage 1 when parent wins minus candidate wins is this or more |
-| `gate_top_k` | 1 | candidates sent to the gate |
-| `gate_looks` | 1 | sequential looks; the benchmark must provide `gate_r1`, ... |
-| `spending_rho` | 3.0 | alpha spent by look k is `alpha * (k/K)^rho` |
-| `futility_stop` | true | stop a candidate once it no longer leads the parent on the gate |
-| `max_task_regression` | 0.15 | veto: success on any task may not drop by more than this |
-| `max_safety_increase` | 1.0 | veto: mean safety interventions per episode may not rise by more than this |
-| `max_candidates` | 8 | candidates evaluated per cycle |
-| `budget_s` | none | wall-clock limit per cycle, checked before each candidate |
-| `prescreen` | none | `{env: {type: world_model, params: {path}}, split, margin}`: reject candidates a world model predicts below parent minus margin |
-| `gate_test` | `{type: mcnemar}` | the paired statistic (`gate_tests` plugin), for example `{type: sign, params: {metric: steps, direction: lower}}` |
-
-## Design
-
-[Read the design rationale](../developer-guide/execution-model.md#campaigns).
+<span id="reference"></span>
+<span id="design"></span>
 
 ## Next
+
+- [Campaign configuration](../configuration/campaigns.md): campaign and gate settings, defaults and limits.
+
+- [Execution model](../developer-guide/execution-model.md#campaigns): runtime and implementation details.
 
 - Serve the promoted version on a robot: [deployment](deployment.md). A policy server started with
   `hylo serve policy --campaign DIR` follows `active.json`.

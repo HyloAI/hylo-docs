@@ -27,7 +27,7 @@ plugin must provide and the data that passes between the episode loop, environme
       heading_level: 3
       show_if_no_docstring: true
 
-## Reasoners, choosers, planners, reflectors
+## Reasoning components { #reasoners-choosers-planners-reflectors }
 
 ::: hylo.core.reasoning
     options:
@@ -48,7 +48,7 @@ plugin must provide and the data that passes between the episode loop, environme
       heading_level: 3
       show_if_no_docstring: true
 
-## Robot and scene descriptions
+## Robots and scenes { #robot-and-scene-descriptions }
 
 These data contracts connect environments with task-strategy tools and program agents. They do not import a simulator.
 
@@ -83,14 +83,14 @@ These data contracts connect environments with task-strategy tools and program a
       heading_level: 3
       show_if_no_docstring: true
 
-## Scorers and gate tests
+## Scoring { #scorers-and-gate-tests }
 
 ::: hylo.core.scoring
     options:
       heading_level: 3
       show_if_no_docstring: true
 
-## Generators and campaign records
+## Improvement { #generators-and-campaign-records }
 
 The generator contract is the `Proposer` protocol (YAML key `proposer`).
 

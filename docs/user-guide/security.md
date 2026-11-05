@@ -8,7 +8,7 @@ reference for tokens and Studio roles. Robot limits are on [safety](safety.md).
     config's `params`. So a config, a `--set` override or a campaign patch can run any importable Python function,
     as the user running Hylo. Treat everyone who can submit a config as someone with a shell on that machine.
 
-## What is exposed where
+## Access boundaries { #what-is-exposed-where }
 
 Every service binds to the loopback interface unless you pass `--host 0.0.0.0`. No service terminates TLS or
 manages user accounts, so tokens travel in clear text over `http://` and `ws://`. Without a token, anyone who can
@@ -42,7 +42,7 @@ machine.
    unpickles them and refuses object dtypes. A learner or adapter that loads third-party checkpoints follows that
    library's rules, for example PyTorch's `torch.load`.
 
-## Model-written programs
+## Generated code { #model-written-programs }
 
 `code.llm`, `code.program` and research submissions use AST validation and a restricted Python namespace. Imports,
 private attributes and file operations are restricted, and a watchdog interrupts Python execution. The program
@@ -84,7 +84,7 @@ Studio checks the token on every API call and maps it to a role:
 Jobs and live sandbox episodes take configs and overrides, so **the operator role can run code on the Studio
 machine**. Give it only to people you would give a shell to.
 
-## Known gaps
+## Constraints { #known-gaps }
 
 These are current behaviours to plan around:
 

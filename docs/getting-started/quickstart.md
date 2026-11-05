@@ -9,7 +9,7 @@ Complete [Installation](installation.md), then run the commands from **`bench/`*
 cd bench
 ```
 
-## 1. Run an experiment
+## 1. Run { #1-run-an-experiment }
 
 An experiment config names a benchmark and its split, an environment and an agent:
 
@@ -43,7 +43,7 @@ metrics:
 
 The run directory contains the results and traces. Its random suffix will differ on your machine.
 
-### Read the traces
+## 2. Inspect { #read-the-traces }
 
 Use the `run_dir` printed above to read a run. Its last six characters are random, so yours differs
 ([what a run contains](../user-guide/experiments.md#runs-and-traces)):
@@ -69,7 +69,7 @@ Counter({'observation': 31, 'agent.chunk': 30, 'safety.review': 30, 'action': 30
 }
 ```
 
-## What you have now
+## Outputs { #what-you-have-now }
 
 A completed run contains 20 scored episodes. In the recorded reference run all 20 succeed, with no safety
 interventions and an average of 35.25 steps. `hylo trace` lets you inspect what was proposed and executed.

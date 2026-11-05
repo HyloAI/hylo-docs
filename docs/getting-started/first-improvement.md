@@ -10,7 +10,7 @@ You need the [installed workspace](installation.md) and the [quickstart](quickst
 cd bench
 ```
 
-## 1. Score a policy under a protocol
+## 1. Compare { #1-score-a-policy-under-a-protocol }
 
 An evaluation protocol fixes everything except the agent being scored. `mujoco-reach` is 100 episodes: a fixed and
 a random target, 50 held-out seeds each.
@@ -60,7 +60,7 @@ episode the other loses, so p = 1.0:
 
 More in [benchmarking](../benchmarking/index.md).
 
-## 2. Improve a policy with a campaign
+## 2. Improve { #2-improve-a-policy-with-a-campaign }
 
 A campaign tries changes to a config and keeps one only if it beats the current version on episodes it was not
 chosen on. Here the IK controller starts with the weak gain `kp: 0.02`, and a rule-based generator
@@ -129,7 +129,7 @@ Among other fields, the status shows the active version and the change it makes 
 The campaign writes its active version to `runs/evolve/mujoco-reach-gain/active.json`, which step 3 serves.
 `hylo evolve rollback` would undo the promotion ([campaigns](../user-guide/campaigns.md)); keep it for now.
 
-## 3. Serve the promoted version
+## 3. Serve { #3-serve-the-promoted-version }
 
 A policy server serves a campaign's active version and follows later promotions and rollbacks. It needs no
 hardware:
@@ -144,7 +144,7 @@ uv run hylo serve policy --campaign runs/evolve/mujoco-reach-gain      # port 80
 
 A workcell next to a robot connects to this server; see [Deployment](../user-guide/deployment.md).
 
-## 4. Look at it in Studio
+## 4. Inspect { #4-look-at-it-in-studio }
 
 Studio shows the runs, episodes and campaigns from the steps above. Build its web UI once
 ([optional setup](optional-environments.md#studio-web-ui)), then start it from `bench/`:
@@ -162,4 +162,4 @@ episode, and **Self-improvement** to follow the campaign ([Studio](../user-guide
 - [Campaigns](../user-guide/campaigns.md): splits, the gate, approval and rollback.
 - [Deployment](../user-guide/deployment.md): run the promoted version on a workcell.
 - [Next steps](next-steps.md): choose another task.
-- [Example catalogue](examples.md): every shipped configuration.
+- [Examples](examples.md): every shipped configuration.

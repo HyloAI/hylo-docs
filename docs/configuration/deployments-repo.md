@@ -27,7 +27,7 @@ git remote set-url origin <your lab's private repository>
 Add one workcell file per robot or simulator. Set up the robot computer first
 ([deployment, step 2](../user-guide/deployment.md#2-the-robot-computer)).
 
-## A workcell config
+## Workcell { #a-workcell-config }
 
 Copy a template for your robot and set its port, identity, cameras, action limits and home pose.
 See [Workcell configuration](workcells.md) for the YAML example, field defaults and safety-limit settings.
@@ -37,7 +37,7 @@ See [Workcell configuration](workcells.md) for the YAML example, field defaults 
 Review changes to robot action limits and safety settings before starting a workcell.
 See [workcell safety fields](workcells.md#safety-limits) and [Safety](../user-guide/safety.md).
 
-## Machine-specific settings
+## Machine settings { #machine-specific-settings }
 
 | Keep out of the repository | Put it here instead |
 |---|---|
@@ -45,7 +45,7 @@ See [workcell safety fields](workcells.md#safety-limits) and [Safety](../user-gu
 | interpreter paths, environment variables | the robot computer's [execution profile](profiles.md) |
 | motor calibration | LeRobot's calibration files on the robot computer |
 
-## Starting a workcell
+## Start a workcell { #starting-a-workcell }
 
 From the deployments repository:
 

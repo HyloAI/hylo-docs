@@ -5,7 +5,7 @@ This page shows how to run your model in Hylo and which agent to wrap it in.
 A policy is a model or controller used by an [agent](agents.md). This guide covers configuring policy agents;
 the agent overview also covers programs and typed tool calls.
 
-## Run a controller
+## Run { #run-a-controller }
 
 Complete [Installation](../getting-started/installation.md). From **`bench/`**, run the shipped CPU controller:
 
@@ -28,7 +28,7 @@ The optional `simplememvla` agent combines an episode video-history buffer with 
 video-conditioned checkpoint. It uses the released Panda controller interface and an explicit shared-batch
 runtime. Configuration, model requirements and verification limits are in [Video memory](memory/video.md).
 
-## Agents that run a policy
+## Agent types { #agents-that-run-a-policy }
 
 | Agent | Runs the policy | Key params |
 |---|---|---|
@@ -107,7 +107,7 @@ steering:
   end-effector delta control only, such as LIBERO).
 - `cooldown` (default 30 steps) and `max_fires` (default 3 per episode) limit firing.
 
-## The policy contract
+## Policy contract { #the-policy-contract }
 
 A policy is a `policies` plugin with four methods:
 
@@ -149,7 +149,7 @@ them from your own runs and they are sealed as artifacts. They are not the publi
 Learners of the same names build `policy_params` artifacts from successful episodes. `world_model.state` builds
 the world model that `policy.mpc` plans in ([learning](learning.md)).
 
-### Train and score them on MuJoCo reach
+### Train and evaluate { #train-and-score-them-on-mujoco-reach }
 
 === "All at once"
 
@@ -177,7 +177,7 @@ the world model that `policy.mpc` plans in ([learning](learning.md)).
 Compare two scorecards with `hylo bench compare A.json B.json` (an exact paired McNemar test) before reading a
 difference into them. The results of `compare.py` are on the [leaderboard](../benchmarking/leaderboard.md).
 
-## LeRobot and openpi policies
+## Model adapters { #lerobot-and-openpi-policies }
 
 === "LeRobot (SmolVLA, pi0, ...)"
 
@@ -220,11 +220,11 @@ difference into them. The results of `compare.py` are on the [leaderboard](../be
 Weight licences differ per checkpoint: PaliGemma-based pi0 and pi0.5 checkpoints are under the Gemma Terms of Use.
 The [plugin catalogue](../developer-guide/plugin-catalogue.md) lists each plugin's maturity and licences.
 
-## Design
-
-[Read the design rationale](../developer-guide/execution-model.md#policy-agents).
+<span id="design"></span>
 
 ## Next
+
+- [Execution model](../developer-guide/execution-model.md#policy-agents): runtime and implementation details.
 
 - [Benchmarking](../benchmarking/index.md): score your agent under an evaluation protocol.
 - [Run a component in another process](experiments.md#where-components-run), or

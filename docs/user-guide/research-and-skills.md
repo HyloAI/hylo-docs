@@ -1,10 +1,10 @@
-# Develop and reuse a program skill
+# Develop a program skill { #develop-and-reuse-a-program-skill }
 
 Improve an existing task program with a model, let a campaign evaluate the frozen candidate, and make a promoted
 program available to a later agent. The supplied example starts from a deliberately weak stacking program.
 Promotion depends on the results; a new model session may produce no qualifying candidate.
 
-## Before you start
+## Setup { #before-you-start }
 
 You need the [workspace](../getting-started/installation.md), [camera rendering](../getting-started/optional-environments.md#camera-rendering)
 and an Ollama endpoint serving `gpt-oss:20b`. The shipped campaign names that model and uses automatic approval
@@ -12,10 +12,10 @@ in simulation. All commands below run from the **workspace root** and write unde
 Use a fresh output directory for a new experiment; reusing an existing campaign directory can resume its state.
 
 The model receives the parent's source and develops on three `search` cases. The campaign evaluates frozen
-programs as `code.program`, without model calls during their execution. The [recorded case](../developer-guide/validation/tool-agents.md#program-improvement)
-reports the conditions and results; the [sorting demo](../use-cases/program-skills.md) is a separate experiment.
+programs as `code.program`, without model calls during their execution. The example uses simulator-provided observations; keep those conditions explicit when comparing agents.
+See the [recorded case](../developer-guide/validation/tool-agents.md#program-improvement) for its measured scope.
 
-## 1. Develop and evaluate a candidate { #improve-an-existing-program-through-a-campaign }
+## 1. Develop { #improve-an-existing-program-through-a-campaign }
 
 `research.llm` is a candidate generator for the ordinary campaign cascade. It can expose a `code.program` parent's
 source to the model, freeze a submission and propose it as a code candidate. The campaign owns the subsequent
@@ -30,10 +30,7 @@ The shipped example uses one cycle and automatic approval in simulation. Its out
 working directory. Keep them consistent when resuming. For deployment, review
 [approval and rollback](campaigns.md) and [Security](security.md); an approval happens after candidate evaluation.
 
-The [recorded stacking campaign](../developer-guide/validation/tool-agents.md) reports the gate and held-out results, including
-its deliberately weak parent and privileged simulator observations.
-
-## 2. Check the promotion
+## 2. Verify { #2-check-the-promotion }
 
 Inspect `runs/campaign/campaign/cycle-01/cycle_report.json` and the status printed above. A successful path has a
 promoted candidate and an `active.json` pointing to it. If no candidate passes, inspect the research session under
@@ -42,13 +39,10 @@ promoted candidate and an `active.json` pointing to it. If no candidate passes, 
 The gate supports the comparison with this parent under the declared conditions. A held-out report is kept for
 review. For hardware use, configure `approval: manual` before running the campaign and validate the target setup.
 
-## 3. Build and use the skill library { #reuse-a-promoted-program }
+## 3. Reuse { #reuse-a-promoted-program }
 
-The current program-skill path creates an explicit skill-library record. It binds a name/version, applicability,
-the sealed implementation and gate evidence. Policies and controllers can also implement robot skills, but the
-CLI below specifically derives records for promoted program candidates.
-
-Derive program skills from the campaign's promoted candidates:
+Derive a skill-library record from the promoted candidate. It binds the name, version, applicability, sealed
+program and gate evidence:
 
 ```bash
 uv run hylo research skills runs/campaign/campaign --library runs/skills --family stack
@@ -83,7 +77,7 @@ Inspect the printed run directory with `hylo trace`. Check whether the agent ret
 skill, as well as the task verdict. Retrieval does not force the model to use a skill. These validation episodes
 are development observations; they are not a new paired estimate of the skill's benefit.
 
-## Inspect sessions in Studio
+## Inspect sessions { #inspect-sessions-in-studio }
 
 ```bash
 uv run hylo playground --repo . --sessions research=runs/research
@@ -97,7 +91,7 @@ not provide an interactive model-development editor or start research sessions f
 
 *A research session's turns, submissions and frozen program; the campaign that promoted it; the verified program skill in the library.*
 
-## Start a development session
+## Standalone development { #start-a-development-session }
 
 Prepare [the tools, environment and model backend](developing-strategies.md#prepare-the-environment). From the
 workspace root, the existing stacking experiment can be used as a development environment:
@@ -110,7 +104,7 @@ uv run hylo research harness/adapters/hylo-code-agents/examples/campaign/experim
 
 This command requires that model at the configured Ollama endpoint. It uses `search` cases and does not
 automatically pass the experiment's parent program to the model. A campaign's `research.llm` generator can pass
-the parent program as described below. The command returns a nonzero status if no program qualifies for freezing.
+the parent program in the campaign workflow above. The command returns a nonzero status if no program qualifies for freezing.
 
 During a session:
 
@@ -122,7 +116,7 @@ During a session:
 Inspect `summary.json`, `log.jsonl`, the `submissions/` directory and, when one qualifies, `frozen/`. A frozen
 program records its source, entry point, artifact digest and provenance. It has not been promoted merely by being frozen.
 
-## Evaluate a frozen program
+## Evaluate a program { #evaluate-a-frozen-program }
 
 `hylo research --evaluate search_val` evaluates after the session; `--with-parent` also evaluates the configured
 agent for a paired comparison. Post-session outcomes are not fed back into that session's model. Evaluation can
@@ -132,61 +126,21 @@ Use development and validation results while iterating. Reserve gate and held-ou
 decision and final report. Once you use a result to choose or edit a program, it is no longer independent evidence
 for that choice. A standalone `--evaluate` command does not run the campaign promotion protocol.
 
-## Phase-guided evolution
+<span id="phase-guided-evolution"></span>
+<span id="recipe-skills-from-role-campaigns"></span>
 
-`harness.program` is an optional proposer in `hylo-code-agents`. It uses phase-scoped program repair and notes within Hylo's research runtime and campaign gate.
+## Related workflows
 
-The model proposes observable phases, repairs `solve(robot)` on search cases, and can
-distill notes connecting a failed case to a successful replay in the selected program.
-All selected development cases must pass before a candidate is returned. Invalid notes
-are discarded without discarding an otherwise valid program.
+- [Program repair](../developer-guide/program-repair.md): the experimental phase-guided proposer, its
+  configuration and current evidence.
 
-```yaml
-proposer:
-  type: harness.program
-  params:
-    model: {backend: ollama, model: gpt-oss:20b, reasoning_effort: low}
-    dev: 6
-    budget: {turns: 40, submits: 6, resets: 12}
-    out_root: runs/harness-program/proposals
-    repair_campaigns: [runs/harness-program]
-```
+- [Role campaigns](worlds.md#tasks-with-roles): develop and replay world-task solutions to create
+  [recipe skills](memory/skills.md#recipe-skills) in the same library.
 
-Use this block within a campaign configuration. The alias requires the updated adapter
-entry-point metadata; the equivalent module reference is
-`hylo.codeagents.harness_evolution:HarnessEvolutionProposer`.
-
-Completed program revisions are automatically submitted within the budget. Unchanged
-collected source and explicit submissions are not duplicated. The ordinary `research.llm`
-proposer retains its explicit-submission behavior. Planning and optional distillation
-share the total model-call budget with development.
-
-Repair notes and their evidence share the sealed program artifact. Recall checks both
-artifact integrity and the digest recorded in the admitted candidate, and reads only
-active promoted lineages. A gate-passing candidate awaiting approval contributes no notes.
-Rollback removes the retired branch's notes from subsequent recall. A note's transfer to
-another task remains unverified even when its containing program passed a gate.
-
-The phase plan is guidance for generated code, not a centrally enforced phase interpreter.
-Using a frozen VLA requires a toolkit that exposes one; there is no automatic SimpleMemVLA
-handover. The recorded real-model probes produced no promoted candidate. See the
-[phase-guided example and probe results](../developer-guide/validation/phase-guided.md) before choosing this experimental path.
-
-The example campaign, workflow diagram and probe runner are under
-`harness/adapters/hylo-code-agents/examples/harness_evolution/` in the workspace.
-See the [code-agent API](../api/packages/hylo-code-agents.md) and [campaign guide](campaigns.md)
-for the surrounding runtime and version lifecycle.
-
-## Recipe skills from role campaigns
-
-World tasks have a separate development and replay-verification path. See [role campaigns](worlds.md#tasks-with-roles)
-and [recipe skills](memory/skills.md#recipe-skills) for how their results enter the same library.
-
-## Recorded skill-development demo
-
-[Watch the recorded case, including results, conditions and provenance](../use-cases/program-skills.md).
+<span id="recorded-skill-development-demo"></span>
 
 ## Next
 
 - [Skill library](memory/skills.md): retrieve and apply program skills.
 - [Campaigns](campaigns.md): promotion, approval and rollback.
+- [Sorting demo](../use-cases/program-skills.md): recorded development, verification and reuse.

@@ -1,11 +1,11 @@
-# Run and compare evaluations
+# Compare agents { #run-and-compare-evaluations }
 
 <span id="leaderboards"></span>
 
 A leaderboard is every scorecard of one evaluation protocol (name, version and digest), ranked by success. There is
 no server: scorecards are JSON files, and `hylo bench leaderboard` collects them from directories.
 
-## Running policies
+## Run evaluations { #running-policies }
 
 Commands on this page run from `bench/`. `--policy` takes an agent spec, in one of three forms: JSON, an experiment
 config YAML (its agent is used), or a plugin name.
@@ -40,7 +40,7 @@ config YAML (its agent is used), or a plugin name.
 
 Use digest-pinned [store ids](../user-guide/store.md) for artifacts so the scorecard names the exact weights.
 
-## Ranking and comparing
+## Compare results { #ranking-and-comparing }
 
 ```bash
 uv run hylo bench leaderboard                          # ./scorecards
@@ -65,7 +65,7 @@ episodes, mean steps. `compare` prints the paired result:
 `candidate_wins` and `parent_wins` count episodes only the candidate or only the baseline solved (the key name is
 shared with campaigns). The test is explained in [compare two scorecards](index.md#statistics).
 
-## The reference-policy leaderboard
+## Reference policies { #the-reference-policy-leaderboard }
 
 Published rankings now live in [Research → Benchmarks](https://hyloai.github.io/research/benchmarks/).
 The [MuJoCo reach benchmark](https://hyloai.github.io/research/benchmarks/mujoco-reach/)
@@ -81,7 +81,7 @@ uv run hylo bench leaderboard runs/policies/scorecards
 Compare only scorecards with the same protocol name, version and digest. A published historical ranking
 may use a different digest from your current installation.
 
-## Publishing results
+## Share results { #publishing-results }
 
 - A scorecard is the unit to share.
 - `run_dir` is a path on your machine. To share the traces too, keep the run in the

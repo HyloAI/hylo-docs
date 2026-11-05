@@ -1,10 +1,10 @@
-# Adding a generator
+# Add a generator { #adding-a-generator }
 
 You will write a generator that proposes controller-gain changes, then run a campaign to test whether a candidate
 passes the gate. To build a model from runs instead, write a [learner](adding-a-learner.md). You need the
 [development workspace](../getting-started/installation.md) with hylo-bench.
 
-## 1. Create and install the package
+## 1. Create a package { #1-create-and-install-the-package }
 
 From the workspace root, create the package in `plugins/packages/`:
 
@@ -64,7 +64,7 @@ What `propose()` receives:
 Each `Candidate` is a `patch` of dotted config paths, a `rationale`, the `parent_id` and the `generator` name. A patch
 may not touch the [protected settings](../user-guide/safety.md#safety-in-campaigns).
 
-## 3. Check it
+## 3. Validate { #3-check-it }
 
 ```bash
 uv run hylo plugin check generator my-gain
@@ -80,7 +80,7 @@ generator my-gain@0.1: PASS
 The check calls `propose()` once with a MuJoCo planar reach diagnosis. A PASS means the candidates are well formed and
 allowed, not that they help.
 
-## 4. Run it in a campaign
+## 4. Run { #4-run-it-in-a-campaign }
 
 A campaign configures its generator under the `proposer` key. Save this in `bench/`:
 
@@ -112,7 +112,7 @@ uv run hylo evolve run gain_campaign.yaml
 [cycle 1] done: promoted=cand-71e72a5f60 heldout={...}
 ```
 
-## 5. Read the verdict
+## 5. Inspect { #5-read-the-verdict }
 
 `runs/evolve/mujoco-reach-my-gain/archive.jsonl` has one entry per candidate. `kp: 0.08` (factor 4) passed the gate
 and was `promoted`. `kp: 0.2` (factor 10) succeeded on `search_val` but was `archived` without entering the gate

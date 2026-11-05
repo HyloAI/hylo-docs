@@ -1,4 +1,4 @@
-# Event Memory
+# Event memory { #event-memory }
 
 `EventMemory` stores episode-scoped observations in a SQLite journal and answers exact
 queries over their recorded order. It supports latest, first, nth, count, sequence,
@@ -9,7 +9,7 @@ This is a storage and recall component, not a visual detector. An extractor or a
 must turn permitted observations into events. Missing perception cannot become a known
 fact merely because it was written to memory.
 
-## Example
+## Store and recall { #example }
 
 ```python
 from hylo.core.episode_memory import EpisodeScope, MemoryEvent, RecallQuery
@@ -42,7 +42,7 @@ Reset selects a task/episode scope. Reopening existing evidence requires `resume
 ordinary reset refuses to reuse a scope that already contains events. Persistent journals
 can retain audit evidence without making it available to another episode's recall.
 
-## Agent Integration
+## Agent integration { #agent-integration }
 
 `EventMemoryAgent` wraps an existing agent with an extractor and recall queries. It makes
 the recalled context available through the wrapped agent's instruction. The reference

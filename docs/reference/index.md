@@ -8,6 +8,7 @@ Look up a command, configuration field, tool, Python symbol or stored format. St
 | Command arguments and defaults | [CLI](../cli/index.md) |
 | YAML fields, runtime settings or environment variables | [Configuration](configuration.md) |
 | Stage fields, robot controls, goal checks or camera tools | [Worlds & tools](worlds.md) |
+| Memory fields, retrieval settings and skill status | [Memory & skills](memory.md) |
 | Python classes, functions and plugin contracts | [Python API](../api/index.md) |
 | Versioned records and JSON Schemas | [Data formats & schemas](../api/formats.md) |
 | Available plugin names, implementations and declared maturity | [Plugin catalogue](../developer-guide/plugin-catalogue.md) |

@@ -67,7 +67,7 @@ When a component starts in a runtime:
 Hylo finds the store in this order: `--root` on `hylo store`, then `$HYLO_STORE`, then `store:` in the profile, then
 `./runs`. `hylo store where` prints the one in use. See [the store](../user-guide/store.md).
 
-## Machines in a lab
+## Lab setup { #machines-in-a-lab }
 
 | Machine | Typical runtimes | Store |
 |---|---|---|

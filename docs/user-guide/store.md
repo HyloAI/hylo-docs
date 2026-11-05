@@ -1,4 +1,4 @@
-# Run and artifact store
+# Store { #run-and-artifact-store }
 
 The store holds runs and artifacts referenced by experiments, campaigns and skill-library records.
 
@@ -9,7 +9,7 @@ deletion, and copies entries between machines.
 ![Store ids, references and sync](../assets/diagrams/store-light.svg){ .hylo-diagram .only-light }
 ![Store ids, references and sync](../assets/diagrams/store-dark.svg){ .hylo-diagram .only-dark }
 
-## Set up the store
+## Setup { #set-up-the-store }
 
 Installation registers `bench/runs` as the store, and commands on this page run from `bench/`:
 
@@ -44,7 +44,7 @@ uv run hylo store show artifact:policy.flow             # entry, local path, wha
 An id that does not resolve says why: not found, ambiguous, or removed
 ([messages](../developer-guide/troubleshooting.md#the-store)).
 
-## Reference artifacts in configs
+## Artifact references { #reference-artifacts-in-configs }
 
 ```yaml
 sampler: {type: policy.flow, params: {path: "artifact:policy.flow@218d7147b2d05110"}}
@@ -58,7 +58,7 @@ sampler: {type: policy.flow, params: {path: "artifact:policy.flow@218d7147b2d051
 - The run's `manifest.json` records every id the config used, with the full id and the local path (`artifacts:`).
   A name-only id is pinned there, after the fact.
 
-## Delete safely
+## Deletion { #delete-safely }
 
 ```bash
 uv run hylo store rm run:<run_id>
@@ -79,7 +79,7 @@ when, why, and what referred to it. A later lookup of that id says it was remove
 !!! warning
     Do not delete run directories by hand. An artifact's provenance or a campaign's archive may still name them.
 
-## Move runs and artifacts between machines
+## Transfer { #move-runs-and-artifacts-between-machines }
 
 ```bash
 uv run hylo store pull robot-host:/home/lab/runs                        # runs recorded on the robot computer
@@ -105,7 +105,7 @@ books, are brought up to date.
 
 Push and pull have been tested between local stores. Transfers over ssh have not been tested.
 
-## Adopt older directories
+## Import runs { #adopt-older-directories }
 
 An artifact built before manifests existed can be sealed in place, with the runs it was built from:
 

@@ -10,7 +10,7 @@ Task programs use a separate [research session](research-and-skills.md) to produ
 ![A learner reads search and search_val runs and seals one artifact; the split guard refuses gate and held-out runs.](../assets/diagrams/learning-flow-light.svg){ .hylo-diagram .only-light }
 ![A learner reads search and search_val runs and seals one artifact; the split guard refuses gate and held-out runs.](../assets/diagrams/learning-flow-dark.svg){ .hylo-diagram .only-dark }
 
-## Run a learner job
+## Run a learner { #run-a-learner-job }
 
 A learner job is a JSON file. Commands on this page run from `bench/`, so runs and artifacts land in the store you
 registered during [installation](../getting-started/installation.md).
@@ -58,7 +58,7 @@ Use `--python` when the learner's dependencies live in another venv, such as LIB
 uv run hylo learn my-job.json --python envs/libero/.venv/bin/python
 ```
 
-## Inspect and reference an artifact
+## Use an artifact { #inspect-and-reference-an-artifact }
 
 ```bash
 uv run hylo artifact runs/policies/artifacts/flow     # check the digest and sources, print the manifest
@@ -76,7 +76,7 @@ sampler: {type: policy.flow, params: {path: "artifact:policy.flow@218d7147b2d051
 
 Keep the `@digest` ([why](store.md#reference-artifacts-in-configs)).
 
-## The split guard
+## Data boundaries { #the-split-guard }
 
 By default a learner reads only `search` and `search_val` runs. It reads `synthetic` runs (produced inside a learned
 model) and `external` runs ([ingested data](#external-data)) only when the job lists them in `splits`.
@@ -100,7 +100,7 @@ a behaviour artifact.
 A **mutable** artifact keeps changing after it is sealed, such as a lesson book a campaign is curating. Its digest is
 not enforced: `hylo artifact` and the stage-0 checks do not compare its content with the manifest.
 
-## Success judges and calibration
+## Calibrate judges { #success-judges-and-calibration }
 
 A success judge (an `instrument`) labels episodes from their traces when no simulator can, on a robot or in external
 data. Train one with `judge.trace`, then calibrate it on simulator runs:
@@ -172,11 +172,11 @@ not block anything. Do not use matching external data to build anything gated on
 How far each is tested: [plugin catalogue](../developer-guide/plugin-catalogue.md). To write your own:
 [adding a learner](../developer-guide/adding-a-learner.md).
 
-## Design
-
-[Read the design rationale](../developer-guide/execution-model.md#learning).
+<span id="design"></span>
 
 ## Next
+
+- [Execution model](../developer-guide/execution-model.md#learning): runtime and implementation details.
 
 - Use these artifacts in a [campaign](campaigns.md).
 - Keep and move them with the [store](store.md).

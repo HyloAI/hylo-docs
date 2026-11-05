@@ -3,18 +3,12 @@
 Select memory for a decision your agent actually makes. The memory backend and its consuming agent must support
 the same interface; adding a memory plugin alone does not make an arbitrary model use it.
 
-## Choose a path
+## Choose a backend { #choose-a-path }
 
-| Your agent needs | Memory | Consumer |
-|---|---|---|
-| Positions after objects leave view | [Spatial](memory/spatial.md) | a composable agent or reasoner |
-| Exact order, counts or pending observations | [Events](memory/events.md) | an extractor and `EventMemoryAgent` |
-| Video history for a compatible frozen VLA | [Video](memory/video.md) | the optional SimpleMemVLA runtime |
-| Successful motions as a sampling prior | [Action](memory/action.md) | a compatible flow policy with steering |
-| Experience when proposing a change | [Lessons](memory/lessons.md) | the `experience` proposer |
-| An executable capability already verified | [Skill library](memory/skills.md) | the supported consumer for that skill kind |
+Use the [memory types](memory/index.md#memory-and-its-consumers) to match your task to a backend and consumer.
+The example below uses event memory: it records supplied observations and recalls their order without a model.
 
-## Run an event-memory example
+## Run the example { #run-an-event-memory-example }
 
 Complete [Installation](../getting-started/installation.md). From the **workspace root**, run the CPU example:
 
@@ -22,10 +16,10 @@ Complete [Installation](../getting-started/installation.md). From the **workspac
 uv run python harness/examples/memory/06_event_memory.py --quick
 ```
 
-It exercises scoped event storage and recall and prints `40/40` complete-evidence cases correct. The example uses supplied observations
-and does not require a visual model. [Event memory](memory/events.md#example) shows the minimal Python API.
+Expected output includes `40/40` correct complete-evidence cases. These cases check storage and recall from
+supplied observations; they do not evaluate visual perception. [Event memory](memory/events.md#example) shows the minimal Python API.
 
-## Connect the consumer
+## Connect an agent { #connect-the-consumer }
 
 For spatial memory, start with the [composable agent configuration](memory/spatial.md#using-it-in-an-agent).
 For event memory, supply an observation extractor and recall queries to the wrapper. For video memory, match the
@@ -34,7 +28,7 @@ checkpoint's camera, state, controller and runtime requirements before loading t
 Persistent action banks and skill libraries need development data or promotion evidence first. Follow their
 building steps before putting a path in an agent configuration; a path alone does not create the artifact.
 
-## Check the boundary
+## Evaluation boundaries { #check-the-boundary }
 
 Keep persistent experience sources frozen during evaluation. Episode-local history can update from permitted
 observations, but must be scoped and reset so another evaluation episode cannot read it. Check the recorded

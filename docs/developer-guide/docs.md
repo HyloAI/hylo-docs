@@ -51,8 +51,8 @@ remain expanded; the full reference content is also available without JavaScript
 | [Formats and schemas](../api/formats.md) | the format table and `hylo schema` | the code |
 | API Reference: the core pages | a short hand-written intro in `docs/api/`, then the docstrings | the intro here, the rest in the code |
 | API package indexes and module pages | the docstrings of every package | the code |
-| Use Cases | curated recorded workflows | `docs/use-cases/` |
-| Validation records | generated example README records | the source README |
+| Use cases | curated recorded workflows | `docs/use-cases/` |
+| Validation records | generated example READMEs and curated evidence summaries | the source README; summary prose in `docs/developer-guide/validation/` |
 | Public Research | website articles and benchmark results | the website repository |
 
 `mkdocs/gen_pages.py` writes the generated pages. API pages are short hand-written intros; mkdocstrings fills them
@@ -93,33 +93,33 @@ Small flows that change often can be Mermaid diagrams in a `mermaid` code block 
 
 <span id="the-concepts-and-the-guides"></span>
 
-### User Guides organised by concept
+### Guides organised by concept { #user-guides-organised-by-concept }
 
 The five product concepts are **Physical RSI, Worlds, Agents, Memory and Skills**. Physical RSI connects the
-other four. Home introduces that relationship; User Guides groups explanations and practical guides by these
+other four. Home introduces that relationship; Guides groups explanations and practical guides by these
 five topics. Each topic starts with its concept page, followed by operational guides.
 Skills have their own topic even though the library is implemented in the memory package. Deployment and
-operations form a supporting section in User Guides.
+operations form a supporting section in Guides.
 
 | Content | Responsibility |
 |---|---|
 | Home | a brief product introduction, the five concepts and starting points |
-| User Guides | concept explanations and concrete operations grouped by topic |
-| How Hylo fits together | how the five concepts relate; supporting command/config terms are secondary |
+| Guides | concept explanations and concrete operations grouped by topic |
+| Concepts | how the five concepts relate; supporting command/config terms are secondary |
 | RSI | the improvement loop, what can change and how outcomes support those changes |
 | Worlds | scenes, robots, interactions and goal checks |
 | Agents | choosing policies, programs or tool calls |
 | Memory | observations and experience, storage, retrieval and data boundaries |
 | Skills | reusable task capabilities, applicability, verification and reuse |
-| Deploy and operate | deployment, Studio, stores, safety and security |
-| Use Cases | recorded task workflows and reproduction entry points |
+| Operations | deployment, Studio, stores, safety and security |
+| Use cases | recorded task workflows and reproduction entry points |
 | Public Research (website) | experimental findings, conditions, limitations and benchmark results |
 | Developers | architecture, extension tutorials, system validation and contributing |
 | Reference | exact CLI, configuration, contracts, formats and module API details |
 | Internal | current direction, decisions, research conclusions, experiment records and historical archive |
 
 Get started contains the minimal installation, first run, first improvement and task chooser. Optional runtime
-setup lives on its own page. Within each User Guides topic, the concept page explains a capability and the
+setup lives on its own page. Within each Guides topic, the concept page explains a capability and the
 operational guides complete tasks. Physical RSI contains experiments, benchmarking, learning and campaigns;
 Skills contains library management and program-skill development. The separate website Research section owns public experimental analysis; developer validation pages retain
 reproduction records. Keep each fact in its primary page and link from the other contexts.
@@ -130,13 +130,13 @@ Historical design snapshots belong under the archive, with a link to the current
 
 ### Reference organisation
 
-Reference has six lookup categories: CLI, Configuration, Worlds & tools, Python API, Data formats & schemas,
-and Plugin catalogue. Keep exact fields, defaults, signatures and current behaviour here.
+Reference groups CLI, Configuration, Worlds & tools, Memory & skills, Python API, Data formats and the
+Plugin catalogue. Keep exact fields, defaults, signatures and current behaviour here.
 Python API is the single entry point for core contracts and the complete package index. Individual packages and
 modules stay out of the sidebar; link them from the indexes. Configuration pages own YAML field tables;
 Python API pages own the corresponding Python objects; format pages own generated schemas.
 
-Put setup steps in User Guides, extension explanations in Developers, runnable configurations in the Get started
+Put setup steps in Guides, extension explanations in Developers, runnable configurations in the Get started
 example catalogue, and historical assumptions or proposed features in Internal. Preserve published paths and
 anchors when changing navigation. When a guide and a reference share a table, keep it in the reference and link
 from the guide.
@@ -161,15 +161,33 @@ Chinese: 智能体在世界中行动，从经验中学习，并复用已验证�
 | Gate | 准入评测（gate） | the confirmatory paired test, not every form of verification |
 | Program skill / recipe skill | 程序技能 / 动作配方技能 | promoted programs / recipes verified by replay without a model |
 | Studio | Studio | the UI; do not rename it Workbench |
-| Developing programs / Program research | 开发程序 / 程序研发 | the manual and model-assisted program guides |
+| Programs / Program skills | 程序 / 程序技能 | task programs and model-assisted development for reuse |
 
 Website concept descriptions follow the docs home page. Buttons name their destination: Quickstart, Agents,
-Developing programs, Program research, Deployment. Keep the website's English markup, Chinese dictionary and
+Programs, Program skills, Deployment. Existing URLs remain stable. Keep the website's English markup, Chinese dictionary and
 metadata aligned when changing these terms. Its brand headline can differ from a documentation heading.
 
 State what each verification path proves: campaign candidates pass a gate; recipes pass replay checks. Promotion
 and deployment remain separate, and hardware requires target validation. Describe current Serve behaviour in
 product copy; keep broader model-serving ambitions in design planning.
+
+### Titles and scope
+
+- Navigation labels name a capability or object: Programs, Tool agents, Skill library. Prefer one to three words.
+- Page titles name the capability or the task: Memory, Create a world, Develop a program skill.
+- Section titles name one action or topic: Setup, Retrieval, Constraints. Prefer two to four words; retain a
+  qualifier when it prevents ambiguity. Do not put a full explanatory sentence in the table of contents.
+- Concept pages explain the capability, its use cases and the next action. Keep selection tables in one place.
+- Guides follow one usable path through prerequisites, commands and outputs. Keep required compatibility,
+  observation conditions and evaluation boundaries beside the relevant step.
+- Exact fields, defaults, storage rules and state transitions belong in Reference. A guide links to that lookup.
+- Measurements, trial history, failed attempts and long recorded traces belong in validation records or Research.
+  Keep a short link from the guide. Expected tutorial output may stay when it helps a reader check their run.
+- A section that only links elsewhere usually belongs in Next or a short reference paragraph. Preserve its old
+  fragment as an HTML span instead of retaining an empty heading in the table of contents.
+- Use cases lead with the task and demo. State scope up front; put detailed recording provenance in a disclosure.
+- Mark experimental integrations at their entry point. Moving results out of a guide must not imply broader
+  reliability or remove conditions needed to use the capability correctly.
 
 ### Page order
 
@@ -219,15 +237,16 @@ Each fact lives on one page. Other pages give one sentence and a link.
 
 | Fact | Home |
 |---|---|
-| the five concepts and their relationship | How Hylo fits together in User Guides |
+| the five concepts and their relationship | Concepts in Guides |
 | agent selection and control modes | Agents |
-| skill kinds, status, matching and application | Skill library |
-| measured example results | Showcase, generated from the example READMEs |
+| skill kinds, status and matching | Memory & skills reference |
+| building a library and applying skills | Skill library guide |
+| measured example results | Validation records; source READMEs own full reproduction records |
 | the splits, and who reads which | Campaigns |
 | sync and realtime timing | Experiments |
 | digest and placement | Concepts defines them, Experiments gives the rules |
 | the roles of artifacts | Learning |
-| leaderboard numbers | Leaderboard |
+| published rankings | Website Research > Benchmarks |
 | what campaigns may not change, safety guarantees | Safety |
 | Studio roles and tokens | Security |
 | the repository table and the architecture diagram | Architecture |
@@ -268,7 +287,7 @@ Keep current limitations: write them as current behaviour.
 ### Reviewing structural changes
 
 - Preserve existing page URLs and useful section anchors when moving content; leave a short link at the old anchor.
-- User Guides explanations live under `user-guide/`, alongside their operational guides. When a URL changes,
+- Guides explanations live under `user-guide/`, alongside their operational guides. When a URL changes,
   update incoming links and add the old path to `mkdocs/redirects.py`; redirects preserve query strings and anchors
   and stay out of navigation and search.
 - Rebuild both sites and run `check_site.py` on each output. The checker does not fetch external URLs.

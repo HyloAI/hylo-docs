@@ -85,8 +85,7 @@ output_dir: runs/workcell
 this file, so review changes there as safety changes. [Safety](../user-guide/safety.md#configure-guards) describes
 every guard.
 
-
-## Python API and service endpoints
+## API { #python-api-and-service-endpoints }
 
 - [Serve package](../api/packages/hylo-serve.md): configuration models and runtime implementation.
 - [Workcell API](../user-guide/deployment.md#workcell-api): HTTP endpoints and request types.

@@ -32,7 +32,7 @@ export PYOPENGL_PLATFORM=osmesa
 export LD_LIBRARY_PATH=~/.local/mesa/root/usr/lib/x86_64-linux-gnu
 ```
 
-## Strategy development tools
+## Program tools { #strategy-development-tools }
 
 The workspace discovers `hylo-manip`, `hylo-code-agents` and `hylo-tools` alongside the other packages. Reference
 programs need the robot assets and camera rendering above, but no chat model. Assets are cached on first use.
@@ -41,13 +41,13 @@ API configured in the model specification. A local model must already be availab
 
 Heavy perception and motion tools use `uv` worker environments: their first call can install separate dependencies
 and download weights. Some primary backends require model access or registered body-model files; the tools expose
-fallbacks and record the backend actually used. See [Developing programs](../user-guide/developing-strategies.md)
+fallbacks and record the backend actually used. See [Programs](../user-guide/developing-strategies.md)
 and the [environment variables](../configuration/environment-variables.md#strategy-development).
 
 robosuite and RoboCasa have their own setup scripts under `bench/envs/robosuite` and `bench/envs/robocasa`.
 They are optional; the existing CPU quickstart does not require those runtimes or a language model.
 
-## LIBERO and LeRobot policies
+## LIBERO and LeRobot { #libero-and-lerobot-policies }
 
 LIBERO and LeRobot need package versions that conflict with the workspace, so they run in their own venv inside
 bench, through two named [runtimes](../configuration/profiles.md).
@@ -86,7 +86,7 @@ bench, through two named [runtimes](../configuration/profiles.md).
     Weight licences differ from the code's; the [plugin catalogue](../developer-guide/plugin-catalogue.md) lists
     them.
 
-## A subset of the repositories
+## Partial workspace { #a-subset-of-the-repositories }
 
 The workspace covers whichever repositories are present; tests that need a missing one skip.
 

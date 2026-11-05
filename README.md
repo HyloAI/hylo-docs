@@ -27,17 +27,25 @@ Physical RSI connects agents acting in worlds with accumulated memory and reusab
 concepts; task guides explain execution, evaluation, learning, campaigns and deployment. Skills have their own
 navigation entry even though the library is implemented in the memory package. Architecture describes the
 implementation; historical designs are grouped under the internal archive.
-The public navigation has five sections: **Get started, User Guides, Use Cases, Developers,
-and Reference**. Home is the entry page. **User Guides** groups concept explanations and practical guides under
+The public navigation has five sections: **Get started, Guides, Use cases, Developers,
+and Reference**. Home is the entry page. **Guides** groups concept explanations and practical guides under
 **Physical RSI, Worlds, Agents, Memory and Skills**, followed by deployment and operations.
 The full site adds **Internal** for current direction, decisions,
 research, experiments and historical records. `mkdocs.yml` owns the navigation; the public build inherits it
 and filters internal/excluded entries with `mkdocs/public_hook.py`.
 
-Recorded case introductions live in `docs/use-cases/`; reproduction records under `docs/developer-guide/validation/` are generated from repository example
-READMEs. Public Research articles and benchmark results live at https://hyloai.github.io/research/, in the website repository. Edit those sources to change measured results. Reference groups CLI, Configuration, Worlds & tools, Python API, Data formats & schemas and the Plugin catalogue.
+Navigation labels name capabilities; page and section titles name tasks or short topics. Guides focus on setup,
+usage and outputs. Memory fields and skill status live in `docs/reference/memory.md`; campaign fields live in
+`docs/configuration/campaigns.md`. Recorded measurements and traces are reached through Validation > Records,
+including `docs/developer-guide/validation/guide-results.md`. Preserve published URLs and section anchors when
+shortening titles. The [authoring guide](docs/developer-guide/docs.md#titles-and-scope) defines this structure.
+
+Recorded case introductions live in `docs/use-cases/`. Validation includes curated summaries and reproduction
+records generated from repository example READMEs. Public Research articles and benchmark results live at
+https://hyloai.github.io/research/, in the website repository. Edit the original records to change measured results.
+Reference groups CLI, Configuration, Worlds & tools, Memory & skills, Python API, Data formats and the Plugin catalogue.
 Python API owns the package index; individual packages are reached from that index rather than expanded in navigation.
-Interface notes live under Developers, deployment setup under User Guides, and the example catalogue under Get started.
+Interfaces live under Developers, deployment setup under Guides, and the example catalogue under Get started.
 API package indexes link to generated module pages;
 the CLI index links to generated command-family pages. New packages need entries in the generator's package list
 and the shared navigation. Keep implemented, measured and unrun capabilities distinct.

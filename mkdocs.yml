@@ -133,6 +133,7 @@ not_in_nav: |
   api/packages/
   cli/commands/
   developer-guide/validation/tool-agents-*.md
+  developer-guide/validation/guide-results.md
   developer-guide/validation/memory.md
   developer-guide/validation/agents.md
   developer-guide/validation/learning.md
@@ -150,51 +151,51 @@ nav:
   - First improvement: getting-started/first-improvement.md
   - Next steps: getting-started/next-steps.md
   - Optional environments: getting-started/optional-environments.md
-  - Example catalogue: getting-started/examples.md
-- User Guides:
+  - Examples: getting-started/examples.md
+- Guides:
   - user-guide/index.md
-  - How Hylo fits together: user-guide/overview.md
+  - Concepts: user-guide/overview.md
   - Physical RSI:
     - Overview: physical-rsi.md
-    - Run experiments: user-guide/experiments.md
+    - Experiments: user-guide/experiments.md
     - Benchmarking:
       - benchmarking/index.md
-      - Run and compare evaluations: benchmarking/leaderboard.md
-    - Learn from runs: user-guide/learning.md
-    - Run campaigns: user-guide/campaigns.md
+      - Compare agents: benchmarking/leaderboard.md
+    - Learning: user-guide/learning.md
+    - Campaigns: user-guide/campaigns.md
   - Worlds:
     - Overview: user-guide/worlds/overview.md
     - Create a world: user-guide/worlds.md
   - Agents:
     - Overview: user-guide/agents.md
-    - Run policies: user-guide/policies.md
-    - Develop programs: user-guide/developing-strategies.md
-    - Run tool-calling agents: user-guide/tool-agents.md
+    - Policies: user-guide/policies.md
+    - Programs: user-guide/developing-strategies.md
+    - Tool agents: user-guide/tool-agents.md
   - Memory:
     - user-guide/memory/index.md
-    - Choose and use memory: user-guide/using-memory.md
-    - Memory backends:
-      - user-guide/memory/spatial.md
-      - user-guide/memory/events.md
-      - user-guide/memory/video.md
-      - user-guide/memory/action.md
-      - user-guide/memory/lessons.md
+    - Quickstart: user-guide/using-memory.md
+    - Backends:
+      - Spatial: user-guide/memory/spatial.md
+      - Events: user-guide/memory/events.md
+      - Video: user-guide/memory/video.md
+      - Actions: user-guide/memory/action.md
+      - Lessons: user-guide/memory/lessons.md
   - Skills:
     - Overview: user-guide/skills.md
-    - Build and use a skill library: user-guide/memory/skills.md
-    - Develop and reuse program skills: user-guide/research-and-skills.md
-  - Deploy and operate:
+    - Skill library: user-guide/memory/skills.md
+    - Program skills: user-guide/research-and-skills.md
+  - Operations:
     - user-guide/deployment.md
     - Deployments repository: configuration/deployments-repo.md
     - user-guide/studio.md
     - user-guide/store.md
     - user-guide/safety.md
     - user-guide/security.md
-- Use Cases:
+- Use cases:
   - use-cases/index.md
-  - use-cases/worlds.md
-  - use-cases/robot-control.md
-  - use-cases/program-skills.md
+  - Build worlds: use-cases/worlds.md
+  - Control robots: use-cases/robot-control.md
+  - Reuse skills: use-cases/program-skills.md
 - Developers:
   - Architecture: design/overview.md
   - Validation:
@@ -203,18 +204,19 @@ nav:
     - Runtime: developer-guide/validation/runtime.md
     - Plugins: developer-guide/validation/plugins.md
     - Instruments: developer-guide/validation/instruments.md
-    - Video-memory integration: developer-guide/validation/video-memory.md
-    - Reproduction records: developer-guide/validation/records.md
+    - Video memory: developer-guide/validation/video-memory.md
+    - Records: developer-guide/validation/records.md
   - developer-guide/execution-model.md
-  - Extension tutorials:
+  - Extensions:
     - developer-guide/adding-a-policy.md
     - developer-guide/adding-an-environment.md
     - developer-guide/adding-a-learner.md
     - developer-guide/adding-a-generator.md
-  - Plugin development:
+    - Program repair: developer-guide/program-repair.md
+  - Plugins:
     - harness/extending.md
     - harness/plugin-system.md
-  - Interface notes:
+  - Interfaces:
     - developer-guide/interfaces.md
     - Environment: harness/interfaces/environment.md
     - Agent: harness/interfaces/agent.md
@@ -236,20 +238,22 @@ nav:
   - CLI: cli/index.md
   - Configuration:
     - reference/configuration.md
-    - Experiment configuration: harness/experiment-schema.md
-    - Execution profiles: configuration/profiles.md
+    - Experiments: harness/experiment-schema.md
+    - Campaigns: configuration/campaigns.md
+    - Profiles: configuration/profiles.md
     - Environment variables: configuration/environment-variables.md
-    - Evaluation protocols: benchmarking/protocols.md
-    - Workcell configuration: configuration/workcells.md
+    - Protocols: benchmarking/protocols.md
+    - Workcells: configuration/workcells.md
   - Worlds & tools: reference/worlds.md
+  - Memory & skills: reference/memory.md
   - Python API:
     - api/index.md
     - Core contracts: api/contracts.md
     - Episode loop: api/kernel.md
-    - Configuration API: api/config.md
+    - Configuration: api/config.md
     - Artifacts and store: api/artifacts-and-store.md
     - Package index: api/packages/index.md
-  - Data formats & schemas: api/formats.md
+  - Data formats: api/formats.md
   - Plugin catalogue: developer-guide/plugin-catalogue.md
 - Internal:
   - internal/index.md

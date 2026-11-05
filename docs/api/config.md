@@ -19,7 +19,7 @@ for how plugins are found, see the [plugin system](../harness/plugin-system.md).
       show_if_no_docstring: true
       filters: ["!^_", "!^main$"]
 
-## Contract versions and plugin metadata
+## Plugin metadata { #contract-versions-and-plugin-metadata }
 
 ::: hylo.core.plugins
     options:

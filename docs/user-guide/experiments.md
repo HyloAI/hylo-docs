@@ -4,7 +4,7 @@ Run a configured agent against specified tasks and initial states, then inspect 
 Use development runs to iterate and separate validation runs to measure capability. An experiment config names
 the benchmark, environment, agent, timing and safety settings.
 
-## Run a config
+## Run { #run-a-config }
 
 Commands on this page run from `bench/`, so runs land in the store registered during
 [installation](../getting-started/installation.md):
@@ -37,7 +37,7 @@ uv run hylo run examples/configs/mujoco_reach.yaml
 | `--set KEY=VALUE` | dotted-path override, value parsed as YAML; repeatable (`--set agent.params.kp=0.1 --set workers=8`) |
 | `--output DIR` | where the run directory goes (default: the config's `output_dir`, `runs`) |
 
-## Runs and traces
+## Outputs { #runs-and-traces }
 
 A run directory is named `<name>-<split>-<digest>-<6 hex>` and contains:
 
@@ -65,7 +65,7 @@ so the run's `success_mean` covers only `success` and `failure` episodes ([deplo
 
 Read runs with `hylo trace RUN_DIR [EPISODE_ID]` or in [Studio](studio.md).
 
-## The config
+## Configuration { #the-config }
 
 ```yaml
 schema_version: hylo.experiment/v0.1
@@ -98,7 +98,7 @@ output_dir: runs
 The full schema is the [experiment config schema](../harness/experiment-schema.md). `hylo schema experiment` prints
 it as JSON Schema.
 
-## Check a config before a long run
+## Preflight checks { #check-a-config-before-a-long-run }
 
 ```bash
 uv run hylo conformance examples/configs/mujoco_reach.yaml            # the environment against its contract
@@ -109,7 +109,7 @@ uv run hylo conformance examples/configs/mujoco_reach.yaml --agent    # and the 
 long `spec()` may take, which matters for remote environments. `--split` and `--set` work as in `hylo run`. What
 each check covers is in [extending](../harness/extending.md).
 
-## Timing: sync and realtime
+## Timing { #timing-sync-and-realtime }
 
 ![Sync: the world waits for each policy call. Realtime: the robot keeps moving while the next chunk is computed.](../assets/diagrams/episode-loop-light.svg){ .hylo-diagram .only-light }
 ![Sync: the world waits for each policy call. Realtime: the robot keeps moving while the next chunk is computed.](../assets/diagrams/episode-loop-dark.svg){ .hylo-diagram .only-dark }
@@ -146,7 +146,7 @@ An agent that returns one action per call, such as `baseline.planar_ik` or `temp
 realtime mode with any latency: each action arrives after its step has passed, so the arm only holds until the
 watchdog ends the episode.
 
-## Where components run
+## Process placement { #where-components-run }
 
 An environment or an agent can run in another process, with another interpreter. Name a **runtime** from this
 machine's [execution profile](../configuration/profiles.md), so the config stays the same on every machine:
@@ -190,7 +190,7 @@ The config then uses `{type: remote.ws, params: {url: "ws://host:8770"}}` as the
 connection gets its own component instance. `--token-env` names an environment variable that holds the token
 ([security](security.md)).
 
-## What is measured: the digest
+## Comparability { #what-is-measured-the-digest }
 
 The **config digest** is a short hash of everything the experiment measures. Left out are where results go
 (`output_dir`), parallelism (`workers`), and where components run: `env.remote`, and a `remote` agent's `runtime`,
@@ -206,11 +206,11 @@ Two runs with the same digest used the same config. Compare them episode by epis
 - **The code versions match.** Code is not part of the digest. Compare the git commit and package versions in the
   two manifests.
 
-## Design
-
-[Read the design rationale](../developer-guide/execution-model.md#experiments).
+<span id="design"></span>
 
 ## Next
+
+- [Execution model](../developer-guide/execution-model.md#experiments): runtime and implementation details.
 
 - [Policies](policies.md): run your own model under one of Hylo's agents.
 - [Benchmarking](../benchmarking/index.md): score an agent under a fixed evaluation protocol.

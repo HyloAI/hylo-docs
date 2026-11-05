@@ -14,7 +14,7 @@ Commands run from `bench/` unless an entry says otherwise.
 | `[Errno 98] ... address already in use`, HTTP 401 or 409 from a workcell | [Serving and workcells](#serve-and-studio) |
 | `IncompatiblePlugin`, `cannot build ...`, `warning: ... declares no contract version` | [Writing plugins](#plugins) |
 
-## Install and workspace
+## Installation { #install-and-workspace }
 
 ??? question "`.../pyproject.toml is stale: run python harness/dev/workspace.py .` or `AssertionError: run python harness/dev/workspace.py`"
     **Cause:** the workspace file no longer matches the repositories present. A repository or package was added or
@@ -52,7 +52,7 @@ Commands run from `bench/` unless an entry says otherwise.
 
     **Check:** `uv run hylo profile show` lists the runtime. See [execution profiles](../configuration/profiles.md).
 
-## Experiments and the episode loop
+## Execution { #experiments-and-the-episode-loop }
 
 ??? question "`EnvironmentFault: env server exited with code 1`, after a traceback"
     **Cause:** a remote environment's process (`env.remote`) died before it answered. Its own traceback is printed
@@ -174,7 +174,7 @@ A candidate rejected by the stage-0 checks is recorded in the campaign archive w
     **Fix:** none needed. If it rejects candidates you expected to pass, raise `protocol.prescreen.margin` or
     remove the prescreen.
 
-## The store
+## Store { #the-store }
 
 ??? question "`artifact:l10-trace-v2 not found in the store at .../runs`"
     **Cause:** no run or sealed artifact with that id is under the store directory, even after the index was rebuilt.
@@ -222,7 +222,7 @@ A candidate rejected by the stage-0 checks is recorded in the campaign archive w
 
     **Fix:** remove `<store>/.hylo-store/index.json` and run `hylo store index`.
 
-## Serve and studio
+## Serve and Studio { #serve-and-studio }
 
 ??? question "`ERROR:    [Errno 98] error while attempting to bind on address ('127.0.0.1', 8765): address already in use`"
     **Cause:** another process holds the port. The message comes from uvicorn.
@@ -270,7 +270,7 @@ A candidate rejected by the stage-0 checks is recorded in the campaign archive w
 
     **Fix:** add the declaration ([extending](../harness/extending.md), [versioning](versioning.md#contract-versions)).
 
-## Inspecting a run
+## Inspect a run { #inspecting-a-run }
 
 [Experiments](../user-guide/experiments.md#runs-and-traces) lists the files of a run directory.
 
@@ -283,7 +283,7 @@ The `episode.end` event carries `status` and `termination_reason`. The `terminat
 apart: `max_steps`, `terminated`, `truncated`, `sim_error`, or the text of the error that ended the episode. An
 `error` event carries `phase` and `message`.
 
-## Collecting a bug report
+## Report a bug { #collecting-a-bug-report }
 
 Include:
 

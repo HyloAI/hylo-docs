@@ -1,4 +1,4 @@
-# Versioning and compatibility
+# Compatibility { #versioning-and-compatibility }
 
 This page lists what carries a version or a digest, and what changes it.
 
@@ -38,7 +38,7 @@ The plugin registry checks the declaration before it imports an entry point, and
 mismatch. A plugin without a declaration still loads and is listed as undeclared, and `hylo plugin check` warns.
 `module:attr` references are not checked, because there is no package to ask.
 
-## Format schema versions
+## Schema versions { #format-schema-versions }
 
 Files read through a Hylo contract (experiment configs, profiles, protocols, artifact manifests, scorecards, the
 store index, campaign configs) carry their schema version. They are refused when the version or a key is unknown,
@@ -102,7 +102,7 @@ the same definitions get now, because the schema id is part of what is hashed. T
 before placement (`env.remote`) was left out of the digest. To compare with such a run, run the older agent again.
 Artifact content digests did not change, so older store ids still resolve.
 
-## Package versions and releases
+## Package releases { #package-versions-and-releases }
 
 There are 23 packages, all at `0.1.0.dev0`. Nothing is released to PyPI, and the repositories have no tags. Install
 from the GitHub repositories (`https://github.com/HyloAI/hylo-<name>`), as

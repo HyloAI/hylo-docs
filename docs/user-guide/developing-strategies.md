@@ -1,13 +1,13 @@
-# Developing programs
+# Develop a program { #developing-programs }
 
 Write and run a task program using Hylo's perception, grasping and motion-planning tools. Start with the task,
 robot, observations and success conditions, then test the program across initial states.
 
 `code.program` executes a hand-written or frozen `solve(robot)` program. `code.llm` writes and executes code
 one turn at a time during an episode. For policy and tool-calling alternatives, see [Agents](agents.md).
-For repeated development cases and frozen submissions, follow [Program research](research-and-skills.md).
+For repeated development cases and frozen submissions, follow [Program skills](research-and-skills.md).
 
-## Prepare the environment
+## Setup { #prepare-the-environment }
 
 Use the [development workspace](../getting-started/installation.md), with harness and bench installed. It includes
 `hylo-manip`, `hylo-code-agents` and `hylo-tools`. Camera-based tasks need an
@@ -15,9 +15,9 @@ Use the [development workspace](../getting-started/installation.md), with harnes
 asset cache on first use; a reference program needs no language model. `code.llm` and research additionally need
 a configured chat backend, such as a local Ollama endpoint or a supported API.
 
-Start with a supported MuJoCo manipulation task. Panda, ALOHA and the fixed-base G1 have recorded program runs.
-LIBERO uses a separate runtime. robosuite and RoboCasa have adapters and interface checks, while their formal
-program success-rate evaluations remain unrun. See the [measured showcase](../developer-guide/validation/tool-agents.md).
+Start with a supported MuJoCo manipulation task. LIBERO uses a separate runtime. Check the
+[adapter validation records](../developer-guide/validation/tool-agents.md) before choosing another environment;
+an available adapter alone does not establish task success.
 
 ## Robot tools
 
@@ -38,7 +38,7 @@ recorded. Tools use the robot contract; the environment retains the task's succe
 Simulator segmentation is privileged perception. Keep it explicit in the environment config and compare runs
 with the same observation conditions. A result using segmentation is not a like-for-like comparison with an RGB-only policy.
 
-## Run a reference program
+## Run a program { #run-a-reference-program }
 
 From the workspace root, after configuring rendering:
 
@@ -57,20 +57,19 @@ To develop your own program, use the generated config as a starting point. `code
 itself, not a Python filename. Keep the benchmark and environment fixed while changing the strategy.
 
 For a model that writes code during the episode, use `agent.type: code.llm` and a `model` specification in its
-params. For repeated development cases and frozen submissions, follow [Program research](research-and-skills.md).
+params.
 
-## Model tools and further workflows
+## Model tools { #model-tools-and-further-workflows }
 
 `hylo tool` exposes segmentation, depth, meshes, motion extraction and rendering. Each heavy model runs in a
 separate worker environment; the first call can install dependencies and download weights. Current mesh, hand
 and human tools have fallback backends because their primary models have access or registration requirements.
 The [tools README](https://github.com/HyloAI/hylo-harness/tree/main/adapters/hylo-tools) records backends, licences and timings.
 
-Scene generation, replay-to-simulation and motion authoring are additional experimental workflows. Free-scene
-and motion-free showcase requests remain unrun; external replay and physical motion stability have known failures.
-Their presence in the CLI is not evidence of task reliability. See [Showcase](../developer-guide/validation/tool-agents.md).
+For experimental scene generation, replay and motion-authoring workflows, consult the
+[validation records](../developer-guide/validation/tool-agents.md) for supported conditions and known failures.
 
-## Tool calls instead of code
+## Tool agents { #tool-calls-instead-of-code }
 
 `code.llm` and `tools.llm` use the same robot tools. `code.llm` writes Python blocks, which suits tasks a program
 can express in a few lines and keeps the code for reuse. `tools.llm` calls one tool at a time with JSON arguments;
@@ -80,7 +79,7 @@ trained for tool calls and makes each step visible. See [Tool-calling agents](to
 To try a task with another robot or in another scene first, build it as a [world](worlds.md): 24 robot packs,
 cameras, people, goals checked with reason codes.
 
-## Validate the capability and record its scope
+## Validation { #validate-the-capability-and-record-its-scope }
 
 Inspect task success, steps, safety interventions and traces across more than one initial state. Record the
 robot, task, observation conditions and program version. Development successes do not establish generalisation;
@@ -95,6 +94,6 @@ and does not limit memory. Read [Security](security.md#model-written-programs) b
 
 ## Next
 
-- [Program research](research-and-skills.md): develop and freeze a program with a model.
+- [Program skills](research-and-skills.md): develop and freeze a program with a model.
 - [Experiments](experiments.md): run a program under explicit task conditions.
 - [Skills](skills.md): retain and reuse verified capabilities.

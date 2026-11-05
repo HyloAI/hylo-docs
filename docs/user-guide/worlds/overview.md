@@ -3,7 +3,7 @@
 A world is a simulation in which agents can act and receive measured feedback. It contains robots, objects,
 cameras and goals. Use it to develop a task or explore a scene; use a benchmark when you need a fixed comparison.
 
-## Stage, world and task
+## World model { #stage-world-and-task }
 
 | Term | Meaning |
 |---|---|
@@ -15,7 +15,7 @@ Changing a stage does not change a running world until it is rebuilt. Actions na
 were planned for, so an action based on an earlier build can be refused. Receipts describe the measured motion;
 goal checks decide whether the requested result holds.
 
-## How agents use worlds
+## Agent integration { #how-agents-use-worlds }
 
 A person, a model or a coding agent can edit a stage, build it, act and check outcomes through the same world
 tools. Robot packs supply models and supported controls. Camera observations can feed an agent's memory;

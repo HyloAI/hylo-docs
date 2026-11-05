@@ -1,4 +1,4 @@
-# Adding an environment
+# Add an environment { #adding-an-environment }
 
 You will add a simulator and end with a scorecard under your own evaluation protocol. The example, `slider`, is a
 point on a rail that must reach a goal. `hylo-env-mujoco` and `hylo-env-libero` in hylo-bench are the full
@@ -6,7 +6,7 @@ references. You need the [development workspace](../getting-started/installation
 
 An environment is the simulator **plus** the task logic. It decides success; the agent never does.
 
-## 1. Create the package
+## 1. Create a package { #1-create-the-package }
 
 There is no `hylo plugin new` template for environments. From the workspace root, create the package by hand in
 `plugins/packages/`:
@@ -54,7 +54,7 @@ META = {"contracts": {"envs": "hylo.env/v0.1", "benchmarks": "hylo.benchmark/v0.
 
 `META` and maturity: [extending Hylo](../harness/extending.md).
 
-## 2. Write the environment
+## 2. Implement the environment { #2-write-the-environment }
 
 An environment has four methods: `spec`, `reset`, `step` and `close` ([contracts](../api/contracts.md)).
 
@@ -141,7 +141,7 @@ How the last step becomes an episode status is in [execution lifecycle](../harne
 Optional capabilities, such as snapshots or privileged state, are declared in `EnvSpec.capabilities`
 ([interfaces: environment](../harness/interfaces/environment.md)).
 
-## 3. Add tasks and a benchmark
+## 3. Define tasks { #3-add-tasks-and-a-benchmark }
 
 A `TaskSpec` describes one task: a globally unique `id`, `version`, `instruction`, `max_steps`, environment-specific
 `params` and `tags`. A `Benchmark` is tasks plus splits.
@@ -157,7 +157,7 @@ The `protocol` argument chooses a split scheme, not an evaluation protocol; the 
 `rsi_splits` gives the four [splits](../user-guide/campaigns.md#splits) that campaigns need: `search`, `search_val`,
 `gate` and `heldout`, here 20, 10, 10 and 10 init states.
 
-## 4. Install and check it
+## 4. Validate { #4-install-and-check-it }
 
 A conformance check needs an agent. Add this proportional controller, a [policy](adding-a-policy.md), to `env.py`:
 
@@ -233,7 +233,7 @@ agent PolicyAgent: PASS
 A PASS means the contract holds; it does not check your success predicate. The snapshot check skips because `slider`
 does not declare `snapshot`. Options for slow or nondeterministic simulators are in [testing](testing.md).
 
-## 5. Run it
+## 5. Run { #5-run-it }
 
 ```bash
 uv run hylo run slider.yaml
@@ -251,7 +251,7 @@ uv run hylo run slider.yaml
 }
 ```
 
-## 6. A protocol in bench
+## 6. Add a protocol { #6-a-protocol-in-bench }
 
 An [evaluation protocol](../benchmarking/protocols.md) fixes everything except the agent being scored:
 

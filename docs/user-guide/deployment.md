@@ -25,7 +25,7 @@ the policy server is slow, the arm holds its position, and if it stops answering
 e-stop stays latched in the workcell until an operator clears it. Where these layers stop is on the
 [safety](safety.md#safety-on-robots) page.
 
-## 1. Bring-up without hardware
+## 1. Simulated setup { #1-bring-up-without-hardware }
 
 Clone the deployments template next to the other repositories, once. Studio's web UI also needs a one-time build
 ([installation](../getting-started/installation.md)).
@@ -72,7 +72,7 @@ After the verdict, `/status` is back to `idle` and reports the episode:
 
 The episode is in `runs/workcell/workcell-sim-arm/`.
 
-## 2. The robot computer
+## 2. Robot setup { #2-the-robot-computer }
 
 The robot computer needs:
 
@@ -105,7 +105,7 @@ safety shield is not a certified safety function ([safety](safety.md)).
 
 The LeRobot robot adapter has run only with the simulated arm ([plugin catalogue](../developer-guide/plugin-catalogue.md)).
 
-## 3. Serving a policy
+## 3. Policy server { #3-serving-a-policy }
 
 On the GPU machine, serve the agent of an experiment config, or the promoted version of a campaign:
 
@@ -124,7 +124,7 @@ uv run hylo serve policy --campaign bench/runs/evolve/libero10-steering --host 0
 The workcell config points at the server with `policy: {url: "ws://gpu-box:8000/hylo", protocol: hylo}`. Give the
 token per episode rather than in that config ([security](security.md)).
 
-## 4. Operating a workcell
+## 4. Workcell { #4-operating-a-workcell }
 
 Start the workcell on the robot computer, and point Studio at it and at the policy server:
 
@@ -165,7 +165,7 @@ Operator events go to `POST /operator`:
 Studio's Operator station sends these events. Every Studio role can press the e-stop; the other events need the
 operator role ([security](security.md#studio-roles)).
 
-## 5. Recorded episodes
+## 5. Recordings { #5-recorded-episodes }
 
 All episodes of a workcell go into one run, `<output_dir>/workcell-<name>/`. Unlike `hylo run`, which writes a new
 run each time, the workcell appends a trace per episode and updates `evallog.json` after each one. Replay, judges and Studio work on it like any run. Episodes get the split `deployment`, which no learner reads
@@ -222,11 +222,11 @@ complete example. [Deployments repository](../configuration/deployments-repo.md)
 | `POST /operator` | `OperatorEvent` (`type`, `by`, `verdict`, `note`) → `{"fault", "state"}` | 400 for an unknown or malformed event |
 | `WS /events` | one JSON event per message | observations (JPEG), actions, chunks, safety, operator events, done |
 
-## Design
-
-[Read the design rationale](../developer-guide/execution-model.md#deployment).
+<span id="design"></span>
 
 ## Next
+
+- [Execution model](../developer-guide/execution-model.md#deployment): runtime and implementation details.
 
 - [Safety](safety.md): what the shield checks on a robot, and where it stops.
 - [Security](security.md): tokens and bind addresses before the workcell leaves loopback.

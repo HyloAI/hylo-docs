@@ -30,51 +30,22 @@ agent:
 
 The full LIBERO-10 config is `bench/examples/configs/libero10_memory.yaml`.
 
-| Setting | Default | Meaning |
-|---|---|---|
-| `k` | 10 | segments retrieved |
-| `same_task` | true | retrieve only from the same task |
-| `sim_floor` | 0.9 | minimum cosine similarity; calibrate it against the bank's build report |
-| `temperature` | 0.05 | softmax temperature over similarity when weighting segments |
-| `dtw_mad` | 2.0 | how far from the others a segment may be before it is dropped |
-| `compare_steps` | the execution steps | prefix length compared between segments |
-| `t0_min`, `t0_max` | 0.1, 0.7 | the range of start times; smaller is a stronger bias |
-| `fixed_t0` | none | ignore confidence and always start here (for ablations) |
-| `dispersion_scale` | 0.5 | disagreement at which confidence roughly halves |
-| `gripper_dim` | −1 | the action dimension treated as the gripper |
+[Retrieval settings](../../reference/memory.md#retrieval-settings) lists defaults and all tuning options.
 
-SmolVLA's velocity field pulls hard towards its own action: on LIBERO, a prior almost one standard deviation away
-moves the result about 40% of the way at `t0 = 0.1` and hardly at all from `t0 = 0.4`. Useful guidance therefore
-lives at small `t0`.
+Calibrate retrieval and sampling strength on development data. Action memory can reduce success when retrieved
+motions do not suit the current scene; compare with the same policy without memory before adopting it.
 
-## Design
+## Behaviour { #design }
 
-**The problem.** A frozen policy repeats the same situations many times but learns nothing from them: it cannot be
-retrained in place, and every decision samples from scratch. Yet its own past successes are a record of what works in
-situations close to the present one. Action memory lets those successes inform the next decision without changing a
-single weight.
+Build a bank from successful development episodes and load it frozen for evaluation. To incorporate new
+development experience, save a new artifact. Each decision retrieves similar segments and uses them as a
+sampling prior while the policy still responds to the current observation.
 
-**When it is written and read.** A bank is built after development runs, from the chunks of episodes the simulator
-judged successful, and then sealed. It is read at every policy decision. Across sessions, each session loads the
-previous bank frozen and saves a new one with its own verified successes added: a new artifact, never an edit.
+Close, consistent neighbours give a stronger bias. Distant or disagreeing neighbours give a weaker one;
+without a usable match, the policy samples as it would without memory. The policy computes retrieval keys in
+its own forward pass, so retrieval needs no extra model call.
 
-**Steer, do not replay.** Replaying a remembered chunk ignores everything that differs between then and now. Instead
-the remembered motion becomes the starting point of the policy's own flow sampling, and the policy's velocity field,
-which sees the current observation, carries it the rest of the way.
-
-**Confidence sets the strength.** Close, consistent neighbours start sampling late in the flow (a strong bias);
-distant or disagreeing neighbours start it early (a weak one). With nothing usable, the policy runs exactly as it
-would without memory.
-
-**Agreement before averaging.** The mean of two different motions is a motion neither of them made, so segments that
-disagree with the rest are dropped first. The gripper is voted, not averaged: a half-closed gripper is neither open
-nor closed.
-
-**The policy's own key.** The retrieval key is computed inside the forward pass the policy runs anyway (for SmolVLA,
-its pooled visual tokens), so retrieval costs no extra model call and compares situations the way the policy sees
-them.
-
-## How a decision works
+## Retrieval { #how-a-decision-works }
 
 ![The policy's own key retrieves the most similar verified segments from the bank; outliers are dropped, the rest form a prior and a start time, and flow sampling starts from the prior while the policy still sees the current observation. With nothing usable, the policy runs unchanged.](../../assets/diagrams/action-steer-light.svg){ .hylo-diagram .only-light }
 ![The policy's own key retrieves the most similar verified segments from the bank; outliers are dropped, the rest form a prior and a start time, and flow sampling starts from the prior while the policy still sees the current observation. With nothing usable, the policy runs unchanged.](../../assets/diagrams/action-steer-dark.svg){ .hylo-diagram .only-dark }
@@ -108,42 +79,18 @@ them.
 
     `dispersion` is the mean pairwise DTW distance between the kept segments.
 
-Each decision emits `memory.retrieval`. From a recorded MuJoCo episode: five candidates above the floor, four kept,
-started at a fixed `t0` of 0.3, with the source episode, step and similarity of each kept segment.
-
-??? example "A recorded retrieval"
-
-    ```json
-    {"type": "memory.retrieval", "seq": 3,
-     "payload": {"chunk_index": 0, "step": 0, "used_prior": true, "candidates": 5, "kept": 4,
-                 "mean_sim": 0.99958, "dispersion": 0.0536, "confidence": 0.8609, "t0": 0.3,
-                 "hits": [["mujoco.planar_reach_fixed-s30141-c701ae45", 0, 1.00002],
-                          ["mujoco.planar_reach_fixed-s30141-14b63ae5", 0, 1.00002],
-                          ["mujoco.planar_reach_fixed-s30147-9924dbb2", 0, 0.99914],
-                          ["mujoco.planar_reach_fixed-s30147-52489dc1", 0, 0.99914]]}}
-    ```
+Each decision emits `memory.retrieval` with the matches, confidence and sampling start time. Inspect these
+fields when a retrieved prior changes the result.
 
 The chosen chunk's provenance also records `t0` and the number of segments kept, and the agent spec records the
 bank: `bank(<digest>,n=<segments>,k=10,floor=0.95,t0=[0.1,0.7])`.
 
-## Building a bank
+## Build a bank { #building-a-bank }
 
 A bank is a folder with `bank.npz` (keys, chunks, lengths) and `bank.json` (schema, digest, and each segment's
 task, step, progress and source episode); no pickle. It holds at most `capacity` segments (50,000 by default),
 oldest first out. Keys are stored L2-normalised as float16, so similarity is a dot product. Loading checks the
 content against the recorded digest.
-
-??? example "A bank's bank.json"
-
-    ```json
-    {"schema": "hylo.action_bank/v0.1", "digest": "b6f269909aabce26", "n": 5623, "key_dim": 8,
-     "segments": [{"task_id": "mujoco/planar_reach_fixed", "step": 0, "progress": 0.0,
-                   "source": {"run_id": "control-search_val", "episode_id": "mujoco.planar_reach_fixed-s30100-41fd994e",
-                              "split": "search_val", "judge": "sim"}}]}
-    ```
-
-    The bank after six sessions (first of 5,623 segments shown): 8-dimensional keys, each segment traced to the
-    episode it came from and to who judged that episode a success.
 
 For LeRobot policies, build from the runs of development splits, with the policy's own keys:
 
@@ -166,36 +113,19 @@ saves for the next.
 
 `lerobot.noise_steered` is a variant that remembers the initial noise that led to successful chunks instead of the
 chunks themselves, and mixes it with fresh noise over the full flow. Build its bank with
-`memory_build --store noise`. On unseen LIBERO start states it made no difference (0.55 and 0.54 against 0.54).
+`memory_build --store noise`. Compare it with the base policy under the same evaluation protocol.
 
-## What it achieved
-
-| Setting | Result |
-|---|---|
-| MuJoCo planar reach, revisited scenes | 0.75 → 0.81 (p = 0.29) |
-| MuJoCo planar reach, new scenes | 0.69 → 0.75 (p = 0.24) |
-| Six sessions on the same workcell, each extending the bank | +4, +5, +7, +11, +1 points in sessions 2–6; pooled +5.6 |
-| LIBERO-10, SmolVLA, bank from other start states | 0.54 → 0.46 |
-| LIBERO-10, same scenes, fixed `t0` 0.2 | 0.54 → 0.62 (p = 0.10) |
-
-On MuJoCo the key is the policy's 8-dimensional state, so a neighbour from another scene is still informative. On
-LIBERO the key is pooled image features, which carry no information about the outcome on an unseen layout. Looser
-retrieval (`k` 10, floor 0.95) with a well-tuned policy made results worse on MuJoCo in a development run. Treat
-action memory as an experiment to measure on your task, not a default.
-
-```bash
-uv run python examples/memory/03_action_memory_scene_recall.py    # in the harness repository
-uv run python examples/memory/05_memory_across_sessions.py
-```
-
-## Limits
+## Constraints { #limits }
 
 - The sampler must implement the prior-sampling protocol (`sample(..., prior_fn=...)` and `retrieval_key`).
   LeRobot flow policies do; the reference `policy.flow` does not on its own.
 - The gripper dimension is always aggregated by vote; there is no option for robots without a gripper.
 - Banks for policies other than LeRobot are built in scripts, not with a command.
 
+<span id="what-it-achieved"></span>
+
 ## Next
 
+- [Recorded results](../../developer-guide/validation/guide-results.md#action-memory): measurements, conditions and reproduction commands.
 - [Use memory](../using-memory.md): match a memory to its consuming agent.
 - [Memory](index.md): lifetime and evaluation boundaries.

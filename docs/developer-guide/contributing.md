@@ -3,7 +3,7 @@
 The rules for changing code in the Hylo repositories, and how to commit. [Architecture](../design/overview.md) shows
 how the repositories fit together.
 
-## The development workspace
+## Workspace { #the-development-workspace }
 
 Follow [installation](../getting-started/installation.md): it checks the repositories out side by side and installs
 every package editable into one venv. After you add or remove a package, regenerate the workspace file from the
@@ -16,7 +16,7 @@ uv sync
 
 The boundary lint fails while the workspace file is stale.
 
-## Repository and package rules
+## Repository rules { #repository-and-package-rules }
 
 `harness/dev/repos.toml` lists the repositories and what each may depend on. `harness/dev/test_boundaries.py`
 enforces these rules:
@@ -33,7 +33,7 @@ enforces these rules:
    sibling checkout read it from an environment variable such as `HYLO_HARNESS`.
 5. **The workspace file is current.**
 
-## Adding a package
+## Add a package { #adding-a-package }
 
 1. Create it under `packages/`, or under `adapters/` if it wraps a third-party stack, in the right repository. Give
    it a `pyproject.toml` (hatchling, `src/` layout, a `license`), `src/` and `tests/`.

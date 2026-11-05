@@ -39,7 +39,7 @@ gate vetoes a candidate that needs noticeably more interventions than its parent
 **Every review is evidence.** Each review is a trace event with the proposed and the approved action and the reason,
 and interventions are counted in every score, so safety is measured as well as enforced.
 
-## What the shield does
+## Action checks { #what-the-shield-does }
 
 ![Every action passes the finite check, the workspace guard, the configured guards and the bounds clamp before the environment; a non-finite action aborts the episode.](../assets/diagrams/safety-shield-light.svg){ .hylo-diagram .only-light }
 ![Every action passes the finite check, the workspace guard, the configured guards and the bounds clamp before the environment; a non-finite action aborts the episode.](../assets/diagrams/safety-shield-dark.svg){ .hylo-diagram .only-dark }
@@ -56,7 +56,7 @@ Hold actions, which the episode loop executes when no policy action is ready, pa
 review is recorded in the trace as a `safety.review` event: the proposed and approved actions, whether the action
 was modified, and why.
 
-## Interventions and aborts
+## Interventions { #interventions-and-aborts }
 
 A guard that changes an action makes a **safety intervention**. The rest of the agent's planned chunk is discarded,
 because the plan no longer matches what will happen. A bounds clip within `clip_tolerance` (default 0.05) is not an
@@ -102,7 +102,7 @@ template.
 
 Guard plugins from other packages work the same way ([extending](../harness/extending.md)).
 
-## Safety on robots
+## Robot operation { #safety-on-robots }
 
 On a robot, three layers act, each with its own job:
 
@@ -125,7 +125,7 @@ path to `home` is clear.
 Keep-out zones and limits for a cell belong in the lab's
 [deployments repository](../configuration/deployments-repo.md).
 
-## Safety in campaigns
+## Campaign protection { #safety-in-campaigns }
 
 A campaign proposes changes to an experiment config as patches. It rejects any candidate whose patch touches one of
 these top-level keys:

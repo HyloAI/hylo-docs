@@ -1,4 +1,4 @@
-# Adding a policy
+# Add a policy { #adding-a-policy }
 
 You will write a policy, run it on MuJoCo planar reach, and end with its scorecard on the `mujoco-reach` leaderboard
 next to a baseline. You need the [development workspace](../getting-started/installation.md) with hylo-bench.
@@ -7,7 +7,7 @@ A policy is the model inside an agent; built-in agents decide how its chunks run
 If your decision logic is more than drawing chunks from one model, write an [agent](../harness/interfaces/agent.md)
 instead (`hylo plugin new agent NAME`).
 
-## 1. Scaffold the package
+## 1. Create a package { #1-scaffold-the-package }
 
 From the workspace root, create the package in `plugins/packages/`:
 
@@ -42,7 +42,7 @@ A package in `plugins/packages/` is a workspace member, so every `uv sync` keeps
 the `uv pip install -e` hint that `hylo plugin new` prints: the next `uv sync` removes a package installed that way.
 From here on, run commands from `bench/`. `META` and maturity: [extending Hylo](../harness/extending.md).
 
-## 2. The contract
+## 2. Implement the contract { #2-the-contract }
 
 A policy provides four methods and inherits from nothing ([contracts](../api/contracts.md)). The generated policy
 drives the planar arm with two-link inverse kinematics plus seeded noise. These are the methods you change:
@@ -101,7 +101,7 @@ class MyReacherPolicy:
     safety shield clips anything outside the bounds and counts larger excursions as interventions
     ([safety](../user-guide/safety.md)).
 
-## 3. Check it
+## 3. Validate { #3-check-it }
 
 ```bash
 uv run pytest ../plugins/packages/hylo-plugin-my-reacher/tests
@@ -121,7 +121,7 @@ The generated tests run the conformance check and one full episode that must rea
 checks only the interface and warns about missing metadata. Neither measures quality; step 5 does. More options are
 in [testing](testing.md).
 
-## 4. Run it
+## 4. Run { #4-run-it }
 
 Save an experiment config in `bench/` ([experiments](../user-guide/experiments.md)). The `policy` agent runs your
 policy:
@@ -158,7 +158,7 @@ The policy never knows which agent runs it. `temporal_ensemble` and `steered` ta
 agent: {type: steered, params: {sampler: {type: my-reacher, params: {noise: 0.2}}, steering: {n_samples: 4, selector: medoid}}}
 ```
 
-## 5. Score it on the leaderboard
+## 5. Evaluate { #5-score-it-on-the-leaderboard }
 
 An [evaluation protocol](../benchmarking/protocols.md) fixes everything except the agent being scored. Score the agent
 that runs your policy, and the planar IK baseline, under the `mujoco-reach` protocol:

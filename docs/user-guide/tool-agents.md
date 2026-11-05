@@ -1,4 +1,4 @@
-# Tool-calling agents
+# Tool agents { #tool-calling-agents }
 
 `tools.llm` lets a chat model operate a robot through typed tools, one checked action at a time. The model can
 measure freely: find objects, turn pixels into world points, compute, and ask for grasp poses. Every action it
@@ -7,9 +7,9 @@ receipt and fresh camera images. The task's own check decides success; the model
 
 Use it to try a model on a task without writing a program, to watch how a model approaches a robot problem, and to
 collect conversations that worked. For a frozen, model-free implementation use `code.program`; for a model that
-writes Python against the same tools use `code.llm` (see [Developing programs](developing-strategies.md)).
+writes Python against the same tools use `code.llm` (see [Programs](developing-strategies.md)).
 
-## Run it
+## Run an agent { #run-it }
 
 The environment must publish a robot description (`mujoco.panda_table`, `mujoco.aloha_table`, `mujoco.g1_table`,
 or `libero` in its tool mode). Complete [Installation](../getting-started/installation.md), configure
@@ -75,7 +75,7 @@ Rules the agent works under:
   ends the episode.
 - `finish(success)` states the model's view only. Episodes are scored by the task's check.
 
-## Watch and steer
+## Live control { #watch-and-steer }
 
 ```bash
 uv run hylo watch runs/<run-dir>                        # the newest episode, followed while it runs
@@ -92,45 +92,15 @@ results and are left out of training exports.
 
 *`hylo watch --replay` on a recorded episode: each model turn, read calls in blue, actions in orange with their receipts, a refused call in red that the model then corrects, and the verdict.*
 
-## Read the results
+## Inspect results { #read-the-results }
 
 Per episode, the trace has the model's turns (`agent.tool.turn`), every tool result, every action proposal and its
 receipt, and a summary: model calls, decisions, refusals, tokens, cost, why it stopped, and the outcome the model
 stated. The prompt is recorded by layer (protocol, evidence rules, boundary, robot description), each with a digest,
 together with the digest of the tool set.
 
-??? example "The first model call in the trace (abridged)"
-
-    ```json
-    {"type": "agent.tool.turn", "seq": 4,
-     "payload": {"call": 1, "images": 2, "model": "qwen3.5:35b-a3b", "backend": "ollama",
-                 "tool_calls": [{"id": "call_ay5zhb6m", "name": "locate", "arguments": {"text": "purple block"}},
-                                {"id": "call_53rblsls", "name": "locate", "arguments": {"text": "green block"}}],
-                 "tokens_in": 5873, "tokens_out": 132, "cached_tokens": 5408, "latency_s": 17.5, "stop_reason": "tool_calls"},
-     "prev": "a46a5428…", "h": "37…"}
-    ```
-
-??? example "A proposal and its receipt (abridged)"
-
-    ```json
-    {"type": "agent.tool.proposal", "seq": 10,
-     "payload": {"action_id": "a6", "tool": "grasp", "arguments": {"option": "g3"}, "observation_step": 0}}
-    {"type": "agent.tool.receipt", "seq": 349,
-     "payload": {"action_id": "a6", "tool": "grasp", "status": "arrived", "steps": 84, "counted_as_decision": true,
-                 "stages": [{"stage": "approach and close", "steps": 69, "tcp_error_mm": 0.6, "rotation_error_deg": 0.1,
-                             "holding_after_close": true},
-                            {"stage": "lift", "steps": 15, "tcp_error_mm": 4.0, "rotation_error_deg": 0.0}],
-                 "holding": true, "holding_after_lift": true, "verdict": "holding the object"}}
-    ```
-
-??? example "The episode's summary"
-
-    ```json
-    {"type": "agent.tool.summary", "seq": 531,
-     "payload": {"calls": 5, "decisions": 2, "refused": 0, "stopped": "episode ended", "operator_messages": 0,
-                 "human_assisted": false, "steps": 127, "context": {"stored": 2, "summaries": 0, "reopened": 0},
-                 "usage": {"tokens_in": 34965, "tokens_out": 678, "cost_usd": 0.0, "latency_s": 83.92}, "wall_s": 92.6}}
-    ```
+Inspect the [recorded trace example](../developer-guide/validation/guide-results.md#tool-agent-trace) for
+model turns, proposals, receipts and the episode summary.
 
 ```bash
 uv run hylo seal runs/<run-dir>             # check every hash chain, list every file, make the run read-only
@@ -141,7 +111,7 @@ uv run hylo chats runs/<run-dir> --out chats.jsonl   # successful, unsteered con
 Every trace line carries the hash of the line before it, so a changed, removed or reordered line is found. Sealing
 is refused when a chain is broken or when a model-visible event contains privileged keys.
 
-## Perturbed LIBERO
+## Task variations { #perturbed-libero }
 
 LIBERO tasks can be changed in seven ways, to measure what an agent or a policy relies on. Declare them on the
 benchmark; each variant is its own task:
@@ -169,25 +139,21 @@ env: {type: libero, params: {control: joint_position, tool_obs: true, segmentati
 Every observation reports what was changed. Perturbations work in both LIBERO modes, for VLA policies as well as
 tool agents.
 
-## Recorded robot-control demo
+## Control model { #why-tool-calls }
 
-[Watch the recorded case, including results, conditions and provenance](../use-cases/robot-control.md).
+`tools.llm` lets a model call typed tools one step at a time. Each action returns a checked receipt before the
+next decision, and the trace records the prompt, tools, observations and outcome. Use [program agents](developing-strategies.md)
+when the model should write a reusable sequence of actions in Python.
 
-## Why tool calls
-
-Hylo's code agents let a model write Python against the robot's toolkit. That works, but a program block can move
-the robot many times before anyone sees the result, small models fail on syntax, and most served models are trained
-to call tools with JSON arguments rather than to write programs. Comparing models on a robot also needs a record
-that holds up afterwards: which prompt and tools the model had, what it was shown, and proof that nothing in the
-trace was changed. `tools.llm` is designed for those three needs: step-by-step control with checked actions, native
-tool calls, and evidence.
-
-## Design
-
-[Read the design rationale](../developer-guide/execution-model.md#tool-calling-agents).
+<span id="design"></span>
+<span id="recorded-robot-control-demo"></span>
 
 ## Next
 
+- [Robot-control demo](../use-cases/robot-control.md): a recorded episode with checked actions.
+
+- [Execution model](../developer-guide/execution-model.md#tool-calling-agents): runtime and implementation details.
+
 - [Worlds](worlds.md): build scenes with other robots and let a model run them.
-- [Developing programs](developing-strategies.md): programs and code agents with the same tools.
-- [Showcase](../developer-guide/validation/tool-agents.md#tool-calling-agents): measured results and what does not work yet.
+- [Programs](developing-strategies.md): programs and code agents with the same tools.
+- [Validation records](../developer-guide/validation/tool-agents.md#tool-calling-agents): measured results and what does not work yet.

@@ -86,7 +86,7 @@ A scorecard is a self-contained JSON file:
 | `run_dir`, `config_digest`, `code` | the run it came from on this machine, its config digest, and the git commit and package versions that ran |
 | `notes`, `created_at` | free text (`--notes`), and when it was written |
 
-## Protocols vs experiments
+## Evaluation setup { #protocols-vs-experiments }
 
 An [experiment config](../user-guide/experiments.md) says what to run: benchmark and split, environment, agent,
 safety, trace, timing. A protocol is an experiment with the agent left out:
@@ -102,11 +102,11 @@ safety, trace, timing. A protocol is an experiment with the agent left out:
 The protocol digest does not cover package versions. Each scorecard records them under `code`
 ([the digest](protocols.md#the-digest)).
 
-## Design
-
-[Read the design rationale](../developer-guide/execution-model.md#evaluation).
+<span id="design"></span>
 
 ## Next
+
+- [Execution model](../developer-guide/execution-model.md#evaluation): runtime and implementation details.
 
 - The built-in [protocols](protocols.md), and how to write your own.
 - Put several agents on a [leaderboard](leaderboard.md).

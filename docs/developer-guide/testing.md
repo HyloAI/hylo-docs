@@ -3,7 +3,7 @@
 Every package tests itself. A test double lets the harness check its contracts without a simulator. The real
 simulators check what the double cannot. A boundary lint keeps the repositories apart.
 
-## Running tests
+## Run tests { #running-tests }
 
 Run these from the workspace directory, not from `bench/`:
 
@@ -37,7 +37,7 @@ There is no CI. Before pushing, run the project test directories in a workspace 
 Unit tests run on the test double or on recorded data, finish in seconds, and need nothing but the venv. Tests in
 bench, plugins and the CLI templates run MuJoCo episodes. The LIBERO test starts the simulator in its own venv.
 
-## Tests that skip
+## Skipped tests { #tests-that-skip }
 
 | Test | Skips unless | To enable |
 |---|---|---|
@@ -49,7 +49,7 @@ bench, plugins and the CLI templates run MuJoCo episodes. The LIBERO test starts
 | `hylo-playground`: the control-plane test with a real workcell | `hylo.serve` is importable (a fake workcell is used otherwise) | hylo-serve |
 | `hylo-playground`: `test_playground.py` | `httpx` is importable | the workspace's `dev` dependency group, which `uv sync` installs |
 
-## Tests for a new package
+## Package tests { #tests-for-a-new-package }
 
 1. Put tests in `<package>/tests/`, importing the package by its installed name.
 2. Call the conformance check for each plugin the package registers (see below). The `hylo plugin new` templates
@@ -65,7 +65,7 @@ bench, plugins and the CLI templates run MuJoCo episodes. The LIBERO test starts
 
 The steps for creating the package itself are in [contributing](contributing.md#adding-a-package).
 
-### The test double
+### Test doubles { #the-test-double }
 
 `hylo.testing` ships with hylo-core. Its plugins are named `testing.*`, are declared `test-double` in the
 [plugin catalogue](plugin-catalogue.md), and are hidden from `hylo plugins` unless `--all` is given.
@@ -141,7 +141,7 @@ name a config whose benchmark has those splits (on MuJoCo: `benchmark: {..., par
 `bench/examples/configs/mujoco_reach.yaml` uses the standard splits, so the learner check fails on it with
 `KeyError: 'search'`.
 
-## The boundary lint
+## Boundary lint { #the-boundary-lint }
 
 `harness/dev/test_boundaries.py` runs one test per [repository and package rule](contributing.md#repository-and-package-rules);
 `uv run pytest harness/dev -v` lists them. The path rule reads code and config files (`.py`, `.yaml`, `.yml`,

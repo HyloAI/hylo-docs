@@ -12,7 +12,7 @@ the package index provides the complete module inventory.
 | Memory records, queries and store protocol | [Core memory module](modules/hylo-core/hylo.core.memory.md) |
 | Any other package or module | [Package index](packages/index.md) |
 
-## Working with contracts
+## Contracts { #working-with-contracts }
 
 Data contracts such as `EnvSpec`, `Observation`, `ActionChunk` and `ExperimentConfig` are frozen pydantic models.
 Build them with keyword arguments, copy them with `model_copy(update=...)`, and obtain a JSON Schema with
@@ -24,7 +24,7 @@ A module covered by a core page links back to that page from the package index, 
 Names starting with an underscore are omitted. Inclusion in the package index is not a stability guarantee;
 plugins should depend on the core contracts at their integration boundary.
 
-## Related references
+## Related { #related-references }
 
 - [Configuration](../reference/configuration.md): YAML fields and machine settings.
 - [Data formats & schemas](formats.md): versioned records and JSON Schemas.
