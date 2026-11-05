@@ -4,6 +4,41 @@ A lesson is a short note distilled from experience, such as "a narrower grasp sl
 model can use when it proposes the next change to an agent. Lessons are kept in a lesson book: a folder with the
 current lessons (`lessons.json`) and a log of every change (`ops.jsonl`).
 
+## Operations
+
+The book is never rewritten as a whole. A reflector model proposes operations, and the book applies them by fixed
+rules:
+
+| Operation | Effect |
+|---|---|
+| `ADD` | a new lesson; if an active lesson in the same scope has a near-identical title, it is upvoted instead |
+| `UPVOTE`, `DOWNVOTE` | one more helpful or harmful count, with the episodes as evidence |
+| `EDIT` | new content; the counts are kept |
+| `RETIRE` | removed from retrieval, kept in the file |
+
+A lesson whose harmful count reaches its helpful count plus two retires itself. Invalid operations are reported, not
+applied. Every applied operation is appended to the log with its time and source.
+
+??? example "What the reflector sends (the format)"
+
+    ```json
+    [{"op": "ADD", "scope": "global", "kind": "pitfall", "title": "Closing before the fingers surround the block",
+      "content": "Failed episodes close the gripper above the block and lift nothing; successes descend until the block is between the fingers.",
+      "evidence": ["<episode id>"]},
+     {"op": "UPVOTE", "id": "L3f2a9c1d", "evidence": ["<episode id>"]}]
+    ```
+
+??? example "What the book logs (the format; ids are content hashes of scope and title)"
+
+    ```json
+    {"t": 1793560000.0, "source": "reflect:<run>", "op": "ADD", "id": "L5b07e2aa"}
+    {"t": 1793560000.0, "source": "reflect:<run>", "op": "UPVOTE", "id": "L3f2a9c1d"}
+    {"t": 1793563600.0, "source": "credit:cand-1c3f4ceacb", "op": "DOWNVOTE", "id": "L3f2a9c1d"}
+    ```
+
+A vote that retires a lesson carries `"retired": true`. The `source` keeps the book idempotent: a reflection or a
+credit already in the log is not applied again when a campaign resumes.
+
 ## Design
 
 **The problem.** A language-model proposer plans each round of a campaign from the latest failures. Without a
@@ -39,41 +74,6 @@ did), so a campaign learns from both.
 | `helpful`, `harmful` | votes: from the reflector when new episodes confirm or contradict it, and from the outcomes of candidates that relied on it |
 | `evidence` | the episodes it was drawn from or confirmed by (the last 20) |
 | `status` | `active` or `retired` |
-
-## Operations
-
-The book is never rewritten as a whole. A reflector model proposes operations, and the book applies them by fixed
-rules:
-
-| Operation | Effect |
-|---|---|
-| `ADD` | a new lesson; if an active lesson in the same scope has a near-identical title, it is upvoted instead |
-| `UPVOTE`, `DOWNVOTE` | one more helpful or harmful count, with the episodes as evidence |
-| `EDIT` | new content; the counts are kept |
-| `RETIRE` | removed from retrieval, kept in the file |
-
-A lesson whose harmful count reaches its helpful count plus two retires itself. Invalid operations are reported, not
-applied. Every applied operation is appended to the log with its time and source.
-
-??? example "What the reflector sends (the format)"
-
-    ```json
-    [{"op": "ADD", "scope": "global", "kind": "pitfall", "title": "Closing before the fingers surround the block",
-      "content": "Failed episodes close the gripper above the block and lift nothing; successes descend until the block is between the fingers.",
-      "evidence": ["<episode id>"]},
-     {"op": "UPVOTE", "id": "L3f2a9c1d", "evidence": ["<episode id>"]}]
-    ```
-
-??? example "What the book logs (the format; ids are content hashes of scope and title)"
-
-    ```json
-    {"t": 1793560000.0, "source": "reflect:<run>", "op": "ADD", "id": "L5b07e2aa"}
-    {"t": 1793560000.0, "source": "reflect:<run>", "op": "UPVOTE", "id": "L3f2a9c1d"}
-    {"t": 1793563600.0, "source": "credit:cand-1c3f4ceacb", "op": "DOWNVOTE", "id": "L3f2a9c1d"}
-    ```
-
-A vote that retires a lesson carries `"retired": true`. The `source` keeps the book idempotent: a reflection or a
-credit already in the log is not applied again when a campaign resumes.
 
 ## The reflector
 
@@ -133,3 +133,8 @@ loop and enough rounds to compare with and without lessons.
 - Lessons do nothing without a language model that reads them.
 - The reflector's prompt is written for manipulation timelines; other domains need their own.
 - Near-duplicate detection compares titles only.
+
+## Next
+
+- [Use memory](../using-memory.md): match a memory to its consuming agent.
+- [Memory](index.md): lifetime and evaluation boundaries.

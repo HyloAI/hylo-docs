@@ -575,10 +575,10 @@ def experience_round(T: dict) -> Doc:
 # ---------------------------------------------------------------- 21. memory: when it is written and read
 def memory_timeline(T: dict) -> Doc:
     d = Doc(960, 340, T, "When memory is written and read",
-            "During an episode, spatial facts are written while visible and memory is read at every decision. After "
+            "During an episode, permitted observations enter spatial, event or video memory. After "
             "development runs, a bank is built from verified successes. During a campaign, verdicts become skills and "
-            "credit lessons, which the proposer reads. At evaluation nothing is written: banks, skills and lessons are "
-            "frozen and only read.")
+            "credit lessons, which the proposer reads. At evaluation episode-local observation memory can change; "
+            "cross-episode banks, skills and lessons remain frozen.")
     d.card()
     cols = [("In an episode", 150), ("After runs", 350), ("In a campaign", 550), ("At evaluation", 750)]
     d.arrow([(150, 40), (934, 40)], "faint", 1.6)
@@ -586,16 +586,16 @@ def memory_timeline(T: dict) -> Doc:
         d.text(x + 90, 74, name, "sb", 17, "accent" if name == "At evaluation" else "ink", anchor="middle")
     d.text(40, 136, "Writes", "b", 17, "muted")
     d.text(40, 250, "Reads", "b", 17, "muted")
-    writes = [("Spatial facts\nwhile visible", "soft"), ("Bank from\nverified successes", "soft"),
-              ("Skills from verdicts,\nlesson credits", "soft"), ("Nothing", "ghost")]
+    writes = [("Observed facts,\nevents and video", "soft"), ("Bank from\nverified successes", "soft"),
+              ("Skills from verdicts,\nlesson credits", "soft"), ("Episode-local\nobservations only", "soft")]
     reads = [("Skills at start,\nmemory each decision", "plain"), ("Nothing", "ghost"),
-             ("Lessons and skill\nstatus, by proposer", "plain"), ("Frozen memory,\nread only", "accent")]
+             ("Lessons and skill\nstatus, by proposer", "plain"), ("History and frozen\nexperience", "accent")]
     for (w, wk), (r, rk), (_, x) in zip(writes, reads, cols):
         node(d, x, 96, 180, 70, w, wk, size=15.5)
         node(d, x, 210, 180, 70, r, rk, size=15.5)
     d.add(f'<line x1="742" y1="92" x2="742" y2="286" stroke="{d.c("accent")}" stroke-width="3" '
           'stroke-linecap="round"/>')
-    d.text(742, 312, "freeze", "sb", 15, "accent", anchor="middle")
+    d.text(742, 312, "freeze shared experience", "sb", 15, "accent", anchor="middle")
     return d
 
 

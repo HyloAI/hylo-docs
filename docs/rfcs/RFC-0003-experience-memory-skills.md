@@ -155,3 +155,11 @@ agent conditions on*, never the acceptance rule.
 1. Retrieval key: SmolVLA's own visual tokens (paper choice, needs a forward pass we already do) vs cheap thumbnails.
 2. Skill granularity: per task, per scene, or per instruction pattern; how to infer families without hand tags.
 3. Whether learned primitives (adapters from L4 self-training) count as skills or as policies.
+
+## 10. Episode Memory Amendment
+
+[RFC-0009](RFC-0009-benchmark-memory.md) adds the within-episode evidence path. Observations and observed failed
+attempts can be written before task success is known; the verified-success rule above applies to reusable action
+exemplars and promoted skills. During validation/test, episodic memory resets per episode while the cross-episode
+lesson/skill/action library stays frozen. Scoped storage, exact event queries and an agent wrapper are implemented;
+visual benchmark performance remains pending. See the [local validation record](../research/experiments/2026-11-03-benchmark-memory.md).

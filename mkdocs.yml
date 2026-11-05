@@ -42,6 +42,9 @@ theme:
 extra_css:
   - assets/stylesheets/extra.css
 
+extra_javascript:
+  - assets/javascripts/reference-links.js
+
 plugins:
   - search
   - glightbox
@@ -68,6 +71,7 @@ plugins:
             - ../harness/adapters/hylo-tools/src
             - ../harness/adapters/hylo-policy-lerobot/src
             - ../harness/adapters/hylo-policy-openpi/src
+            - ../harness/adapters/hylo-policy-simplememvla/src
             - ../harness/adapters/hylo-reasoner-llm/src
             - ../harness/adapters/hylo-proposer-llm/src
             - ../harness/adapters/hylo-data-video/src
@@ -114,197 +118,235 @@ markdown_extensions:
       emoji_generator: !!python/name:material.extensions.emoji.to_svg
   - toc: {permalink: true}
 
+# Detail pages are reached through their command/package indexes.
+not_in_nav: |
+  api/modules/
+  cli/commands/
+  showcase/tool-agents-*.md
+
 nav:
-  - Home: index.md
-  - Get started:
-      - getting-started/installation.md
-      - getting-started/quickstart.md
-      - getting-started/examples.md
-  - Concepts:
-      - Overview: getting-started/concepts.md
-      - RSI: physical-rsi.md
-      - Worlds: user-guide/worlds.md
-      - Agents: user-guide/agents.md
-      - Memory:
-          - user-guide/memory/index.md
-          - user-guide/memory/spatial.md
-          - user-guide/memory/action.md
-          - user-guide/memory/lessons.md
-      - Skills:
-          - user-guide/skills.md
-          - Skill library: user-guide/memory/skills.md
-  - Guides:
-      - Running agents:
-          - user-guide/policies.md
-          - user-guide/developing-strategies.md
-          - user-guide/research-and-skills.md
-          - user-guide/tool-agents.md
-          - user-guide/experiments.md
-      - Improving agents:
-          - user-guide/campaigns.md
-          - user-guide/learning.md
-      - Evaluation:
-          - benchmarking/index.md
-          - benchmarking/protocols.md
-          - benchmarking/leaderboard.md
-      - Deployment and operation:
-          - user-guide/deployment.md
-          - user-guide/studio.md
-          - user-guide/safety.md
-          - user-guide/security.md
-          - user-guide/store.md
-  - Showcase:
-      - showcase/index.md
-      - Core: showcase/core.md
-      - Memory: showcase/memory.md
-      - Agents: showcase/agents.md
-      - Instruments: showcase/instruments.md
-      - Learning: showcase/learning.md
-      - Evolution: showcase/evolution.md
-      - Benchmarks: showcase/benchmarks.md
-      - Plugins: showcase/plugins.md
-      - Runtime: showcase/runtime.md
-      - Studio: showcase/studio.md
-      - Tool-using agents: showcase/tool-agents.md
-  - Developer Guide:
-      - Architecture: design/overview.md
-      - developer-guide/contributing.md
-      - developer-guide/testing.md
-      - developer-guide/troubleshooting.md
-      - developer-guide/versioning.md
-      - developer-guide/docs.md
-      - Tutorials:
-          - developer-guide/adding-a-policy.md
-          - developer-guide/adding-an-environment.md
-          - developer-guide/adding-a-learner.md
-          - developer-guide/adding-a-generator.md
-      - Extending:
-          - harness/extending.md
-          - harness/plugin-system.md
-          - developer-guide/plugin-catalogue.md
-      - Interfaces:
-          - harness/interfaces/environment.md
-          - harness/interfaces/agent.md
-          - harness/interfaces/reasoner.md
-          - harness/interfaces/memory.md
-          - harness/interfaces/benchmark.md
-          - harness/interfaces/improvement.md
-      - Internals:
-          - harness/execution-lifecycle.md
-          - harness/dependency-graph.md
-  - Reference:
-      - Configuration:
-          - configuration/profiles.md
-          - configuration/environment-variables.md
-          - configuration/deployments-repo.md
-          - Experiment config schema: harness/experiment-schema.md
-      - CLI: cli/index.md
-      - API overview: api/index.md
-      - Core contracts:
-          - api/contracts.md
-          - api/kernel.md
-          - api/config.md
-          - api/artifacts-and-store.md
-          - api/formats.md
-      - Packages:
-          - api/packages/index.md
-          - Harness:
-              - hylo-core: api/packages/hylo-core.md
-              - hylo-eval: api/packages/hylo-eval.md
-              - hylo-agents: api/packages/hylo-agents.md
-              - hylo-instruments: api/packages/hylo-instruments.md
-              - hylo-reasoners: api/packages/hylo-reasoners.md
-              - hylo-memory: api/packages/hylo-memory.md
-              - hylo-learn: api/packages/hylo-learn.md
-              - hylo-evolve: api/packages/hylo-evolve.md
-              - hylo-catalog: api/packages/hylo-catalog.md
-              - hylo-policies: api/packages/hylo-policies.md
-              - hylo-cli: api/packages/hylo-cli.md
-              - hylo-manip: api/packages/hylo-manip.md
-          - Harness adapters:
-              - hylo-code-agents: api/packages/hylo-code-agents.md
-              - hylo-tools: api/packages/hylo-tools.md
-              - hylo-policy-lerobot: api/packages/hylo-policy-lerobot.md
-              - hylo-policy-openpi: api/packages/hylo-policy-openpi.md
-              - hylo-reasoner-llm: api/packages/hylo-reasoner-llm.md
-              - hylo-proposer-llm: api/packages/hylo-proposer-llm.md
-              - hylo-data-video: api/packages/hylo-data-video.md
-          - Bench:
-              - hylo-bench: api/packages/hylo-bench.md
-              - hylo-robosuite-contract: api/packages/hylo-robosuite-contract.md
-              - hylo-env-mujoco: api/packages/hylo-env-mujoco.md
-              - hylo-env-libero: api/packages/hylo-env-libero.md
-              - hylo-env-robosuite: api/packages/hylo-env-robosuite.md
-              - hylo-env-robocasa: api/packages/hylo-env-robocasa.md
-          - Serve:
-              - hylo-serve: api/packages/hylo-serve.md
-              - hylo-env-lerobot-robot: api/packages/hylo-env-lerobot-robot.md
-          - Studio:
-              - hylo-playground: api/packages/hylo-playground.md
-          - Plugins:
-              - hylo-plugin-examples: api/packages/hylo-plugin-examples.md
-  - Design:
-      - design/roadmap.md
-      - design/repository-structure.md
-      - Historical archive:
-          - EXECUTIVE-SUMMARY.md
-          - design/architecture.md
-          - design/mvp-v0.1.md
-          - design/roadmap/v0.1-plan.md
-      - RFCs:
-          - rfcs/index.md
-          - rfcs/RFC-0001.md
-          - rfcs/RFC-0002-physical-rsi.md
-          - rfcs/RFC-0003-experience-memory-skills.md
-          - rfcs/RFC-0004-learning-pipeline.md
-          - rfcs/RFC-0005-architecture-measurement-and-placement.md
-          - rfcs/RFC-0006-tool-using-agents.md
-          - rfcs/RFC-0007-tool-calling-robot-agents.md
-          - rfcs/RFC-0008-stage-worlds.md
+- Home: index.md
+- Get started:
+  - Installation: getting-started/installation.md
+  - First run: getting-started/quickstart.md
+  - First improvement: getting-started/first-improvement.md
+  - Next steps: getting-started/next-steps.md
+  - Optional environments: getting-started/optional-environments.md
+- Concepts:
+  - Overview: getting-started/concepts.md
+  - Physical RSI: physical-rsi.md
+  - Worlds: concepts/worlds.md
+  - Agents: user-guide/agents.md
+  - Memory: user-guide/memory/index.md
+  - Skills: user-guide/skills.md
+- Guides:
+  - user-guide/index.md
+  - Build and run:
+    - Create a world: user-guide/worlds.md
+    - Run policies: user-guide/policies.md
+    - Develop programs: user-guide/developing-strategies.md
+    - Run tool-calling agents: user-guide/tool-agents.md
+  - Memory and reuse:
+    - Choose and use memory: user-guide/using-memory.md
+    - Memory backends:
+      - user-guide/memory/spatial.md
+      - user-guide/memory/events.md
+      - user-guide/memory/video.md
+      - user-guide/memory/action.md
+      - user-guide/memory/lessons.md
+    - Build and use a skill library: user-guide/memory/skills.md
+    - Develop and reuse program skills: user-guide/research-and-skills.md
+  - Evaluate and improve:
+    - user-guide/experiments.md
+    - Compare agents: benchmarking/index.md
+    - benchmarking/leaderboard.md
+    - user-guide/learning.md
+    - user-guide/campaigns.md
+  - Deploy and operate:
+    - user-guide/deployment.md
+    - user-guide/studio.md
+    - user-guide/store.md
+    - user-guide/safety.md
+    - user-guide/security.md
+- Examples and results:
+  - showcase/index.md
+  - showcase/worlds.md
+  - showcase/robot-control.md
+  - showcase/program-skills.md
+  - Program and tool experiments: showcase/tool-agents.md
+  - showcase/video-memory.md
+  - showcase/phase-guided.md
+  - System measurements:
+    - showcase/system-results.md
+    - Core: showcase/core.md
+    - Memory: showcase/memory.md
+    - Agents: showcase/agents.md
+    - Instruments: showcase/instruments.md
+    - Learning: showcase/learning.md
+    - Evolution: showcase/evolution.md
+    - Benchmarks: showcase/benchmarks.md
+    - Plugins: showcase/plugins.md
+    - Runtime: showcase/runtime.md
+    - Studio: showcase/studio.md
+- Developers:
+  - Architecture: design/overview.md
+  - developer-guide/execution-model.md
+  - Extension tutorials:
+    - developer-guide/adding-a-policy.md
+    - developer-guide/adding-an-environment.md
+    - developer-guide/adding-a-learner.md
+    - developer-guide/adding-a-generator.md
+  - Plugin development:
+    - harness/extending.md
+    - harness/plugin-system.md
+  - Internals:
+    - harness/execution-lifecycle.md
+    - harness/dependency-graph.md
+  - Contributing:
+    - developer-guide/contributing.md
+    - developer-guide/testing.md
+    - developer-guide/troubleshooting.md
+    - developer-guide/versioning.md
+    - developer-guide/docs.md
+- Reference:
+  - reference/index.md
+  - CLI: cli/index.md
+  - Configuration:
+    - configuration/profiles.md
+    - configuration/environment-variables.md
+    - configuration/deployments-repo.md
+    - harness/experiment-schema.md
+    - benchmarking/protocols.md
+    - reference/worlds.md
+  - Interfaces:
+    - harness/interfaces/environment.md
+    - harness/interfaces/agent.md
+    - harness/interfaces/reasoner.md
+    - harness/interfaces/memory.md
+    - harness/interfaces/benchmark.md
+    - harness/interfaces/improvement.md
+  - Core API:
+    - api/index.md
+    - api/contracts.md
+    - api/kernel.md
+    - api/config.md
+    - api/artifacts-and-store.md
+    - api/formats.md
+  - Packages:
+    - api/packages/index.md
+    - Harness:
+      - hylo-core: api/packages/hylo-core.md
+      - hylo-eval: api/packages/hylo-eval.md
+      - hylo-agents: api/packages/hylo-agents.md
+      - hylo-instruments: api/packages/hylo-instruments.md
+      - hylo-reasoners: api/packages/hylo-reasoners.md
+      - hylo-memory: api/packages/hylo-memory.md
+      - hylo-learn: api/packages/hylo-learn.md
+      - hylo-evolve: api/packages/hylo-evolve.md
+      - hylo-catalog: api/packages/hylo-catalog.md
+      - hylo-policies: api/packages/hylo-policies.md
+      - hylo-cli: api/packages/hylo-cli.md
+      - hylo-manip: api/packages/hylo-manip.md
+    - Harness adapters:
+      - hylo-code-agents: api/packages/hylo-code-agents.md
+      - hylo-tools: api/packages/hylo-tools.md
+      - hylo-policy-lerobot: api/packages/hylo-policy-lerobot.md
+      - hylo-policy-openpi: api/packages/hylo-policy-openpi.md
+      - hylo-policy-simplememvla: api/packages/hylo-policy-simplememvla.md
+      - hylo-reasoner-llm: api/packages/hylo-reasoner-llm.md
+      - hylo-proposer-llm: api/packages/hylo-proposer-llm.md
+      - hylo-data-video: api/packages/hylo-data-video.md
+    - Bench:
+      - hylo-bench: api/packages/hylo-bench.md
+      - hylo-robosuite-contract: api/packages/hylo-robosuite-contract.md
+      - hylo-env-mujoco: api/packages/hylo-env-mujoco.md
+      - hylo-env-libero: api/packages/hylo-env-libero.md
+      - hylo-env-robosuite: api/packages/hylo-env-robosuite.md
+      - hylo-env-robocasa: api/packages/hylo-env-robocasa.md
+    - Serve:
+      - hylo-serve: api/packages/hylo-serve.md
+      - hylo-env-lerobot-robot: api/packages/hylo-env-lerobot-robot.md
+    - Studio:
+      - hylo-playground: api/packages/hylo-playground.md
+    - Plugins:
+      - hylo-plugin-examples: api/packages/hylo-plugin-examples.md
+  - Plugin catalogue: developer-guide/plugin-catalogue.md
+  - Example catalogue: getting-started/examples.md
+- Internal:
+  - internal/index.md
+  - Direction and roadmap:
+    - design/roadmap.md
+    - design/repository-structure.md
+  - Design decisions:
+    - rfcs/index.md
+    - rfcs/RFC-0001.md
+    - rfcs/RFC-0002-physical-rsi.md
+    - rfcs/RFC-0003-experience-memory-skills.md
+    - rfcs/RFC-0004-learning-pipeline.md
+    - rfcs/RFC-0005-architecture-measurement-and-placement.md
+    - rfcs/RFC-0006-tool-using-agents.md
+    - rfcs/RFC-0007-tool-calling-robot-agents.md
+    - rfcs/RFC-0008-stage-worlds.md
+    - rfcs/RFC-0009-benchmark-memory.md
   - Research:
-      - research/index.md
-      - Experiments:
-          - research/experiments/2026-10-30-libero10-rsi-cycle1.md
-          - research/experiments/2026-10-30-experience-memory-libero10.md
-          - research/experiments/2026-10-31-rfc0004-w1-w4.md
-          - research/experiments/2026-10-31-success-judges-libero10.md
-      - Comparisons:
-          - research/comparisons/technology-gap-analysis.md
-          - research/comparisons/harness-comparison.md
-          - research/comparisons/simulator-comparison.md
-          - research/comparisons/benchmark-comparison.md
-          - research/comparisons/agent-policy-comparison.md
-          - research/comparisons/memory-comparison.md
-          - research/comparisons/rsi-comparison.md
-          - research/comparisons/rsi-frameworks-deep-dive.md
-          - research/comparisons/license-matrix.md
-      - research/architecture/concept-map.md
-      - Projects:
-          - research/projects/vla-evaluation-harness.md
-          - research/projects/inspect-robots.md
-          - research/projects/rpent.md
-          - research/projects/xpolicylab.md
-          - research/projects/mujoco.md
-          - research/projects/maniskill.md
-          - research/projects/libero.md
-          - research/projects/robocasa.md
-          - research/projects/lerobot.md
-          - research/projects/openpi.md
-          - research/projects/langgraph.md
-          - research/projects/dspy.md
-          - research/projects/memory-landscape.md
-          - research/projects/memory-experience.md
-          - research/projects/learning-from-video.md
-          - research/projects/zetta-embodiment.md
-          - research/projects/agent-lightning.md
-          - research/projects/rsi-vla-steering.md
-          - research/projects/rsi-simplevla-rl.md
-          - research/projects/rsi-rlinf.md
-          - research/projects/rsi-eureka.md
-          - research/projects/rsi-voyager.md
-          - research/projects/rsi-adas.md
-          - research/projects/rsi-dgm.md
-          - research/projects/rsi-gepa.md
-          - research/projects/rsi-openevolve.md
-          - research/projects/rsi-shinkaevolve.md
-          - research/projects/rsi-sica.md
+    - research/index.md
+    - Comparisons:
+      - research/comparisons/technology-gap-analysis.md
+      - research/comparisons/harness-comparison.md
+      - research/comparisons/simulator-comparison.md
+      - research/comparisons/benchmark-comparison.md
+      - research/comparisons/agent-policy-comparison.md
+      - research/comparisons/memory-comparison.md
+      - research/comparisons/memory-benchmark-comparison.md
+      - research/comparisons/memory-performance-review.md
+      - research/comparisons/memory-method-screening.md
+      - research/comparisons/rsi-comparison.md
+      - research/comparisons/rsi-frameworks-deep-dive.md
+      - research/comparisons/license-matrix.md
+    - research/architecture/concept-map.md
+    - Project studies:
+      - research/projects/vla-evaluation-harness.md
+      - research/projects/inspect-robots.md
+      - research/projects/rpent.md
+      - research/projects/xpolicylab.md
+      - research/projects/mujoco.md
+      - research/projects/maniskill.md
+      - research/projects/libero.md
+      - research/projects/robocasa.md
+      - research/projects/lerobot.md
+      - research/projects/openpi.md
+      - research/projects/langgraph.md
+      - research/projects/dspy.md
+      - research/projects/memory-landscape.md
+      - research/projects/memory-experience.md
+      - research/projects/learning-from-video.md
+      - research/projects/zetta-embodiment.md
+      - research/projects/agent-lightning.md
+      - research/projects/rsi-vla-steering.md
+      - research/projects/rsi-simplevla-rl.md
+      - research/projects/rsi-rlinf.md
+      - research/projects/rsi-eureka.md
+      - research/projects/rsi-voyager.md
+      - research/projects/rsi-adas.md
+      - research/projects/rsi-dgm.md
+      - research/projects/rsi-gepa.md
+      - research/projects/rsi-openevolve.md
+      - research/projects/rsi-shinkaevolve.md
+      - research/projects/rsi-sica.md
+  - Experiment records:
+    - research/experiments/2026-10-30-libero10-rsi-cycle1.md
+    - research/experiments/2026-10-30-experience-memory-libero10.md
+    - research/experiments/2026-11-03-benchmark-memory.md
+    - research/experiments/2026-11-03-robomme-memory-pilot.md
+    - research/experiments/2026-11-03-working-memory.md
+    - research/experiments/2026-11-04-simplememvla-pilot.md
+    - research/experiments/2026-11-04-simplememvla-integration.md
+    - research/experiments/2026-11-04-harness-program-evolution.md
+    - research/experiments/2026-11-03-memory-design-review.md
+    - research/experiments/2026-10-31-rfc0004-w1-w4.md
+    - research/experiments/2026-10-31-success-judges-libero10.md
+  - Historical archive:
+    - EXECUTIVE-SUMMARY.md
+    - design/architecture.md
+    - design/mvp-v0.1.md
+    - design/roadmap/v0.1-plan.md

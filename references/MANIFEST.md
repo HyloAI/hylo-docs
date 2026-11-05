@@ -2,7 +2,7 @@
 
 Third-party repositories used for research only. **Read-only**: not modified, not installed, not imported by our code.
 Cloned 2026-10-30 with `git clone --depth 1 --filter=blob:limit=2m --no-recurse-submodules` and `GIT_LFS_SKIP_SMUDGE=1`
-(no model weights, no LFS assets, no submodules, blobs > 2 MB omitted). The trees are gitignored; re-create them from this table.
+(no model weights, no LFS assets or submodules; checkout can hydrate tracked blobs above the filter threshold). The trees are gitignored; re-create them from this table.
 
 | Category | Repo | Branch | Commit SHA | Commit date | License | Size (no .git) | Files / .py |
 |---|---|---|---|---|---|---|---|
@@ -38,11 +38,25 @@ Cloned 2026-10-30 with the same command as above into `references/memory/<repo>`
 | memory (skill) | [NVlabs/ASPIRE](https://github.com/NVlabs/ASPIRE) | main | `fa00f0ef2bc1d91d594b9aa502c22133c9f538f7` | 2026-10-15 | Apache-2.0 | 33M | 341 / 205 |
 | memory (general infra) | [mem0ai/mem0](https://github.com/mem0ai/mem0) | main | `26cdefb46600c0fa5953c4b5ee5003c125539fc4` | 2026-10-26 | Apache-2.0 | 42M | 1832 / 421 |
 | memory (general infra) | [getzep/graphiti](https://github.com/getzep/graphiti) | main | `72b5c59c06607e09ea855be61b6ff5a3446fc951` | 2026-10-28 | Apache-2.0 | 24M | 424 / 302 |
+| memory (skill, harness) | [Darwin-Agent/HarnessPAI](https://github.com/Darwin-Agent/HarnessPAI) | main | `3af7d561d531ce3e3a3884a3f801c41b8b98e2fe` | 2026-10-22 | No LICENSE (design only) | 4.0K (unpopulated worktree) | 0 / 0 (see note) |
+| memory (experience, evolution) | [StevenKKXS/SERA](https://github.com/StevenKKXS/SERA) | main | `80fcd8f7eda425c8de563b75fab04e7bd18d3929` | 2026-10-24 | Apache-2.0 | 7.4M | 298 / 164 |
+| memory (episodic, spatial) | [automatika-robotics/emem](https://github.com/automatika-robotics/emem) | main | `82e3da61cf710c4379e0cd7bf7a6a21710caaa96` | 2026-05-22 | MIT | 1.5M | 127 / 115 |
+| memory (benchmark) | [RoboMME/robomme_benchmark](https://github.com/RoboMME/robomme_benchmark) | main | `5753639d62c167ba74fa64fcce8b2f4895d08e7b` | 2026-10-30 | Apache-2.0 | 14M | 570 / 329 |
+| memory (policy variants) | [RoboMME/robomme_policy_learning](https://github.com/RoboMME/robomme_policy_learning) | main | `ac846a9a4aec841e483b1dc5d620dfe426bde853` | 2026-10-20 | Apache-2.0 | 4.1M | 181 / 139 |
+| memory (benchmark) | [CognitiveAISystems/MIKASA-Robo](https://github.com/CognitiveAISystems/MIKASA-Robo) | main | `509b875f3d207c287497c0a897661062de928bb0` | 2026-06-30 | MIT | 658M | 271 / 88 |
 
 Memory notes
 - ReMEmbR's NVIDIA License (LICENSE.md §3.3) restricts use to non-commercial research/evaluation; treat it as design reference only and do not copy code.
 - ASPIRE's `third_party/` submodules (LIBERO-PRO, robosuite, BEHAVIOR-1K, curobo, sam3, contact_graspnet_pytorch) were not fetched (`--no-recurse-submodules`).
 - ConceptGraphs `main` is the batch pipeline; the README points to the `ali-dev` branch for the streaming refactor (not cloned).
+- The six rows added on 2026-11-03 use `references/memory/<repo>` and the requested clone flags; HarnessPAI already existed and was not cloned again. Sizes/counts describe the physical worktree excluding `.git`. No installs, repository-script execution, weights, LFS or submodule downloads were performed.
+- HarnessPAI has an unpopulated worktree/index in the pre-existing clone. Its recorded tree contains 1,709 tracked entries, including 106 Python paths; the physical count above is therefore zero. Static reading used `git show HEAD:<path>` into a temporary text-only snapshot outside the clone. Citations name logical paths at `3af7d56`, not restored files. A tracked-tree license-name audit found no project LICENSE; `references/memory/HarnessPAI/harnesspai/code_library/TEMPLATE.md:7` documents the program representation, but grants no reuse license. Design only, no code copying.
+- Partial-clone `blob:limit=2m` limits initial object transfer, not final checkout contents: checkout can hydrate larger tracked files. MIKASA-Robo's 658M includes tracked media. No separate published demonstration datasets or checkpoints were fetched; skipped LFS contents remain pointers where applicable.
+- Code licenses: `references/memory/SERA/LICENSE:1`, `references/memory/emem/LICENSE:1`, `references/memory/robomme_benchmark/LICENSE:1`, `references/memory/robomme_policy_learning/LICENSE:1`, `references/memory/MIKASA-Robo/LICENSE:1`. SERA and RoboMME policy learning also carry Gemma terms (`references/memory/SERA/LICENSE_GEMMA.txt:1`; `references/memory/robomme_policy_learning/LICENSE_GEMMA.txt:1`). Upstream simulator assets and model/data artifacts are not universally covered by these code licenses.
+- Version scope: original RoboMME has 16 tasks; `robomme_plus` is outside this study (`references/memory/robomme_benchmark/src/robomme/env_record_wrapper/episode_config_resolver.py:17`). MIKASA retains the original 32 RL registrations but its current VLA manifest has 90 tasks and ten memory types, not 32 tasks and ten types (`references/memory/MIKASA-Robo/README.md:45`; `references/memory/MIKASA-Robo/mikasa_robo_vla_envs.csv:1`).
+- SERA's documented RoboMME submodule pin differs from the independently cloned benchmark HEAD (`references/memory/SERA/README.md:104`); no submodule was initialized or updated. These are source comparisons, not a jointly reproduced environment.
+- The later authorized remote pilot uses separate checkouts: SERA `80fcd8f7eda425c8de563b75fab04e7bd18d3929` and its RoboMME pin `856bc3a189d4172f3f47dbee4424d585f8d78db3`. Runtime sources, dependency inventories, checkpoint checksums and results are recorded in `docs/research/experiments/2026-11-03-robomme-memory-pilot.md`. The reference trees and line-number pins in this table remain unchanged.
+- RMBench and MEMOBench are paper-only references in `docs/research/comparisons/memory-benchmark-comparison.md`; they were not cloned and are not assigned fabricated commits or local source paths. MEMOBench's current dataset card declares CC BY-NC 4.0, despite a different planned release statement in its paper; see that comparison's license table.
 
 ## RSI frameworks (2026-10-30, second study)
 

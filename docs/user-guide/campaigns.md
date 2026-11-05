@@ -10,62 +10,6 @@ that will run on hardware.
 
 *One cycle. The promoted candidate is the next cycle's parent.*
 
-## Design
-
-**An improvement is an experiment, not an edit.** A rule, a learner or a language model can propose a change; none of
-them is trusted. A change is kept only when a paired test on initial states that played no part in proposing or
-choosing it agrees, and every kept change can be undone. The proposer's confidence counts for nothing.
-
-**Four splits, one job each.** Data that has been used to make a decision is no longer an independent test of that
-decision. So the initial states are divided by job: `search` to diagnose failures (proposers see these),
-`search_val` to choose among candidates, `gate` for one confirmatory test of the chosen candidate, and `heldout` for
-the report to the person who approves, never used to choose. Choosing on gate data would turn the gate into one more
-selection step; reporting on selection data would overstate the gain.
-
-**Spend episodes where they can matter.** Episodes are the expensive resource, so the cascade orders its checks by
-cost. Stage 0 costs nothing: protected settings, validity, novelty, the provenance of any artifact the candidate
-names. Stage 1 runs a few pairs to drop clear losers. Stage 2 screens on all of `search_val`. Only the best reach the
-gate.
-
-**Pair everything.** Parent and candidate run on the same initial states with the same seeds and the same policy
-noise, so a difference between them comes from the change, not from luck. The test counts only the pairs in which
-exactly one of them succeeded, which needs far fewer episodes than comparing two success rates.
-
-**One error budget per cycle.** A cycle tests several candidates and may look at the gate more than once. Holm
-correction across candidates and an alpha-spending schedule across looks keep the chance of promoting a change that
-does not help at `alpha` per cycle.
-
-**Better on average is not enough.** A candidate that raises the mean but breaks one task, or needs more safety
-interventions, is vetoed: success on any task may not fall beyond a tolerance, and interventions may not rise beyond
-one per episode.
-
-**Changes are declarative, and the goalposts are protected.** A candidate is a config patch, which may name a sealed
-artifact or a sealed program. It may not touch safety, the benchmark, the trace, the scorers, the environment or the
-campaign's own settings: a change that raises its score by loosening safety or editing the scorer has improved
-nothing.
-
-**Cheap and reversible first.** Improvements form a ladder by cost and risk. A frozen policy is improved from the
-bottom up, and every rung passes the same gate.
-
-![Improvements are ordered by cost and risk. Steering settings and recovery rules need only rollouts and change nothing permanent. Learned components need training. Policy weights need hours of training and change the most. A frozen policy is improved from the bottom up; every rung goes through the same gate.](../assets/diagrams/improvement-ladder-light.svg){ .hylo-diagram .only-light }
-![Improvements are ordered by cost and risk. Steering settings and recovery rules need only rollouts and change nothing permanent. Learned components need training. Policy weights need hours of training and change the most. A frozen policy is improved from the bottom up; every rung goes through the same gate.](../assets/diagrams/improvement-ladder-dark.svg){ .hylo-diagram .only-dark }
-
-**Every promotion can be undone.** A candidate can be promoted only over the version that is active; the ledger
-records every promotion and rollback, with who and why. Anything that will run on hardware waits for a person, who
-sees the held-out report before approving.
-
-## Program development and code candidates
-
-Developing a first program and comparing a revision with a baseline have different evidence requirements.
-Use [Program research](research-and-skills.md) for development and independent evaluation; use a campaign to
-compare a proposed change with the current version and promote it through the gate.
-
-The `research.llm` generator develops code on `search` cases, optionally starting from a `code.program` parent.
-It freezes a qualifying submission as a program artifact and proposes a `code` candidate. The same cascade,
-paired gate, held-out report and approval path apply. A program that succeeded during development has not yet
-passed these checks. See [Program research](research-and-skills.md) for the recorded stacking example,
-commands and current limits.
-
 ## Run a campaign
 
 Commands on this page run from `bench/`. This is the quickstart's campaign:
@@ -209,6 +153,38 @@ How far each is tested: [plugin catalogue](../developer-guide/plugin-catalogue.m
 `hylo plugin new generator NAME` and see
 [adding a generator](../developer-guide/adding-a-generator.md).
 
+## Program development and code candidates
+
+Developing a first program and comparing a revision with a baseline have different evidence requirements.
+Use [Program research](research-and-skills.md) for development and independent evaluation; use a campaign to
+compare a proposed change with the current version and promote it through the gate.
+
+The `research.llm` generator develops code on `search` cases, optionally starting from a `code.program` parent.
+It freezes a qualifying submission as a program artifact and proposes a `code` candidate. The same cascade,
+paired gate, held-out report and approval path apply. A program that succeeded during development has not yet
+passed these checks. See [Program research](research-and-skills.md) for the recorded stacking example,
+commands and current limits.
+
+The optional `harness.program` generator adds phase-guided development and repair-note
+recall. It automatically evaluates completed program revisions within the submission
+budget, requires all selected development cases to pass, and proposes a sealed program
+with evidence-linked notes. The shared campaign still controls selection, gate, approval
+and activation. Notes enter recall only through active promoted lineages; rollback removes
+the retired branch from recall. See [Phase-guided evolution](research-and-skills.md#phase-guided-evolution).
+
+| Proposer | Changes | Training |
+| --- | --- | --- |
+| `rule.gain`, `rule.steering`, `llm.steering` | Runtime parameters or steering | None |
+| `experience` | Supplies lessons and skill evidence to an inner proposer | Depends on the inner proposer |
+| `research.llm` | Executable program | None |
+| `harness.program` | Phase-guided program and repair notes | None |
+| `critic.chunk_value` | Action-chunk ranking around a frozen policy | Critic training |
+| `learn`, `selftrain.expert_iteration` | Learner artifacts or policy checkpoint | Explicit training path |
+
+Select one proposer through `proposer.type`; additional packages provide the model-based
+options. These choices do not automatically combine into one algorithm. See the
+[campaign API](../api/packages/hylo-evolve.md) for implementation details.
+
 ## Approve, roll back, shadow
 
 <video src="../../assets/videos/studio-campaigns.mp4" poster="../../assets/videos/studio-campaigns.jpg" controls muted playsinline preload="none" width="100%" aria-label="The Studio's self-improvement pages: a candidate's cascade, an approval, the rollback form and the A/B arena"></video>
@@ -274,6 +250,10 @@ Gate settings (`protocol:`):
 | `budget_s` | none | wall-clock limit per cycle, checked before each candidate |
 | `prescreen` | none | `{env: {type: world_model, params: {path}}, split, margin}`: reject candidates a world model predicts below parent minus margin |
 | `gate_test` | `{type: mcnemar}` | the paired statistic (`gate_tests` plugin), for example `{type: sign, params: {metric: steps, direction: lower}}` |
+
+## Design
+
+[Read the design rationale](../developer-guide/execution-model.md#campaigns).
 
 ## Next
 

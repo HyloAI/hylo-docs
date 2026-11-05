@@ -112,3 +112,10 @@ editable from its checkout, so the version does not tell two installs apart.
 A run's `manifest.json` records the versions of the main Hylo packages and the git commit of the directory the run
 started in. When that directory is not inside a git repository, as with the workspace directory, the commit is
 empty.
+
+## Retired memory prototype
+
+The experimental model-managed Working Memory runtime, agent wrapper and dedicated prompt campaign were
+removed on 2026-11-04. `MemoryPromptCampaign` is not an available API. Event memory, SimpleMemVLA and the bounded
+in-process working store are separate, supported components. See [Memory](../user-guide/memory/index.md) for
+current choices and their evaluation boundaries.

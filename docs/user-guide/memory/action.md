@@ -6,6 +6,47 @@ then. At each decision the agent retrieves similar segments and starts the polic
 from pure noise. The policy still integrates its own velocity field from the current observation, so memory biases
 the action; it never replays one.
 
+## Configuration
+
+First build an [action bank](#building-a-bank) from successful development runs and register its artifact id.
+For the example below, prepare the [LIBERO and LeRobot runtimes](../../getting-started/optional-environments.md#libero-and-lerobot-policies)
+and checkpoint. This is an `agent` fragment for an experiment; replace the example artifact id with your bank.
+
+`memory.steered` wraps a sampler that implements the prior-sampling protocol. For LeRobot flow policies such as
+SmolVLA, use `lerobot.memory_steered`, which runs the policy in its own runtime:
+
+```yaml
+agent:
+  type: remote
+  params:
+    ref: lerobot.memory_steered
+    runtime: lerobot
+    params:
+      repo_id: lerobot/smolvla_libero
+      steering: {n_samples: 1, seed_noise: true}
+      memory: {type: action_bank, params: {path: "artifact:l10-search-v1@40a84dd1afab4a5c"}}
+      memory_steer: {k: 10, same_task: true, sim_floor: 0.95, t0_min: 0.1, t0_max: 0.7}
+```
+
+The full LIBERO-10 config is `bench/examples/configs/libero10_memory.yaml`.
+
+| Setting | Default | Meaning |
+|---|---|---|
+| `k` | 10 | segments retrieved |
+| `same_task` | true | retrieve only from the same task |
+| `sim_floor` | 0.9 | minimum cosine similarity; calibrate it against the bank's build report |
+| `temperature` | 0.05 | softmax temperature over similarity when weighting segments |
+| `dtw_mad` | 2.0 | how far from the others a segment may be before it is dropped |
+| `compare_steps` | the execution steps | prefix length compared between segments |
+| `t0_min`, `t0_max` | 0.1, 0.7 | the range of start times; smaller is a stronger bias |
+| `fixed_t0` | none | ignore confidence and always start here (for ablations) |
+| `dispersion_scale` | 0.5 | disagreement at which confidence roughly halves |
+| `gripper_dim` | −1 | the action dimension treated as the gripper |
+
+SmolVLA's velocity field pulls hard towards its own action: on LIBERO, a prior almost one standard deviation away
+moves the result about 40% of the way at `t0 = 0.1` and hardly at all from `t0 = 0.4`. Useful guidance therefore
+lives at small `t0`.
+
 ## Design
 
 **The problem.** A frozen policy repeats the same situations many times but learns nothing from them: it cannot be
@@ -85,43 +126,6 @@ started at a fixed `t0` of 0.3, with the source episode, step and similarity of 
 The chosen chunk's provenance also records `t0` and the number of segments kept, and the agent spec records the
 bank: `bank(<digest>,n=<segments>,k=10,floor=0.95,t0=[0.1,0.7])`.
 
-## Configuration
-
-`memory.steered` wraps a sampler that implements the prior-sampling protocol. For LeRobot flow policies such as
-SmolVLA, use `lerobot.memory_steered`, which runs the policy in its own runtime:
-
-```yaml
-agent:
-  type: remote
-  params:
-    ref: lerobot.memory_steered
-    runtime: lerobot
-    params:
-      repo_id: lerobot/smolvla_libero
-      steering: {n_samples: 1, seed_noise: true}
-      memory: {type: action_bank, params: {path: "artifact:l10-search-v1@40a84dd1afab4a5c"}}
-      memory_steer: {k: 10, same_task: true, sim_floor: 0.95, t0_min: 0.1, t0_max: 0.7}
-```
-
-The full LIBERO-10 config is `bench/examples/configs/libero10_memory.yaml`.
-
-| Setting | Default | Meaning |
-|---|---|---|
-| `k` | 10 | segments retrieved |
-| `same_task` | true | retrieve only from the same task |
-| `sim_floor` | 0.9 | minimum cosine similarity; calibrate it against the bank's build report |
-| `temperature` | 0.05 | softmax temperature over similarity when weighting segments |
-| `dtw_mad` | 2.0 | how far from the others a segment may be before it is dropped |
-| `compare_steps` | the execution steps | prefix length compared between segments |
-| `t0_min`, `t0_max` | 0.1, 0.7 | the range of start times; smaller is a stronger bias |
-| `fixed_t0` | none | ignore confidence and always start here (for ablations) |
-| `dispersion_scale` | 0.5 | disagreement at which confidence roughly halves |
-| `gripper_dim` | −1 | the action dimension treated as the gripper |
-
-SmolVLA's velocity field pulls hard towards its own action: on LIBERO, a prior almost one standard deviation away
-moves the result about 40% of the way at `t0 = 0.1` and hardly at all from `t0 = 0.4`. Useful guidance therefore
-lives at small `t0`.
-
 ## Building a bank
 
 A bank is a folder with `bank.npz` (keys, chunks, lengths) and `bank.json` (schema, digest, and each segment's
@@ -190,3 +194,8 @@ uv run python examples/memory/05_memory_across_sessions.py
   LeRobot flow policies do; the reference `policy.flow` does not on its own.
 - The gripper dimension is always aggregated by vote; there is no option for robots without a gripper.
 - Banks for policies other than LeRobot are built in scripts, not with a command.
+
+## Next
+
+- [Use memory](../using-memory.md): match a memory to its consuming agent.
+- [Memory](index.md): lifetime and evaluation boundaries.

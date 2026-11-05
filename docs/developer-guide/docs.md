@@ -18,26 +18,30 @@ Build with `--strict` before every commit: broken links, missing images and API 
 errors. The hylo-docs README says how to publish the public site.
 
 A repository that is not checked out does not fail the build. Each page generated from it shows a "Not built"
-warning instead, and `--strict` still passes. Before publishing, check that no page carries it:
+warning instead, and `--strict` still passes. Before publishing, check for placeholders and broken built links, including raw HTML resources and fragments:
 
 ```bash
-grep -rl 'admonition-title">Not built' docs/site-public/ || echo "all generated pages built"
+uv run python docs/mkdocs/check_site.py docs/site
+uv run python docs/mkdocs/check_site.py docs/site-public --url-prefix /hylo-docs/
 ```
 
 ## Generated pages
 
-The navigation is explicit in `mkdocs.yml`: a page appears only once it is listed there.
+`mkdocs.yml` owns the shared navigation. `mkdocs.public.yml` inherits it; the public hook removes Internal and
+excluded entries. Add a page to that shared navigation once. Generated module, command-family and workflow
+pages are reached through their indexes and listed under `not_in_nav` so they do not overwhelm the sidebar.
 
 | Page | Source | Edit |
 |---|---|---|
 | User Guide, Benchmarking, Configuration, most of Developer Guide | `docs/` in hylo-docs | the Markdown file |
-| Developer Guide > Extending, Interfaces, Internals; the experiment config schema | `harness/docs/`, copied at build time | the file in hylo-harness |
+| Developers > Plugin development/Internals; Reference > Interfaces and experiment schema | `harness/docs/`, copied at build time | the file in hylo-harness |
 | [CLI Reference](../cli/index.md) | every `hylo` subcommand's `--help` | the argparse help in the code |
 | [Plugin catalogue](plugin-catalogue.md) | every installed plugin's contract, maturity and licence | the package's `hylo.meta` declaration |
 | [Examples](../getting-started/examples.md) | the header comment of each config in `bench/examples/` and `plugins/examples/` | the config file |
 | [Formats and schemas](../api/formats.md) | the format table and `hylo schema` | the code |
 | API Reference: the core pages | a short hand-written intro in `docs/api/`, then the docstrings | the intro here, the rest in the code |
-| API Reference > Packages | the docstrings of every package | the code |
+| API package indexes and module pages | the docstrings of every package | the code |
+| Examples and results | curated case pages plus generated example README records | the case page or source README |
 
 `mkdocs/gen_pages.py` writes the generated pages. API pages are short hand-written intros; mkdocstrings fills them
 from the code's docstrings, which therefore appear on the public site verbatim. Docstrings follow the same writing
@@ -46,7 +50,7 @@ rules as pages.
 ## Public and internal site
 
 `mkdocs.yml` builds everything. `mkdocs.public.yml` builds the public site: it leaves out `rfcs/`, `research/`, the
-strategy summary and `design/` except `design/overview.md`.
+strategy summary, `internal/`, and `design/` except `design/overview.md`.
 
 The public hook (`mkdocs/public_hook.py`) turns links to the left-out pages into plain text. It does not remove the
 words around them. "See RFC-0005" stays on the public page, pointing at nothing. So user pages never cite RFCs,
@@ -91,9 +95,14 @@ Skills have a separate navigation entry even though the library is implemented i
 | Memory | observations and experience, storage, retrieval and data boundaries |
 | Skills | reusable task capabilities, applicability, verification and reuse |
 | Guides | concrete operations: run, evaluate, learn, improve, deploy and inspect |
-| Showcase | measured results, conditions, reproduction commands and failures |
-| Developer Guide and Reference | implementation, extension, configuration, API and CLI details |
-| Design and Research (internal) | decisions, roadmap, studies and historical records |
+| Examples and results | measured results, conditions, reproduction commands and failures |
+| Developers | architecture, extension tutorials and contributing |
+| Reference | exact CLI, configuration, contracts, formats and module API details |
+| Internal | current direction, decisions, research conclusions, experiment records and historical archive |
+
+Get started contains the minimal installation, first run, first improvement and task chooser. Optional runtime
+setup lives on its own page. Concepts explains a capability; Guides completes a task; Examples and results owns
+the measured evidence. Keep each fact in its primary page and link from the other contexts.
 
 Do not retell the full improvement loop or skill lifecycle at the start of each guide. State the page's task and
 link to the relevant concept. Distinguish robot capabilities, concrete library records and coding-agent instructions.
@@ -133,7 +142,7 @@ product copy; keep broader model-serving ambitions in design planning.
 
 Operational guides follow this order; concept pages lead with the capability and link to the relevant operations:
 
-1. **Purpose**: one or two sentences on what the page lets the reader do.
+1. **Purpose and prerequisites**: the outcome, required model/data/runtime and explicit working directory.
 2. **Do**: commands and their expected output, ready to copy.
 3. **Explain**: what just happened, and why it works this way.
 4. **Options**: the two or three most used; link the rest to the reference.
@@ -222,3 +231,13 @@ Each fact lives on one page. Other pages give one sentence and a link.
 - links to `rfcs/`, `research/` or `design/` pages other than `design/overview.md`.
 
 Keep current limitations: write them as current behaviour.
+
+### Reviewing structural changes
+
+- Preserve existing page URLs and useful section anchors when moving content; leave a short link at the old anchor.
+- Rebuild both sites and run `check_site.py` on each output. The checker does not fetch external URLs.
+- Execute new CPU-only tutorial snippets in an isolated output directory. Validate complete configuration examples;
+  do not present an untested model or hardware workflow as a newly measured result.
+- Edit generated content at its source, including `harness/docs`, example READMEs, CLI help and docstrings.
+- Keep RFC index statuses consistent with their source status lines. Update the Research conclusions index when
+  new evidence changes a current conclusion; preserve dated experiment records.

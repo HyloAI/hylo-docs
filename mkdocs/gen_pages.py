@@ -63,16 +63,22 @@ def cli_reference() -> None:
     lines = ["# CLI Reference", "",
              "`hylo` is one command whose subcommands come from the installed Hylo packages (the "
              "`hylo.commands` entry-point group): what is listed here depends on which repositories are "
-             "installed. Every page below is the command's own `--help`.", "",
+             "installed. Choose a command family for its generated `--help` and subcommands.", "",
              "| Command | What it does |", "|---|---|"]
-    lines += [f"| [`hylo {c}`](#hylo-{c}) | {d} |" for c, d in commands]
-    for c, _ in commands:
+    lines += [f"| [`hylo {c}`](commands/{c}.md) | {d} |" for c, d in commands]
+    for c, description in commands:
         text = _help(c)
-        lines += ["", f"## hylo {c}", "", "```text", text, "```"]
+        detail = [f"# hylo {c}", "", description, "", "[All commands](../index.md)",
+                  "", "```text", text, "```"]
+        # Keep existing command anchors useful without repeating the full help on the index.
+        lines += ["", f"## hylo {c}", "", f"[{description}](commands/{c}.md)"]
         usage = text.split("\n\n")[0]
         subs = re.search(r"\{([a-z,_-]+)\}", usage)
         for sub in (subs.group(1).split(",") if subs else []):
-            lines += ["", f"### hylo {c} {sub}", "", "```text", _help(c, sub), "```"]
+            detail += ["", f"## hylo {c} {sub}", "", "```text", _help(c, sub), "```"]
+            lines += ["", f"### hylo {c} {sub}", "",
+                      f"[Arguments and defaults](commands/{c}.md#hylo-{c}-{sub})."]
+        write(f"cli/commands/{c}.md", "\n".join(detail) + "\n")
     write("cli/index.md", "\n".join(lines) + "\n")
 
 
@@ -127,10 +133,13 @@ def examples() -> None:
               ("bench", "examples/evolve", "Improvement campaigns", "hylo evolve run {path}"),
               ("plugins", "examples/configs", "Plugin examples: experiments", "hylo run {path}"),
               ("plugins", "examples/evolve", "Plugin examples: campaigns", "hylo evolve run {path}")]
-    lines = ["# Examples", "",
-             "Every example config in hylo-bench and hylo-plugins, with the comment at its top. Paths "
-             "are relative to the development workspace; commands run from any directory (simulator runtimes come from "
-             "the machine profile, artifacts from the store).", ""]
+    lines = ["# Example catalogue", "",
+             "Every example config in hylo-bench and hylo-plugins, with the comment at its top. "
+             "Run these commands from the **workspace root**, where `bench/` and `plugins/` are siblings. "
+             "Config paths are relative to the working directory; runtimes and artifact ids resolve through the "
+             "machine profile and store.", "",
+             "For a guided first run, use the [quickstart](quickstart.md). "
+             "[Next steps](next-steps.md) matches tasks to guides and prerequisites.", ""]
     for repo, sub, title, cmd in groups:
         d = WORKSPACE / repo / sub
         if not d.is_dir():
@@ -168,6 +177,7 @@ SHOWCASE = [  # (page, repository, examples directory, title): one page per laye
     ("runtime", "serve", "examples", "Runtime"),
     ("studio", "studio", "examples", "Studio"),
     ("tool-agents", "harness", "adapters/hylo-code-agents/examples", "Tool-using agents"),
+    ("phase-guided", "harness", "adapters/hylo-code-agents/examples/harness_evolution", "Phase-guided development"),
 ]
 LINK = re.compile(r'(\]\(|src="|poster=")(?!https?:|#|mailto:|/)([^)"\s]+)')
 
@@ -200,7 +210,29 @@ def showcase() -> None:
         note = (f"!!! note \"Source\"\n    Generated from hylo-{repo}: `{sub}/README.md`. Every number on this page was "
                 f"measured by the scripts next to it; run them to reproduce.\n\n")
         head, _, body = readme.read_text().partition("\n")
-        write(f"showcase/{page}.md", f"{head}\n\n{note}{LINK.sub(fix, body)}")   # no edit path: the public
+        rendered = LINK.sub(fix, body)
+        if page == "tool-agents":
+            # The source remains one evidence record next to the reproducing scripts. Publish
+            # each workflow separately, with the original section anchors kept on its index.
+            chunks = re.split(r"(?m)^(?=## )", rendered)
+            index = [head, "", note, chunks[0], "## Workflow records", ""]
+            for chunk in chunks[1:]:
+                heading, _, content = chunk.partition("\n")
+                title = heading.removeprefix("## ")
+                slug = re.sub(r"[^\w\s-]", "", title.lower()).strip().replace(" ", "-")
+                target = f"tool-agents-{slug}.md"
+                # A section may refer to another section of the original README.
+                content = re.sub(r"\]\(#([^)]*)\)", r"](tool-agents.md#\1)", content)
+                write(f"showcase/{target}", f"# {title}\n\n{note}"
+                      f"[All program and tool experiments](tool-agents.md)\n\n{content}")
+                index += [heading, "", f"[Read the results, conditions and reproduction source]({target}).", ""]
+                for child in re.findall(r"(?m)^### (.+)$", content):
+                    anchor = re.sub(r"[^\w\s-]", "", child.lower()).strip().replace(" ", "-")
+                    index += [f"### {child}", "", f"[Read this section]({target}#{anchor}).", ""]
+            rendered = "\n".join(index)
+        else:
+            rendered = f"{head}\n\n{note}{rendered}"
+        write(f"showcase/{page}.md", rendered)   # no edit path: the public
         # site leaves some showcase pages out, and the source note says where each page comes from
 
 
@@ -248,7 +280,7 @@ PACKAGES = {  # repository -> package directories, in the order of the nav
                 "packages/hylo-reasoners", "packages/hylo-memory", "packages/hylo-learn", "packages/hylo-evolve",
                 "packages/hylo-catalog", "packages/hylo-policies", "packages/hylo-cli", "packages/hylo-manip",
                 "adapters/hylo-code-agents", "adapters/hylo-tools",
-                "adapters/hylo-policy-lerobot", "adapters/hylo-policy-openpi", "adapters/hylo-reasoner-llm",
+                "adapters/hylo-policy-lerobot", "adapters/hylo-policy-openpi", "adapters/hylo-policy-simplememvla", "adapters/hylo-reasoner-llm",
                 "adapters/hylo-proposer-llm", "adapters/hylo-data-video"],
     "bench": ["packages/hylo-bench", "packages/hylo-robosuite-contract", "adapters/hylo-env-mujoco",
               "adapters/hylo-env-libero", "adapters/hylo-env-robosuite", "adapters/hylo-env-robocasa"],
@@ -300,7 +332,7 @@ def package_api() -> None:
     index = ["# Packages", "",
              "The API of every Hylo package, generated from its docstrings and type annotations (mkdocstrings). "
              "Plugins and leaf repositories should depend on the [core contracts](../index.md) only; the rest is "
-             "documented so that it can be read, extended and debugged. Members whose names start with an underscore "
+             "documented by module so that it can be read, extended and debugged. Members whose names start with an underscore "
              "are left out.", ""]
     for repo, dirs in PACKAGES.items():
         index += [f"## hylo-{repo}", "", "| Package | What it is | Modules |", "|---|---|---|"]
@@ -323,16 +355,26 @@ def package_api() -> None:
             if plug:
                 lines += ["??? info \"Registered entry points\"", "", "    | Group | Name | Object |", "    |---|---|---|",
                           *[f"    | {g} | `{n}` | `{v}` |" for g, n, v in sorted(plug)], ""]
+            def module_target(module: str) -> str:
+                if module in curated:
+                    return f"../{curated[module]}#{module}"
+                return f"../modules/{dist}/{module}.md"
+
             lines += ["| Module | Summary |", "|---|---|",
-                      *[f"| [`{m}`](#{m.replace('.', '')}) | {_first_line(src, m)} |" for m in mods], ""]
+                      *[f"| [`{m}`]({module_target(m)}) | {_first_line(src, m)} |" for m in mods], ""]
             for m in mods:
                 if m in curated:
                     lines += [f"## `{m}` {{ #{m.replace('.', '')} }}", "",
                               f"A core contract: documented in [{curated[m][:-3].replace('-', ' ')}](../{curated[m]}#{m}).", ""]
                     continue
-                lines += [f"## `{m}` {{ #{m.replace('.', '')} }}", "", f"::: {m}", "    options:",
-                          "      show_root_heading: false", "      heading_level: 3", "      show_submodules: false",
+                lines += [f"## `{m}` {{ #{m.replace('.', '')} }}", "",
+                          f'[Module API]({module_target(m)}){{ data-api-module="{m}" }}. '
+                          f"{_first_line(src, m)}", ""]
+                detail = [f"# {m}", "", f"[Package: {dist}](../../packages/{dist}.md) · "
+                          "[Core contracts](../../index.md)", "", f"::: {m}", "    options:",
+                          "      show_root_heading: true", "      heading_level: 2", "      show_submodules: false",
                           "      members_order: source", "      show_if_no_docstring: true", ""]
+                write(f"api/modules/{dist}/{m}.md", "\n".join(detail))
             write(f"api/packages/{dist}.md", "\n".join(lines))
             summary = proj.get("description", "").split(":")[-1].strip()
             index.append(f"| [{dist}]({dist}.md) | {summary} | {len(mods)} |")

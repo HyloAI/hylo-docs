@@ -13,6 +13,8 @@ documented under [Skill library](skills.md).
 | Memory | What it keeps | Who uses it |
 |---|---|---|
 | [Spatial](spatial.md) | facts about objects and places, with time and frame information | a reasoner recalling an observation |
+| [Events](events.md) | ordered, episode-scoped observations with evidence and coverage | an agent or planner requesting exact recall |
+| [Video](video.md) | sampled chronological RGB history and episode-local feature caches | a compatible frozen SimpleMemVLA agent |
 | [Action](action.md) | motion segments from successful development episodes | a frozen flow policy retrieving a sampling prior |
 | [Lessons](lessons.md) | notes distilled from experience and credited by outcomes | a proposer planning its next change |
 
@@ -25,36 +27,42 @@ without a lesson book, and a reasoner can recall spatial facts without changing 
 - **Keep provenance.** Spatial facts record what was observed and when. Action banks use successful development
   episodes; skills and lessons carry the evidence appropriate to their source.
 - **Respect evaluation boundaries.** Development builds persistent banks and libraries. During evaluation they
-  are frozen, while spatial observations can still be written within an episode.
+  are frozen, while permitted spatial observations, events and video history can still be written within an episode.
 - **Make use inspectable.** Memory digests and trace events identify what influenced a decision. Refuted skills
   and retired lessons remain available as records of what did not work.
 
 ## When it is written and read
 
-The moment of writing matters as much as the content. Writing during an evaluation would let the agent learn from
-the episodes being scored, and would make the result depend on the order in which parallel episodes happened to
-finish. So writing and reading are separated in time.
+The moment and scope of writing matter as much as the content. Updating a shared experience library from scored
+episodes would make results depend on their order. Such libraries stay frozen during evaluation. Episode-local
+memory continues to record permitted observations so the agent can use its own history without learning across
+test episodes.
 
-![During an episode, spatial facts are written while visible and memory is read at every decision. After development runs, a bank is built from verified successes. During a campaign, verdicts become skills and credit lessons, which the proposer reads. At evaluation nothing is written: banks, skills and lessons are frozen and only read.](../../assets/diagrams/memory-timeline-light.svg){ .hylo-diagram .only-light }
-![During an episode, spatial facts are written while visible and memory is read at every decision. After development runs, a bank is built from verified successes. During a campaign, verdicts become skills and credit lessons, which the proposer reads. At evaluation nothing is written: banks, skills and lessons are frozen and only read.](../../assets/diagrams/memory-timeline-dark.svg){ .hylo-diagram .only-dark }
+![Episode-local observations update spatial, event or video memory. Development runs build banks and campaigns update experience. During evaluation, episode-local memory still changes while shared banks, skills and lessons remain frozen.](../../assets/diagrams/memory-timeline-light.svg){ .hylo-diagram .only-light }
+![Episode-local observations update spatial, event or video memory. Development runs build banks and campaigns update experience. During evaluation, episode-local memory still changes while shared banks, skills and lessons remain frozen.](../../assets/diagrams/memory-timeline-dark.svg){ .hylo-diagram .only-dark }
 
 1. **During an episode.** The reasoner writes what it perceives to spatial memory and recalls it when perception
    fails. A `skills` agent applies matching skills when the episode starts. A memory-steered policy retrieves from
-   its bank at every decision. Apart from a spatial memory file you chose to keep, nothing that outlives the run is
-   written.
+   its bank at every decision. Event-memory agents record observations in an episode scope; video-memory agents
+   append RGB history and clear it at reset. Durable event journals may retain audit evidence without exposing it
+   to another episode.
 2. **After development runs.** The successful episodes of the development splits, and only those, are turned into
    an action bank. The bank is sealed with a digest and never changes again; a newer bank is a new artifact.
-3. **During a campaign.** After every round, the archive's verdicts become skills with the status their evidence
-   supports, the lessons that the decided candidates relied on are credited, and a reflector distils new lessons from
-   development episodes. The proposer reads lessons and skill status before planning the next round.
+3. **During a campaign.** With the `experience` wrapper configured, archive verdicts become skills with the status
+   their evidence supports, cited lessons receive credit and an optional reflector distils development lessons.
+   The inner proposer can consume that context. The separate `harness.program` strategy recalls repair notes
+   from active promoted lineages; arbitrary campaigns do not update every memory backend automatically.
 4. **At evaluation.** Banks, skill libraries and lesson books are opened frozen and refuse every write. The agent
-   spec records each one's digest, so the result names exactly the memory it used.
+   spec records each one's digest, so the result names exactly the persistent experience it used. Episode-local
+   spatial, event and video memory can still change from observations within that episode.
 
 ## Choosing a memory
 
 | You want | Use |
 |---|---|
 | an agent that keeps track of objects it can no longer see | [spatial memory](spatial.md) with a composable agent |
+| exact recall of observed event order, counts or pending intentions | [event memory](events.md) with an observation extractor |
+| a frozen video-conditioned VLA to use its episode history | [video memory](video.md) with the optional `simplememvla` agent |
 | a frozen flow policy (SmolVLA and similar) to repeat motions that worked in similar scenes | [action memory](action.md) |
 | a change that a campaign verified to be applied automatically to matching tasks | a [steering, recovery or plan skill](skills.md) with the `skills` agent |
 | a code agent to reuse a program that already passed a gate | a [program skill](skills.md#program-skills) with `code.llm` |
@@ -81,8 +89,8 @@ The Experience page shows every skill library, lesson book and action bank under
 - Lessons change behaviour only through a language model that reads them.
 - Tool-calling agents and world sessions keep context only within an episode or session; across tasks, only role
   campaigns reuse experience (as recipe skills).
-- An online mode, in which a deployed agent writes memory while it works, is not part of this release: it would
-  make results depend on the order of episodes, and needs its own way of reporting that.
+- Updating shared experience libraries across evaluation episodes is not part of the frozen-library protocol.
+  Episode-local observation memory is supported and must remain separate from that persistent learning.
 
 ??? info "Where memory lives on disk"
 
@@ -96,3 +104,8 @@ The Experience page shows every skill library, lesson book and action bank under
     The Studio's Experience page shows skill libraries with status and evidence, lesson books with their recent
     operations, and action banks with their provenance (see [Studio](../studio.md#pages)). The contracts a new
     backend implements are in [Memory interfaces](../../harness/interfaces/memory.md).
+
+## Next
+
+- [Use memory](../using-memory.md): select a consumer and run a first example.
+- [Memory interfaces](../../harness/interfaces/memory.md): implement a backend or agent integration.

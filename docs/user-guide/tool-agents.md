@@ -9,105 +9,13 @@ Use it to try a model on a task without writing a program, to watch how a model 
 collect conversations that worked. For a frozen, model-free implementation use `code.program`; for a model that
 writes Python against the same tools use `code.llm` (see [Developing programs](developing-strategies.md)).
 
-## Recorded robot-control demo
-
-<video src="../../assets/videos/tools-llm-stack.mp4" poster="../../assets/videos/tools-llm-stack.jpg" controls muted playsinline preload="none" width="100%" aria-label="Recorded AI robot-control walkthrough: English task instruction, model tool calls, Panda grasp and place motions, measured receipts and the independent task verdict"></video>
-
-*1:45 · English · Recorded episode walkthrough. “Stack the purple block on the green block”: locate both blocks,
-choose a grasp, pick up the purple block, measure the target again, then place. Front and wrist cameras show the
-motion alongside the original model's tool calls and measured receipts.*
-
-The selected `qwen3.5:35b-a3b` episode has **five model calls, two robot actions and 127 control steps**, ending in
-success according to the task's own check. It has no operator messages or safety interventions. This is one
-recorded simulation episode, not a new aggregate evaluation or a hardware demonstration.
-
-The presentation replays the original actions in MuJoCo at higher camera resolution. All 128 recorded joint and
-gripper states, including reset, match exactly; the replay reaches the same success verdict. The original trace's
-531 hash-chained events verify. Model waits are shortened and robot motions are slowed for readability; selected
-model text is shown as trace excerpts. The original run took 92.6 seconds.
-[Replay provenance](../assets/videos/tools-llm-stack.provenance.json) records the source trace hash and verification.
-
-
-## Why tool calls
-
-Hylo's code agents let a model write Python against the robot's toolkit. That works, but a program block can move
-the robot many times before anyone sees the result, small models fail on syntax, and most served models are trained
-to call tools with JSON arguments rather than to write programs. Comparing models on a robot also needs a record
-that holds up afterwards: which prompt and tools the model had, what it was shown, and proof that nothing in the
-trace was changed. `tools.llm` is designed for those three needs: step-by-step control with checked actions, native
-tool calls, and evidence.
-
-## Design
-
-![The chat model measures with read tools and gets results back. An action goes as a proposal through the kernel and the safety shield to the environment, and the model gets a measured receipt with new images. The task's check scores the episode and is hidden from the model. Every event is in a hash-chained trace.](../assets/diagrams/tool-agent-loop-light.svg){ .hylo-diagram .only-light }
-![The chat model measures with read tools and gets results back. An action goes as a proposal through the kernel and the safety shield to the environment, and the model gets a measured receipt with new images. The task's check scores the episode and is hidden from the model. Every event is in a hash-chained trace.](../assets/diagrams/tool-agent-loop-dark.svg){ .hylo-diagram .only-dark }
-
-**Looking is separate from acting.** Read tools (locate, measure, compute, ask for grasp poses) can be batched in one
-reply and change nothing. An action must be the only call in its reply. It is recorded as a proposal tied to the
-observation it was decided on, runs through the kernel and the safety shield, and is answered with a measured
-receipt and fresh images. The model therefore sees the effect of every action before it decides the next one.
-
-**Measurements expire.** A target or grasp handle is tied to the moment it was measured. Once the robot has moved,
-an old handle is refused as stale and the model has to measure again: positions taken before a motion may no longer
-be true after it.
-
-**Refusing is not failing.** An action the shield or the planner refuses, and that moved nothing, does not count as a
-decision, so a model is not punished for asking for something impossible and then correcting itself. Three identical
-refusals in a row end the episode, so it cannot loop forever.
-
-**The task decides success.** `finish(success)` records what the model believes. The episode is scored by the task's
-own check, which the model never sees: a model that could see the check could stop the moment it passed, or argue
-with it.
-
-**Nothing is dropped from the record.** Long episodes outgrow the model's context, so what the model is sent is a
-projection: recent turns verbatim, older results as references it can reopen, and under pressure a structured
-summary. The conversation itself is append-only, and everything left out of the projection stays in the trace.
-
-**The evidence holds up.** The prompt is recorded layer by layer with digests, every trace line carries the hash of
-the line before it, and a sealed run can be checked later for any change. A person can steer a running episode, but
-any message marks it as human-assisted, and such episodes are kept out of autonomous results and training exports.
-
-**Tools are declared once.** Each tool is one declaration (a kind, a closed argument schema and structured help).
-The same declaration serves native tool calls, a text protocol for models without them, the MCP server and these
-docs, so they cannot drift apart.
-
-**The same execution path as every agent.** A tool action becomes action chunks that the episode kernel executes
-step by step through the safety shield, exactly as it does for a policy or a code agent. A model's run is therefore
-scored, traced and limited in the same way as any other agent's, and the results can be compared directly.
-
-??? info "Under the hood"
-
-    - **Tool surface.** Every tool is typed: a name, a kind (`read`, `act` or `end`), a closed JSON schema for its
-      arguments, and help in six parts (purpose, when to use, effect, returns, limits, errors). Calls are checked
-      against the schema before they run; a bad call returns a structured error, not an exception.
-    - **Model backends.** Messages use one neutral format with tool calls and tool results; adapters translate it for
-      OpenAI-compatible endpoints (including reasoning replay for models that need it) and the Anthropic API. Models
-      without native tool calls write fenced `tool` blocks, which are parsed into the same calls.
-    - **Prompt layers.** The system prompt is built from four layers (protocol, evidence rules, boundary, robot
-      description), each recorded with its digest.
-    - **Context.** Older tool results are stored and replaced by references the model can reopen with `read_artifact`;
-      under token pressure older turns are folded into a summary with seven fixed keys (`progress`, `confirmed`,
-      `ruled_out`, `attempts`, `constraints`, `avoid`, `next_checks`). A tool call and its result are always
-      kept or dropped together.
-
-??? example "One recorded episode, call by call"
-
-    The `stack` episode in the video, with `qwen3.5:35b-a3b` running locally:
-
-    | Call | The model | The robot and the tools |
-    |---|---|---|
-    | 1 | locates both blocks in one reply: two read calls | purple block `t1` and green block `t2`, measured in 3D at step 0 |
-    | 2 | asks for grasp options on `t1` | options that fit the open hand; `g3` is top-down with no IK error |
-    | 3 | grasps with `g3`: an action, alone in its reply | proposal tied to step 0; receipt after 84 steps: closed with 0.6 mm error, lifted with 4.0 mm, holding before and after the lift |
-    | 4 | locates the green block again, since the robot has moved and `t2` would now be refused as stale | the same block as `t7`, measured at step 84 |
-    | 5 | places on `t7` | lowered and released with 1.4 mm error; the episode ends, and the task's check reports success |
-
-    Five model calls, two decisions, no refusals, 127 control steps, 93 seconds of wall time.
-
 ## Run it
 
 The environment must publish a robot description (`mujoco.panda_table`, `mujoco.aloha_table`, `mujoco.g1_table`,
-or `libero` in its tool mode). An experiment config:
+or `libero` in its tool mode). Complete [Installation](../getting-started/installation.md), configure
+[camera rendering](../getting-started/optional-environments.md#camera-rendering), and make `qwen3.5:35b-a3b`
+available at your Ollama endpoint. Run commands from the **workspace root**. Create `runs/configs/` and save
+this complete configuration as `runs/configs/tools-llm-stack.yaml`:
 
 ```yaml
 schema_version: hylo.experiment/v0.1
@@ -127,7 +35,7 @@ trace: {record_privileged: false}
 ```bash
 uv run hylo preflight runs/configs/tools-llm-stack.yaml --out runs/tools-llm-stack   # check before running
 MUJOCO_GL=osmesa uv run hylo run runs/configs/tools-llm-stack.yaml
-uv run hylo watch runs/<run-dir>                                                     # follow it in the terminal
+uv run hylo watch <run_dir>                                                     # follow it in the terminal
 ```
 
 `hylo preflight` loads the config and its plugins, checks free storage, makes four live calls to the model (a text
@@ -260,6 +168,23 @@ env: {type: libero, params: {control: joint_position, tool_obs: true, segmentati
 
 Every observation reports what was changed. Perturbations work in both LIBERO modes, for VLA policies as well as
 tool agents.
+
+## Recorded robot-control demo
+
+[Watch the recorded case, including results, conditions and provenance](../showcase/robot-control.md).
+
+## Why tool calls
+
+Hylo's code agents let a model write Python against the robot's toolkit. That works, but a program block can move
+the robot many times before anyone sees the result, small models fail on syntax, and most served models are trained
+to call tools with JSON arguments rather than to write programs. Comparing models on a robot also needs a record
+that holds up afterwards: which prompt and tools the model had, what it was shown, and proof that nothing in the
+trace was changed. `tools.llm` is designed for those three needs: step-by-step control with checked actions, native
+tool calls, and evidence.
+
+## Design
+
+[Read the design rationale](../developer-guide/execution-model.md#tool-calling-agents).
 
 ## Next
 

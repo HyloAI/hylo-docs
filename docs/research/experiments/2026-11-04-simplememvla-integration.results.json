@@ -1,0 +1,221 @@
+{
+  "date": "2026-11-04",
+  "status": "completed",
+  "interpretation": "Implementation parity and regression on previously observed IDs; not fresh held-out evaluation or a memory gain estimate.",
+  "cpu_tests": {
+    "affected_suite_passed": 58,
+    "targeted_boundary_checks_passed": 4
+  },
+  "parity": {
+    "cpu_sampling_checks": 18,
+    "gpu_checks": [
+      {
+        "frame": 0,
+        "batch": 2,
+        "inputs_equal": true,
+        "actions_bitwise_equal": true,
+        "subtasks_equal": true,
+        "max_abs_action_error": 0.0
+      },
+      {
+        "frame": 16,
+        "batch": 2,
+        "inputs_equal": true,
+        "actions_bitwise_equal": true,
+        "subtasks_equal": true,
+        "max_abs_action_error": 0.0
+      },
+      {
+        "frame": 1190,
+        "batch": 2,
+        "inputs_equal": true,
+        "actions_bitwise_equal": true,
+        "subtasks_equal": true,
+        "max_abs_action_error": 0.0
+      },
+      {
+        "frame": 1206,
+        "batch": 2,
+        "inputs_equal": true,
+        "actions_bitwise_equal": true,
+        "subtasks_equal": true,
+        "max_abs_action_error": 0.0
+      },
+      {
+        "frame": 1300,
+        "batch": 2,
+        "inputs_equal": true,
+        "actions_bitwise_equal": true,
+        "subtasks_equal": true,
+        "max_abs_action_error": 0.0
+      }
+    ],
+    "complete": true,
+    "seconds": 250.9713113727048
+  },
+  "regression": {
+    "complete": true,
+    "successes": 8,
+    "planned": 8,
+    "outcomes": [
+      {
+        "task": "PickXtimes",
+        "episode": 0,
+        "success": true
+      },
+      {
+        "task": "VideoUnmask",
+        "episode": 0,
+        "success": true
+      },
+      {
+        "task": "PickHighlight",
+        "episode": 0,
+        "success": true
+      },
+      {
+        "task": "PatternLock",
+        "episode": 0,
+        "success": true
+      },
+      {
+        "task": "PickXtimes",
+        "episode": 1,
+        "success": true
+      },
+      {
+        "task": "VideoUnmask",
+        "episode": 1,
+        "success": true
+      },
+      {
+        "task": "PickHighlight",
+        "episode": 1,
+        "success": true
+      },
+      {
+        "task": "PatternLock",
+        "episode": 1,
+        "success": true
+      }
+    ],
+    "seconds": 157.35488207638264,
+    "inference_calls": 39
+  },
+  "protocol": {
+    "tasks": [
+      "PickXtimes",
+      "VideoUnmask",
+      "PickHighlight",
+      "PatternLock"
+    ],
+    "split": "test",
+    "episode_ids": [
+      0,
+      1
+    ],
+    "specs": [
+      {
+        "task": "PickXtimes",
+        "episode": 0
+      },
+      {
+        "task": "VideoUnmask",
+        "episode": 0
+      },
+      {
+        "task": "PickHighlight",
+        "episode": 0
+      },
+      {
+        "task": "PatternLock",
+        "episode": 0
+      },
+      {
+        "task": "PickXtimes",
+        "episode": 1
+      },
+      {
+        "task": "VideoUnmask",
+        "episode": 1
+      },
+      {
+        "task": "PickHighlight",
+        "episode": 1
+      },
+      {
+        "task": "PatternLock",
+        "episode": 1
+      }
+    ],
+    "planned_attempts": 8,
+    "group_size": 8,
+    "interpretation": "Implementation regression on already observed pilot IDs; not fresh held-out performance.",
+    "memory": "hylo.memory.simplememvla.SimpleMemVLAHistory",
+    "model": "Same frozen reference checkpoint",
+    "physical_gpus": [
+      {
+        "index": 0,
+        "uuid": "GPU-b67f9dc9-af53-8d6a-b3e1-15d955dea1b3",
+        "free_mib": 81153,
+        "utilization": 0,
+        "compute_processes": false
+      }
+    ],
+    "runtime_note": "Same validated fused kernels and GEMM projection as reference pilot"
+  },
+  "native_agent_kernel_closed_loop_verified": false,
+  "upstream_commit": "453d6ec293e63318bbc2bce545d0b9256ab1bc51",
+  "checkpoint_revision": "6bf7204311496b93f12889cad0eaf3fcbddc35e4",
+  "model_sha256": "3d0fa9de73353cbd3e0e6c9b798b3747b7126931d42ce3a8cd510be767ffce69",
+  "tested_source_archive_sha256": "2ecec4fbac3ea5ac325aeeddd789da282f94dd7764766489d6920a769ac286df",
+  "implementation_files_verified_against_deployed_source": [
+    {
+      "path": "harness/adapters/hylo-policy-simplememvla/src/hylo/policies/simplememvla/agent.py",
+      "sha256": "455f6b54fe63fb71c6071b7d5f7d2d5ddb8d9efc6f4a7e1c5c17365c61e0dfb3"
+    },
+    {
+      "path": "harness/adapters/hylo-policy-simplememvla/src/hylo/policies/simplememvla/bridge.py",
+      "sha256": "92c445f9b290011079ad0d12176a313597d109f8d50784f6d5f16a5b6a7208c4"
+    },
+    {
+      "path": "harness/adapters/hylo-policy-simplememvla/src/hylo/policies/simplememvla/runtime.py",
+      "sha256": "18da666ed304cf26b80cf999bb2e17172b54048f35b454942ac767e34a289b5b"
+    },
+    {
+      "path": "harness/adapters/hylo-policy-simplememvla/tests/verify_upstream.py",
+      "sha256": "ed1ae72172cbc971a7abfc4309a076a863701d78899482954d919555dd8c4769"
+    },
+    {
+      "path": "harness/packages/hylo-memory/src/hylo/memory/simplememvla.py",
+      "sha256": "8a2bab250bf0f636b165a9b402eef591750a6a67e0c021500c0cb8c3c76237bb"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "runs/memory-20261104/hylo-simplememvla-v1/ecolab/integration.log",
+      "bytes": 7956,
+      "sha256": "0c9432b5720cc0acbbdb78da072a82c861843b1eceaffa00c76662b5ded5b75c"
+    },
+    {
+      "path": "runs/memory-20261104/hylo-simplememvla-v1/ecolab/parity-results.json",
+      "bytes": 1006,
+      "sha256": "d884488367aeb2a7f52f7390ab568f3de9bc671cedf2bd86e6ee5e0f94d0f518"
+    },
+    {
+      "path": "runs/memory-20261104/hylo-simplememvla-v1/ecolab/regression-protocol.json",
+      "bytes": 1208,
+      "sha256": "30772d0ae831c969cf0ca78ceec8ae727f6f3acc79eceacde41818e5275f07e2"
+    },
+    {
+      "path": "runs/memory-20261104/hylo-simplememvla-v1/ecolab/regression-results.json",
+      "bytes": 809,
+      "sha256": "b84c5504328d3fc069c9c4a704f9140b5573ab1f0b62783b46256165d522ea8a"
+    },
+    {
+      "path": "runs/memory-20261104/hylo-simplememvla-v1/ecolab/state.json",
+      "bytes": 1024,
+      "sha256": "758cd45a8a1b0c1eaae423403ee1a9deab40366399a8299cf6a3bb36a87ecaf3"
+    }
+  ]
+}

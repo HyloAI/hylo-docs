@@ -1,0 +1,469 @@
+{
+  "tasks": {
+    "PickXtimes": {
+      "successes": 10,
+      "n": 10,
+      "planned": 10,
+      "excluded": 0,
+      "success_rate": 1.0
+    },
+    "VideoUnmask": {
+      "successes": 10,
+      "n": 10,
+      "planned": 10,
+      "excluded": 0,
+      "success_rate": 1.0
+    },
+    "PickHighlight": {
+      "successes": 10,
+      "n": 10,
+      "planned": 10,
+      "excluded": 0,
+      "success_rate": 1.0
+    },
+    "PatternLock": {
+      "successes": 10,
+      "n": 10,
+      "planned": 10,
+      "excluded": 0,
+      "success_rate": 1.0
+    }
+  },
+  "outcomes": [
+    {
+      "task": "PickXtimes",
+      "episode": 0,
+      "success": true
+    },
+    {
+      "task": "VideoUnmask",
+      "episode": 0,
+      "success": true
+    },
+    {
+      "task": "PickHighlight",
+      "episode": 0,
+      "success": true
+    },
+    {
+      "task": "PatternLock",
+      "episode": 0,
+      "success": true
+    },
+    {
+      "task": "PickXtimes",
+      "episode": 1,
+      "success": true
+    },
+    {
+      "task": "VideoUnmask",
+      "episode": 1,
+      "success": true
+    },
+    {
+      "task": "PickHighlight",
+      "episode": 1,
+      "success": true
+    },
+    {
+      "task": "PatternLock",
+      "episode": 1,
+      "success": true
+    },
+    {
+      "task": "PickXtimes",
+      "episode": 2,
+      "success": true
+    },
+    {
+      "task": "VideoUnmask",
+      "episode": 2,
+      "success": true
+    },
+    {
+      "task": "PickHighlight",
+      "episode": 2,
+      "success": true
+    },
+    {
+      "task": "PatternLock",
+      "episode": 2,
+      "success": true
+    },
+    {
+      "task": "PickXtimes",
+      "episode": 3,
+      "success": true
+    },
+    {
+      "task": "VideoUnmask",
+      "episode": 3,
+      "success": true
+    },
+    {
+      "task": "PickHighlight",
+      "episode": 3,
+      "success": true
+    },
+    {
+      "task": "PatternLock",
+      "episode": 3,
+      "success": true
+    },
+    {
+      "task": "PickXtimes",
+      "episode": 4,
+      "success": true
+    },
+    {
+      "task": "VideoUnmask",
+      "episode": 4,
+      "success": true
+    },
+    {
+      "task": "PickHighlight",
+      "episode": 4,
+      "success": true
+    },
+    {
+      "task": "PatternLock",
+      "episode": 4,
+      "success": true
+    },
+    {
+      "task": "PickXtimes",
+      "episode": 5,
+      "success": true
+    },
+    {
+      "task": "VideoUnmask",
+      "episode": 5,
+      "success": true
+    },
+    {
+      "task": "PickHighlight",
+      "episode": 5,
+      "success": true
+    },
+    {
+      "task": "PatternLock",
+      "episode": 5,
+      "success": true
+    },
+    {
+      "task": "PickXtimes",
+      "episode": 6,
+      "success": true
+    },
+    {
+      "task": "VideoUnmask",
+      "episode": 6,
+      "success": true
+    },
+    {
+      "task": "PickHighlight",
+      "episode": 6,
+      "success": true
+    },
+    {
+      "task": "PatternLock",
+      "episode": 6,
+      "success": true
+    },
+    {
+      "task": "PickXtimes",
+      "episode": 7,
+      "success": true
+    },
+    {
+      "task": "VideoUnmask",
+      "episode": 7,
+      "success": true
+    },
+    {
+      "task": "PickHighlight",
+      "episode": 7,
+      "success": true
+    },
+    {
+      "task": "PatternLock",
+      "episode": 7,
+      "success": true
+    },
+    {
+      "task": "PickXtimes",
+      "episode": 8,
+      "success": true
+    },
+    {
+      "task": "VideoUnmask",
+      "episode": 8,
+      "success": true
+    },
+    {
+      "task": "PickHighlight",
+      "episode": 8,
+      "success": true
+    },
+    {
+      "task": "PatternLock",
+      "episode": 8,
+      "success": true
+    },
+    {
+      "task": "PickXtimes",
+      "episode": 9,
+      "success": true
+    },
+    {
+      "task": "VideoUnmask",
+      "episode": 9,
+      "success": true
+    },
+    {
+      "task": "PickHighlight",
+      "episode": 9,
+      "success": true
+    },
+    {
+      "task": "PatternLock",
+      "episode": 9,
+      "success": true
+    }
+  ],
+  "seconds": 1151.0705484505743,
+  "complete": true,
+  "scope": "Exploratory frozen SimpleMemVLA full-system test subset, not the 16-task benchmark score or a controlled Hylo-memory improvement. These test IDs are consumed for future tuning; keep remaining IDs separate.",
+  "protocol": {
+    "tasks": [
+      "PickXtimes",
+      "VideoUnmask",
+      "PickHighlight",
+      "PatternLock"
+    ],
+    "split": "test",
+    "episode_ids": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    "planned_attempts": 40,
+    "group_size": 40,
+    "specs": [
+      {
+        "task": "PickXtimes",
+        "episode": 0
+      },
+      {
+        "task": "VideoUnmask",
+        "episode": 0
+      },
+      {
+        "task": "PickHighlight",
+        "episode": 0
+      },
+      {
+        "task": "PatternLock",
+        "episode": 0
+      },
+      {
+        "task": "PickXtimes",
+        "episode": 1
+      },
+      {
+        "task": "VideoUnmask",
+        "episode": 1
+      },
+      {
+        "task": "PickHighlight",
+        "episode": 1
+      },
+      {
+        "task": "PatternLock",
+        "episode": 1
+      },
+      {
+        "task": "PickXtimes",
+        "episode": 2
+      },
+      {
+        "task": "VideoUnmask",
+        "episode": 2
+      },
+      {
+        "task": "PickHighlight",
+        "episode": 2
+      },
+      {
+        "task": "PatternLock",
+        "episode": 2
+      },
+      {
+        "task": "PickXtimes",
+        "episode": 3
+      },
+      {
+        "task": "VideoUnmask",
+        "episode": 3
+      },
+      {
+        "task": "PickHighlight",
+        "episode": 3
+      },
+      {
+        "task": "PatternLock",
+        "episode": 3
+      },
+      {
+        "task": "PickXtimes",
+        "episode": 4
+      },
+      {
+        "task": "VideoUnmask",
+        "episode": 4
+      },
+      {
+        "task": "PickHighlight",
+        "episode": 4
+      },
+      {
+        "task": "PatternLock",
+        "episode": 4
+      },
+      {
+        "task": "PickXtimes",
+        "episode": 5
+      },
+      {
+        "task": "VideoUnmask",
+        "episode": 5
+      },
+      {
+        "task": "PickHighlight",
+        "episode": 5
+      },
+      {
+        "task": "PatternLock",
+        "episode": 5
+      },
+      {
+        "task": "PickXtimes",
+        "episode": 6
+      },
+      {
+        "task": "VideoUnmask",
+        "episode": 6
+      },
+      {
+        "task": "PickHighlight",
+        "episode": 6
+      },
+      {
+        "task": "PatternLock",
+        "episode": 6
+      },
+      {
+        "task": "PickXtimes",
+        "episode": 7
+      },
+      {
+        "task": "VideoUnmask",
+        "episode": 7
+      },
+      {
+        "task": "PickHighlight",
+        "episode": 7
+      },
+      {
+        "task": "PatternLock",
+        "episode": 7
+      },
+      {
+        "task": "PickXtimes",
+        "episode": 8
+      },
+      {
+        "task": "VideoUnmask",
+        "episode": 8
+      },
+      {
+        "task": "PickHighlight",
+        "episode": 8
+      },
+      {
+        "task": "PatternLock",
+        "episode": 8
+      },
+      {
+        "task": "PickXtimes",
+        "episode": 9
+      },
+      {
+        "task": "VideoUnmask",
+        "episode": 9
+      },
+      {
+        "task": "PickHighlight",
+        "episode": 9
+      },
+      {
+        "task": "PatternLock",
+        "episode": 9
+      }
+    ],
+    "physical_gpus": [
+      {
+        "index": 0,
+        "uuid": "GPU-b67f9dc9-af53-8d6a-b3e1-15d955dea1b3",
+        "free_mib": 81153,
+        "utilization": 0,
+        "compute_processes": false
+      }
+    ],
+    "native_torch_numpy_seed": 0,
+    "source": {
+      "source_commit": "453d6ec293e63318bbc2bce545d0b9256ab1bc51",
+      "source_archive_sha256": "56156d7f46dde462e856865220188bfbe6fec7e1ceb69c2724c79c48d2273c19",
+      "checkpoint_repo": "yinchenghust/simplememvla_robomme",
+      "checkpoint_revision": "6bf7204311496b93f12889cad0eaf3fcbddc35e4",
+      "purpose": "Native released SimpleMemVLA RoboMME checkpoint evaluation; no new training",
+      "initial_gpu_scope": 1,
+      "gpu_policy": "User expanded authorization to all idle GPUs on 2026-11-04; resolve devices at launch."
+    },
+    "runtime": {
+      "stage": "prepared",
+      "wheel": {
+        "version": "v1.6.2.post1",
+        "name": "causal_conv1d-1.6.2.post1+cu12torch2.9cxx11abiTRUE-cp311-cp311-linux_x86_64.whl",
+        "url": "https://github.com/Dao-AILab/causal-conv1d/releases/download/v1.6.2.post1/causal_conv1d-1.6.2.post1%2Bcu12torch2.9cxx11abiTRUE-cp311-cp311-linux_x86_64.whl",
+        "digest": "sha256:0341ebb14402a00d5743e1f0ac62bfcf5a95f52a94e562c17f0ade1e0d9db616",
+        "size": 193796334
+      },
+      "attention": "Torch SDPA retained; fused Qwen gated-delta and causal-convolution enabled"
+    },
+    "selection": "Four previously chosen memory families, fixed first ten test IDs per task, declared before observing outcomes. No resampling or success-based stopping.",
+    "deviations": [
+      "Heterogeneous shared batch: round-robin task ordering instead of native per-task groups; policy RNG consumption therefore differs",
+      "Fused Qwen kernels, SDPA, and validated equivalent GEMM vision patch projection",
+      "Videos disabled for this pilot to avoid native mixed-task filename collisions; per-episode status logged"
+    ],
+    "interpretation": "Exploratory frozen SimpleMemVLA full-system test subset, not the 16-task benchmark score or a controlled Hylo-memory improvement. These test IDs are consumed for future tuning; keep remaining IDs separate."
+  },
+  "verification": {
+    "planned_and_recorded_id_sets_match": true,
+    "successful_resets": 40,
+    "terminal_success_events": 40,
+    "exclusions": 0,
+    "episode_errors": 0,
+    "inference_calls": 52,
+    "raw_results_sha256": "a76772360adc53a864c81619a35b3abc6c01764f15519f3088777a027c364f5d",
+    "progress_sha256": "075dcf46311887d09d957d53f9ed0fdfc512811fcd17036837f18cc3b245a8b7"
+  }
+}

@@ -8,6 +8,45 @@ and text.
 ![While the targets are visible, the reasoner perceives them and writes them to spatial memory; once they are hidden, it queries the memory and acts on the remembered positions.](../../assets/diagrams/spatial-recall-light.svg){ .hylo-diagram .only-light }
 ![While the targets are visible, the reasoner perceives them and writes them to spatial memory; once they are hidden, it queries the memory and acts on the remembered positions.](../../assets/diagrams/spatial-recall-dark.svg){ .hylo-diagram .only-dark }
 
+## Using it in an agent
+
+Composable agents pair a reasoner (slow, event-triggered decisions) with a policy (every step). The reasoner gets
+the memory store, a per-episode working memory with a fixed capacity, and an event emitter.
+
+```yaml
+agent:
+  type: composable.object_reach
+  params:
+    chooser: {type: chooser.rule_color}        # or chooser.llm / chooser.vlm
+    memory: {type: sqlite, params: {path: ":memory:"}}   # the default; a file path keeps it across runs
+```
+
+`composable.object_reach` writes every visible object as a spatial item keyed by episode and object, and when the
+objects are hidden it recalls them from memory instead. The chooser decides which object the instruction means,
+from seen or remembered objects alike, so the same code serves both. `memory: null` turns memory off.
+
+A reasoner of your own uses the same contracts:
+
+```python
+from hylo.core.memory import MemoryItem, MemoryKind, MemoryQuery, Pose, TimeSpan
+
+def remember(rctx, obj_id, xy, t):
+    item = MemoryItem(kind=MemoryKind.SPATIAL, key=f"{rctx.episode_id}:{obj_id}", content=f"{obj_id} at {xy}",
+                      entities=(obj_id,), scope={"episode_id": rctx.episode_id},
+                      pose=Pose(frame_id="table", position=(*xy, 0.0)), event_time=TimeSpan(start=t))
+    res = rctx.memory.write([item])
+    rctx.emit("memory.write", {"op": "write", "events": [list(e) for e in res.events]})
+
+def recall(rctx, near_xy, radius=0.2):
+    q = MemoryQuery(kinds=frozenset({MemoryKind.SPATIAL}), scope={"episode_id": rctx.episode_id},
+                    near=(Pose(frame_id="table", position=(*near_xy, 0.0)), radius))
+    hits = rctx.memory.query(q)
+    rctx.emit("memory.retrieval", {"n_hits": len(hits)})
+    return hits
+```
+
+Emit the events yourself: they are what makes a decision from memory visible in a replay.
+
 ## Design
 
 **The problem.** Perception is intermittent: objects leave the field of view, are hidden by the arm, or are
@@ -51,12 +90,16 @@ Time is kept twice: when the fact was true in the world, and when it was recorde
 three effects, reported back to the writer and in the `memory.write` trace event:
 
 - `ADD`: a new fact.
-- `INVALIDATE`: an earlier fact with the same kind and key stops being valid from the new item's time. It is not
+- `INVALIDATE`: an earlier fact with the same kind, key, exact scope and clock stops being valid from the new item's time. It is not
   deleted: a query "as of" an earlier time still finds it.
-- `SKIP_DUP`: the same content is already stored and valid, so nothing is written.
+- `SKIP_DUP`: the same typed evidence is already stored and valid. Scope, event time, pose orientation and provenance
+  participate in its identity, so repeated-looking observations are not automatically duplicates.
 
 `forget` marks matching items as expired (for example, a remembered location that turned out to be empty). Nothing
 is ever removed from the file.
+Forgetting applies all query filters, including scope, entity and exact spatial radius;
+`k` limits retrieval, not how many matching records expire. Backdated keyed replacements
+are rejected atomically. Append late evidence without a key instead of rewriting history.
 
 ## Queries
 
@@ -68,6 +111,7 @@ is ever removed from the file.
 | `near` | within a radius of a pose (same frame); closer items score higher |
 | `time_range` | observed during this interval |
 | `as_of` | what was valid at that time, including facts that were invalidated later |
+| `clock` | restrict to `sim` or `wall`; select it when interpreting numeric time filters |
 | `include_invalidated` | also return replaced facts |
 | `k` | at most this many hits (default 10) |
 
@@ -81,52 +125,16 @@ did.
 
     | Columns | Holds |
     |---|---|
-    | `t_start`, `t_end` | when the fact was observed (event time) |
+    | `t_start`, `t_end`, `t_clock` | when the fact was observed and its clock domain |
     | `valid_from`, `valid_to` | when it was true; `valid_to` is set when a newer item with the same key arrives |
     | `recorded_at`, `expired_at` | when it was written; when `forget` expired it |
-    | `frame_id`, `px`, `py`, `pz` | position, for the bounding-box prefilter before the exact radius check |
+    | `frame_id`, `px`, `py`, `pz`, `orientation` | frame and pose; position supports the prefilter and exact radius check |
     | `content_hash` | for duplicate detection |
 
-    `snapshot()` hashes the content of the unexpired rows, so a run can record which state of memory it started from.
-
-## Using it in an agent
-
-Composable agents pair a reasoner (slow, event-triggered decisions) with a policy (every step). The reasoner gets
-the memory store, a per-episode working memory with a fixed capacity, and an event emitter.
-
-```yaml
-agent:
-  type: composable.object_reach
-  params:
-    chooser: {type: chooser.rule_color}        # or chooser.llm / chooser.vlm
-    memory: {type: sqlite, params: {path: ":memory:"}}   # the default; a file path keeps it across runs
-```
-
-`composable.object_reach` writes every visible object as a spatial item keyed by episode and object, and when the
-objects are hidden it recalls them from memory instead. The chooser decides which object the instruction means,
-from seen or remembered objects alike, so the same code serves both. `memory: null` turns memory off.
-
-A reasoner of your own uses the same contracts:
-
-```python
-from hylo.core.memory import MemoryItem, MemoryKind, MemoryQuery, Pose, TimeSpan
-
-def remember(rctx, obj_id, xy, t):
-    item = MemoryItem(kind=MemoryKind.SPATIAL, key=f"{rctx.episode_id}:{obj_id}", content=f"{obj_id} at {xy}",
-                      entities=(obj_id,), scope={"episode_id": rctx.episode_id},
-                      pose=Pose(frame_id="table", position=(*xy, 0.0)), event_time=TimeSpan(start=t))
-    res = rctx.memory.write([item])
-    rctx.emit("memory.write", {"op": "write", "events": [list(e) for e in res.events]})
-
-def recall(rctx, near_xy, radius=0.2):
-    q = MemoryQuery(kinds=frozenset({MemoryKind.SPATIAL}), scope={"episode_id": rctx.episode_id},
-                    near=(Pose(frame_id="table", position=(*near_xy, 0.0)), radius))
-    hits = rctx.memory.query(q)
-    rctx.emit("memory.retrieval", {"n_hits": len(hits)})
-    return hits
-```
-
-Emit the events yourself: they are what makes a decision from memory visible in a replay.
+    `snapshot()` uses the `hylo.sqlite/v2` digest over all rows, including expired records,
+    complete intervals and provenance. It is not comparable to the earlier snapshot algorithm.
+    Opening a legacy store adds clock/orientation columns and rehashes its records; unknown
+    historical orientations cannot be recovered.
 
 ## In the trace
 
@@ -166,3 +174,8 @@ uv run python examples/memory/02_observable_retrieval.py          # one episode'
 - Text search is a substring match; there are no embeddings yet.
 - Spatial queries need the same frame; there is no transform between frames.
 - Memory does not resolve language: an instruction the chooser misreads is misread with memory too.
+
+## Next
+
+- [Use memory](../using-memory.md): match a memory to its consuming agent.
+- [Memory](index.md): lifetime and evaluation boundaries.

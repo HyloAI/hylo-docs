@@ -1,0 +1,607 @@
+{
+  "date": "2026-11-03",
+  "official_external_benchmarks_run": false,
+  "environment": {
+    "python": "3.12.3",
+    "sqlite": "3.45.1",
+    "packages": {
+      "numpy": "2.5.4",
+      "pydantic": "2.14.2",
+      "pytest": "9.2.0",
+      "mujoco": "3.17.0",
+      "torch": null,
+      "mani_skill": null,
+      "sapien": null
+    },
+    "nvidia_device_nodes": []
+  },
+  "source": {
+    "harness_base_commit": "41876d5cb446fdfe3222999fda127e2fe9edccdb",
+    "working_tree_changes": true,
+    "sha256": {
+      "harness/examples/memory/06_event_memory.py": "31f6b94206348e3f562d5025b5d2e86cb298b0fb1ea4114e75081ffad2a9050e",
+      "harness/examples/memory/07_event_memory_occlusion.py": "49479355a147e072b7e024d4b637a1bcdeffaa049ca0c2f8d4043d19a5f3ef7f",
+      "harness/packages/hylo-agents/src/hylo/agents/event_memory.py": "7c0496186ae381f859cb04110fd214a3e85d3f1fca8ad44182d9fc6885010ed0",
+      "harness/packages/hylo-agents/tests/test_event_memory.py": "035e49b459cae422cc6c4fac2d223f13e044b6771fd9fe8241a8060ac2fe96e4",
+      "harness/packages/hylo-core/src/hylo/core/episode_memory.py": "32ef390aef42d63eef43a83d30e862801808fac71f1accc9953b788ea98bfeff",
+      "harness/packages/hylo-memory/src/hylo/memory/episode.py": "4aa5092bfc92ef2427d8296f65fe16353fff271df0db36faffc3146011611df4",
+      "harness/packages/hylo-memory/src/hylo/memory/signals.py": "53d0969ec95f765ce0d5a33cd208653b93e2a7fdc84861a3983f864bf2b684b5",
+      "harness/packages/hylo-memory/tests/test_episode.py": "a038b7c4a990d9cb101e9f0b700265c17ee7ba9ab1a58ccba7d357d6475d23ab",
+      "harness/packages/hylo-memory/tests/test_sqlite_semantics.py": "b22a71c52355be50d6aa84768547971c36e70d23c000d311e04ac3ac9d91072f",
+      "harness/packages/hylo-core/src/hylo/core/memory.py": "9dd0bd032d5877f78d885b81d759f0579ba69d99460c33aae2d7c0b187d4ec06",
+      "harness/packages/hylo-memory/src/hylo/memory/sqlite.py": "c9dfa9ef13cbfd7e6c66d16424214f1aace2e47b41f187530f277246d12b2ce8"
+    }
+  },
+  "validation": {
+    "functional_and_examples": {
+      "passed": 166,
+      "command": "python -m pytest packages/hylo-core/tests packages/hylo-memory/tests packages/hylo-agents/tests tests/integration/test_memory.py tests/test_examples_memory.py -q"
+    },
+    "boundaries": {
+      "passed": 66,
+      "command": "python -I -m pytest dev/test_boundaries.py -q"
+    },
+    "documentation": {
+      "result": "passed",
+      "command": "python -m mkdocs build --site-dir /tmp/hylo-memory-docs-build"
+    }
+  },
+  "artifacts": {
+    "event-diagnostics-v2": {
+      "path": "runs/memory-20261103/event-diagnostics-v2/result.json",
+      "sha256": "bf9a0d86b186f84c3852f4d0311df8afa724cc6d34d862d6a33863d9eab797fb",
+      "result": {
+        "example": "event_memory",
+        "official_benchmark": false,
+        "inputs": "reference observable events, no RGB or motor policy",
+        "seed_start": 10000,
+        "seeds_per_type": 100,
+        "results": {
+          "spatial": {
+            "cases": 100,
+            "correct": {
+              "full_events": 100,
+              "fifo_8": 0,
+              "last_event": 0
+            }
+          },
+          "object": {
+            "cases": 100,
+            "correct": {
+              "full_events": 100,
+              "fifo_8": 0,
+              "last_event": 0
+            }
+          },
+          "capacity": {
+            "cases": 100,
+            "correct": {
+              "full_events": 100,
+              "fifo_8": 0,
+              "last_event": 0
+            }
+          },
+          "sequential": {
+            "cases": 100,
+            "correct": {
+              "full_events": 100,
+              "fifo_8": 0,
+              "last_event": 0
+            }
+          },
+          "tracking": {
+            "cases": 100,
+            "correct": {
+              "full_events": 100,
+              "fifo_8": 0,
+              "last_event": 0
+            }
+          },
+          "negative": {
+            "cases": 100,
+            "correct": {
+              "full_events": 100,
+              "fifo_8": 0,
+              "last_event": 0
+            }
+          },
+          "checklist": {
+            "cases": 100,
+            "correct": {
+              "full_events": 100,
+              "fifo_8": 0,
+              "last_event": 0
+            }
+          },
+          "temporal": {
+            "cases": 100,
+            "correct": {
+              "full_events": 100,
+              "fifo_8": 0,
+              "last_event": 0
+            }
+          },
+          "procedural": {
+            "cases": 100,
+            "correct": {
+              "full_events": 100,
+              "fifo_8": 0,
+              "last_event": 0
+            }
+          },
+          "prospective": {
+            "cases": 100,
+            "correct": {
+              "full_events": 100,
+              "fifo_8": 0,
+              "last_event": 0
+            }
+          }
+        },
+        "failures": [],
+        "runtime_s": 6.10011154320091
+      }
+    },
+    "event-mujoco-v2": {
+      "path": "runs/memory-20261103/event-mujoco-v2/result.json",
+      "sha256": "a74529ad7e0c1d482558e34fc988c5e1f570c4a10eb57843a102d1020cc658df",
+      "result": {
+        "example": "event_memory_occlusion",
+        "quick": false,
+        "seeds_per_task": 100,
+        "policy": "fixed reference controller, no VLA",
+        "observations": "visible structured signals",
+        "official_benchmark": false,
+        "results": {
+          "visible_5": {
+            "off": {
+              "success": 0.0,
+              "ci95": [
+                0.0,
+                0.0126
+              ],
+              "n": 300
+            },
+            "on": {
+              "success": 0.76,
+              "ci95": [
+                0.7086,
+                0.8048
+              ],
+              "n": 300
+            },
+            "paired": {
+              "n_pairs": 300,
+              "diff": 0.76,
+              "wins": 228,
+              "losses": 0,
+              "p_two_sided": 4.637e-69
+            },
+            "per_task": {
+              "mujoco/table_direct": {
+                "off": {
+                  "success": 0.0,
+                  "ci95": [
+                    0.0,
+                    0.037
+                  ],
+                  "n": 100
+                },
+                "on": {
+                  "success": 0.99,
+                  "ci95": [
+                    0.9455,
+                    0.9982
+                  ],
+                  "n": 100
+                },
+                "paired": {
+                  "n_pairs": 100,
+                  "diff": 0.99,
+                  "wins": 99,
+                  "losses": 0,
+                  "p_two_sided": 3.155e-30
+                }
+              },
+              "mujoco/table_indirect": {
+                "off": {
+                  "success": 0.0,
+                  "ci95": [
+                    0.0,
+                    0.037
+                  ],
+                  "n": 100
+                },
+                "on": {
+                  "success": 0.3,
+                  "ci95": [
+                    0.2189,
+                    0.3959
+                  ],
+                  "n": 100
+                },
+                "paired": {
+                  "n_pairs": 100,
+                  "diff": 0.3,
+                  "wins": 30,
+                  "losses": 0,
+                  "p_two_sided": 1.863e-09
+                }
+              },
+              "mujoco/table_push": {
+                "off": {
+                  "success": 0.0,
+                  "ci95": [
+                    0.0,
+                    0.037
+                  ],
+                  "n": 100
+                },
+                "on": {
+                  "success": 0.99,
+                  "ci95": [
+                    0.9455,
+                    0.9982
+                  ],
+                  "n": 100
+                },
+                "paired": {
+                  "n_pairs": 100,
+                  "diff": 0.99,
+                  "wins": 99,
+                  "losses": 0,
+                  "p_two_sided": 3.155e-30
+                }
+              }
+            },
+            "runs": {
+              "off": "/home/bingao/hyloai/runs/memory-20261103/event-mujoco-v2/runs/off-5",
+              "on": "/home/bingao/hyloai/runs/memory-20261103/event-mujoco-v2/runs/on-5"
+            }
+          },
+          "visible_all": {
+            "off": {
+              "success": 0.76,
+              "ci95": [
+                0.7086,
+                0.8048
+              ],
+              "n": 300
+            },
+            "on": {
+              "success": 0.76,
+              "ci95": [
+                0.7086,
+                0.8048
+              ],
+              "n": 300
+            },
+            "paired": {
+              "n_pairs": 300,
+              "diff": 0.0,
+              "wins": 0,
+              "losses": 0,
+              "p_two_sided": 1.0
+            },
+            "per_task": {
+              "mujoco/table_direct": {
+                "off": {
+                  "success": 0.99,
+                  "ci95": [
+                    0.9455,
+                    0.9982
+                  ],
+                  "n": 100
+                },
+                "on": {
+                  "success": 0.99,
+                  "ci95": [
+                    0.9455,
+                    0.9982
+                  ],
+                  "n": 100
+                },
+                "paired": {
+                  "n_pairs": 100,
+                  "diff": 0.0,
+                  "wins": 0,
+                  "losses": 0,
+                  "p_two_sided": 1.0
+                }
+              },
+              "mujoco/table_indirect": {
+                "off": {
+                  "success": 0.3,
+                  "ci95": [
+                    0.2189,
+                    0.3959
+                  ],
+                  "n": 100
+                },
+                "on": {
+                  "success": 0.3,
+                  "ci95": [
+                    0.2189,
+                    0.3959
+                  ],
+                  "n": 100
+                },
+                "paired": {
+                  "n_pairs": 100,
+                  "diff": 0.0,
+                  "wins": 0,
+                  "losses": 0,
+                  "p_two_sided": 1.0
+                }
+              },
+              "mujoco/table_push": {
+                "off": {
+                  "success": 0.99,
+                  "ci95": [
+                    0.9455,
+                    0.9982
+                  ],
+                  "n": 100
+                },
+                "on": {
+                  "success": 0.99,
+                  "ci95": [
+                    0.9455,
+                    0.9982
+                  ],
+                  "n": 100
+                },
+                "paired": {
+                  "n_pairs": 100,
+                  "diff": 0.0,
+                  "wins": 0,
+                  "losses": 0,
+                  "p_two_sided": 1.0
+                }
+              }
+            },
+            "runs": {
+              "off": "/home/bingao/hyloai/runs/memory-20261103/event-mujoco-v2/runs/off-all",
+              "on": "/home/bingao/hyloai/runs/memory-20261103/event-mujoco-v2/runs/on-all"
+            }
+          }
+        },
+        "runtime_s": 30.18870131392032
+      }
+    },
+    "mujoco-occlusion": {
+      "path": "runs/memory-20261103/mujoco-occlusion/result.json",
+      "sha256": "572830bd4a45695f75ccb2fcac30133e63a82740c4e8c0c00e517f32257178e8",
+      "result": {
+        "example": "spatial_memory_occlusion",
+        "quick": true,
+        "seeds_per_task": 10,
+        "results": {
+          "visible_5": {
+            "visible_steps": 5,
+            "memory_off": {
+              "success": 0.0,
+              "ci95": [
+                0.0,
+                0.1135
+              ],
+              "n": 30
+            },
+            "memory_on": {
+              "success": 0.8,
+              "ci95": [
+                0.6269,
+                0.905
+              ],
+              "n": 30
+            },
+            "paired": {
+              "n_pairs": 30,
+              "diff": 0.8,
+              "wins": 24,
+              "losses": 0,
+              "p_two_sided": 1.192e-07
+            },
+            "per_task": {
+              "mujoco/table_direct": {
+                "memory_off": {
+                  "success": 0.0,
+                  "ci95": [
+                    0.0,
+                    0.2775
+                  ],
+                  "n": 10
+                },
+                "memory_on": {
+                  "success": 1.0,
+                  "ci95": [
+                    0.7225,
+                    1.0
+                  ],
+                  "n": 10
+                },
+                "paired": {
+                  "n_pairs": 10,
+                  "diff": 1.0,
+                  "wins": 10,
+                  "losses": 0,
+                  "p_two_sided": 0.001953
+                }
+              },
+              "mujoco/table_indirect": {
+                "memory_off": {
+                  "success": 0.0,
+                  "ci95": [
+                    0.0,
+                    0.2775
+                  ],
+                  "n": 10
+                },
+                "memory_on": {
+                  "success": 0.4,
+                  "ci95": [
+                    0.1682,
+                    0.6873
+                  ],
+                  "n": 10
+                },
+                "paired": {
+                  "n_pairs": 10,
+                  "diff": 0.4,
+                  "wins": 4,
+                  "losses": 0,
+                  "p_two_sided": 0.125
+                }
+              },
+              "mujoco/table_push": {
+                "memory_off": {
+                  "success": 0.0,
+                  "ci95": [
+                    0.0,
+                    0.2775
+                  ],
+                  "n": 10
+                },
+                "memory_on": {
+                  "success": 1.0,
+                  "ci95": [
+                    0.7225,
+                    1.0
+                  ],
+                  "n": 10
+                },
+                "paired": {
+                  "n_pairs": 10,
+                  "diff": 1.0,
+                  "wins": 10,
+                  "losses": 0,
+                  "p_two_sided": 0.001953
+                }
+              }
+            },
+            "steps_mean": {
+              "memory_off": 123.33333333333333,
+              "memory_on": 43.666666666666664
+            },
+            "runs": {
+              "memory_off": "/home/bingao/hyloai/runs/memory-20261103/mujoco-occlusion/runs/no-memory-visible-5",
+              "memory_on": "/home/bingao/hyloai/runs/memory-20261103/mujoco-occlusion/runs/memory-visible-5"
+            }
+          },
+          "visible_all": {
+            "visible_steps": null,
+            "memory_off": {
+              "success": 0.8,
+              "ci95": [
+                0.6269,
+                0.905
+              ],
+              "n": 30
+            },
+            "memory_on": {
+              "success": 0.8,
+              "ci95": [
+                0.6269,
+                0.905
+              ],
+              "n": 30
+            },
+            "paired": {
+              "n_pairs": 30,
+              "diff": 0.0,
+              "wins": 0,
+              "losses": 0,
+              "p_two_sided": 1.0
+            },
+            "per_task": {
+              "mujoco/table_direct": {
+                "memory_off": {
+                  "success": 1.0,
+                  "ci95": [
+                    0.7225,
+                    1.0
+                  ],
+                  "n": 10
+                },
+                "memory_on": {
+                  "success": 1.0,
+                  "ci95": [
+                    0.7225,
+                    1.0
+                  ],
+                  "n": 10
+                },
+                "paired": {
+                  "n_pairs": 10,
+                  "diff": 0.0,
+                  "wins": 0,
+                  "losses": 0,
+                  "p_two_sided": 1.0
+                }
+              },
+              "mujoco/table_indirect": {
+                "memory_off": {
+                  "success": 0.4,
+                  "ci95": [
+                    0.1682,
+                    0.6873
+                  ],
+                  "n": 10
+                },
+                "memory_on": {
+                  "success": 0.4,
+                  "ci95": [
+                    0.1682,
+                    0.6873
+                  ],
+                  "n": 10
+                },
+                "paired": {
+                  "n_pairs": 10,
+                  "diff": 0.0,
+                  "wins": 0,
+                  "losses": 0,
+                  "p_two_sided": 1.0
+                }
+              },
+              "mujoco/table_push": {
+                "memory_off": {
+                  "success": 1.0,
+                  "ci95": [
+                    0.7225,
+                    1.0
+                  ],
+                  "n": 10
+                },
+                "memory_on": {
+                  "success": 1.0,
+                  "ci95": [
+                    0.7225,
+                    1.0
+                  ],
+                  "n": 10
+                },
+                "paired": {
+                  "n_pairs": 10,
+                  "diff": 0.0,
+                  "wins": 0,
+                  "losses": 0,
+                  "p_two_sided": 1.0
+                }
+              }
+            },
+            "steps_mean": {
+              "memory_off": 43.666666666666664,
+              "memory_on": 43.666666666666664
+            },
+            "runs": {
+              "memory_off": "/home/bingao/hyloai/runs/memory-20261103/mujoco-occlusion/runs/no-memory-visible-all",
+              "memory_on": "/home/bingao/hyloai/runs/memory-20261103/mujoco-occlusion/runs/memory-visible-all"
+            }
+          }
+        },
+        "runtime_s": 2.9
+      }
+    }
+  }
+}

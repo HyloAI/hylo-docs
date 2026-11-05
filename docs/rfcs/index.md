@@ -10,10 +10,11 @@ repeats it.
 | [RFC-0002](RFC-0002-physical-rsi.md) | Physical RSI on LIBERO (frozen VLA first, weights second) | Implemented (2026-10-30/31); weight-level units unverified | improvement as a gated experiment: development, gate and held-out splits of init states, a cascade and a sequential paired test, approval before promotion |
 | [RFC-0003](RFC-0003-experience-memory-skills.md) | Experience memory and skills | Draft (2026-10-30) | action memories of verified successes, lessons and skills that steer a frozen policy |
 | [RFC-0004](RFC-0004-learning-pipeline.md) | Learning pipeline and derived artifacts | Implemented (A1-A3, W1-W4; video world models and RL fine-tuning wait for a GPU) | learners build sealed artifacts with provenance and a role (behaviour, instrument, proposal); one split guard; calibrated judges |
-| [RFC-0005](RFC-0005-architecture-measurement-and-placement.md) | What is measured, where it runs, and one episode loop | Parts 1-4 implemented (2026-10-31, 2026-11-01); part 5 partly; part 6 proposed | experiments vs execution profiles, one episode loop, a run and artifact store, contract versions and plugin metadata |
+| [RFC-0005](RFC-0005-architecture-measurement-and-placement.md) | What is measured, where it runs, and one episode loop | Parts 1-5 implemented (2026-10-31, 2026-11-01); part 6 proposed | experiments vs execution profiles, one episode loop, a run and artifact store, contract versions and plugin metadata |
 | [RFC-0006](RFC-0006-tool-using-agents.md) | Tool-using agents, program candidates and the manipulation toolkit | All parts implemented (2026-11-01/02) | agents that write programs against robot tools, programs as gated candidates and skills, a Panda tabletop task set |
 | [RFC-0007](RFC-0007-tool-calling-robot-agents.md) | Tool-calling robot agents, run evidence and perturbed LIBERO | Parts 1-9 implemented (2026-11-02) | a model calls typed robot tools one checked action at a time; lossless context; hash-chained, sealed runs; watching and steering; seven LIBERO perturbations |
 | [RFC-0008](RFC-0008-stage-worlds.md) | Stages, worlds and robot packs for model-driven robotics | Parts 1-11 implemented (2026-11-02) | scenes as revisioned entity trees, a MuJoCo world with 24 robot packs, actions with receipts, checks with reason codes, people, pretrained walking policies, role campaigns, the Studio world page |
+| [RFC-0009](RFC-0009-benchmark-memory.md) | Benchmark memory | Working Memory runtime withdrawn and removed; historical results retained (2026-11-04) | archived working-memory design and evaluation; earlier event-memory primitives remain available |
 
 Statuses are the RFCs' own status lines.
 
@@ -37,7 +38,7 @@ replay-verified recipes.
 
 ## Writing an RFC
 
-- Number it next (`RFC-0009-<slug>.md`) and add it to this table and to the navigation in `mkdocs.yml`.
+- Number it next (`RFC-0010-<slug>.md`) and add it to this table and to the navigation in `mkdocs.yml`.
 - Start with a status table (status, scope, what it builds on), then the motivation: the concrete problem, found in
   the code or in a result.
 - Give each part its own section with what changes, what it costs (for example, digests that change once), and how

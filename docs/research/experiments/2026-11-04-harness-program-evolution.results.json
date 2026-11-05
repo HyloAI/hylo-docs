@@ -1,0 +1,359 @@
+{
+  "date": "2026-11-04",
+  "interpretation": "Independent HarnessPAI-inspired Hylo strategy; CPU toy environment. No robot benchmark performance established.",
+  "reference": {
+    "repo": "Darwin-Agent/HarnessPAI",
+    "commit": "3af7d561d531ce3e3a3884a3f801c41b8b98e2fe",
+    "license": "No project license at audited pin; design reference only, no upstream source copied"
+  },
+  "tests": [
+    {
+      "passed": 33,
+      "path": "/home/bingao/hyloai/runs/evolution-20261104/final-tests-auto.log",
+      "scope": "10 strategy cases and 23 regression cases"
+    },
+    {
+      "passed": 11,
+      "path": "/home/bingao/hyloai/runs/evolution-20261104/final-tests-integrity.log",
+      "scope": "All strategy cases after adding replacement-artifact check; overlaps 10 previous cases"
+    }
+  ],
+  "distinct_test_cases": 34,
+  "attempts": [
+    {
+      "attempt": 1,
+      "directory": "/home/bingao/hyloai/runs/evolution-20261104/harness-program-v1",
+      "elapsed_s": 92.65,
+      "status": "no_complete_development_solution",
+      "model": "gpt-oss:20b",
+      "error": null,
+      "usage_completed_replies": {
+        "calls": 10,
+        "tokens_in": 59202,
+        "tokens_out": 2994,
+        "cost_usd": 0.0,
+        "cost_usd_known_part": 0.0,
+        "latency_s": 92.29
+      },
+      "development_cases": [
+        {
+          "case": 0,
+          "key": "testing/toy_put_red#0",
+          "instruction": "put the red block in the bin"
+        },
+        {
+          "case": 1,
+          "key": "testing/toy_put_blue#0",
+          "instruction": "put the blue block in the bin"
+        }
+      ],
+      "submissions": [],
+      "promoted": null,
+      "evidence_files": [
+        {
+          "path": "/home/bingao/hyloai/runs/evolution-20261104/harness-program-v1/result.json",
+          "sha256": "fd33e79538b89f524057e483875ff63023d106836f71d4f2ec6aebdb5a06cd81"
+        },
+        {
+          "path": "/home/bingao/hyloai/runs/evolution-20261104/harness-program-v1/protocol.json",
+          "sha256": "9c209486fe3495ae330a99b93cdfa1a83e6adc811b6286e8238d89b2ddfb8969"
+        },
+        {
+          "path": "/home/bingao/hyloai/runs/evolution-20261104/harness-program-v1/source-manifest.json",
+          "sha256": "51821d03abcca2546c9483928daddd2a9d56602231858be7004c7240850977dd"
+        },
+        {
+          "path": "/home/bingao/hyloai/runs/evolution-20261104/harness-program-v1/proposals/proposal-9eeefb5d71e5/strategy.json",
+          "sha256": "4e78f1d7b572c314b92eabc16ad109e9bbea22a8433eae491723dd52e3209860"
+        }
+      ]
+    },
+    {
+      "attempt": 2,
+      "directory": "/home/bingao/hyloai/runs/evolution-20261104/harness-program-v2",
+      "elapsed_s": 90.45,
+      "status": "rejected",
+      "model": "qwen3.5:35b-a3b",
+      "error": "http://localhost:11434/v1/chat/completions: TimeoutError('timed out')",
+      "usage_completed_replies": {
+        "calls": 0,
+        "tokens_in": 0,
+        "tokens_out": 0,
+        "cost_usd": 0.0,
+        "cost_usd_known_part": 0.0,
+        "latency_s": 0.0
+      },
+      "development_cases": [],
+      "submissions": [],
+      "promoted": null,
+      "evidence_files": [
+        {
+          "path": "/home/bingao/hyloai/runs/evolution-20261104/harness-program-v2/result.json",
+          "sha256": "3ab9fb1ecd3901a4ef5bf821c12b0870301f13abc4875deedd9c9dca4397b1a7"
+        },
+        {
+          "path": "/home/bingao/hyloai/runs/evolution-20261104/harness-program-v2/protocol.json",
+          "sha256": "690431c187b8ac28873ebe3bd8390ac8756994b3a6e2db430fb00bd795a198a7"
+        },
+        {
+          "path": "/home/bingao/hyloai/runs/evolution-20261104/harness-program-v2/source-manifest.json",
+          "sha256": "df6a020c67a1a789988d4ea0e38d03699776000d7eba575c81c0c7a0e01b189a"
+        },
+        {
+          "path": "/home/bingao/hyloai/runs/evolution-20261104/harness-program-v2/proposals/proposal-9272acd14c79/strategy.json",
+          "sha256": "26ebeba741af82c33e01197653aab23ef89f2df5eef28de8a734606aee8e961c"
+        }
+      ]
+    },
+    {
+      "attempt": 3,
+      "directory": "/home/bingao/hyloai/runs/evolution-20261104/harness-program-v3",
+      "elapsed_s": 132.48,
+      "status": "no_complete_development_solution",
+      "model": "gpt-oss:20b",
+      "error": null,
+      "usage_completed_replies": {
+        "calls": 15,
+        "tokens_in": 119761,
+        "tokens_out": 6305,
+        "cost_usd": 0.0,
+        "cost_usd_known_part": 0.0,
+        "latency_s": 132.09
+      },
+      "development_cases": [
+        {
+          "case": 0,
+          "key": "testing/toy_put_red#0",
+          "instruction": "put the red block in the bin"
+        },
+        {
+          "case": 1,
+          "key": "testing/toy_put_blue#0",
+          "instruction": "put the blue block in the bin"
+        }
+      ],
+      "submissions": [],
+      "promoted": null,
+      "evidence_files": [
+        {
+          "path": "/home/bingao/hyloai/runs/evolution-20261104/harness-program-v3/result.json",
+          "sha256": "2985a24f1c4d72d9430515e48981b170774db90792f3dfdeb81213e6f3a2ed05"
+        },
+        {
+          "path": "/home/bingao/hyloai/runs/evolution-20261104/harness-program-v3/protocol.json",
+          "sha256": "b7696b6c5f3f49e36118fc844da3d6322d3e9c8a493f86bbbf083f414561dfec"
+        },
+        {
+          "path": "/home/bingao/hyloai/runs/evolution-20261104/harness-program-v3/source-manifest.json",
+          "sha256": "15435a95e60640f554a310d9fed1b86bb448d657c0f71171c2d6b3b33c9bc512"
+        },
+        {
+          "path": "/home/bingao/hyloai/runs/evolution-20261104/harness-program-v3/proposals/proposal-bf5f7d25c2bd/strategy.json",
+          "sha256": "17446037c46b750d4dfc188885685b79bd30c7aecf98556424bcab61cdd49480"
+        }
+      ]
+    },
+    {
+      "attempt": 4,
+      "directory": "/home/bingao/hyloai/runs/evolution-20261104/harness-program-v4",
+      "elapsed_s": 140.4,
+      "status": "no_complete_development_solution",
+      "model": "gpt-oss:20b",
+      "error": null,
+      "usage_completed_replies": {
+        "calls": 15,
+        "tokens_in": 136072,
+        "tokens_out": 6705,
+        "cost_usd": 0.0,
+        "cost_usd_known_part": 0.0,
+        "latency_s": 140.02
+      },
+      "development_cases": [
+        {
+          "case": 0,
+          "key": "testing/toy_put_red#0",
+          "instruction": "put the red block in the bin"
+        },
+        {
+          "case": 1,
+          "key": "testing/toy_put_blue#0",
+          "instruction": "put the blue block in the bin"
+        }
+      ],
+      "submissions": [],
+      "promoted": null,
+      "evidence_files": [
+        {
+          "path": "/home/bingao/hyloai/runs/evolution-20261104/harness-program-v4/result.json",
+          "sha256": "f1a04cc3bad54da6d513de34f8bb7a3bcc331097fb56ae422430b9b43a74401e"
+        },
+        {
+          "path": "/home/bingao/hyloai/runs/evolution-20261104/harness-program-v4/protocol.json",
+          "sha256": "389e82ee8a07a0ec7b032d04af286b712377d08b417ba52b89755115b8ee29d0"
+        },
+        {
+          "path": "/home/bingao/hyloai/runs/evolution-20261104/harness-program-v4/source-manifest.json",
+          "sha256": "98d7174cc43d6754641387ddf17b0c39346dc1904417688fc8b6b147db154354"
+        },
+        {
+          "path": "/home/bingao/hyloai/runs/evolution-20261104/harness-program-v4/proposals/proposal-a847623ad8a2/strategy.json",
+          "sha256": "a14d3f6ffef81955df4cf955ce3ffb441a38094c6db2954a074e4c9fd678a149"
+        }
+      ]
+    },
+    {
+      "attempt": 5,
+      "directory": "/home/bingao/hyloai/runs/evolution-20261104/harness-program-v5",
+      "elapsed_s": 78.56,
+      "status": "no_complete_development_solution",
+      "model": "gpt-oss:20b",
+      "error": null,
+      "usage_completed_replies": {
+        "calls": 15,
+        "tokens_in": 122519,
+        "tokens_out": 3822,
+        "cost_usd": 0.0,
+        "cost_usd_known_part": 0.0,
+        "latency_s": 78.1
+      },
+      "development_cases": [
+        {
+          "case": 0,
+          "key": "testing/toy_put_red#0",
+          "instruction": "put the red block in the bin"
+        },
+        {
+          "case": 1,
+          "key": "testing/toy_put_blue#0",
+          "instruction": "put the blue block in the bin"
+        }
+      ],
+      "submissions": [
+        {
+          "submission": 1,
+          "successes": 0,
+          "cases": 2,
+          "outcomes": [
+            {
+              "case": 0,
+              "success": false,
+              "steps": 32,
+              "reason": "agent_done: solve returned"
+            },
+            {
+              "case": 1,
+              "success": false,
+              "steps": 32,
+              "reason": "agent_done: solve returned"
+            }
+          ]
+        },
+        {
+          "submission": 2,
+          "successes": 0,
+          "cases": 2,
+          "outcomes": [
+            {
+              "case": 0,
+              "success": false,
+              "steps": 32,
+              "reason": "agent_done: solve returned"
+            },
+            {
+              "case": 1,
+              "success": false,
+              "steps": 32,
+              "reason": "agent_done: solve returned"
+            }
+          ]
+        },
+        {
+          "submission": 3,
+          "successes": 0,
+          "cases": 2,
+          "outcomes": [
+            {
+              "case": 0,
+              "success": false,
+              "steps": 32,
+              "reason": "agent_done: solve returned"
+            },
+            {
+              "case": 1,
+              "success": false,
+              "steps": 32,
+              "reason": "agent_done: solve returned"
+            }
+          ]
+        },
+        {
+          "submission": 4,
+          "successes": 0,
+          "cases": 2,
+          "outcomes": [
+            {
+              "case": 0,
+              "success": false,
+              "steps": 32,
+              "reason": "agent_done: solve returned"
+            },
+            {
+              "case": 1,
+              "success": false,
+              "steps": 32,
+              "reason": "agent_done: solve returned"
+            }
+          ]
+        }
+      ],
+      "promoted": null,
+      "evidence_files": [
+        {
+          "path": "/home/bingao/hyloai/runs/evolution-20261104/harness-program-v5/result.json",
+          "sha256": "85ac92d09e12b36a11bf5a4d186ad46557df5e71de81969a0e20a1360e8a6ad3"
+        },
+        {
+          "path": "/home/bingao/hyloai/runs/evolution-20261104/harness-program-v5/protocol.json",
+          "sha256": "c8524379b5eeb6cc0306cb65779018c2f83ffb45c514a946de309ae1fd3f2928"
+        },
+        {
+          "path": "/home/bingao/hyloai/runs/evolution-20261104/harness-program-v5/source-manifest.json",
+          "sha256": "69f1b85124d08bfb15f6f264db806ab94a41f7d6020e02b1235ab9ca1090e3bc"
+        },
+        {
+          "path": "/home/bingao/hyloai/runs/evolution-20261104/harness-program-v5/proposals/proposal-34033883f486/strategy.json",
+          "sha256": "dd3df34e3d82afac82566f9d4edb5f7ab6eaeedf38fa2450b35cfe0f004c80c0"
+        }
+      ]
+    }
+  ],
+  "final_implementation": [
+    {
+      "path": "/home/bingao/hyloai/harness/adapters/hylo-code-agents/src/hylo/codeagents/harness_evolution.py",
+      "sha256": "7bd28ceab48b88b10fa3574fc4ad62c648a6396bb3b7d09d09c448234dd847f4"
+    },
+    {
+      "path": "/home/bingao/hyloai/harness/adapters/hylo-code-agents/src/hylo/codeagents/phase_memory.py",
+      "sha256": "33df37cb554401c307427db685f85e348ec3ecd8a2dd289b6064725d1359e914"
+    },
+    {
+      "path": "/home/bingao/hyloai/harness/adapters/hylo-code-agents/src/hylo/codeagents/research.py",
+      "sha256": "902d6e11de3d418eee66d89c93bd50bcf28db03a17f766abd6d43340dc5e9ed1"
+    },
+    {
+      "path": "/home/bingao/hyloai/harness/adapters/hylo-code-agents/src/hylo/codeagents/prompt.py",
+      "sha256": "1c52ded4213fe6c93af1a1a9000ee63e98f41657aa56c78cfac3d41e85ee1b84"
+    },
+    {
+      "path": "/home/bingao/hyloai/harness/adapters/hylo-code-agents/tests/test_harness_evolution.py",
+      "sha256": "2e07614a3b3dde6e1fecb2fb73f40dd315023bab29434144527bd5c9bb14367f"
+    }
+  ],
+  "limitations": [
+    "No successful autonomous candidate or memory transfer was observed.",
+    "Toy perception uses privileged test-double state.",
+    "Phase plan is code-generation guidance, not an enforced phase interpreter.",
+    "No general frozen-VLA toolkit driver is included.",
+    "Live attempts use their own saved source revisions. Final recall integrity check was added after attempt 5."
+  ]
+}

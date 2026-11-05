@@ -4,10 +4,25 @@ text, studio screenshots are dropped, mentions of research notes are generic."""
 import posixpath
 import re
 
-INTERNAL = ("rfcs/", "research/", "EXECUTIVE-SUMMARY.md", "design/", "developer-guide/docs.md")
+INTERNAL = ("internal/", "rfcs/", "research/", "EXECUTIVE-SUMMARY.md", "design/", "developer-guide/docs.md")
 KEEP = ("design/overview.md",)
 LINK = re.compile(r"(?<!!)\[([^\]]+)\]\(([^)\s]+)\)")
 STUDIO_SHOT = re.compile(r"^!\[[^\]]*\]\([^)]*studio-[a-z]+\.png\)(\{[^}]*\})?\s*\n(\s*\n)?(\*[^\n]*\*\s*\n)?", re.M)
+
+
+def on_config(config):
+    """Derive public navigation from the full site's single navigation source."""
+    def public_nav(node):
+        if isinstance(node, str):
+            excluded = node.startswith(INTERNAL) and node not in KEEP
+            return None if excluded or node == "showcase/studio.md" else node
+        if isinstance(node, list):
+            return [value for child in node if (value := public_nav(child))]
+        return {title: value for title, child in node.items()
+                if title != "Internal" and (value := public_nav(child))}
+
+    config["nav"] = public_nav(config["nav"])
+    return config
 
 
 def _internal(page_uri: str, target: str) -> bool:

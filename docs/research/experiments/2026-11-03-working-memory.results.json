@@ -1,0 +1,1788 @@
+{
+  "status": "completed",
+  "generated_utc": "2026-11-04T02:57:56.231161+00:00",
+  "completed_attempts": 64,
+  "planned_attempts": 64,
+  "interpretation": "Exploratory validation panel; not the canonical RoboMME test score. Frozen v8; later local repair fix is not part of these results.",
+  "panel_sha256": "3aec557e5bebebd2bcaf6ca4a5b1bbb959156f81b07d9f1a276910094658915f",
+  "protocol": {
+    "tasks": [
+      "BinFill",
+      "StopCube",
+      "PickXtimes",
+      "SwingXtimes",
+      "ButtonUnmask",
+      "VideoUnmask",
+      "VideoUnmaskSwap",
+      "ButtonUnmaskSwap",
+      "PickHighlight",
+      "VideoRepick",
+      "VideoPlaceButton",
+      "VideoPlaceOrder",
+      "MoveCube",
+      "InsertPeg",
+      "PatternLock",
+      "RouteStick"
+    ],
+    "split": "val",
+    "episodes": [
+      1,
+      7
+    ],
+    "conditions": [
+      "history",
+      "working"
+    ],
+    "max_steps": 1300,
+    "max_model_calls": 120,
+    "vision_server": {
+      "ready": true,
+      "model": "/home/gaobin/.cache/huggingface/hub/models--Qwen--Qwen3.6-27B/snapshots/6a9e13bd6fc8f0983b9b99948120bc37f49c13e9",
+      "frozen": true,
+      "backend": "vllm",
+      "backend_version": "0.19.0",
+      "dtype": "bfloat16",
+      "structured_working_output": true,
+      "gpu_memory_utilization": 0.64,
+      "working_prompt_sha256": "c5e7ac51d64e21144f02a079b9fb3bdd8bcad9c777f32f8b58a6ee064924e6c5",
+      "source_sha256": "a57a9827e0006afa8b72d96ca57e01204c1ae4624262f286dc78d9fdc2cdb390"
+    },
+    "source_sha256": {
+      "examples/memory/robomme/evaluate_panel.py": "ca2a5538f71937c50dc446ae54b39e75b0ea4a6b4635d8d64c91e1404a4af1cd",
+      "examples/memory/robomme/execution.py": "d392c85638d6d9dcebba5941456b0e60b21bc5c326759af3ffe299d59d508790",
+      "examples/memory/robomme/grounding.py": "cd64a45dc8ef506b03d56d140fc5c525229b0a3bdc4b80dbd7dfbc942f5c4c97",
+      "examples/memory/robomme/run_paired.py": "00fe2b5ef0927cb88b01963715504983f59d63ecf9336debfdadbb44d1162b7f",
+      "examples/memory/robomme/run_working.py": "648197679a75032513949194f3727a0bc2414c955ad77dc1c6e1289fad4f8d6c",
+      "examples/memory/robomme/serve_vision.py": "a57a9827e0006afa8b72d96ca57e01204c1ae4624262f286dc78d9fdc2cdb390",
+      "examples/memory/robomme/summarize.py": "190141b0bc086e9399c3143e642de2d97d1c618804e2fdf967276e25acab0a27",
+      "examples/memory/robomme/working_prompt.py": "c07fba8668997b6ed465d4332efe41f673c63768853f073788ea1d50a4cc9725",
+      "packages/hylo-core/src/hylo/core/__init__.py": "c9fe3f69d1331f0ba9a3297ff0bbf43496adf77a9b3cbc1e2df4eb0e3965aef3",
+      "packages/hylo-core/src/hylo/core/agent.py": "04613ae076d7135449f4069890ea84b1942b5186669e3926a56414b5c91c1c93",
+      "packages/hylo-core/src/hylo/core/artifact.py": "d4481f8a83e0fad9e0368d1befe7284f6338f3cd7b935ddbc364337386548781",
+      "packages/hylo-core/src/hylo/core/benchmark.py": "69e9c10d9de6252dda500fec91b0eaa14d3d0c9c7514befee889885909e4f0b4",
+      "packages/hylo-core/src/hylo/core/cli.py": "1899735dadf7587c477e6614ec23562d4a9156c5f0dc55119bf9732b527998e5",
+      "packages/hylo-core/src/hylo/core/codec.py": "3722802151869c47199d4cd76fe5aca5d809683d6c83cd96e044de0f38578e5f",
+      "packages/hylo-core/src/hylo/core/compat.py": "dff30e4adef7765cebe72b261e9593d1eb993eaf2f0092d0c60770dc5d6e0034",
+      "packages/hylo-core/src/hylo/core/config.py": "5c0659778b4e936ed8588f6b61e23201643738d5590ec0cf0a4ee27fa9d597fd",
+      "packages/hylo-core/src/hylo/core/contract.py": "852438758548fad07195e209a9fb9c550812abae0a6ee6f2302c139824fa74f7",
+      "packages/hylo-core/src/hylo/core/datasource.py": "d04df96c799f655243bdb2a9dca6d650422fa723038b5ed38bb5711c836da4b0",
+      "packages/hylo-core/src/hylo/core/deployment.py": "7bee1afb8c1258f855c33b6d787fb1a68cb644186245162a288ffb6a39688cf7",
+      "packages/hylo-core/src/hylo/core/env.py": "b51c208e113bb8c4424feada6b0048a46ca6185e150abda01f368f9d1205cba2",
+      "packages/hylo-core/src/hylo/core/episode_memory.py": "32ef390aef42d63eef43a83d30e862801808fac71f1accc9953b788ea98bfeff",
+      "packages/hylo-core/src/hylo/core/errors.py": "78278858e39c692d6159a673cbce17c53d0f401d091e2b9ef709a0ee5b66c03e",
+      "packages/hylo-core/src/hylo/core/events.py": "c602f070ebd5216eca23c16efab1510be5ecbda3e54826e39c59717332c607cc",
+      "packages/hylo-core/src/hylo/core/experience.py": "fcf5ecc4146f0e0e1e5af07ca3f727ecf42b0ddecc5f8713e1ad27b8bf24724f",
+      "packages/hylo-core/src/hylo/core/improvement.py": "7e88a8ca28a27394804992612e2b54e3f02fb851dac30f58593f817ff773db49",
+      "packages/hylo-core/src/hylo/core/instrument.py": "53867dc0d3b95a392ade893a102fdf9f268b6cf91c855b7109b45dd5ba126b19",
+      "packages/hylo-core/src/hylo/core/kernel.py": "a75c4a061360745cac90e0f92e02ab54da19469ab4ab99e7ceba1f5d216d8efc",
+      "packages/hylo-core/src/hylo/core/learning.py": "a8350c2cfabe8c50319eb03620fe4dc568462e79b2b2b76aa0265ad3bed516a4",
+      "packages/hylo-core/src/hylo/core/memory.py": "9dd0bd032d5877f78d885b81d759f0579ba69d99460c33aae2d7c0b187d4ec06",
+      "packages/hylo-core/src/hylo/core/plugins.py": "39532e7ab670d99fcf985c2dc52236916010cb3920d3bf8e5a06c5aa1fe3d4e2",
+      "packages/hylo-core/src/hylo/core/policy.py": "0f030518eb87130b87780407720de3cf387d1e6f6411a02faab059be2163677d",
+      "packages/hylo-core/src/hylo/core/profile.py": "0ff86d99046c16714cd7784638f9bf8bd6b6b6209da2f460b65152bd1a57302f",
+      "packages/hylo-core/src/hylo/core/reasoning.py": "a61706e5a6c0f0f88689098cdcb31b828b0de94265a1ddf3b9f6ca234ec36b49",
+      "packages/hylo-core/src/hylo/core/registry.py": "4c393cbdde12b61f175f95354dc4ca63a4afd262d77ef18d15c5ed452ba5c6cb",
+      "packages/hylo-core/src/hylo/core/remote/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "packages/hylo-core/src/hylo/core/remote/agent_client.py": "9d2bf2360c604b942a6074d2929a506e32b677ace4dc79d1a71a88bd6e172a50",
+      "packages/hylo-core/src/hylo/core/remote/agent_server.py": "b283a879d616be80f77661b7b97c630884565ab13e4ad1885fb581fe8d60cb66",
+      "packages/hylo-core/src/hylo/core/remote/client.py": "44c23ad158429d3a7e86da17e950fbb2289f96fbbc276a07fc147139ee4e6cc0",
+      "packages/hylo-core/src/hylo/core/remote/handlers.py": "fd72d5ebd11e93a1e73b8351fc8c4db81dd9e6c45552cc9f4238a3cc727a6ece",
+      "packages/hylo-core/src/hylo/core/remote/protocol.py": "20787c61b40dbfc9fbc0c4fd29cd5450e4c12d7a282b31096fa79b8c92de489c",
+      "packages/hylo-core/src/hylo/core/remote/server.py": "0797adfeac8f09150ed0677ba7e27119da8cb2e292d39908cbaa06cbf39c49b0",
+      "packages/hylo-core/src/hylo/core/remote/wire.py": "5a1086b004c8579024bc109d1d1d2e810142dcf63df4e6d0ad0ca3e1e953b358",
+      "packages/hylo-core/src/hylo/core/remote/workcell.py": "afe98fb48c16a70aea8765fd1642eab9b9425a11cf25dfed915f16cc875839bb",
+      "packages/hylo-core/src/hylo/core/remote/ws.py": "65e5f58f14860dc510d66674c4d68624a32f3bbd97c3fb93a81c158d13f7a0e8",
+      "packages/hylo-core/src/hylo/core/robot.py": "9c72db757f29f5bb39d16325b2576be24dd1555213896028acef2d948b31f33d",
+      "packages/hylo-core/src/hylo/core/safety.py": "b225802008d48c15daffade09d9bcfb354433689c7ccee4f13771df0d0b33184",
+      "packages/hylo-core/src/hylo/core/scene.py": "ffc587a4c96fe9f19fbd72ad0a10b8db5c663b118ccb7386e0eb6fb4a72ff447",
+      "packages/hylo-core/src/hylo/core/scorecard.py": "30173c74f8511819e7de389243b5dcc4354303cf005326ecb696c96167086965",
+      "packages/hylo-core/src/hylo/core/scoring.py": "f27b499c7f7dd75d7cdd88a18893ba1815c1ee43e373d8a8e67a4a858e89d94d",
+      "packages/hylo-core/src/hylo/core/seal.py": "df89e35473763035cdd745da842790d9b7e2902b94639e0bcf15dd2fa11dbdd4",
+      "packages/hylo-core/src/hylo/core/stage.py": "4a324f62cbc4d42d5e0d48eed390df2f8ccec0c8a0cb9ce0af1681b88ba84687",
+      "packages/hylo-core/src/hylo/core/stage_cli.py": "9c8f76ded575574d5b28622e31d168f2c996756acfe72a186951b31ff9ac69f1",
+      "packages/hylo-core/src/hylo/core/store.py": "f57ecbb8c9f753202d1105d1ee3a2437689df981d7c5389ec07e19a2445ae1f2",
+      "packages/hylo-core/src/hylo/core/task.py": "33870cca33879f3f4294a7c3544c44276a93eddcbe3360bb901c9d7cb1191fc8",
+      "packages/hylo-core/src/hylo/core/tooling.py": "4b80ec37ac7f2b8526dc21530aad22b8302e58838b56d1a0e222966751a66609",
+      "packages/hylo-core/src/hylo/core/trace.py": "948851f3eef5262f5ed82106837d499d2637c637aa4f7a2c560a5000bffdea1c",
+      "packages/hylo-core/src/hylo/core/types.py": "1e45484fca656fb0408bc37caa8650ce719f7eeaf3b4e20cf29d79f67d0e7b5e",
+      "packages/hylo-core/src/hylo/core/working_memory.py": "ec16739ea3c8c163beb0d2414a0adc43c9a91716ee56757ec05c40994c55b1eb",
+      "packages/hylo-core/src/hylo/testing/__init__.py": "dcb5eb32b53e08bf195739d4976900152a909b0d3ec668f14cc006b66fa7b5ae",
+      "packages/hylo-core/src/hylo/testing/conformance.py": "0917114ad556e81548875c8478e1b3f540dbede27c71f550b4249e370e4e4d4f",
+      "packages/hylo-core/src/hylo/testing/learners.py": "a60396ac70d4fca2ab81c19337db5b24bafbeb85802e6d9565c362ee3ec99fa4",
+      "packages/hylo-core/src/hylo/testing/point_reach.py": "b51b5f61f510a5d4655b4e73ad8b74d6dc0e8bf7300de2757a5dfeaca1edabec",
+      "packages/hylo-core/src/hylo/testing/setup.py": "4ee9f7ee9b8e5f496d26e75cf7f171cf9a91e32a833f50d7bd9243ded3efb61c",
+      "packages/hylo-memory/src/hylo/memory/__init__.py": "a0006902d805c0b57a3148dd66800a52b3c7d38924a5d6a63ba6c07dd70bba7b",
+      "packages/hylo-memory/src/hylo/memory/action_bank.py": "1749d03c1cb5bbedbb52e9e88339a74715f8a8c5a16ca559919af17ff78fe63a",
+      "packages/hylo-memory/src/hylo/memory/episode.py": "4aa5092bfc92ef2427d8296f65fe16353fff271df0db36faffc3146011611df4",
+      "packages/hylo-memory/src/hylo/memory/frames.py": "8561a0b009b24c23412f06502f915ed96af583c9bc73f10dfae442c2fdd3e3cd",
+      "packages/hylo-memory/src/hylo/memory/lessons.py": "e3cf1c2b29f20637769d34f01631cebb70a034f88f80c40e90a2324db6c88511",
+      "packages/hylo-memory/src/hylo/memory/signals.py": "53d0969ec95f765ce0d5a33cd208653b93e2a7fdc84861a3983f864bf2b684b5",
+      "packages/hylo-memory/src/hylo/memory/skills.py": "f6d6faa0243694e55b3c5ea5829c9a49199c3152f392df8f3e58cc45811997b0",
+      "packages/hylo-memory/src/hylo/memory/sqlite.py": "c9dfa9ef13cbfd7e6c66d16424214f1aace2e47b41f187530f277246d12b2ce8",
+      "packages/hylo-memory/src/hylo/memory/visual.py": "b1f02bdb3c45fb4a9b47980e569ab52700d36ccf757a5a57b0789dec5a82a32c",
+      "packages/hylo-memory/src/hylo/memory/working.py": "9b21eb744fd474aaf3a99ffc009d77e28a8ac021f20973c6a4688be5b7ff423a"
+    },
+    "planned_attempts": 64,
+    "analysis": "Exploratory fixed panel; all agent failures count; no skill promotion or performance stopping rule"
+  },
+  "summary": {
+    "overall": {
+      "history": {
+        "attempted": 32,
+        "successes": 4,
+        "success_per_attempt": 0.125,
+        "wilson95": [
+          0.04970134387480073,
+          0.2806830548165022
+        ],
+        "task_mean_success": 0.125,
+        "total_seconds": 22062.424052148126,
+        "total_actions": 25375,
+        "model_calls": 1201,
+        "input_tokens": 6165136,
+        "output_tokens": 364770,
+        "outcomes": {
+          "fail": 14,
+          "timeout": 13,
+          "success": 4,
+          "agent_error": 1
+        }
+      },
+      "working": {
+        "attempted": 32,
+        "successes": 2,
+        "success_per_attempt": 0.0625,
+        "wilson95": [
+          0.017310567031640967,
+          0.2014712314415458
+        ],
+        "task_mean_success": 0.0625,
+        "total_seconds": 17954.396967145614,
+        "total_actions": 23110,
+        "model_calls": 1554,
+        "input_tokens": 4879168,
+        "output_tokens": 305445,
+        "outcomes": {
+          "agent_error": 4,
+          "fail": 13,
+          "timeout": 13,
+          "success": 2
+        }
+      }
+    },
+    "per_task": [
+      {
+        "task": "BinFill",
+        "condition": "history",
+        "attempted": 2,
+        "successes": 0,
+        "success_per_attempt": 0.0,
+        "wilson95": [
+          0.0,
+          0.6576197724933469
+        ],
+        "outcomes": {
+          "fail": 1,
+          "timeout": 1
+        },
+        "median_seconds": 862.4561766665429
+      },
+      {
+        "task": "BinFill",
+        "condition": "working",
+        "attempted": 2,
+        "successes": 0,
+        "success_per_attempt": 0.0,
+        "wilson95": [
+          0.0,
+          0.6576197724933469
+        ],
+        "outcomes": {
+          "agent_error": 1,
+          "fail": 1
+        },
+        "median_seconds": 433.1743355526123
+      },
+      {
+        "task": "ButtonUnmask",
+        "condition": "history",
+        "attempted": 2,
+        "successes": 0,
+        "success_per_attempt": 0.0,
+        "wilson95": [
+          0.0,
+          0.6576197724933469
+        ],
+        "outcomes": {
+          "timeout": 2
+        },
+        "median_seconds": 1050.9822218781337
+      },
+      {
+        "task": "ButtonUnmask",
+        "condition": "working",
+        "attempted": 2,
+        "successes": 0,
+        "success_per_attempt": 0.0,
+        "wilson95": [
+          0.0,
+          0.6576197724933469
+        ],
+        "outcomes": {
+          "timeout": 2
+        },
+        "median_seconds": 539.1537048104219
+      },
+      {
+        "task": "ButtonUnmaskSwap",
+        "condition": "history",
+        "attempted": 2,
+        "successes": 0,
+        "success_per_attempt": 0.0,
+        "wilson95": [
+          0.0,
+          0.6576197724933469
+        ],
+        "outcomes": {
+          "timeout": 1,
+          "agent_error": 1
+        },
+        "median_seconds": 1213.8949045282789
+      },
+      {
+        "task": "ButtonUnmaskSwap",
+        "condition": "working",
+        "attempted": 2,
+        "successes": 0,
+        "success_per_attempt": 0.0,
+        "wilson95": [
+          0.0,
+          0.6576197724933469
+        ],
+        "outcomes": {
+          "timeout": 2
+        },
+        "median_seconds": 980.3113837544806
+      },
+      {
+        "task": "InsertPeg",
+        "condition": "history",
+        "attempted": 2,
+        "successes": 0,
+        "success_per_attempt": 0.0,
+        "wilson95": [
+          0.0,
+          0.6576197724933469
+        ],
+        "outcomes": {
+          "timeout": 2
+        },
+        "median_seconds": 1228.6118985277135
+      },
+      {
+        "task": "InsertPeg",
+        "condition": "working",
+        "attempted": 2,
+        "successes": 0,
+        "success_per_attempt": 0.0,
+        "wilson95": [
+          0.0,
+          0.6576197724933469
+        ],
+        "outcomes": {
+          "fail": 1,
+          "timeout": 1
+        },
+        "median_seconds": 663.9967440764885
+      },
+      {
+        "task": "MoveCube",
+        "condition": "history",
+        "attempted": 2,
+        "successes": 1,
+        "success_per_attempt": 0.5,
+        "wilson95": [
+          0.09453120573423074,
+          0.9054687942657693
+        ],
+        "outcomes": {
+          "success": 1,
+          "fail": 1
+        },
+        "median_seconds": 283.8237885313574
+      },
+      {
+        "task": "MoveCube",
+        "condition": "working",
+        "attempted": 2,
+        "successes": 1,
+        "success_per_attempt": 0.5,
+        "wilson95": [
+          0.09453120573423074,
+          0.9054687942657693
+        ],
+        "outcomes": {
+          "success": 1,
+          "fail": 1
+        },
+        "median_seconds": 437.6624570596032
+      },
+      {
+        "task": "PatternLock",
+        "condition": "history",
+        "attempted": 2,
+        "successes": 0,
+        "success_per_attempt": 0.0,
+        "wilson95": [
+          0.0,
+          0.6576197724933469
+        ],
+        "outcomes": {
+          "fail": 2
+        },
+        "median_seconds": 24.365999188506976
+      },
+      {
+        "task": "PatternLock",
+        "condition": "working",
+        "attempted": 2,
+        "successes": 0,
+        "success_per_attempt": 0.0,
+        "wilson95": [
+          0.0,
+          0.6576197724933469
+        ],
+        "outcomes": {
+          "fail": 2
+        },
+        "median_seconds": 114.53265836415812
+      },
+      {
+        "task": "PickHighlight",
+        "condition": "history",
+        "attempted": 2,
+        "successes": 1,
+        "success_per_attempt": 0.5,
+        "wilson95": [
+          0.09453120573423074,
+          0.9054687942657693
+        ],
+        "outcomes": {
+          "success": 1,
+          "timeout": 1
+        },
+        "median_seconds": 681.7580603451934
+      },
+      {
+        "task": "PickHighlight",
+        "condition": "working",
+        "attempted": 2,
+        "successes": 1,
+        "success_per_attempt": 0.5,
+        "wilson95": [
+          0.09453120573423074,
+          0.9054687942657693
+        ],
+        "outcomes": {
+          "success": 1,
+          "timeout": 1
+        },
+        "median_seconds": 534.4986770774703
+      },
+      {
+        "task": "PickXtimes",
+        "condition": "history",
+        "attempted": 2,
+        "successes": 0,
+        "success_per_attempt": 0.0,
+        "wilson95": [
+          0.0,
+          0.6576197724933469
+        ],
+        "outcomes": {
+          "fail": 1,
+          "timeout": 1
+        },
+        "median_seconds": 731.097141667502
+      },
+      {
+        "task": "PickXtimes",
+        "condition": "working",
+        "attempted": 2,
+        "successes": 0,
+        "success_per_attempt": 0.0,
+        "wilson95": [
+          0.0,
+          0.6576197724933469
+        ],
+        "outcomes": {
+          "timeout": 2
+        },
+        "median_seconds": 842.6903918958269
+      },
+      {
+        "task": "RouteStick",
+        "condition": "history",
+        "attempted": 2,
+        "successes": 0,
+        "success_per_attempt": 0.0,
+        "wilson95": [
+          0.0,
+          0.6576197724933469
+        ],
+        "outcomes": {
+          "fail": 2
+        },
+        "median_seconds": 243.44466868112795
+      },
+      {
+        "task": "RouteStick",
+        "condition": "working",
+        "attempted": 2,
+        "successes": 0,
+        "success_per_attempt": 0.0,
+        "wilson95": [
+          0.0,
+          0.6576197724933469
+        ],
+        "outcomes": {
+          "fail": 2
+        },
+        "median_seconds": 371.16161504015326
+      },
+      {
+        "task": "StopCube",
+        "condition": "history",
+        "attempted": 2,
+        "successes": 1,
+        "success_per_attempt": 0.5,
+        "wilson95": [
+          0.09453120573423074,
+          0.9054687942657693
+        ],
+        "outcomes": {
+          "success": 1,
+          "fail": 1
+        },
+        "median_seconds": 175.5316160125658
+      },
+      {
+        "task": "StopCube",
+        "condition": "working",
+        "attempted": 2,
+        "successes": 0,
+        "success_per_attempt": 0.0,
+        "wilson95": [
+          0.0,
+          0.6576197724933469
+        ],
+        "outcomes": {
+          "fail": 1,
+          "agent_error": 1
+        },
+        "median_seconds": 148.04748422512785
+      },
+      {
+        "task": "SwingXtimes",
+        "condition": "history",
+        "attempted": 2,
+        "successes": 0,
+        "success_per_attempt": 0.0,
+        "wilson95": [
+          0.0,
+          0.6576197724933469
+        ],
+        "outcomes": {
+          "fail": 1,
+          "timeout": 1
+        },
+        "median_seconds": 840.6721682241186
+      },
+      {
+        "task": "SwingXtimes",
+        "condition": "working",
+        "attempted": 2,
+        "successes": 0,
+        "success_per_attempt": 0.0,
+        "wilson95": [
+          0.0,
+          0.6576197724933469
+        ],
+        "outcomes": {
+          "fail": 1,
+          "timeout": 1
+        },
+        "median_seconds": 613.5572404495906
+      },
+      {
+        "task": "VideoPlaceButton",
+        "condition": "history",
+        "attempted": 2,
+        "successes": 0,
+        "success_per_attempt": 0.0,
+        "wilson95": [
+          0.0,
+          0.6576197724933469
+        ],
+        "outcomes": {
+          "timeout": 2
+        },
+        "median_seconds": 1168.2275466411375
+      },
+      {
+        "task": "VideoPlaceButton",
+        "condition": "working",
+        "attempted": 2,
+        "successes": 0,
+        "success_per_attempt": 0.0,
+        "wilson95": [
+          0.0,
+          0.6576197724933469
+        ],
+        "outcomes": {
+          "timeout": 2
+        },
+        "median_seconds": 1154.0379612511024
+      },
+      {
+        "task": "VideoPlaceOrder",
+        "condition": "history",
+        "attempted": 2,
+        "successes": 0,
+        "success_per_attempt": 0.0,
+        "wilson95": [
+          0.0,
+          0.6576197724933469
+        ],
+        "outcomes": {
+          "timeout": 1,
+          "fail": 1
+        },
+        "median_seconds": 1006.3052622063551
+      },
+      {
+        "task": "VideoPlaceOrder",
+        "condition": "working",
+        "attempted": 2,
+        "successes": 0,
+        "success_per_attempt": 0.0,
+        "wilson95": [
+          0.0,
+          0.6576197724933469
+        ],
+        "outcomes": {
+          "timeout": 1,
+          "agent_error": 1
+        },
+        "median_seconds": 1156.8475901354104
+      },
+      {
+        "task": "VideoRepick",
+        "condition": "history",
+        "attempted": 2,
+        "successes": 0,
+        "success_per_attempt": 0.0,
+        "wilson95": [
+          0.0,
+          0.6576197724933469
+        ],
+        "outcomes": {
+          "timeout": 1,
+          "fail": 1
+        },
+        "median_seconds": 510.0970517611131
+      },
+      {
+        "task": "VideoRepick",
+        "condition": "working",
+        "attempted": 2,
+        "successes": 0,
+        "success_per_attempt": 0.0,
+        "wilson95": [
+          0.0,
+          0.6576197724933469
+        ],
+        "outcomes": {
+          "timeout": 1,
+          "fail": 1
+        },
+        "median_seconds": 404.0235830890015
+      },
+      {
+        "task": "VideoUnmask",
+        "condition": "history",
+        "attempted": 2,
+        "successes": 1,
+        "success_per_attempt": 0.5,
+        "wilson95": [
+          0.09453120573423074,
+          0.9054687942657693
+        ],
+        "outcomes": {
+          "success": 1,
+          "fail": 1
+        },
+        "median_seconds": 355.7470056039747
+      },
+      {
+        "task": "VideoUnmask",
+        "condition": "working",
+        "attempted": 2,
+        "successes": 0,
+        "success_per_attempt": 0.0,
+        "wilson95": [
+          0.0,
+          0.6576197724933469
+        ],
+        "outcomes": {
+          "fail": 2
+        },
+        "median_seconds": 321.8054680863861
+      },
+      {
+        "task": "VideoUnmaskSwap",
+        "condition": "history",
+        "attempted": 2,
+        "successes": 0,
+        "success_per_attempt": 0.0,
+        "wilson95": [
+          0.0,
+          0.6576197724933469
+        ],
+        "outcomes": {
+          "fail": 2
+        },
+        "median_seconds": 654.1965156104416
+      },
+      {
+        "task": "VideoUnmaskSwap",
+        "condition": "working",
+        "attempted": 2,
+        "successes": 0,
+        "success_per_attempt": 0.0,
+        "wilson95": [
+          0.0,
+          0.6576197724933469
+        ],
+        "outcomes": {
+          "fail": 1,
+          "agent_error": 1
+        },
+        "median_seconds": 261.6971887049731
+      }
+    ],
+    "paired": {
+      "memory_wins": 0,
+      "memory_losses": 2,
+      "ties": 30,
+      "incomplete_pairs": 0,
+      "invalid_pairs": 0,
+      "exact_mcnemar_one_sided": 1.0,
+      "exact_mcnemar_two_sided": 0.5
+    },
+    "comparison": {
+      "baseline": "history",
+      "candidate": "working"
+    },
+    "interpretation": "Exploratory comparison, not a promotion gate. Agent/model/output/budget failures count as failures, including in paired statistics. Infrastructure/unknown statuses and incomplete pairs are excluded from pairing and reported; all attempts remain in per-attempt rates.",
+    "families": {
+      "counting": {
+        "history": {
+          "attempts": 8,
+          "successes": 1,
+          "task_mean_success": 0.125
+        },
+        "working": {
+          "attempts": 8,
+          "successes": 0,
+          "task_mean_success": 0.0
+        }
+      },
+      "permanence": {
+        "history": {
+          "attempts": 8,
+          "successes": 1,
+          "task_mean_success": 0.125
+        },
+        "working": {
+          "attempts": 8,
+          "successes": 0,
+          "task_mean_success": 0.0
+        }
+      },
+      "reference": {
+        "history": {
+          "attempts": 8,
+          "successes": 1,
+          "task_mean_success": 0.125
+        },
+        "working": {
+          "attempts": 8,
+          "successes": 1,
+          "task_mean_success": 0.125
+        }
+      },
+      "imitation": {
+        "history": {
+          "attempts": 8,
+          "successes": 1,
+          "task_mean_success": 0.125
+        },
+        "working": {
+          "attempts": 8,
+          "successes": 1,
+          "task_mean_success": 0.125
+        }
+      }
+    }
+  },
+  "episodes": [
+    {
+      "task": "BinFill",
+      "split": "val",
+      "episode": 1,
+      "condition": "working",
+      "status": "agent_error",
+      "steps": 1007,
+      "seconds": 751.8743540211581,
+      "model_calls": 120,
+      "input_tokens": 367767,
+      "output_tokens": 11888,
+      "initial_frames": 1,
+      "reset_observation_sha256": "d4b73e5a5b17ed4eed55bd8880cf94c66abc2a2cc0537146eb4e24273cf43810",
+      "comparison_fingerprint": "12559cd0e981b9fb4eade680c9a602c1bba6e409c825b913687cf70f0da392e3",
+      "error_message": "AgentOutputError: episode model-call budget exhausted"
+    },
+    {
+      "task": "BinFill",
+      "split": "val",
+      "episode": 1,
+      "condition": "history",
+      "status": "fail",
+      "steps": 406,
+      "seconds": 928.6061506588012,
+      "model_calls": 89,
+      "input_tokens": 453529,
+      "output_tokens": 14295,
+      "initial_frames": 1,
+      "reset_observation_sha256": "d4b73e5a5b17ed4eed55bd8880cf94c66abc2a2cc0537146eb4e24273cf43810",
+      "comparison_fingerprint": "12559cd0e981b9fb4eade680c9a602c1bba6e409c825b913687cf70f0da392e3"
+    },
+    {
+      "task": "BinFill",
+      "split": "val",
+      "episode": 7,
+      "condition": "history",
+      "status": "timeout",
+      "steps": 1300,
+      "seconds": 796.3062026742846,
+      "model_calls": 43,
+      "input_tokens": 218111,
+      "output_tokens": 13056,
+      "initial_frames": 1,
+      "reset_observation_sha256": "944c9e3430bb493778a6781a83f07aed2d125a839f1f70759f4f7d9e12db64d2",
+      "comparison_fingerprint": "12559cd0e981b9fb4eade680c9a602c1bba6e409c825b913687cf70f0da392e3"
+    },
+    {
+      "task": "BinFill",
+      "split": "val",
+      "episode": 7,
+      "condition": "working",
+      "status": "fail",
+      "steps": 188,
+      "seconds": 114.47431708406657,
+      "model_calls": 9,
+      "input_tokens": 26376,
+      "output_tokens": 1948,
+      "initial_frames": 1,
+      "reset_observation_sha256": "944c9e3430bb493778a6781a83f07aed2d125a839f1f70759f4f7d9e12db64d2",
+      "comparison_fingerprint": "12559cd0e981b9fb4eade680c9a602c1bba6e409c825b913687cf70f0da392e3"
+    },
+    {
+      "task": "StopCube",
+      "split": "val",
+      "episode": 1,
+      "condition": "history",
+      "status": "success",
+      "steps": 186,
+      "seconds": 200.8106773630716,
+      "model_calls": 10,
+      "input_tokens": 44804,
+      "output_tokens": 3403,
+      "initial_frames": 1,
+      "reset_observation_sha256": "98f1fad58054662184ca91b2bcddaf7119901ac5ab0668e38647f979619057dc",
+      "comparison_fingerprint": "12559cd0e981b9fb4eade680c9a602c1bba6e409c825b913687cf70f0da392e3"
+    },
+    {
+      "task": "StopCube",
+      "split": "val",
+      "episode": 1,
+      "condition": "working",
+      "status": "fail",
+      "steps": 240,
+      "seconds": 157.7989040352404,
+      "model_calls": 13,
+      "input_tokens": 37705,
+      "output_tokens": 2676,
+      "initial_frames": 1,
+      "reset_observation_sha256": "98f1fad58054662184ca91b2bcddaf7119901ac5ab0668e38647f979619057dc",
+      "comparison_fingerprint": "12559cd0e981b9fb4eade680c9a602c1bba6e409c825b913687cf70f0da392e3"
+    },
+    {
+      "task": "StopCube",
+      "split": "val",
+      "episode": 7,
+      "condition": "working",
+      "status": "agent_error",
+      "steps": 58,
+      "seconds": 138.29606441501528,
+      "model_calls": 5,
+      "input_tokens": 10868,
+      "output_tokens": 2570,
+      "initial_frames": 1,
+      "reset_observation_sha256": "e23cb385f8d84f25517e99c466afab6f65948e8c0d370a043cca5e693b364fad",
+      "comparison_fingerprint": "12559cd0e981b9fb4eade680c9a602c1bba6e409c825b913687cf70f0da392e3",
+      "error_message": "AgentOutputError: model inference failed: {\"error\": \"VLLMValidationError: This model's maximum context length is 16384 tokens. However, you requested 0 output tokens and your prompt contains at least 16385 input tokens, for a total of at least 16385 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=16385)\", \"error_type\": \"VLLMValidationError\", \"category\": \"model\"}"
+    },
+    {
+      "task": "StopCube",
+      "split": "val",
+      "episode": 7,
+      "condition": "history",
+      "status": "fail",
+      "steps": 160,
+      "seconds": 150.25255466206,
+      "model_calls": 7,
+      "input_tokens": 30514,
+      "output_tokens": 2571,
+      "initial_frames": 1,
+      "reset_observation_sha256": "e23cb385f8d84f25517e99c466afab6f65948e8c0d370a043cca5e693b364fad",
+      "comparison_fingerprint": "12559cd0e981b9fb4eade680c9a602c1bba6e409c825b913687cf70f0da392e3"
+    },
+    {
+      "task": "PickXtimes",
+      "split": "val",
+      "episode": 1,
+      "condition": "working",
+      "status": "timeout",
+      "steps": 1300,
+      "seconds": 1144.0521177570336,
+      "model_calls": 72,
+      "input_tokens": 223494,
+      "output_tokens": 20120,
+      "initial_frames": 1,
+      "reset_observation_sha256": "b8e26bb245cc93aa9b8d5464dfcae8b50a2c830cbccaeca1acfa7ead0cefa269",
+      "comparison_fingerprint": "12559cd0e981b9fb4eade680c9a602c1bba6e409c825b913687cf70f0da392e3"
+    },
+    {
+      "task": "PickXtimes",
+      "split": "val",
+      "episode": 1,
+      "condition": "history",
+      "status": "fail",
+      "steps": 429,
+      "seconds": 277.8620222839527,
+      "model_calls": 15,
+      "input_tokens": 72182,
+      "output_tokens": 4592,
+      "initial_frames": 1,
+      "reset_observation_sha256": "b8e26bb245cc93aa9b8d5464dfcae8b50a2c830cbccaeca1acfa7ead0cefa269",
+      "comparison_fingerprint": "12559cd0e981b9fb4eade680c9a602c1bba6e409c825b913687cf70f0da392e3"
+    },
+    {
+      "task": "PickXtimes",
+      "split": "val",
+      "episode": 7,
+      "condition": "history",
+      "status": "timeout",
+      "steps": 1300,
+      "seconds": 1184.3322610510513,
+      "model_calls": 57,
+      "input_tokens": 291375,
+      "output_tokens": 19959,
+      "initial_frames": 1,
+      "reset_observation_sha256": "5aca18648090c90dae9a768532e556e75f3be38dd4bcde6e8217a9d51d072db8",
+      "comparison_fingerprint": "12559cd0e981b9fb4eade680c9a602c1bba6e409c825b913687cf70f0da392e3"
+    },
+    {
+      "task": "PickXtimes",
+      "split": "val",
+      "episode": 7,
+      "condition": "working",
+      "status": "timeout",
+      "steps": 1300,
+      "seconds": 541.3286660346203,
+      "model_calls": 43,
+      "input_tokens": 133003,
+      "output_tokens": 9189,
+      "initial_frames": 1,
+      "reset_observation_sha256": "5aca18648090c90dae9a768532e556e75f3be38dd4bcde6e8217a9d51d072db8",
+      "comparison_fingerprint": "12559cd0e981b9fb4eade680c9a602c1bba6e409c825b913687cf70f0da392e3"
+    },
+    {
+      "task": "SwingXtimes",
+      "split": "val",
+      "episode": 1,
+      "condition": "history",
+      "status": "fail",
+      "steps": 878,
+      "seconds": 581.6241319039837,
+      "model_calls": 32,
+      "input_tokens": 161502,
+      "output_tokens": 9551,
+      "initial_frames": 1,
+      "reset_observation_sha256": "159050c7479387b3e3c2fda5e5e7a57bf49d84c5978a9aa7efaf35140f6f5ab7",
+      "comparison_fingerprint": "12559cd0e981b9fb4eade680c9a602c1bba6e409c825b913687cf70f0da392e3"
+    },
+    {
+      "task": "SwingXtimes",
+      "split": "val",
+      "episode": 1,
+      "condition": "working",
+      "status": "fail",
+      "steps": 1102,
+      "seconds": 583.8270858218893,
+      "model_calls": 44,
+      "input_tokens": 138681,
+      "output_tokens": 10017,
+      "initial_frames": 1,
+      "reset_observation_sha256": "159050c7479387b3e3c2fda5e5e7a57bf49d84c5978a9aa7efaf35140f6f5ab7",
+      "comparison_fingerprint": "12559cd0e981b9fb4eade680c9a602c1bba6e409c825b913687cf70f0da392e3"
+    },
+    {
+      "task": "SwingXtimes",
+      "split": "val",
+      "episode": 7,
+      "condition": "working",
+      "status": "timeout",
+      "steps": 1300,
+      "seconds": 643.2873950772919,
+      "model_calls": 44,
+      "input_tokens": 138060,
+      "output_tokens": 10962,
+      "initial_frames": 1,
+      "reset_observation_sha256": "0f8bb06bbbe1aa9091b48b132bdcdeb095235906b6fd267a3ae9d8e5babb952f",
+      "comparison_fingerprint": "12559cd0e981b9fb4eade680c9a602c1bba6e409c825b913687cf70f0da392e3"
+    },
+    {
+      "task": "SwingXtimes",
+      "split": "val",
+      "episode": 7,
+      "condition": "history",
+      "status": "timeout",
+      "steps": 1300,
+      "seconds": 1099.7202045442536,
+      "model_calls": 61,
+      "input_tokens": 313867,
+      "output_tokens": 17821,
+      "initial_frames": 1,
+      "reset_observation_sha256": "0f8bb06bbbe1aa9091b48b132bdcdeb095235906b6fd267a3ae9d8e5babb952f",
+      "comparison_fingerprint": "12559cd0e981b9fb4eade680c9a602c1bba6e409c825b913687cf70f0da392e3"
+    },
+    {
+      "task": "ButtonUnmask",
+      "split": "val",
+      "episode": 1,
+      "condition": "working",
+      "status": "timeout",
+      "steps": 1300,
+      "seconds": 595.1467060949653,
+      "model_calls": 42,
+      "input_tokens": 130575,
+      "output_tokens": 9802,
+      "initial_frames": 1,
+      "reset_observation_sha256": "38656df1197fcb44c26682c6f4f883089b197e8855bd7ea7dc1656eb03aebc7d",
+      "comparison_fingerprint": "12559cd0e981b9fb4eade680c9a602c1bba6e409c825b913687cf70f0da392e3"
+    },
+    {
+      "task": "ButtonUnmask",
+      "split": "val",
+      "episode": 1,
+      "condition": "history",
+      "status": "timeout",
+      "steps": 1300,
+      "seconds": 982.6293154372834,
+      "model_calls": 46,
+      "input_tokens": 231967,
+      "output_tokens": 16428,
+      "initial_frames": 1,
+      "reset_observation_sha256": "38656df1197fcb44c26682c6f4f883089b197e8855bd7ea7dc1656eb03aebc7d",
+      "comparison_fingerprint": "12559cd0e981b9fb4eade680c9a602c1bba6e409c825b913687cf70f0da392e3"
+    },
+    {
+      "task": "ButtonUnmask",
+      "split": "val",
+      "episode": 7,
+      "condition": "history",
+      "status": "timeout",
+      "steps": 1300,
+      "seconds": 1119.335128318984,
+      "model_calls": 48,
+      "input_tokens": 241331,
+      "output_tokens": 19156,
+      "initial_frames": 1,
+      "reset_observation_sha256": "fac9b95c913f2179cb86f464e8a3248f1ee258edec14f08d69fa219f4223427f",
+      "comparison_fingerprint": "12559cd0e981b9fb4eade680c9a602c1bba6e409c825b913687cf70f0da392e3"
+    },
+    {
+      "task": "ButtonUnmask",
+      "split": "val",
+      "episode": 7,
+      "condition": "working",
+      "status": "timeout",
+      "steps": 1300,
+      "seconds": 483.1607035258785,
+      "model_calls": 41,
+      "input_tokens": 128815,
+      "output_tokens": 8089,
+      "initial_frames": 1,
+      "reset_observation_sha256": "fac9b95c913f2179cb86f464e8a3248f1ee258edec14f08d69fa219f4223427f",
+      "comparison_fingerprint": "12559cd0e981b9fb4eade680c9a602c1bba6e409c825b913687cf70f0da392e3"
+    },
+    {
+      "task": "VideoUnmask",
+      "split": "val",
+      "episode": 1,
+      "condition": "history",
+      "status": "success",
+      "steps": 191,
+      "seconds": 130.82034967793152,
+      "model_calls": 6,
+      "input_tokens": 30770,
+      "output_tokens": 2137,
+      "initial_frames": 67,
+      "reset_observation_sha256": "f0da1a3433f1853622907b4dbb1a4e70472a1b986af4f4d219c46eb9193333ac",
+      "comparison_fingerprint": "12559cd0e981b9fb4eade680c9a602c1bba6e409c825b913687cf70f0da392e3"
+    },
+    {
+      "task": "VideoUnmask",
+      "split": "val",
+      "episode": 1,
+      "condition": "working",
+      "status": "fail",
+      "steps": 677,
+      "seconds": 408.3750061998144,
+      "model_calls": 26,
+      "input_tokens": 93479,
+      "output_tokens": 7031,
+      "initial_frames": 67,
+      "reset_observation_sha256": "f0da1a3433f1853622907b4dbb1a4e70472a1b986af4f4d219c46eb9193333ac",
+      "comparison_fingerprint": "12559cd0e981b9fb4eade680c9a602c1bba6e409c825b913687cf70f0da392e3"
+    },
+    {
+      "task": "VideoUnmask",
+      "split": "val",
+      "episode": 7,
+      "condition": "working",
+      "status": "fail",
+      "steps": 263,
+      "seconds": 235.23592997295782,
+      "model_calls": 14,
+      "input_tokens": 45584,
+      "output_tokens": 4120,
+      "initial_frames": 67,
+      "reset_observation_sha256": "60cc5c720e5a459f947a61a050ac6c4d7bf6d16803edae4a186903c259f1bf0c",
+      "comparison_fingerprint": "12559cd0e981b9fb4eade680c9a602c1bba6e409c825b913687cf70f0da392e3"
+    },
+    {
+      "task": "VideoUnmask",
+      "split": "val",
+      "episode": 7,
+      "condition": "history",
+      "status": "fail",
+      "steps": 663,
+      "seconds": 580.6736615300179,
+      "model_calls": 23,
+      "input_tokens": 119417,
+      "output_tokens": 10020,
+      "initial_frames": 67,
+      "reset_observation_sha256": "60cc5c720e5a459f947a61a050ac6c4d7bf6d16803edae4a186903c259f1bf0c",
+      "comparison_fingerprint": "12559cd0e981b9fb4eade680c9a602c1bba6e409c825b913687cf70f0da392e3"
+    },
+    {
+      "task": "VideoUnmaskSwap",
+      "split": "val",
+      "episode": 1,
+      "condition": "working",
+      "status": "fail",
+      "steps": 136,
+      "seconds": 224.27236912492663,
+      "model_calls": 16,
+      "input_tokens": 46839,
+      "output_tokens": 3954,
+      "initial_frames": 169,
+      "reset_observation_sha256": "cf0596d39f31d2ffb9a5470d5a1317250ba8033d2ba6a718119fc346559e092e",
+      "comparison_fingerprint": "12559cd0e981b9fb4eade680c9a602c1bba6e409c825b913687cf70f0da392e3"
+    },
+    {
+      "task": "VideoUnmaskSwap",
+      "split": "val",
+      "episode": 1,
+      "condition": "history",
+      "status": "fail",
+      "steps": 1064,
+      "seconds": 1050.4284999729134,
+      "model_calls": 43,
+      "input_tokens": 223900,
+      "output_tokens": 18205,
+      "initial_frames": 169,
+      "reset_observation_sha256": "cf0596d39f31d2ffb9a5470d5a1317250ba8033d2ba6a718119fc346559e092e",
+      "comparison_fingerprint": "12559cd0e981b9fb4eade680c9a602c1bba6e409c825b913687cf70f0da392e3"
+    },
+    {
+      "task": "VideoUnmaskSwap",
+      "split": "val",
+      "episode": 7,
+      "condition": "history",
+      "status": "fail",
+      "steps": 207,
+      "seconds": 257.9645312479697,
+      "model_calls": 9,
+      "input_tokens": 46599,
+      "output_tokens": 4453,
+      "initial_frames": 169,
+      "reset_observation_sha256": "3353d9a0b78ff86af78a70af9282e85fdcdd957ff4a36597a66313b501a154b6",
+      "comparison_fingerprint": "12559cd0e981b9fb4eade680c9a602c1bba6e409c825b913687cf70f0da392e3"
+    },
+    {
+      "task": "VideoUnmaskSwap",
+      "split": "val",
+      "episode": 7,
+      "condition": "working",
+      "status": "agent_error",
+      "steps": 256,
+      "seconds": 299.12200828501955,
+      "model_calls": 21,
+      "input_tokens": 68880,
+      "output_tokens": 5308,
+      "initial_frames": 169,
+      "reset_observation_sha256": "3353d9a0b78ff86af78a70af9282e85fdcdd957ff4a36597a66313b501a154b6",
+      "comparison_fingerprint": "12559cd0e981b9fb4eade680c9a602c1bba6e409c825b913687cf70f0da392e3",
+      "error_message": "AgentOutputError: resolve a pending intention with evidence before removing it"
+    },
+    {
+      "task": "ButtonUnmaskSwap",
+      "split": "val",
+      "episode": 1,
+      "condition": "history",
+      "status": "timeout",
+      "steps": 1300,
+      "seconds": 914.6588768986985,
+      "model_calls": 46,
+      "input_tokens": 229681,
+      "output_tokens": 15535,
+      "initial_frames": 1,
+      "reset_observation_sha256": "e442cc92753a75085bce3dde785bc4e60f6d205f6ede772055dc6797e1bedc04",
+      "comparison_fingerprint": "12559cd0e981b9fb4eade680c9a602c1bba6e409c825b913687cf70f0da392e3"
+    },
+    {
+      "task": "ButtonUnmaskSwap",
+      "split": "val",
+      "episode": 1,
+      "condition": "working",
+      "status": "timeout",
+      "steps": 1300,
+      "seconds": 1034.424125941936,
+      "model_calls": 81,
+      "input_tokens": 259112,
+      "output_tokens": 18094,
+      "initial_frames": 1,
+      "reset_observation_sha256": "e442cc92753a75085bce3dde785bc4e60f6d205f6ede772055dc6797e1bedc04",
+      "comparison_fingerprint": "12559cd0e981b9fb4eade680c9a602c1bba6e409c825b913687cf70f0da392e3"
+    },
+    {
+      "task": "ButtonUnmaskSwap",
+      "split": "val",
+      "episode": 7,
+      "condition": "working",
+      "status": "timeout",
+      "steps": 1300,
+      "seconds": 926.1986415670253,
+      "model_calls": 75,
+      "input_tokens": 240995,
+      "output_tokens": 16038,
+      "initial_frames": 1,
+      "reset_observation_sha256": "7634276f8e26e5528b9dfee243e2ab6e9482cbc66aad7358999c1b460a26e97f",
+      "comparison_fingerprint": "12559cd0e981b9fb4eade680c9a602c1bba6e409c825b913687cf70f0da392e3"
+    },
+    {
+      "task": "ButtonUnmaskSwap",
+      "split": "val",
+      "episode": 7,
+      "condition": "history",
+      "status": "agent_error",
+      "steps": 1121,
+      "seconds": 1513.1309321578592,
+      "model_calls": 120,
+      "input_tokens": 619973,
+      "output_tokens": 24359,
+      "initial_frames": 1,
+      "reset_observation_sha256": "7634276f8e26e5528b9dfee243e2ab6e9482cbc66aad7358999c1b460a26e97f",
+      "comparison_fingerprint": "12559cd0e981b9fb4eade680c9a602c1bba6e409c825b913687cf70f0da392e3",
+      "error_message": "AgentOutputError: episode model-call budget exhausted"
+    },
+    {
+      "task": "PickHighlight",
+      "split": "val",
+      "episode": 1,
+      "condition": "working",
+      "status": "success",
+      "steps": 419,
+      "seconds": 346.43857767479494,
+      "model_calls": 25,
+      "input_tokens": 77799,
+      "output_tokens": 6036,
+      "initial_frames": 1,
+      "reset_observation_sha256": "7c85c47860f79225083e2c7b99dca79f217d6b9ff07b2d9794b13bea12af584f",
+      "comparison_fingerprint": "12559cd0e981b9fb4eade680c9a602c1bba6e409c825b913687cf70f0da392e3"
+    },
+    {
+      "task": "PickHighlight",
+      "split": "val",
+      "episode": 1,
+      "condition": "history",
+      "status": "success",
+      "steps": 672,
+      "seconds": 456.92358139902353,
+      "model_calls": 22,
+      "input_tokens": 108696,
+      "output_tokens": 7680,
+      "initial_frames": 1,
+      "reset_observation_sha256": "7c85c47860f79225083e2c7b99dca79f217d6b9ff07b2d9794b13bea12af584f",
+      "comparison_fingerprint": "12559cd0e981b9fb4eade680c9a602c1bba6e409c825b913687cf70f0da392e3"
+    },
+    {
+      "task": "PickHighlight",
+      "split": "val",
+      "episode": 7,
+      "condition": "history",
+      "status": "timeout",
+      "steps": 1300,
+      "seconds": 906.5925392913632,
+      "model_calls": 46,
+      "input_tokens": 230247,
+      "output_tokens": 15167,
+      "initial_frames": 1,
+      "reset_observation_sha256": "21531feaa5d6344a322652878cbf2f9b02170341179f8d45965592b35b9d29a1",
+      "comparison_fingerprint": "12559cd0e981b9fb4eade680c9a602c1bba6e409c825b913687cf70f0da392e3"
+    },
+    {
+      "task": "PickHighlight",
+      "split": "val",
+      "episode": 7,
+      "condition": "working",
+      "status": "timeout",
+      "steps": 1300,
+      "seconds": 722.5587764801458,
+      "model_calls": 44,
+      "input_tokens": 138135,
+      "output_tokens": 12502,
+      "initial_frames": 1,
+      "reset_observation_sha256": "21531feaa5d6344a322652878cbf2f9b02170341179f8d45965592b35b9d29a1",
+      "comparison_fingerprint": "12559cd0e981b9fb4eade680c9a602c1bba6e409c825b913687cf70f0da392e3"
+    },
+    {
+      "task": "VideoRepick",
+      "split": "val",
+      "episode": 1,
+      "condition": "history",
+      "status": "timeout",
+      "steps": 1300,
+      "seconds": 905.6475387453102,
+      "model_calls": 43,
+      "input_tokens": 224948,
+      "output_tokens": 14958,
+      "initial_frames": 266,
+      "reset_observation_sha256": "591d893e3b658ba4a2b8d33f8e079ce54d0b203eac4a04625d88f68e4712261d",
+      "comparison_fingerprint": "12559cd0e981b9fb4eade680c9a602c1bba6e409c825b913687cf70f0da392e3"
+    },
+    {
+      "task": "VideoRepick",
+      "split": "val",
+      "episode": 1,
+      "condition": "working",
+      "status": "timeout",
+      "steps": 1300,
+      "seconds": 681.776766540017,
+      "model_calls": 57,
+      "input_tokens": 187788,
+      "output_tokens": 11365,
+      "initial_frames": 266,
+      "reset_observation_sha256": "591d893e3b658ba4a2b8d33f8e079ce54d0b203eac4a04625d88f68e4712261d",
+      "comparison_fingerprint": "12559cd0e981b9fb4eade680c9a602c1bba6e409c825b913687cf70f0da392e3"
+    },
+    {
+      "task": "VideoRepick",
+      "split": "val",
+      "episode": 7,
+      "condition": "working",
+      "status": "fail",
+      "steps": 99,
+      "seconds": 126.27039963798597,
+      "model_calls": 13,
+      "input_tokens": 35546,
+      "output_tokens": 2031,
+      "initial_frames": 160,
+      "reset_observation_sha256": "9aac196798949d02172b12c1d76f60b98c011379995b5530d07f50bd9f174a3b",
+      "comparison_fingerprint": "12559cd0e981b9fb4eade680c9a602c1bba6e409c825b913687cf70f0da392e3"
+    },
+    {
+      "task": "VideoRepick",
+      "split": "val",
+      "episode": 7,
+      "condition": "history",
+      "status": "fail",
+      "steps": 169,
+      "seconds": 114.54656477691606,
+      "model_calls": 6,
+      "input_tokens": 31137,
+      "output_tokens": 1782,
+      "initial_frames": 160,
+      "reset_observation_sha256": "9aac196798949d02172b12c1d76f60b98c011379995b5530d07f50bd9f174a3b",
+      "comparison_fingerprint": "12559cd0e981b9fb4eade680c9a602c1bba6e409c825b913687cf70f0da392e3"
+    },
+    {
+      "task": "VideoPlaceButton",
+      "split": "val",
+      "episode": 1,
+      "condition": "working",
+      "status": "timeout",
+      "steps": 1300,
+      "seconds": 788.0107447751798,
+      "model_calls": 93,
+      "input_tokens": 273688,
+      "output_tokens": 12627,
+      "initial_frames": 763,
+      "reset_observation_sha256": "90eb53247a52ff525e3a2851492a12f30e42451d300145806643ddab3c8d90a1",
+      "comparison_fingerprint": "12559cd0e981b9fb4eade680c9a602c1bba6e409c825b913687cf70f0da392e3"
+    },
+    {
+      "task": "VideoPlaceButton",
+      "split": "val",
+      "episode": 1,
+      "condition": "history",
+      "status": "timeout",
+      "steps": 1300,
+      "seconds": 1252.8459374662489,
+      "model_calls": 57,
+      "input_tokens": 298402,
+      "output_tokens": 21053,
+      "initial_frames": 763,
+      "reset_observation_sha256": "90eb53247a52ff525e3a2851492a12f30e42451d300145806643ddab3c8d90a1",
+      "comparison_fingerprint": "12559cd0e981b9fb4eade680c9a602c1bba6e409c825b913687cf70f0da392e3"
+    },
+    {
+      "task": "VideoPlaceButton",
+      "split": "val",
+      "episode": 7,
+      "condition": "history",
+      "status": "timeout",
+      "steps": 1300,
+      "seconds": 1083.609155816026,
+      "model_calls": 50,
+      "input_tokens": 261738,
+      "output_tokens": 17967,
+      "initial_frames": 792,
+      "reset_observation_sha256": "435cdb0ca00e1bede362326fd2d11429d04874630c0d579e63088b951867a537",
+      "comparison_fingerprint": "12559cd0e981b9fb4eade680c9a602c1bba6e409c825b913687cf70f0da392e3"
+    },
+    {
+      "task": "VideoPlaceButton",
+      "split": "val",
+      "episode": 7,
+      "condition": "working",
+      "status": "timeout",
+      "steps": 1300,
+      "seconds": 1520.065177727025,
+      "model_calls": 120,
+      "input_tokens": 397445,
+      "output_tokens": 26021,
+      "initial_frames": 792,
+      "reset_observation_sha256": "435cdb0ca00e1bede362326fd2d11429d04874630c0d579e63088b951867a537",
+      "comparison_fingerprint": "12559cd0e981b9fb4eade680c9a602c1bba6e409c825b913687cf70f0da392e3"
+    },
+    {
+      "task": "VideoPlaceOrder",
+      "split": "val",
+      "episode": 1,
+      "condition": "history",
+      "status": "timeout",
+      "steps": 1300,
+      "seconds": 1142.5799910249189,
+      "model_calls": 65,
+      "input_tokens": 340840,
+      "output_tokens": 18606,
+      "initial_frames": 1088,
+      "reset_observation_sha256": "e8ef023853b821fb45e4d183f88f14a6d02677124b011f507fc01849a3ecb379",
+      "comparison_fingerprint": "12559cd0e981b9fb4eade680c9a602c1bba6e409c825b913687cf70f0da392e3"
+    },
+    {
+      "task": "VideoPlaceOrder",
+      "split": "val",
+      "episode": 1,
+      "condition": "working",
+      "status": "timeout",
+      "steps": 1300,
+      "seconds": 1081.2777455169708,
+      "model_calls": 111,
+      "input_tokens": 320410,
+      "output_tokens": 18344,
+      "initial_frames": 1088,
+      "reset_observation_sha256": "e8ef023853b821fb45e4d183f88f14a6d02677124b011f507fc01849a3ecb379",
+      "comparison_fingerprint": "12559cd0e981b9fb4eade680c9a602c1bba6e409c825b913687cf70f0da392e3"
+    },
+    {
+      "task": "VideoPlaceOrder",
+      "split": "val",
+      "episode": 7,
+      "condition": "working",
+      "status": "agent_error",
+      "steps": 271,
+      "seconds": 1232.41743475385,
+      "model_calls": 120,
+      "input_tokens": 377250,
+      "output_tokens": 21300,
+      "initial_frames": 806,
+      "reset_observation_sha256": "3422596c5fd693a2b40e342c37e346e0f14e6bdc05125a28e7da09cc44740d42",
+      "comparison_fingerprint": "12559cd0e981b9fb4eade680c9a602c1bba6e409c825b913687cf70f0da392e3",
+      "error_message": "AgentOutputError: episode model-call budget exhausted"
+    },
+    {
+      "task": "VideoPlaceOrder",
+      "split": "val",
+      "episode": 7,
+      "condition": "history",
+      "status": "fail",
+      "steps": 1265,
+      "seconds": 870.0305333877914,
+      "model_calls": 47,
+      "input_tokens": 246342,
+      "output_tokens": 14104,
+      "initial_frames": 806,
+      "reset_observation_sha256": "3422596c5fd693a2b40e342c37e346e0f14e6bdc05125a28e7da09cc44740d42",
+      "comparison_fingerprint": "12559cd0e981b9fb4eade680c9a602c1bba6e409c825b913687cf70f0da392e3"
+    },
+    {
+      "task": "MoveCube",
+      "split": "val",
+      "episode": 1,
+      "condition": "working",
+      "status": "success",
+      "steps": 426,
+      "seconds": 590.5287164598703,
+      "model_calls": 87,
+      "input_tokens": 287271,
+      "output_tokens": 9383,
+      "initial_frames": 263,
+      "reset_observation_sha256": "fd8ef4c59818d3f5ad0dab6b4142cbebea393616b777a3e84aa44f6812449e7e",
+      "comparison_fingerprint": "12559cd0e981b9fb4eade680c9a602c1bba6e409c825b913687cf70f0da392e3"
+    },
+    {
+      "task": "MoveCube",
+      "split": "val",
+      "episode": 1,
+      "condition": "history",
+      "status": "success",
+      "steps": 269,
+      "seconds": 445.6742407437414,
+      "model_calls": 44,
+      "input_tokens": 228161,
+      "output_tokens": 6722,
+      "initial_frames": 263,
+      "reset_observation_sha256": "fd8ef4c59818d3f5ad0dab6b4142cbebea393616b777a3e84aa44f6812449e7e",
+      "comparison_fingerprint": "12559cd0e981b9fb4eade680c9a602c1bba6e409c825b913687cf70f0da392e3"
+    },
+    {
+      "task": "MoveCube",
+      "split": "val",
+      "episode": 7,
+      "condition": "history",
+      "status": "fail",
+      "steps": 144,
+      "seconds": 121.97333631897345,
+      "model_calls": 6,
+      "input_tokens": 31023,
+      "output_tokens": 1948,
+      "initial_frames": 165,
+      "reset_observation_sha256": "98998a89f71c2752554d803f14543f73ea784ac78317ee6a8dbc40ba1d49abbf",
+      "comparison_fingerprint": "12559cd0e981b9fb4eade680c9a602c1bba6e409c825b913687cf70f0da392e3"
+    },
+    {
+      "task": "MoveCube",
+      "split": "val",
+      "episode": 7,
+      "condition": "working",
+      "status": "fail",
+      "steps": 197,
+      "seconds": 284.79619765933603,
+      "model_calls": 21,
+      "input_tokens": 63136,
+      "output_tokens": 5003,
+      "initial_frames": 165,
+      "reset_observation_sha256": "98998a89f71c2752554d803f14543f73ea784ac78317ee6a8dbc40ba1d49abbf",
+      "comparison_fingerprint": "12559cd0e981b9fb4eade680c9a602c1bba6e409c825b913687cf70f0da392e3"
+    },
+    {
+      "task": "InsertPeg",
+      "split": "val",
+      "episode": 1,
+      "condition": "history",
+      "status": "timeout",
+      "steps": 1300,
+      "seconds": 1209.4490637131967,
+      "model_calls": 65,
+      "input_tokens": 338985,
+      "output_tokens": 20158,
+      "initial_frames": 233,
+      "reset_observation_sha256": "4ee136c405bb1a5a3f06f0a2a5175ccd06e162af0af4b3b9239e1d3ebe12f66c",
+      "comparison_fingerprint": "12559cd0e981b9fb4eade680c9a602c1bba6e409c825b913687cf70f0da392e3"
+    },
+    {
+      "task": "InsertPeg",
+      "split": "val",
+      "episode": 1,
+      "condition": "working",
+      "status": "fail",
+      "steps": 131,
+      "seconds": 237.45690663298592,
+      "model_calls": 22,
+      "input_tokens": 65821,
+      "output_tokens": 4076,
+      "initial_frames": 233,
+      "reset_observation_sha256": "4ee136c405bb1a5a3f06f0a2a5175ccd06e162af0af4b3b9239e1d3ebe12f66c",
+      "comparison_fingerprint": "12559cd0e981b9fb4eade680c9a602c1bba6e409c825b913687cf70f0da392e3"
+    },
+    {
+      "task": "InsertPeg",
+      "split": "val",
+      "episode": 7,
+      "condition": "working",
+      "status": "timeout",
+      "steps": 1300,
+      "seconds": 1090.5365815199912,
+      "model_calls": 84,
+      "input_tokens": 289841,
+      "output_tokens": 18800,
+      "initial_frames": 214,
+      "reset_observation_sha256": "460a49683faed220fe352be1b1fe281972b35ade8e82cee6732a746bf9211e31",
+      "comparison_fingerprint": "12559cd0e981b9fb4eade680c9a602c1bba6e409c825b913687cf70f0da392e3"
+    },
+    {
+      "task": "InsertPeg",
+      "split": "val",
+      "episode": 7,
+      "condition": "history",
+      "status": "timeout",
+      "steps": 1300,
+      "seconds": 1247.7747333422303,
+      "model_calls": 70,
+      "input_tokens": 365864,
+      "output_tokens": 20808,
+      "initial_frames": 214,
+      "reset_observation_sha256": "460a49683faed220fe352be1b1fe281972b35ade8e82cee6732a746bf9211e31",
+      "comparison_fingerprint": "12559cd0e981b9fb4eade680c9a602c1bba6e409c825b913687cf70f0da392e3"
+    },
+    {
+      "task": "PatternLock",
+      "split": "val",
+      "episode": 1,
+      "condition": "working",
+      "status": "fail",
+      "steps": 19,
+      "seconds": 101.70878778025508,
+      "model_calls": 7,
+      "input_tokens": 16884,
+      "output_tokens": 1748,
+      "initial_frames": 97,
+      "reset_observation_sha256": "87522fa432c9e4c3b8f7ffed1d7bdd9a7262026a51e30793cca9ef84f124be5b",
+      "comparison_fingerprint": "12559cd0e981b9fb4eade680c9a602c1bba6e409c825b913687cf70f0da392e3"
+    },
+    {
+      "task": "PatternLock",
+      "split": "val",
+      "episode": 1,
+      "condition": "history",
+      "status": "fail",
+      "steps": 17,
+      "seconds": 20.015641344245523,
+      "model_calls": 1,
+      "input_tokens": 5017,
+      "output_tokens": 232,
+      "initial_frames": 97,
+      "reset_observation_sha256": "87522fa432c9e4c3b8f7ffed1d7bdd9a7262026a51e30793cca9ef84f124be5b",
+      "comparison_fingerprint": "12559cd0e981b9fb4eade680c9a602c1bba6e409c825b913687cf70f0da392e3"
+    },
+    {
+      "task": "PatternLock",
+      "split": "val",
+      "episode": 7,
+      "condition": "history",
+      "status": "fail",
+      "steps": 20,
+      "seconds": 28.71635703276843,
+      "model_calls": 1,
+      "input_tokens": 5055,
+      "output_tokens": 333,
+      "initial_frames": 172,
+      "reset_observation_sha256": "35590010dd8134b40945a27b6ecc7afb1eb44203c9c726518ec8aad2491eea52",
+      "comparison_fingerprint": "12559cd0e981b9fb4eade680c9a602c1bba6e409c825b913687cf70f0da392e3"
+    },
+    {
+      "task": "PatternLock",
+      "split": "val",
+      "episode": 7,
+      "condition": "working",
+      "status": "fail",
+      "steps": 42,
+      "seconds": 127.35652894806117,
+      "model_calls": 12,
+      "input_tokens": 31023,
+      "output_tokens": 2103,
+      "initial_frames": 172,
+      "reset_observation_sha256": "35590010dd8134b40945a27b6ecc7afb1eb44203c9c726518ec8aad2491eea52",
+      "comparison_fingerprint": "12559cd0e981b9fb4eade680c9a602c1bba6e409c825b913687cf70f0da392e3"
+    },
+    {
+      "task": "RouteStick",
+      "split": "val",
+      "episode": 1,
+      "condition": "history",
+      "status": "fail",
+      "steps": 567,
+      "seconds": 440.72336701722816,
+      "model_calls": 21,
+      "input_tokens": 108887,
+      "output_tokens": 7195,
+      "initial_frames": 151,
+      "reset_observation_sha256": "fcef44ed04ad16477bc6804dc88184273d8724124e1bdc6ace94f3839d149b56",
+      "comparison_fingerprint": "12559cd0e981b9fb4eade680c9a602c1bba6e409c825b913687cf70f0da392e3"
+    },
+    {
+      "task": "RouteStick",
+      "split": "val",
+      "episode": 1,
+      "condition": "working",
+      "status": "fail",
+      "steps": 627,
+      "seconds": 579.7430553631857,
+      "model_calls": 49,
+      "input_tokens": 169198,
+      "output_tokens": 9771,
+      "initial_frames": 151,
+      "reset_observation_sha256": "fcef44ed04ad16477bc6804dc88184273d8724124e1bdc6ace94f3839d149b56",
+      "comparison_fingerprint": "12559cd0e981b9fb4eade680c9a602c1bba6e409c825b913687cf70f0da392e3"
+    },
+    {
+      "task": "RouteStick",
+      "split": "val",
+      "episode": 7,
+      "condition": "working",
+      "status": "fail",
+      "steps": 52,
+      "seconds": 162.58017471712083,
+      "model_calls": 23,
+      "input_tokens": 57700,
+      "output_tokens": 2529,
+      "initial_frames": 351,
+      "reset_observation_sha256": "721c2c368a1f998acf481729b9eb0b8d0afd9327b952cf159940b4141d33fdda",
+      "comparison_fingerprint": "12559cd0e981b9fb4eade680c9a602c1bba6e409c825b913687cf70f0da392e3"
+    },
+    {
+      "task": "RouteStick",
+      "split": "val",
+      "episode": 7,
+      "condition": "history",
+      "status": "fail",
+      "steps": 47,
+      "seconds": 46.165970345027745,
+      "model_calls": 2,
+      "input_tokens": 10272,
+      "output_tokens": 516,
+      "initial_frames": 351,
+      "reset_observation_sha256": "721c2c368a1f998acf481729b9eb0b8d0afd9327b952cf159940b4141d33fdda",
+      "comparison_fingerprint": "12559cd0e981b9fb4eade680c9a602c1bba6e409c825b913687cf70f0da392e3"
+    }
+  ],
+  "remote_artifacts": "/home/gaobin/hylo-memory-eval/results/working-validation-v1",
+  "local_artifacts": "runs/memory-20261103/working-v1/validation",
+  "artifact_scope": "Local mirror contains metadata, raw responses, source archives and analysis. Full RGB/action arrays and videos remain remote.",
+  "trace_diagnostics": {
+    "history": {
+      "episodes": 32,
+      "requests": 1201,
+      "completed_history_reads": 0,
+      "demonstration_calls": 0,
+      "execution_calls": 1201,
+      "repair_calls": 0,
+      "schema_errors": 0
+    },
+    "working": {
+      "episodes": 32,
+      "requests": 1554,
+      "completed_history_reads": 0,
+      "demonstration_calls": 365,
+      "execution_calls": 1189,
+      "repair_calls": 5,
+      "schema_errors": 6
+    }
+  },
+  "separate_batch_probe": {
+    "server": {
+      "ready": true,
+      "model": "/home/gaobin/.cache/huggingface/hub/models--Qwen--Qwen3.6-27B/snapshots/6a9e13bd6fc8f0983b9b99948120bc37f49c13e9",
+      "frozen": true,
+      "backend": "vllm",
+      "backend_version": "0.19.0",
+      "dtype": "bfloat16",
+      "structured_working_output": true,
+      "gpu_memory_utilization": 0.64,
+      "max_num_seqs": 2,
+      "request_batch_size": 2,
+      "batch_wait_ms": 200.0,
+      "enable_prefix_caching": false,
+      "enable_thinking": false,
+      "sampling_seed": 7,
+      "max_model_len": 16384,
+      "batcher_sha256": "f86e3c1d3b051010aa8000614c0ee93e2438f3766228fe76275be11c6406cc87",
+      "working_prompt_sha256": "c5e7ac51d64e21144f02a079b9fb3bdd8bcad9c777f32f8b58a6ee064924e6c5",
+      "source_sha256": "d1e99e9a3de6c0368b171825b8b470730422769f0d11539d643e3cc08e244452"
+    },
+    "payload_sha256": "7b7d8f8aec913d31454cbbe8846ffcac0279c085be5a6380fdbe9d9ee3d8be6c",
+    "image_source_sha256": "b2765431610b01573316c57447f0e38b5a7039137453a1e379599041ee10c6ce",
+    "summary": {
+      "serial": {
+        "requests": 6,
+        "wall_seconds": 52.628412095829844,
+        "requests_per_second": 0.11400685981318874,
+        "output_tokens_per_second": 18.583118149549765,
+        "batch_sizes": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "valid_json": 6,
+        "same_text_as_warmup": 6
+      },
+      "concurrent": {
+        "requests": 6,
+        "wall_seconds": 29.576576862018555,
+        "requests_per_second": 0.20286323288835492,
+        "output_tokens_per_second": 33.06670696080185,
+        "batch_sizes": [
+          2,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "valid_json": 6,
+        "same_text_as_warmup": 6
+      }
+    },
+    "interpretation": "Inference throughput probe on a training image, not robot success or multi-environment throughput. Both traffic modes use the same size-2 server and its collection window. Prefix caching is disabled; queue latency is included."
+  }
+}

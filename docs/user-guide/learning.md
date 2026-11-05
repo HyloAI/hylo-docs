@@ -10,36 +10,6 @@ Task programs use a separate [research session](research-and-skills.md) to produ
 ![A learner reads search and search_val runs and seals one artifact; the split guard refuses gate and held-out runs.](../assets/diagrams/learning-flow-light.svg){ .hylo-diagram .only-light }
 ![A learner reads search and search_val runs and seals one artifact; the split guard refuses gate and held-out runs.](../assets/diagrams/learning-flow-dark.svg){ .hylo-diagram .only-dark }
 
-## Design
-
-**One pipeline for everything learned.** Learning from the agent's own runs, from demonstrations, from video, and
-learning judges or world models all take the same path: data, an optional labeller, a learner, a sealed artifact, a
-candidate, the gate. Before this pipeline, each learner had its own export, its own split guard and its own output
-format; now a new learner only has to read runs and write an artifact.
-
-**The trace store is the only source of truth.** Everything learned is derived from recorded runs, and a sealed
-artifact records which runs and splits it read, which builder made it, with which parameters, and its content
-digest. Memory and learning are the same thing in this design: they differ only in the builder (a retrieval index, a
-curated list, gradient descent).
-
-**Three roles, three ways to earn trust.** What an artifact is allowed to influence decides how it must be trusted.
-
-![A behaviour artifact changes what the robot does and is trusted only through the gate. An instrument measures or labels and is trusted through calibration against ground truth. A proposal artifact changes what gets proposed and is trusted through outcome votes.](../assets/diagrams/trust-paths-light.svg){ .hylo-diagram .only-light }
-![A behaviour artifact changes what the robot does and is trusted only through the gate. An instrument measures or labels and is trusted through calibration against ground truth. A proposal artifact changes what gets proposed and is trusted through outcome votes.](../assets/diagrams/trust-paths-dark.svg){ .hylo-diagram .only-dark }
-
-An instrument never decides a gate verdict: in simulation the gate scores with ground truth, and a world model may
-only decide which candidates are worth real episodes. An instrument is never calibrated on, and never labels, the
-data it was built from. A model used in two roles is approved separately for each.
-
-**Split integrity is enforced twice.** When an artifact is sealed, a guard refuses any provenance that includes gate
-or held-out runs. When a candidate reaches the gate, stage 0 checks again that every artifact it names still has its
-digest and never saw those splits. One bias is accepted and recorded: an artifact built from `search_val` can favour
-itself in the screen that uses `search_val`; the gate split stays clean.
-
-**Outside data comes in as runs.** External datasets and videos enter as runs under their own split, with origin,
-licence and how their labels were made, and are checked against the gate and held-out initial states, so they follow
-the same rules as everything else.
-
 ## Run a learner job
 
 A learner job is a JSON file. Commands on this page run from `bench/`, so runs and artifacts land in the store you
@@ -201,6 +171,10 @@ not block anything. Do not use matching external data to build anything gated on
 
 How far each is tested: [plugin catalogue](../developer-guide/plugin-catalogue.md). To write your own:
 [adding a learner](../developer-guide/adding-a-learner.md).
+
+## Design
+
+[Read the design rationale](../developer-guide/execution-model.md#learning).
 
 ## Next
 

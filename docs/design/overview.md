@@ -15,7 +15,7 @@ implementation: execution, recorded evidence, evaluation, improvement and deploy
 | RSI | learning jobs, candidate generation, evaluation gates, version registry | [Campaigns](../user-guide/campaigns.md), [Learning](../user-guide/learning.md) |
 | Worlds | stage descriptions, robot packs, simulator environments and goal checks | [Worlds](../user-guide/worlds.md) |
 | Agents | policy agents, programs and typed tool calls through the episode loop | [Agents](../user-guide/agents.md) |
-| Memory | spatial facts, action banks and lesson books, with provenance and read/write boundaries | [Memory](../user-guide/memory/index.md) |
+| Memory | spatial facts, scoped events, episode video, action banks and lesson books, with distinct consumers and lifetimes | [Memory](../user-guide/memory/index.md) |
 | Skills | versioned library records, verification evidence, retrieval and application by supported agents | [Skills](../user-guide/skills.md) |
 
 ## Design goals
@@ -126,7 +126,7 @@ does not by itself predict the result on a robot.
 | | `hylo-catalog` | read-only queries over runs, campaigns and artifacts |
 | | `hylo-cli` | the harness's `hylo` subcommands |
 | | `hylo-manip` | robot tools: perception, kinematics, grasping and planning; current kinematics backend: MuJoCo |
-| | adapters | `hylo-code-agents`, `hylo-tools`, `hylo-policy-lerobot`, `hylo-policy-openpi`, `hylo-reasoner-llm`, `hylo-proposer-llm`, `hylo-data-video` |
+| | adapters | `hylo-code-agents`, `hylo-tools`, `hylo-policy-lerobot`, `hylo-policy-openpi`, `hylo-policy-simplememvla`, `hylo-reasoner-llm`, `hylo-proposer-llm`, `hylo-data-video` |
 | **hylo-bench** | `hylo-bench` | evaluation protocols, scorecards, leaderboards, paired comparison |
 | | `hylo-robosuite-contract` | shared robot-contract mapping for robosuite-based environments |
 | | adapters | `hylo-env-mujoco`, `hylo-env-libero`, `hylo-env-robosuite`, `hylo-env-robocasa` |
@@ -147,7 +147,7 @@ and the workcell API. A boundary lint enforces this ([contributing](../developer
 |---|---|
 | A light core with contracts and plugins; heavy stacks out of process | No simulator, LLM or VLA is mandatory. Components with conflicting dependencies run in their own venvs. |
 | Improvement is a gated experiment | A change is kept only if a paired test on unseen initial states agrees ([campaigns](../user-guide/campaigns.md#design)). |
-| Experience as memory and skills, not only weights | Retrieved successes, lessons and skills steer a frozen policy and are cheap to roll back. Each kind of memory serves one layer of an agent, is built only from verified development data, and is frozen during evaluation ([memory](../user-guide/memory/index.md#memory-and-its-consumers)). |
+| Experience as memory and skills, not only weights | Retrieved successes, lessons and skills steer a frozen policy and are cheap to roll back. Persistent experience banks and libraries are built from development data and frozen during evaluation; episode-local spatial, event and video memory can record permitted observations ([memory](../user-guide/memory/index.md#memory-and-its-consumers)). |
 | A model decides what; deterministic layers decide what is valid and what happened | A language model edits a world through checked patches, acts through controllers, and learns the result only from measured receipts and checks, so its mistakes cannot make the world inconsistent ([worlds](../user-guide/worlds.md#from-language-to-a-world)). |
 | Looking is separate from acting | A tool-calling agent may measure freely, but each action is a proposal tied to what was seen, answered by a measured receipt; the task's check, hidden from the model, decides success ([tool-calling agents](../user-guide/tool-agents.md#design)). |
 | Everything learned is a sealed artifact with a role | Each role earns trust its own way, and provenance travels with the artifact ([learning](../user-guide/learning.md#design)). |

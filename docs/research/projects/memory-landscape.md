@@ -1,7 +1,7 @@
 # Survey of Open-Source Physical Memory Implementations (Memory Landscape)
 
 > A survey of reference implementations for the `Hylo` Memory Layer (Working / Episodic / Spatial / Skill).
-> Survey date: 2026-10-30. All conclusions are based on **static source reading**: no `pip install`, no scripts run, no weights or datasets downloaded, no cloned repositories modified.
+> Survey date: 2026-10-30; source-study extension: 2026-11-03. The reference study uses **static source reading**: no `pip install`, scripts, weight/dataset downloads or modifications in these reference trees. The separately authorized remote implementation and evaluation are recorded in the [RoboMME pilot](../experiments/2026-11-03-robomme-memory-pilot.md).
 >
 > Tag conventions:
 > - **\[Implemented\]**: the corresponding implementation is seen directly in the source (with `file:line`).
@@ -64,8 +64,16 @@
 | MemOS | https://github.com/MemTensor/MemOS | general (memory OS) | Apache-2.0 | 2026-10-29 | 12k★, main language has shifted to TS | reference-only | Heavyweight |
 | A-MEM | https://github.com/agiresearch/A-mem | general (Zettelkasten link evolution) | MIT | 2025-12-12 | 1.2k★ | reference-only | Research code; the link-evolution idea can be borrowed |
 | cognee | https://github.com/topoteretes/cognee | general (KG memory pipeline) | Apache-2.0 | 2026-10-29 | 33k★ | reference-only | Functionally overlaps with Graphiti |
+| **HarnessPAI** | https://github.com/Darwin-Agent/HarnessPAI | skill and harness evolution | **No LICENSE** | 2026-10-22 | \[Unverified\] Static Git-object study | **clone** | Existing clone retained; design only. Program/skill evolution, unfinished feedback collector: `references/memory/HarnessPAI/harnesspai/feedback/collect.py:47`. |
+| **SERA** | https://github.com/StevenKKXS/SERA | episodic lessons and harness evolution | Apache-2.0 | 2026-10-24 | \[Implemented\]\[Unverified\] Typed interventions and paired verifier | **clone** | Frozen-policy harness with disjoint panels and count/rate gates: `references/memory/SERA/scripts/codex_rollout/verify_self_evolve_v5_candidate.py:154`. |
+| **eMEM** | https://github.com/automatika-robotics/emem | episodic and spatial backend | MIT | 2026-05-22 | \[Implemented\]\[Unverified\] Embedded library | **clone** | SQL, HNSW and spatial/time query paths: `references/memory/emem/emem/store.py:32`. |
+| **RoboMME benchmark** | https://github.com/RoboMME/robomme_benchmark | memory benchmark | Apache-2.0 code; asset terms separate | 2026-10-30 | \[Implemented\]\[Unverified\] Original 16-task suite | **clone** | Explicit task/episode metadata and predicates: `references/memory/robomme_benchmark/src/robomme/env_record_wrapper/episode_config_resolver.py:17`. |
+| **RoboMME policy learning** | https://github.com/RoboMME/robomme_policy_learning | policy-internal and symbolic memory | Apache-2.0 code; Gemma terms separate | 2026-10-20 | \[Implemented\]\[Unverified\] 14 variant configs | **clone** | Establish frozen-harness versus modified-VLA boundary: `references/memory/robomme_policy_learning/scripts/eval.sh:1`. |
+| **MIKASA-Robo** | https://github.com/CognitiveAISystems/MIKASA-Robo | memory benchmark | MIT code; data/assets separate | 2026-06-30 | \[Implemented\]\[Unverified\] 32 retained RL tasks and 90 VLA tasks | **clone** | Separate original four categories from current ten types: `references/memory/MIKASA-Robo/mikasa_robo_vla_envs.csv:1`; `references/memory/MIKASA-Robo/README.md:45`. |
 
-**Clone results (6)**: episodic -> ReMEmbR; spatial -> ConceptGraphs, Spark-DSG; skill -> ASPIRE; general infra -> mem0, Graphiti. See `references/MANIFEST.md` for commit/branch/license.
+**Initial clone results (6)**: episodic -> ReMEmbR; spatial -> ConceptGraphs, Spark-DSG; skill -> ASPIRE; general infra -> mem0, Graphiti. See `references/MANIFEST.md` for commit/branch/license.
+
+**Extension (6 repositories, 5 project studies)**: HarnessPAI, SERA, eMEM, RoboMME benchmark and policy learning, and MIKASA-Robo. The findings below record the static study, before the separate remote evaluation. HarnessPAI was already present with an unpopulated worktree; its recorded Git objects were read without restoring it. New reference clones excluded LFS/submodules and no additional datasets or weights were requested for this study. Tracked repository media can still be hydrated by checkout despite the partial-clone filter.
 
 ---
 
@@ -220,7 +228,7 @@ class MapObjectList(DetectionList):
 - **Write (data association)** \[Implemented\]: `compute_spatial_similarities` supports iou / giou / overlap, etc. (`conceptgraph/slam/mapping.py:17-44`); `compute_match_batch` takes a `phys_bias`-weighted sum and then does thresholded greedy assignment (`conceptgraph/slam/cfslam_pipeline_batch.py:56-80`).
 - **Fusion** \[Implemented\]: `merge_obj2_into_obj1` concatenates list fields, merges point clouds and then denoises with DBSCAN, and **averages CLIP/text features weighted by observation count, then re-normalizes** (`conceptgraph/slam/utils.py:178-222`). This is an "object-level consolidation" rule that can be borrowed directly.
 - **Periodic consolidation / forgetting** \[Implemented\]: every `denoise_interval` / `filter_interval` / `merge_interval` frames, it denoises, deletes objects with too few points or observations, and merges overlapping objects (`cfslam_pipeline_batch.py:293-298`; `utils.py:362-394`; merge condition is three thresholds on overlap + visual_sim + text_sim: `utils.py:325-360`). "Forget when observed too few times" is the most naive forgetting strategy.
-- **Relation edges** \[Implemented\][Needs model/hardware]: bbox overlap matrix -> minimum spanning tree -> GPT-4 called on MST edges to decide `a on b / a in b / none` (`conceptgraph/scenegraph/build_scenegraph_cfslam.py:621-671`, `:712-724`).
+- **Relation edges** \[Implemented\]\[Needs model/hardware\]: bbox overlap matrix -> minimum spanning tree -> GPT-4 called on MST edges to decide `a on b / a in b / none` (`conceptgraph/scenegraph/build_scenegraph_cfslam.py:621-671`, `:712-724`).
 - **Retrieval** [Implemented, script only]: no library-level query API; the example in the visualization script computes cosine between the CLIP text feature and all objects' `clip_ft` (`conceptgraph/scripts/visualize_cfslam_results.py:274-290`).
 - **Storage** \[Implemented\]: gzip pickle (`cfslam_pipeline_batch.py:319-320`), no incremental persistence.
 
@@ -440,12 +448,500 @@ Static reading; no campaign run, submodules not pulled, no LLM called.
 
 ---
 
-## 7. mem0 (`references/memory/mem0`)
+## 7. HarnessPAI
 
 ### 7.1 Positioning
-The most widely used general-purpose agent memory library: it uses an LLM to extract conversations/messages into self-contained factual statements, writes them into a pluggable vector store (Qdrant by default, ~28 supported), and isolates them by a user/agent/run triple scope; retrieval uses **additive hybrid scoring of semantic + BM25 + entity boost**. Suitable as Hylo's **semantic/episodic textual fact backend**.
+
+\[Implemented\] A code-evolution harness around a fixed action model: it generates task-specific Python, executes it, diagnoses failures, and promotes successful code and repair knowledge. Its evolution unit is an executable program, not a VLA weight update (`references/memory/HarnessPAI/harnesspai/evolution/loop.py:793`). This is close to Hylo's outer-loop architecture, but its unrestricted task programs require a stronger observation boundary before Hylo could adopt the design (`references/memory/HarnessPAI/harnesspai/execution/rollout.py:74`).
 
 ### 7.2 Architecture
+
+\[Implemented\] The controller prepares a candidate workspace, invokes Codex with write access, runs episode batches, attaches video diagnosis, and uses a read-only analysis call to formulate the next edit. Success triggers code promotion and a separate skill-summary agent (`references/memory/HarnessPAI/harnesspai/evolution/candidate.py:68`; `references/memory/HarnessPAI/harnesspai/evolution/loop.py:340`; `references/memory/HarnessPAI/harnesspai/evolution/loop.py:793`; `references/memory/HarnessPAI/harnesspai/evolution/loop.py:839`).
+
+\[Docs/Interface only\] The intended runtime architecture is a generated Python package: `planning.py` owns a hard-coded `Planner.run()` state machine; `config.py`, `drivers.py`, entrypoints, and graph-derived phase mixins form the rest. The graph is consumed at code-generation time, not interpreted during rollout. Under `--only-needs-code-phases`, consecutive capable phases become autonomous VLA segments; weak phases use code interventions. This contract is documented in the generation template; the referenced example task packages are not present in this commit's tracked tree (`references/memory/HarnessPAI/harnesspai/code_library/TEMPLATE.md:7`; `references/memory/HarnessPAI/harnesspai/code_library/TEMPLATE.md:20`).
+
+### 7.3 Core Data Structures and Interfaces
+
+| Structure | Meaning and evidence |
+|---|---|
+| Candidate workspace | Isolated filesystem layout for target modules, with package/path support; this is not a typed action DSL. \[Implemented\] `references/memory/HarnessPAI/harnesspai/evolution/candidate.py:68` |
+| Task identity report | Expected task ID, graph/module IDs, instruction, graph files, cross-task imports and validation errors. \[Implemented\] `references/memory/HarnessPAI/harnesspai/evolution/preflight.py:49` |
+| Success contract | Graph terminal conditions rendered as an explicit success contract. \[Implemented\] `references/memory/HarnessPAI/harnesspai/evolution/contract.py:31` |
+| Skill card and manifest | Markdown problem-to-fix cards indexed by benchmark, action-chain archetype and phase; source task provenance is metadata, not the retrieval key. \[Implemented\] `references/memory/HarnessPAI/harnesspai/memory/skill/writeback.py:308` |
+| SkillHit | Phase/name, card path, problem/fix, source tasks and exact-label/exact-verb score. \[Implemented\] `references/memory/HarnessPAI/harnesspai/memory/skill/query.py:44` |
+
+### 7.4 Write / Retrieval Flow
+
+\[Implemented\] Each edit prompt loads relevant graph-derived phase files and skill cards. Cross-task search scans manifests within one benchmark and ranks exact phase labels above shared verbs; it is not vector retrieval (`references/memory/HarnessPAI/harnesspai/evolution/prompts.py:258`; `references/memory/HarnessPAI/harnesspai/memory/skill/query.py:112`).
+
+\[Docs/Interface only\] Within-rollout guidance is expressed by `run_policy_phase(obs, prompt, step_budget, stop_fn)`: infer action chunks, step the environment, and check observation-based handover conditions. The template permits proprioception and grounded perception, and requires task completion or a bounded handover/fallback. This is a generation contract, not a centrally enforced monitor interpreter (`references/memory/HarnessPAI/harnesspai/code_library/TEMPLATE.md:187`; `references/memory/HarnessPAI/harnesspai/code_library/TEMPLATE.md:217`; `references/memory/HarnessPAI/harnesspai/code_library/TEMPLATE.md:439`).
+
+\[Implemented\] The actual rollout driver launches `python -m <task_module>`, reads diagnostics, distinguishes process exit from task success, and requires every batch episode to succeed with consistent episode indices. Evolution then promotes the files and calls `write_skills`; failed runs do not enter that branch. This is a development-rollout gate, not a fresh held-out test of each distilled card (`references/memory/HarnessPAI/harnesspai/execution/rollout.py:120`; `references/memory/HarnessPAI/harnesspai/execution/rollout.py:401`; `references/memory/HarnessPAI/harnesspai/evolution/loop.py:793`).
+
+\[Implemented\] Skill writeback gathers run artifacts, snapshots existing card IDs/content, and asks another Codex call to merge failure modes and fixes into Markdown plus manifests. The post-write shrink guard checks lost IDs/files and manifest/card correspondence. It only returns `ok=False` on failure: it neither restores the snapshot nor runs a new rollout. Thus **write validation is structural and happens after mutation** (`references/memory/HarnessPAI/harnesspai/memory/skill/writeback.py:352`; `references/memory/HarnessPAI/harnesspai/memory/skill/writeback.py:366`; `references/memory/HarnessPAI/harnesspai/memory/skill/writeback.py:389`).
+
+\[Implemented\] Code promotion stages copies and restores replaced files on a copy exception. \[Unverified\] This is filesystem failure recovery, not a persistent registry supporting rollback after a behavioral regression; its temporary backups are deleted. Run diffs/hashes and card provenance provide traceability, but the reviewed path has no immutable skill-version chain or transactional code-and-card release (`references/memory/HarnessPAI/harnesspai/code_library/promote.py:28`; `references/memory/HarnessPAI/harnesspai/evolution/loop.py:803`; `references/memory/HarnessPAI/harnesspai/evolution/loop.py:834`).
+
+\[Docs/Interface only\] The downstream collector is explicitly unfinished: `collect()` raises `NotImplementedError` and describes future HDF5/LeRobot serialization. The README's separate fine-tuning experiment is **author-reported**, not a reproduced or complete public collection-to-training pipeline at this commit (`references/memory/HarnessPAI/harnesspai/feedback/collect.py:36`; `references/memory/HarnessPAI/README.md:117`).
+
+### 7.5 Extension Points
+
+\[Implemented\] Extend benchmark graph/skill roots, candidate target modules, rollout entrypoints and perception clients. \[Docs/Interface only\] Phase signatures and control implementations remain generated per task rather than implementing a uniform safe action ABI (`references/memory/HarnessPAI/harnesspai/memory/skill/query.py:73`; `references/memory/HarnessPAI/harnesspai/execution/rollout.py:48`; `references/memory/HarnessPAI/harnesspai/code_library/TEMPLATE.md:464`).
+
+### 7.6 Dependencies and Runtime Requirements
+
+\[Needs model/hardware\] Evolution needs a coding-model service; video diagnosis uses Gemini; LIBERO rollout needs simulator dependencies, image rendering, and a served action model over an OpenPI-compatible WebSocket. These are separate from pure manifest/card lookup (`references/memory/HarnessPAI/harnesspai/evolution/loop.py:730`; `references/memory/HarnessPAI/harnesspai/memory/skill/writeback.py:370`; `references/memory/HarnessPAI/harnesspai/envs/libero/runtime.py:62`; `references/memory/HarnessPAI/harnesspai/envs/libero/runtime.py:73`).
+
+### 7.7 License
+
+\[Unverified\] No project-level LICENSE exists in the recorded Git tree. Asset-specific notices do not license the harness. **Design reference only; do not copy its code into Hylo.** The evidence for absence is the tree audit recorded in MANIFEST, not an invented LICENSE line; the relevant research artifact is the executable-program design (`references/memory/HarnessPAI/harnesspai/code_library/TEMPLATE.md:7`).
+
+### 7.8 Strengths, Weaknesses and Risks
+
+- \[Implemented\] Failure-to-repair knowledge is phase-scoped and reusable across tasks, making retrieval more targeted than injecting the whole run history (`references/memory/HarnessPAI/harnesspai/evolution/prompts.py:258`).
+- \[Implemented\] The capability aggregation path assigns each extracted sub-prompt its parent task's whole-task success rate; the sub-prompts are **not individually rolled out** in this path. This is a proxy signal, not a measured per-phase competence estimate. Hylo should evaluate candidate skills at their actual dispatch boundary before using reliability to decide when to intervene (`references/memory/HarnessPAI/harnesspai/evolution/stages/capability/aggregate.py:1`; `references/memory/HarnessPAI/harnesspai/evolution/stages/capability/aggregate.py:54`; `references/memory/HarnessPAI/harnesspai/evolution/stages/capability/aggregate.py:189`).
+- \[Docs/Interface only\] The anti-cheating policy forbids movable-object simulator poses, joint states of articulated objects, ground-truth stage gates and perception-cache refinement; it permits robot proprioception and final evaluation checks. This is clearly written in the template (`references/memory/HarnessPAI/harnesspai/code_library/TEMPLATE.md:532`).
+- \[Unverified\] The policy is not a proven isolation boundary. Preflight checks task identity and cross-task imports; rollout executes generated Python directly, and success comes from diagnostics produced by that task. A `workspace-write` coding sandbox does not prove that runtime code cannot inspect simulator internals or fabricate diagnostics (`references/memory/HarnessPAI/harnesspai/evolution/preflight.py:102`; `references/memory/HarnessPAI/harnesspai/execution/rollout.py:89`; `references/memory/HarnessPAI/harnesspai/execution/rollout.py:120`).
+- \[Implemented\] Skill validation lacks behavioral replay and restoration on a rejected write; code promotion can return an empty list on failure while the success branch continues. Hylo needs a separate evaluator, immutable candidate artifacts and atomic activation (`references/memory/HarnessPAI/harnesspai/memory/skill/writeback.py:417`; `references/memory/HarnessPAI/harnesspai/code_library/promote.py:47`; `references/memory/HarnessPAI/harnesspai/evolution/loop.py:801`).
+
+### 7.9 Reusable Components
+
+Design only: phase-scoped repair cards, capability-based VLA/code handover, explicit process-versus-task outcomes, and artifacts linking a repair to a failed rollout. Reimplement behind Hylo's frozen tool catalog and evaluator boundary; no source copying (`references/memory/HarnessPAI/harnesspai/memory/skill/query.py:44`; `references/memory/HarnessPAI/harnesspai/code_library/TEMPLATE.md:439`; `references/memory/HarnessPAI/harnesspai/execution/rollout.py:120`).
+
+For Hylo, program evolution complements model-managed episodic memory: models can select
+visual evidence and propose executable memory/skill candidates, while development experiments
+select which revisions to retain. The relevant distinction is between a manually accumulated
+task patch and a versioned candidate with demonstrated transfer, not simply between code and
+neural representations. This is a proposed adaptation, not a reproduced upstream result; see
+the [program-evolution design](../../rfcs/RFC-0009-benchmark-memory.md#program-evolution)
+(`references/memory/HarnessPAI/harnesspai/evolution/loop.py:340`;
+`references/memory/HarnessPAI/harnesspai/evolution/loop.py:839`;
+`references/memory/HarnessPAI/harnesspai/memory/skill/writeback.py:319`).
+
+### 7.10 Source Index
+
+| Concern | Source |
+|---|---|
+| Program representation | `references/memory/HarnessPAI/harnesspai/code_library/TEMPLATE.md:20` |
+| Candidate editing | `references/memory/HarnessPAI/harnesspai/evolution/loop.py:340` |
+| Rollout aggregation | `references/memory/HarnessPAI/harnesspai/execution/rollout.py:401` |
+| Promotion and distillation | `references/memory/HarnessPAI/harnesspai/evolution/loop.py:793` |
+| Skill write guard | `references/memory/HarnessPAI/harnesspai/memory/skill/writeback.py:389` |
+| Copy failure restoration | `references/memory/HarnessPAI/harnesspai/code_library/promote.py:47` |
+| Privileged-state policy | `references/memory/HarnessPAI/harnesspai/code_library/TEMPLATE.md:532` |
+| Missing feedback collector | `references/memory/HarnessPAI/harnesspai/feedback/collect.py:47` |
+| Capability reliability proxy | `references/memory/HarnessPAI/harnesspai/evolution/stages/capability/aggregate.py:189` |
+| Cross-task skill organization | `references/memory/HarnessPAI/harnesspai/memory/skill/graph_skill.py:114` |
+| Phase-scoped prompt injection | `references/memory/HarnessPAI/harnesspai/evolution/prompts.py:254` |
+
+### 7.11 Verification Status
+
+\[Implemented\]\[Unverified\] Static reading of the fixed `3af7d56` Git objects; the existing working tree was empty and was not restored. Citations identify paths inside that commit, read with `git show HEAD:<path>` into a temporary text-only snapshot. No task code, agent, simulator, collector or tests were run. The feedback gap is directly visible; anti-cheating enforcement and skill generalization remain unverified (`references/memory/HarnessPAI/harnesspai/feedback/collect.py:47`; `references/memory/HarnessPAI/harnesspai/execution/rollout.py:89`).
+
+---
+
+## 8. SERA
+
+### 8.1 Positioning
+
+\[Implemented\] SERA combines observable episode context, a VLM planner, grounded executor-command retrieval and a fixed RoboMME grounded-subgoal policy. Its current evolution unit is a **typed intervention bundle**, including prompt lessons and executable choices among registered harness mechanisms. It is more than prompt rewriting, but not unrestricted online code evolution (`references/memory/SERA/scripts/codex_rollout/interventions/bundle.py:1`; `references/memory/SERA/scripts/codex_rollout/interventions/registry.py:43`).
+
+### 8.2 Architecture
+
+\[Implemented\] The v5 controller discovers failure problems, registers paired development/generalization panels, tracks candidate lineage and retrospectives, and accepts verified interventions into the current working bundle. Runtime compiles bundles into existing planner mechanisms; the planner rejects unregistered Python intervention plugins (`references/memory/SERA/scripts/codex_rollout/self_evolve_v5.py:143`; `references/memory/SERA/scripts/codex_rollout/self_evolve_v5.py:215`; `references/memory/SERA/scripts/codex_rollout/self_evolve_v5.py:809`; `references/memory/SERA/scripts/codex_rollout/text_progress_planner.py:3617`).
+
+### 8.3 Core Data Structures and Interfaces
+
+| Structure | Fields and role |
+|---|---|
+| Intervention component | ID/type, task scope, priority, state namespace, claims, configuration and hashed artifacts. \[Implemented\] `references/memory/SERA/scripts/codex_rollout/interventions/bundle.py:164` |
+| Prompt lesson | Experience ID/revision, condition, lesson, recommended policy, success evidence and forbidden behavior. \[Implemented\] `references/memory/SERA/scripts/codex_rollout/interventions/bundle.py:137` |
+| Runtime hooks | Observation, retrieval, prompt construction, proposal canonicalization, transition validation and dispatch. \[Implemented\] `references/memory/SERA/scripts/codex_rollout/interventions/registry.py:9` |
+| Paired panel | Role, task/problem identity and registered train/val episode samples with cached baseline outcomes. \[Implemented\] `references/memory/SERA/scripts/codex_rollout/verify_self_evolve_v5_candidate.py:40` |
+| Lineage and bundle state | Parent candidate, revisions, behavior hashes, accepted experiences and current working bundle. \[Implemented\] `references/memory/SERA/scripts/codex_rollout/self_evolve_v5.py:315`; `references/memory/SERA/scripts/codex_rollout/self_evolve_v5.py:860` |
+
+### 8.4 Write / Retrieval Flow
+
+\[Implemented\] Experience persistence is JSON, with IDs, revisions, status and validation records. The older updater deduplicates `task:episode`, changes regressing entries to `needs_revision`, promotes entries meeting count thresholds to `validated`, and increments revisions. It is a separate utility, not proof that every v5 runtime follows that older status model (`references/memory/SERA/scripts/codex_rollout/update_experience_memory.py:35`).
+
+\[Implemented\] In v5, acceptance appends the approved candidate to both `accepted_experiences` and `working_bundle`, increments `bundle_revision`, and records a bundle hash. There is no capacity/LRU eviction in this acceptance path. Rejecting a pending candidate leaves the accepted working bundle available; this differs from rolling back an already activated bundle (`references/memory/SERA/scripts/codex_rollout/self_evolve_v5.py:851`; `references/memory/SERA/scripts/codex_rollout/self_evolve_v5.py:923`).
+
+\[Implemented\] Keep three retrieval paths distinct. Executor commands use BM25, character n-gram similarity, status/transition matching and frequency with reciprocal-rank fusion. Cross-episode prompt lessons are selected by task scope, not a vector database. Within-episode lesson context retains bounded successful/promising/do-not-retry examples; this is prompt selection, not deletion from a persistent experience store (`references/memory/SERA/scripts/codex_rollout/skill_retrieval.py:104`; `references/memory/SERA/scripts/codex_rollout/skill_retrieval.py:122`; `references/memory/SERA/scripts/codex_rollout/text_progress_planner.py:5124`).
+
+\[Implemented\] Generalization panels must be disjoint from development and already analyzed samples, and refreshed panels must avoid prior generalization samples for that problem. This provides independent validation **within train/val**, while development samples can be reused during revision. The supplied configuration reserves test for evaluation and disallows historical test experiences (`references/memory/SERA/scripts/codex_rollout/self_evolve_v5.py:250`; `references/memory/SERA/configs/self_evolution.json:6`).
+
+\[Implemented\] Verification requires the exact paired sample identities, matching cached baseline outcomes and stable base/candidate hashes. Development passes with at least two net improvements and zero regressions, **or a perfect panel**; a one-improvement fallback is separately recorded. Generalization requires a 100% candidate success rate and zero regressions under the supplied configuration. These are count/rate gates, not a p-value or McNemar test (`references/memory/SERA/scripts/codex_rollout/verify_self_evolve_v5_candidate.py:104`; `references/memory/SERA/scripts/codex_rollout/verify_self_evolve_v5_candidate.py:154`; `references/memory/SERA/configs/self_evolution.json:156`).
+
+\[Unverified\] Small adaptive panels are vulnerable to selection effects: the supplied development target is six attempts and generalization target four, and a perfect development panel can pass without an improvement. Default `accept` requires a generalization pass, but this is configurable. No automatic demotion/rollback of an accepted bundle was found in the reviewed decision and snapshot paths (`references/memory/SERA/configs/self_evolution.json:130`; `references/memory/SERA/scripts/codex_rollout/verify_self_evolve_v5_candidate.py:152`; `references/memory/SERA/scripts/codex_rollout/self_evolve_v5.py:851`; `references/memory/SERA/scripts/codex_rollout/self_evolve_v5.py:1211`).
+
+### 8.5 Extension Points
+
+\[Implemented\] Registered components cover prompt lessons, criterion overlays, transition gates, counting/event ledgers, retrieval overlays and canonicalization. Artifacts are relative-path checked and hashed; runtime payload validation rejects named episode/seed/privileged fields. \[Unverified\] This denylist is useful hygiene, not a proof that prose contains no leaked information (`references/memory/SERA/scripts/codex_rollout/interventions/registry.py:43`; `references/memory/SERA/scripts/codex_rollout/interventions/bundle.py:28`; `references/memory/SERA/scripts/codex_rollout/interventions/bundle.py:106`).
+
+\[Docs/Interface only\] `python_plugin` and `core_harness_patch` have schemas. A patch records base/materialized commits and touched symbols, and compilation retains that record; it does not apply a patch during rollout. The provided runtime explicitly refuses Python plugin execution. Do not describe the release as an autonomous arbitrary-code deployment system (`references/memory/SERA/scripts/codex_rollout/interventions/bundle.py:401`; `references/memory/SERA/scripts/codex_rollout/interventions/bundle.py:725`; `references/memory/SERA/scripts/codex_rollout/text_progress_planner.py:3617`).
+
+### 8.6 Dependencies and Runtime Requirements
+
+\[Needs model/hardware\] CUDA/Vulkan simulation, a grounded-subgoal π0.5 checkpoint, and an authenticated planner service/CLI are needed for the documented experiment. Policy and simulator use separate environments. SERA pins RoboMME submodule `856bc3a…`, which differs from the separately cloned benchmark HEAD in this study; those versions must not be silently interchanged (`references/memory/SERA/README.md:52`; `references/memory/SERA/README.md:76`; `references/memory/SERA/README.md:85`; `references/memory/SERA/README.md:104`).
+
+### 8.7 License
+
+\[Implemented\] Apache-2.0 for the repository; the separate Gemma terms and upstream model/asset licenses still matter. No model weights were inspected or downloaded (`references/memory/SERA/LICENSE:1`; `references/memory/SERA/LICENSE_GEMMA.txt:1`; `references/memory/SERA/README.md:85`).
+
+### 8.8 Strengths, Weaknesses and Risks
+
+\[Implemented\] SERA provides a closer fit to Hylo's frozen-policy boundary than model-internal memory variants: observable ledgers, bounded gates, artifact hashes and panel isolation are concrete code. Its main limits are task-specific mechanisms, small adaptive validation panels, lack of statistical significance testing and no verified activation rollback (`references/memory/SERA/scripts/codex_rollout/interventions/registry.py:43`; `references/memory/SERA/scripts/codex_rollout/self_evolve_v5.py:250`; `references/memory/SERA/scripts/codex_rollout/verify_self_evolve_v5_candidate.py:154`; `references/memory/SERA/scripts/codex_rollout/self_evolve_v5.py:851`).
+
+| Dimension | SERA at this commit | Zetta-Embodiment at its recorded commit |
+|---|---|---|
+| Candidate | Typed lessons, ledgers and runtime interventions. `references/memory/SERA/scripts/codex_rollout/interventions/bundle.py:164` | `CandidateBundle`: critic DSL plus frozen recovery-tool sequences; see [Zetta source study](zetta-embodiment.md#appendix-direct-answers-to-harness-questions) and its source index, `references/evolution/Zetta-Embodiment/zetta/evolution/models.py:587`. |
+| Validation | Paired development plus disjoint, previously unanalyzed generalization panels. `references/memory/SERA/scripts/codex_rollout/self_evolve_v5.py:250` | Shadow replay, same-seed/regression and held-out gates; `references/evolution/Zetta-Embodiment/zetta/evolution/gating.py:202`. |
+| Promotion threshold | Counts/rates; perfect development can pass without net gain. `references/memory/SERA/scripts/codex_rollout/verify_self_evolve_v5_candidate.py:154` | One-sided exact McNemar is implemented, but held-out defaults to report-only and LIBERO regression is skipped by default in the existing study. `references/evolution/Zetta-Embodiment/zetta/evolution/gating.py:12`; `references/evolution/Zetta-Embodiment/zetta/evolution/protocol.py:17`. |
+| Version and rollback | Bundle revisions/hashes and rejected-candidate retention; no demonstrated active-bundle rollback. `references/memory/SERA/scripts/codex_rollout/self_evolve_v5.py:860` | Parent/digest lineage and guarded promotion; no demote/rollback API in the existing source study. `references/evolution/Zetta-Embodiment/zetta/evolution/store.py:345`. |
+
+The Zetta column reuses the prior pinned source study, not a new checkout or execution. Hylo should combine SERA's observation-grounded event memory with Zetta's paired statistics, while choosing explicit validation/test roles and implementing activation rollback itself.
+
+### 8.9 Reusable Components
+
+Reuse or adapt the Apache-licensed typed component schema, artifact hashing, episode-identity filtering, panel disjointness checks and event-ledger hooks. Replace task-name special cases with Hylo tool contracts and add a statistically specified gate plus immutable registry (`references/memory/SERA/scripts/codex_rollout/interventions/bundle.py:86`; `references/memory/SERA/scripts/codex_rollout/interventions/registry.py:63`; `references/memory/SERA/scripts/codex_rollout/self_evolve_v5.py:253`).
+
+### 8.10 Source Index
+
+| Concern | Source |
+|---|---|
+| Bundle schema and artifact validation | `references/memory/SERA/scripts/codex_rollout/interventions/bundle.py:106` |
+| Hooks and ledgers | `references/memory/SERA/scripts/codex_rollout/interventions/registry.py:9` |
+| Experience revisions | `references/memory/SERA/scripts/codex_rollout/update_experience_memory.py:35` |
+| Command retrieval | `references/memory/SERA/scripts/codex_rollout/skill_retrieval.py:122` |
+| Lesson selection | `references/memory/SERA/scripts/codex_rollout/text_progress_planner.py:5124` |
+| Independent panels | `references/memory/SERA/scripts/codex_rollout/self_evolve_v5.py:215` |
+| Paired verifier | `references/memory/SERA/scripts/codex_rollout/verify_self_evolve_v5_candidate.py:104` |
+| Activation decision | `references/memory/SERA/scripts/codex_rollout/self_evolve_v5.py:809` |
+
+### 8.11 Verification Status
+
+\[Implemented\]\[Unverified\] Source and JSON configuration were read; no model service, simulator, controller or tests were executed. Runtime mechanisms and gates are traceable, but effectiveness and resistance to leakage were not reproduced. \[Needs model/hardware\] Full validation needs the pinned policy, benchmark and planner (`references/memory/SERA/README.md:41`; `references/memory/SERA/README.md:104`).
+
+---
+
+## 9. eMEM
+
+### 9.1 Positioning
+
+\[Implemented\] An embedded spatiotemporal memory library with an explicit store and retrieval APIs, rather than a trainable VLA memory module. It is a plausible CPU backend for Hylo episodic/spatial memory, subject to frame, retention and crash-consistency changes (`references/memory/emem/emem/memory.py:36`; `references/memory/emem/emem/store.py:32`).
+
+### 9.2 Architecture
+
+\[Implemented\] `SpatioTemporalMemory` composes a bounded working buffer, `MemoryStore`, consolidation engine and tool adapters. SQLite stores graph records and metadata; hnswlib stores dense vectors; an in-memory R-tree is rebuilt from SQL on load; SQLite FTS5 supplies sparse retrieval (`references/memory/emem/emem/memory.py:51`; `references/memory/emem/emem/store.py:46`; `references/memory/emem/emem/store.py:162`; `references/memory/emem/emem/store.py:198`).
+
+### 9.3 Core Data Structures and Interfaces
+
+| Type | Stored meaning |
+|---|---|
+| ObservationNode | UUID, text, coordinates, timestamp, layer/source, confidence, episode, metadata, tier and optional embedding. `references/memory/emem/emem/types.py:42` |
+| EpisodeNode | Name, start/end time, active/completed/abandoned status, gist/embedding and parent episode. `references/memory/emem/emem/types.py:59` |
+| GistNode | Summary text, center/radius, time interval, source observation IDs/count and optional layer/episode. `references/memory/emem/emem/types.py:74` |
+| EntityNode | Name/type, coordinates, first/last seen, confidence and observation count. `references/memory/emem/emem/types.py:91` |
+| Edge | Directed source/target IDs, typed relation and metadata: belongs-to, follows, subtask-of, summarizes, observed-in or cooccurs-with. `references/memory/emem/emem/types.py:9`; `references/memory/emem/emem/types.py:108` |
+
+\[Implemented\] These are position records, **not full poses**: no orientation, covariance, explicit `frame_id`, coordinate-transform service, `valid_from` or `valid_to` fields exist in these dataclasses/schema. `layer_name` denotes a perception layer, not a guaranteed coordinate frame. Hylo must define frame and clock semantics explicitly, preferably outside arbitrary metadata (`references/memory/emem/emem/types.py:42`; `references/memory/emem/emem/store.py:78`; `references/memory/emem/emem/memory.py:126`).
+
+### 9.4 Write / Retrieval Flow
+
+\[Implemented\] `add()` constructs an observation and buffers it; flush batches populate SQL, FTS, spatial and optional HNSW entries, attaching observations to an active episode. Semantic/spatial/temporal convenience calls flush pending records first (`references/memory/emem/emem/memory.py:102`; `references/memory/emem/emem/store.py:352`; `references/memory/emem/emem/memory.py:261`).
+
+| Query | Actual implementation |
+|---|---|
+| Semantic | Embed query, HNSW cosine candidates, materialize records through integer-ID/UUID mappings and SQL filters; optional BM25 FTS5 results fused using RRF, enabled by default. `references/memory/emem/emem/store.py:1039`; `references/memory/emem/emem/store.py:1183`; `references/memory/emem/emem/config.py:38` |
+| Spatial | R-tree radius candidates, exact distance filtering, SQL layer/time/source filtering, distance ordering. `references/memory/emem/emem/spatial.py:49`; `references/memory/emem/emem/store.py:1327` |
+| Temporal | Indexed SQL timestamps, absolute range or relative lookback, optional spatial/layer/source filters, chronological order and limit. `references/memory/emem/emem/store.py:95`; `references/memory/emem/emem/store.py:1403` |
+
+\[Implemented\] Episode consolidation splits time chunks; background-style time-window consolidation uses spatial clustering. Both create gists, extract/merge entities and mark observations long-term without immediately dropping text. `maintenance()` archives sufficiently old long-term observations (`references/memory/emem/emem/consolidation.py:225`; `references/memory/emem/emem/consolidation.py:257`; `references/memory/emem/emem/memory.py:359`).
+
+\[Implemented\] Expiry is **lossy archival**, not complete row deletion and not logical fact invalidation: archive changes tier, clears observation text, marks HNSW entries deleted, and removes FTS/spatial entries. SQL identity/coordinates/time and graph provenance remain; the regular queries exclude archived observations. Entities are updated in place, so the entity record is not a versioned history of contradictory facts (`references/memory/emem/emem/consolidation.py:294`; `references/memory/emem/emem/store.py:534`; `references/memory/emem/emem/store.py:654`; `references/memory/emem/emem/store.py:1429`).
+
+### 9.5 Extension Points
+
+\[Implemented\] `EmbeddingProvider` and callable adapters allow local/remote embeddings; `LLMClient` and its fallback control summarization/entity extraction. An injectable clock and tool-registration/dispatch interfaces make the library adaptable to a robot harness. Hylo should use typed store results internally rather than making JSON-formatted tool responses its core data model (`references/memory/emem/emem/embeddings.py:6`; `references/memory/emem/emem/embeddings.py:40`; `references/memory/emem/emem/consolidation.py:19`; `references/memory/emem/emem/memory.py:42`; `references/memory/emem/emem/memory.py:369`).
+
+### 9.6 Dependencies and Runtime Requirements
+
+\[Implemented\] Core dependencies are NumPy, hnswlib, Rtree and scikit-learn, plus standard-library SQLite; **ROS is not a core dependency**, despite ROS/EMOS keywords in package metadata. CPU storage, spatial/time lookup and supplied-vector retrieval do not require a GPU (`references/memory/emem/pyproject.toml:48`; `references/memory/emem/emem/store.py:1`).
+
+\[Needs model/hardware\] Meaningful semantic embeddings and learned summaries need an embedding/LLM provider, but that provider may run locally on CPU or remotely. The default `NullEmbeddingProvider` returns zeros; it is not semantic understanding. Supplying observation embeddings alone does not make text-query embeddings meaningful unless a compatible query provider is configured (`references/memory/emem/emem/store.py:38`; `references/memory/emem/emem/embeddings.py:24`; `references/memory/emem/emem/store.py:1063`).
+
+### 9.7 License
+
+\[Implemented\] MIT; preserve its notice on reuse (`references/memory/emem/LICENSE:1`).
+
+### 9.8 Strengths, Weaknesses and Risks
+
+- \[Implemented\] Embedded, inspectable SQL records with three complementary query paths and summary provenance fit a harness-owned memory layer (`references/memory/emem/emem/store.py:78`; `references/memory/emem/emem/types.py:74`).
+- \[Unverified\] SQLite commits and HNSW file persistence are separate. `save()` writes HNSW then commits SQL; ingest can commit SQL before that save. A crash-consistent multi-index recovery protocol is not established by this code (`references/memory/emem/emem/store.py:352`; `references/memory/emem/emem/store.py:1686`).
+- \[Implemented\] HNSW oversamples a bounded candidate list before filtering, so selective time/space filters can return too few results even when other valid records exist. This is not a guaranteed exact hybrid intersection (`references/memory/emem/emem/store.py:1183`; `references/memory/emem/emem/store.py:1224`).
+- \[Implemented\] `timestamp or clock()` treats zero as missing; temporal relative filtering also uses truthiness. Simulation clocks starting at zero need adaptation. Spatial frames, immutable raw evidence and invalidation must be added for Hylo (`references/memory/emem/emem/memory.py:137`; `references/memory/emem/emem/store.py:1435`; `references/memory/emem/emem/store.py:547`).
+
+### 9.9 Reusable Components
+
+Reuse/adapt the node/edge schema, SQL-plus-index separation, query APIs, callable providers and summary-to-source links. Preserve an append-only Hylo evidence log, add frame/clock/model-version fields, distinguish invalidation from archive, and make index reconstruction recoverable before relying on it as the production backend (`references/memory/emem/emem/types.py:74`; `references/memory/emem/emem/store.py:173`; `references/memory/emem/emem/store.py:534`; `references/memory/emem/emem/store.py:1686`).
+
+### 9.10 Source Index
+
+| Concern | Source |
+|---|---|
+| Nodes and edges | `references/memory/emem/emem/types.py:9` |
+| SQL schema | `references/memory/emem/emem/store.py:76` |
+| Buffered ingestion | `references/memory/emem/emem/memory.py:102` |
+| Hybrid semantic search | `references/memory/emem/emem/store.py:1039` |
+| Spatial query | `references/memory/emem/emem/store.py:1327` |
+| Temporal query | `references/memory/emem/emem/store.py:1403` |
+| Consolidation and archive | `references/memory/emem/emem/consolidation.py:225` |
+| Lossy tier update | `references/memory/emem/emem/store.py:534` |
+| Persistence | `references/memory/emem/emem/store.py:1686` |
+
+### 9.11 Verification Status
+
+\[Implemented\]\[Unverified\] Dataclasses, SQL, index operations, consolidation and dependency declarations were statically read. No tests or benchmarks were run; no latency, scale or durability claim is reproduced. CPU backend suitability is an architectural assessment, not a measured result (`references/memory/emem/pyproject.toml:48`; `references/memory/emem/emem/store.py:32`).
+
+---
+## 10. RoboMME
+
+### 10.1 Positioning
+
+\[Implemented\] Two repositories serve different roles: `robomme_benchmark` defines history-dependent environments, demonstrations and scorers; `robomme_policy_learning` implements the MME-VLA family. The latter's memory is primarily inside a modified policy, whereas the benchmark can evaluate an outer harness. This study covers the original 16-task `robomme` namespace; the cloned HEAD also contains `robomme_plus`, which must not be mixed into the original protocol (`references/memory/robomme_benchmark/pyproject.toml:4`; `references/memory/robomme_benchmark/src/robomme/env_record_wrapper/episode_config_resolver.py:17`; `references/memory/robomme_policy_learning/src/mme_vla_suite/models/integration/history_pi0.py:247`).
+
+### 10.2 Architecture
+
+\[Implemented\] `BenchmarkEnvBuilder` resolves task/split/episode metadata, constructs a ManiSkill environment, wraps demonstration playback and converts the chosen action representation. The policy side keeps visual history, prepares memory features or subgoal text, and communicates with the simulator over a policy-serving boundary (`references/memory/robomme_benchmark/src/robomme/env_record_wrapper/episode_config_resolver.py:172`; `references/memory/robomme_policy_learning/src/mme_vla_suite/shared/mem_buffer.py:24`; `references/memory/robomme_policy_learning/examples/robomme/subgoal_predictor.py:245`).
+
+### 10.3 Core Data Structures and Interfaces
+
+\[Implemented\]\[Needs model/hardware\] The example stack also contains a **MemER external
+planner path**: a Qwen3-VL adapter predicts `current_subtask` and `keyframe_positions`, persists
+the selected execution frames, and supplies past keyframes plus recent frames on the next
+request. This is a concrete model-directed memory-selection interface outside the VLA;
+it is distinct from merely storing every caption or adding a manual event counter. The
+adapter is an additional learned artifact, and it has not been loaded or reproduced in the
+Hylo pilot. A general VLM implementing this output schema would only reproduce the interface,
+not the trained MemER model or its performance
+(`references/memory/robomme_policy_learning/examples/robomme/subgoal_prediction/qwenvl/api_memer.py:24`;
+`references/memory/robomme_policy_learning/examples/robomme/subgoal_prediction/qwenvl/api_memer.py:28`;
+`references/memory/robomme_policy_learning/examples/robomme/subgoal_prediction/qwenvl/api_memer.py:160`;
+`references/memory/robomme_policy_learning/examples/robomme/subgoal_prediction/qwenvl/api_memer.py:202`).
+
+\[Implemented\] Tasks contain ordered subgoal dictionaries with a completion predicate, optional failure predicate, demonstration flag and oracle solver. `sequential_task_check()` advances/evaluates these. Environment observations are lists so reset can return a demonstration prefix and macro actions can return intermediate frames. Defaults exclude raw ManiSkill observations and optional depth/calibration fields (`references/memory/robomme_benchmark/src/robomme/robomme_env/utils/subgoal_evaluate_func.py:33`; `references/memory/robomme_benchmark/src/robomme/env_record_wrapper/episode_config_resolver.py:172`; `references/memory/robomme_benchmark/doc/env_format.md:3`).
+
+The following taxonomy follows the authors' suites; predicate summaries are static source findings, **not reproduced success tests**. Every row is \[Implemented\]\[Unverified\]. The common success condition is subgoal completion without a failure predicate, with task-specific additions shown below. Intended task wording is defined in `references/memory/robomme_benchmark/src/robomme/robomme_env/utils/task_goal.py:47`.
+
+| Task | Memory demand | Success implementation |
+|---|---|---|
+| BinFill | Temporal, count deposited cubes by requested color, then stop | Ordered deposit/button goals with failure tracking. `references/memory/robomme_benchmark/src/robomme/robomme_env/BinFill.py:420` |
+| PickXtimes | Temporal, count repeated pick/place cycles | Repeat subgoals followed by stop button; failure propagation. `references/memory/robomme_benchmark/src/robomme/robomme_env/PickXtimes.py:363` |
+| SwingXtimes | Temporal, count alternating right/left swings | Swing/placement/button sequence must finish without failure. `references/memory/robomme_benchmark/src/robomme/robomme_env/SwingXtimes.py:441` |
+| StopCube | Temporal, stop on the specified visit to the target | Sequence plus `correct_timestep`, target stopping and overshoot failure latch. `references/memory/robomme_benchmark/src/robomme/robomme_env/StopCube.py:309` |
+| VideoUnmask | Spatial, remember which container hid a colored cube in a video | Correct cover-lifting sequence and wrong-container failure predicates. `references/memory/robomme_benchmark/src/robomme/robomme_env/VideoUnmask.py:315` |
+| VideoUnmaskSwap | Spatial, update hidden-object location after container swaps | Sequence targets the remembered identity at its resulting location. `references/memory/robomme_benchmark/src/robomme/robomme_env/VideoUnmaskSwap.py:423` |
+| ButtonUnmask | Spatial, actively reveal and then remember hidden contents | Button/reveal and correct-cover sequence. `references/memory/robomme_benchmark/src/robomme/robomme_env/ButtonUnmask.py:328` |
+| ButtonUnmaskSwap | Spatial, active reveal plus remapping after swaps | Button and cover sequence, wrong target/failure checks. `references/memory/robomme_benchmark/src/robomme/robomme_env/ButtonUnmaskSwap.py:510` |
+| PickHighlight | Object, retain the set of highlighted cubes after the cue | Counts discrete pickup transitions for each target; all must be picked, with persistent failure checks. `references/memory/robomme_benchmark/src/robomme/robomme_env/PickHighlight.py:332` |
+| VideoRepick | Object, identify the previously manipulated cube and repetitions | Correct-object repeat sequence plus stop, with failure propagation. `references/memory/robomme_benchmark/src/robomme/robomme_env/VideoRepick.py:443` |
+| VideoPlaceButton | Object/event reference, destination immediately before or after a button event | Place at the event-relative destination encoded in the task sequence. `references/memory/robomme_benchmark/src/robomme/robomme_env/VideoPlaceButton.py:655` |
+| VideoPlaceOrder | Object/order reference, destination of a specified previous placement | Sequence checks placement at the selected ordinal target. `references/memory/robomme_benchmark/src/robomme/robomme_env/VideoPlaceOrder.py:520` |
+| MoveCube | Procedural, imitate pushing with a peg, pushing with gripper or grasp-and-place | Builds method-specific predicate sequences, not only a final-position test. `references/memory/robomme_benchmark/src/robomme/robomme_env/MoveCube.py:371` |
+| InsertPeg | Procedural, remember peg identity, grasped end and insertion side | Correct-end/side insertion predicates; completion also has an `end_steps + 3` branch. `references/memory/robomme_benchmark/src/robomme/robomme_env/InsertPeg.py:387`; `references/memory/robomme_benchmark/src/robomme/robomme_env/InsertPeg.py:419` |
+| PatternLock | Procedural, retain a demonstrated contact order | Recent achieved-button labels must match selected labels, in addition to sequence completion. `references/memory/robomme_benchmark/src/robomme/robomme_env/PatternLock.py:361` |
+| RouteStick | Procedural, reproduce a demonstrated route around sticks | Sequence and directional checks; evaluator records XY trace and latches failures. A separate historical trace check remains commented out. `references/memory/robomme_benchmark/src/robomme/robomme_env/RouteStick.py:455`; `references/memory/robomme_benchmark/src/robomme/robomme_env/utils/subgoal_evaluate_func.py:548` |
+
+\[Implemented\] Success is a simulator predicate, not proof of remembering. For example insertion uses a distance threshold and relative end/side checks, and task completion may omit fine physical distinctions. Use memory ablations and an oracle-memory control to separate forgetting from control failure (`references/memory/robomme_benchmark/src/robomme/robomme_env/utils/subgoal_evaluate_func.py:448`).
+
+### 10.4 Write / Retrieval Flow
+
+\[Implemented\] Visual history is appended to `MemoryBuffer`. Frame sampling evenly selects historical indices within a token budget; token dropping retains patches scored by pixel changes, with the first frame specially retained. These are history-selection methods, not necessarily semantically chosen keyframes (`references/memory/robomme_policy_learning/src/mme_vla_suite/shared/mem_buffer.py:92`; `references/memory/robomme_policy_learning/src/mme_vla_suite/shared/mem_buffer.py:150`; `references/memory/robomme_policy_learning/src/mme_vla_suite/shared/mem_buffer.py:299`).
+
+\[Implemented\] Recurrent representations use an RMT state or TTT fast-weight state, with explicit reset/update interfaces. Integration places encoded memory into the prefix context, into a separate memory expert, or into action-expert modulation. Modulation attends to memory and applies memory-conditioned normalization (`references/memory/robomme_policy_learning/src/mme_vla_suite/models/representation/recur_mem.py:45`; `references/memory/robomme_policy_learning/src/mme_vla_suite/models/integration/history_pi0.py:293`; `references/memory/robomme_policy_learning/src/mme_vla_suite/models/integration/history_pi0.py:432`; `references/memory/robomme_policy_learning/src/mme_vla_suite/models/integration/history_gemma.py:177`).
+
+Each row below is \[Implemented\]\[Needs model/hardware\]; the config is the evidence for the exact variant. “Policy change” means the released model uses the history-aware VLA path and trained checkpoint; an outer buffer alone does not make it compatible with an arbitrary frozen VLA.
+
+| Variant | Memory representation and placement | Hylo boundary | Configuration source |
+|---|---|---|---|
+| perceptual-framesamp-context | Evenly sampled frame features, prefix tokens | Policy change; selection/buffering can be external | `references/memory/robomme_policy_learning/src/mme_vla_suite/models/config/robomme/perceptual-framesamp-context.yaml:18` |
+| perceptual-framesamp-expert | Evenly sampled frame features, separate memory expert | Policy change; selection/buffering can be external | `references/memory/robomme_policy_learning/src/mme_vla_suite/models/config/robomme/perceptual-framesamp-expert.yaml:18` |
+| perceptual-framesamp-modul | Evenly sampled frame features, action-expert modulation | Policy change; selection/buffering can be external | `references/memory/robomme_policy_learning/src/mme_vla_suite/models/config/robomme/perceptual-framesamp-modul.yaml:18` |
+| perceptual-tokendrop-context | Selected patch tokens, prefix tokens | Policy change; selection/buffering can be external | `references/memory/robomme_policy_learning/src/mme_vla_suite/models/config/robomme/perceptual-tokendrop-context.yaml:18` |
+| perceptual-tokendrop-expert | Selected patch tokens, separate memory expert | Policy change; selection/buffering can be external | `references/memory/robomme_policy_learning/src/mme_vla_suite/models/config/robomme/perceptual-tokendrop-expert.yaml:18` |
+| perceptual-tokendrop-modul | Selected patch tokens, action-expert modulation | Policy change; selection/buffering can be external | `references/memory/robomme_policy_learning/src/mme_vla_suite/models/config/robomme/perceptual-tokendrop-modul.yaml:18` |
+| recurrent-rmt-context | Recurrent transformer memory tokens, prefix tokens | Policy change; recurrent state belongs to the memory model | `references/memory/robomme_policy_learning/src/mme_vla_suite/models/config/robomme/recurrent-rmt-context.yaml:18` |
+| recurrent-rmt-expert | Recurrent transformer memory tokens, separate memory expert | Policy change; recurrent state belongs to the memory model | `references/memory/robomme_policy_learning/src/mme_vla_suite/models/config/robomme/recurrent-rmt-expert.yaml:18` |
+| recurrent-rmt-modul | Recurrent transformer memory tokens, action-expert modulation | Policy change; recurrent state belongs to the memory model | `references/memory/robomme_policy_learning/src/mme_vla_suite/models/config/robomme/recurrent-rmt-modul.yaml:18` |
+| recurrent-ttt-context | TTT fast-weight memory, prefix tokens | Policy change; recurrent state belongs to the memory model | `references/memory/robomme_policy_learning/src/mme_vla_suite/models/config/robomme/recurrent-ttt-context.yaml:18` |
+| recurrent-ttt-expert | TTT fast-weight memory, separate memory expert | Policy change; recurrent state belongs to the memory model | `references/memory/robomme_policy_learning/src/mme_vla_suite/models/config/robomme/recurrent-ttt-expert.yaml:18` |
+| recurrent-ttt-modul | TTT fast-weight memory, action-expert modulation | Policy change; recurrent state belongs to the memory model | `references/memory/robomme_policy_learning/src/mme_vla_suite/models/config/robomme/recurrent-ttt-modul.yaml:18` |
+| symbolic-simple-subgoal | Natural-language next subgoal, tokenized language prefix | Harness-side predictor is reusable; released executor is a trained symbolic VLA | `references/memory/robomme_policy_learning/src/mme_vla_suite/models/config/robomme/symbolic-simple-subgoal.yaml:18` |
+| symbolic-grounded-subgoal | Subgoal with spatial grounding, tokenized language prefix | Harness-side predictor is reusable; released executor is a trained symbolic VLA | `references/memory/robomme_policy_learning/src/mme_vla_suite/models/config/robomme/symbolic-grounded-subgoal.yaml:18` |
+
+\[Implemented\] The two symbolic variants use external Gemini/Qwen/oracle subgoal predictors and tokenize their output into the policy prompt. These are the closest to Hylo's harness boundary, but the published executor is still trained for that interface. The script's oracle variants read environment subgoals and are privileged baselines; they must not be counted as observable-only harness performance (`references/memory/robomme_policy_learning/examples/robomme/subgoal_predictor.py:233`; `references/memory/robomme_policy_learning/src/mme_vla_suite/models/integration/history_pi0.py:468`; `references/memory/robomme_policy_learning/scripts/eval.sh:55`).
+
+\[Implemented\] Static JSON inspection finds **100 train, 50 val and 50 test records for each of 16 tasks**. Episode IDs map to stored seed/difficulty; they are not model RNG seeds. Example VideoUnmask episode zero uses train `6000`, val `1060000`, test `560000` (`references/memory/robomme_benchmark/src/robomme/env_metadata/train/record_dataset_VideoUnmask_metadata.json:1`; `references/memory/robomme_benchmark/src/robomme/env_metadata/val/record_dataset_VideoUnmask_metadata.json:1`; `references/memory/robomme_benchmark/src/robomme/env_metadata/test/record_dataset_VideoUnmask_metadata.json:1`; `references/memory/robomme_benchmark/src/robomme/env_record_wrapper/episode_config_resolver.py:147`).
+
+\[Implemented\] The example evaluator uses model seed 7, with 42 and 0 listed as alternatives, a test split and a 1,300-step budget. It iterates metadata episodes and scores terminal `info.status == "success"`; an error is counted as failure in that example. The policy evaluator has a different default model seed (42), so record the actual invocation rather than claiming one universal seed configuration. The authors report 1,600 training demonstrations; none were downloaded separately or replayed (`references/memory/robomme_benchmark/scripts/evaluation.py:75`; `references/memory/robomme_benchmark/scripts/evaluation.py:100`; `references/memory/robomme_policy_learning/examples/robomme/eval.py:43`; `references/memory/robomme_benchmark/readme.md:75`).
+
+### 10.5 Extension Points
+
+\[Implemented\] Extend a registered task, its seed/difficulty metadata and subgoal predicates; integrate a policy via joint-angle, absolute end-effector pose, waypoint or multi-choice wrappers. Hylo should initially use a continuous action mode with explicit observation filtering; multi-choice/oracle planning changes the motor-control problem (`references/memory/robomme_benchmark/src/robomme/env_record_wrapper/episode_config_resolver.py:172`; `references/memory/robomme_benchmark/doc/env_format.md:8`).
+
+### 10.6 Dependencies and Runtime Requirements
+
+\[Implemented\] The benchmark pins a **ManiSkill fork** to `07be6fbc66350ddca200abfb0a11b692f078f7fd` via uv sources, with Python ≥3.11 and Torch 2.9.1. An ordinary unpinned ManiSkill installation is not the same dependency graph (`references/memory/robomme_benchmark/pyproject.toml:6`; `references/memory/robomme_benchmark/pyproject.toml:18`).
+
+\[Needs model/hardware\] Full visual evaluation requires the simulator/rendering stack, policy weights and GPU inference; symbolic predictors additionally need VLM weights or an API. The authors' training hardware guidance is author-reported, not tested here. Do not interpret the README CPU-rendering suggestion as a verified all-CPU evaluation recipe (`references/memory/robomme_policy_learning/README.md:94`; `references/memory/robomme_benchmark/readme.md:150`; `references/memory/robomme_policy_learning/examples/robomme/subgoal_predictor.py:9`).
+
+### 10.7 License
+
+\[Implemented\] Both repositories have Apache-2.0 code licenses. The policy repository additionally includes Gemma terms. These do not establish a universal license for every simulator asset or checkpoint (`references/memory/robomme_benchmark/LICENSE:1`; `references/memory/robomme_policy_learning/LICENSE:1`; `references/memory/robomme_policy_learning/LICENSE_GEMMA.txt:1`).
+
+\[Implemented\]\[Unverified\] The original task code builds simple procedural objects but also imports Panda and `TableSceneBuilder`, whose assets come from ManiSkill. The pinned upstream builder loads `table.glb`; an asset-by-asset redistribution clearance is not provided by RoboMME's top-level license. Keep this as an **unresolved asset-license dependency**, not “all assets Apache-2.0” or “all assets noncommercial.” Evidence: `references/memory/robomme_benchmark/src/robomme/robomme_env/utils/object_generation.py:39`; `references/memory/robomme_benchmark/src/robomme/robomme_env/BinFill.py:8`; [pinned ManiSkill table builder](https://github.com/YinpeiDai/ManiSkill/blob/07be6fbc66350ddca200abfb0a11b692f078f7fd/mani_skill/utils/scene_builder/table/scene_builder.py#L20). The pinned fork's [third-party notice](https://github.com/YinpeiDai/ManiSkill/blob/07be6fbc66350ddca200abfb0a11b692f078f7fd/LICENSE-3RD-PARTY) covers PyTorch3D BSD terms, not a complete asset manifest.
+
+### 10.8 Strengths, Weaknesses and Risks
+
+- \[Implemented\] A compact set of distinct temporal, spatial, object and procedural demands, with explicit seed tables, is useful for controlled harness ablations (`references/memory/robomme_benchmark/readme.md:64`; `references/memory/robomme_benchmark/src/robomme/env_record_wrapper/episode_config_resolver.py:147`).
+- \[Unverified\] Predicate thresholds and sequential state can confound memory and manipulation; binary success alone cannot localize the cause (`references/memory/robomme_benchmark/src/robomme/robomme_env/utils/subgoal_evaluate_func.py:448`).
+- \[Implemented\] `FailAwareWrapper` maps exceptions to an error outcome, while the example evaluator counts them as failures. Hylo should retain raw benchmark results and separately report `infra_invalid` according to its own protocol (`references/memory/robomme_benchmark/src/robomme/env_record_wrapper/FailAwareWrapper.py:19`; `references/memory/robomme_benchmark/scripts/evaluation.py:103`).
+- \[Unverified\] Current benchmark HEAD, the policy submodule and SERA's pinned submodule are different dependency choices. Architecture comparisons are useful; reproduction requires matching commits, task metadata, action mode and oracle settings (`references/memory/SERA/README.md:104`; `references/memory/robomme_policy_learning/README.md:50`; `references/memory/robomme_benchmark/pyproject.toml:18`).
+
+### 10.9 Reusable Components
+
+Reuse/adapt benchmark metadata resolution, observation-list handling, task predicates and continuous-action adapters under Apache-2.0. Borrow frame retention and symbolic subgoal design, but keep memory outside the VLA for Hylo's initial integration; the twelve perceptual/recurrent variants require a different policy contract (`references/memory/robomme_benchmark/src/robomme/env_record_wrapper/episode_config_resolver.py:172`; `references/memory/robomme_policy_learning/src/mme_vla_suite/shared/mem_buffer.py:299`; `references/memory/robomme_policy_learning/src/mme_vla_suite/models/integration/history_pi0.py:247`).
+
+### 10.10 Source Index
+
+| Concern | Source |
+|---|---|
+| Task registry and splits | `references/memory/robomme_benchmark/src/robomme/env_record_wrapper/episode_config_resolver.py:17` |
+| Shared subgoal evaluator | `references/memory/robomme_benchmark/src/robomme/robomme_env/utils/subgoal_evaluate_func.py:33` |
+| Task instructions | `references/memory/robomme_benchmark/src/robomme/robomme_env/utils/task_goal.py:47` |
+| Observation contract | `references/memory/robomme_benchmark/doc/env_format.md:34` |
+| Example protocol | `references/memory/robomme_benchmark/scripts/evaluation.py:75` |
+| Variant inventory | `references/memory/robomme_policy_learning/scripts/eval.sh:1` |
+| Feature selection | `references/memory/robomme_policy_learning/src/mme_vla_suite/shared/mem_buffer.py:150` |
+| Policy integration | `references/memory/robomme_policy_learning/src/mme_vla_suite/models/integration/history_pi0.py:247` |
+| Symbolic oracle boundary | `references/memory/robomme_policy_learning/examples/robomme/subgoal_predictor.py:233` |
+
+### 10.11 Verification Status
+
+\[Implemented\]\[Unverified\] Task definitions, predicates, metadata JSON, model configs and integration paths were statically inspected. All 14 configs exist; existence does not mean all checkpoints or numerical results were reproduced. No simulator, training, test, dataset-generation or evaluation script was run (`references/memory/robomme_policy_learning/scripts/eval.sh:1`; `references/memory/robomme_policy_learning/README.md:194`).
+
+---
+
+## 11. MIKASA-Robo
+
+### 11.1 Positioning
+
+\[Implemented\] **Separate the two releases.** The original RL-oriented task family has 32 registered environments and four broad categories. The current main branch retains it under `rl/` and adds a canonical **90-task VLA manifest with ten memory types**. “32 tasks and ten types” incorrectly combines the two generations. Counts below come from registration decorators and CSV rows; README release/dataset quantities remain author-reported (`references/memory/MIKASA-Robo/mikasa_robo_suite/rl/memory_envs/__init__.py:1`; `references/memory/MIKASA-Robo/mikasa_robo_vla_envs.csv:1`; `references/memory/MIKASA-Robo/README.md:43`).
+
+### 11.2 Architecture
+
+\[Implemented\] ManiSkill/Gym environments implement cue, delay/occlusion and response phases. The canonical VLA wrapper stack normalizes observations and optionally freezes actions during cue phases; the benchmarking module loads the CSV, selects horizon groups, executes seeded episodes and writes per-task/aggregate results (`references/memory/MIKASA-Robo/mikasa_robo_suite/vla/utils/apply_wrappers.py:22`; `references/memory/MIKASA-Robo/mikasa_robo_suite/vla/benchmarking.py:266`; `references/memory/MIKASA-Robo/mikasa_robo_suite/vla/benchmarking.py:620`).
+
+### 11.3 Core Data Structures and Interfaces
+
+The retained RL registrations below enumerate all 32 task IDs by family. Suffix `-v0` is omitted for readability; numbers are difficulty variants, not separate memory mechanisms. \[Implemented\]\[Unverified\] Source counts, with grouping consistent with the original four-category distinction (`references/memory/MIKASA-Robo/README.md:45`).
+
+| Category | Task IDs | Count | Registration source |
+|---|---|---:|---|
+| Spatial | ShellGameTouch, ShellGamePush, ShellGamePick | 3 | `references/memory/MIKASA-Robo/mikasa_robo_suite/rl/memory_envs/shell_game_touch.py:23`; `references/memory/MIKASA-Robo/mikasa_robo_suite/rl/memory_envs/shell_game_push.py:23`; `references/memory/MIKASA-Robo/mikasa_robo_suite/rl/memory_envs/shell_game_pick.py:23` |
+| Spatial | InterceptSlow, InterceptMedium, InterceptFast | 3 | `references/memory/MIKASA-Robo/mikasa_robo_suite/rl/memory_envs/intercept.py:215` |
+| Spatial | InterceptGrabSlow, InterceptGrabMedium, InterceptGrabFast | 3 | `references/memory/MIKASA-Robo/mikasa_robo_suite/rl/memory_envs/intercept_grab.py:237` |
+| Spatial | RotateLenientPos, RotateLenientPosNeg | 2 | `references/memory/MIKASA-Robo/mikasa_robo_suite/rl/memory_envs/rotate_lenient.py:224` |
+| Spatial | RotateStrictPos, RotateStrictPosNeg | 2 | `references/memory/MIKASA-Robo/mikasa_robo_suite/rl/memory_envs/rotate_strict.py:264` |
+| Spatial | TakeItBack | 1 | `references/memory/MIKASA-Robo/mikasa_robo_suite/rl/memory_envs/take_it_back.py:21` |
+| Object | RememberColor3, RememberColor5, RememberColor9 | 3 | `references/memory/MIKASA-Robo/mikasa_robo_suite/rl/memory_envs/remember_color.py:292` |
+| Object | RememberShape3, RememberShape5, RememberShape9 | 3 | `references/memory/MIKASA-Robo/mikasa_robo_suite/rl/memory_envs/remember_shape.py:389` |
+| Object | RememberShapeAndColor3x2, RememberShapeAndColor3x3, RememberShapeAndColor5x3 | 3 | `references/memory/MIKASA-Robo/mikasa_robo_suite/rl/memory_envs/remember_shape_and_color.py:382` |
+| Capacity | BunchOfColors3, BunchOfColors5, BunchOfColors7 | 3 | `references/memory/MIKASA-Robo/mikasa_robo_suite/rl/memory_envs/bunch_of_colors.py:381` |
+| Capacity | SeqOfColors3, SeqOfColors5, SeqOfColors7 | 3 | `references/memory/MIKASA-Robo/mikasa_robo_suite/rl/memory_envs/seq_of_colors.py:360` |
+| Sequential | ChainOfColors3, ChainOfColors5, ChainOfColors7 | 3 | `references/memory/MIKASA-Robo/mikasa_robo_suite/rl/memory_envs/chain_of_colors.py:393` |
+
+\[Implemented\] One naming trap: the class `RememberShape6Env` actually registers `RememberShape5-v0` and sets `SHAPES=5`; use the registered ID, not the class name (`references/memory/MIKASA-Robo/mikasa_robo_suite/rl/memory_envs/remember_shape.py:394`).
+
+The current VLA CSV yields the following ten groups and **38 Short, 30 Medium, 22 Long** tasks. Horizon groups are not train/validation/test splits. \[Implemented\] Static CSV count (`references/memory/MIKASA-Robo/mikasa_robo_vla_envs.csv:1`).
+
+| Memory type | VLA count | Representative demand and CSV evidence |
+|---|---:|---|
+| Spatial | 14 | Hidden location, interception, angle or original position; `references/memory/MIKASA-Robo/mikasa_robo_vla_envs.csv:2` |
+| Object | 18 | Match previously seen color/shape, including long delays; `references/memory/MIKASA-Robo/mikasa_robo_vla_envs.csv:15` |
+| Capacity | 12 | Retain a set of colored cues; `references/memory/MIKASA-Robo/mikasa_robo_vla_envs.csv:24` |
+| Sequential | 6 | Reproduce cue order; `references/memory/MIKASA-Robo/mikasa_robo_vla_envs.csv:30` |
+| Tracking | 4 | Track hidden identities through shuffles; `references/memory/MIKASA-Robo/mikasa_robo_vla_envs.csv:33` |
+| Negative | 9 | Select the object absent from the earlier set; `references/memory/MIKASA-Robo/mikasa_robo_vla_envs.csv:36` |
+| Checklist | 4 | Remember tested batteries and outcomes; `references/memory/MIKASA-Robo/mikasa_robo_vla_envs.csv:45` |
+| Temporal | 12 | Count blinks or execute at an elapsed-time target; `references/memory/MIKASA-Robo/mikasa_robo_vla_envs.csv:49`; `references/memory/MIKASA-Robo/mikasa_robo_vla_envs.csv:81` |
+| Procedural | 6 | Reproduce a demonstrated shape or shape sequence; `references/memory/MIKASA-Robo/mikasa_robo_vla_envs.csv:75` |
+| Prospective | 5 | Remember a brief cue for an action after another task; `references/memory/MIKASA-Robo/mikasa_robo_vla_envs.csv:87` |
+
+\[Implemented\] `BenchmarkTask` stores ID, horizon split, memory type, max steps, instruction and data source. The observation wrapper produces RGB plus proprioception; the documented canonical shapes are `(B,128,128,6)` two-camera RGB and `(B,7)` xyz/rpy/gripper. Actions are normalized seven-dimensional end-effector deltas, unlike RoboMME's absolute action interfaces (`references/memory/MIKASA-Robo/mikasa_robo_suite/vla/benchmarking.py:192`; `references/memory/MIKASA-Robo/mikasa_robo_suite/vla/utils/wrappers.py:83`; `references/memory/MIKASA-Robo/docs/source/evaluation_protocol.rst:43`).
+
+### 11.4 Write / Retrieval Flow
+
+\[Implemented\] This project supplies memory-demanding environments, not a general episodic database. The task state records cues/targets/history for evaluation; agent memory belongs to the submitted policy or external harness. Examples include matching a remembered color, returning an object to its initial location and completing a sequence (`references/memory/MIKASA-Robo/mikasa_robo_suite/rl/memory_envs/remember_color.py:183`; `references/memory/MIKASA-Robo/mikasa_robo_suite/rl/memory_envs/take_it_back.py:191`; `references/memory/MIKASA-Robo/mikasa_robo_suite/rl/memory_envs/chain_of_colors.py:203`).
+
+\[Implemented\] The canonical wrapper order is state-to-dict, optional curriculum no-op, optional rendering overlays, flattened RGB and joint-to-EEF proprioception. Evaluation disables overlays. Oracle fields are stripped by the flattening wrapper, but Rotate tasks can retain `task_cue`; the protocol explicitly forbids VLA access to it, since the same angle should come through language (`references/memory/MIKASA-Robo/mikasa_robo_suite/vla/utils/apply_wrappers.py:22`; `references/memory/MIKASA-Robo/baselines/ppo/ppo_memtasks.py:138`; `references/memory/MIKASA-Robo/docs/source/evaluation_protocol.rst:64`).
+
+\[Implemented\] The VLA evaluator defaults to 50 episodes per task with seeds `4242424242 + i`, resets a FIFO action queue each episode and OR-latches `info.success` into `success_once`. Split and memory-type scores are task-mean success rates, not summed dense reward (`references/memory/MIKASA-Robo/mikasa_robo_suite/vla/benchmarking.py:26`; `references/memory/MIKASA-Robo/mikasa_robo_suite/vla/benchmarking.py:445`; `references/memory/MIKASA-Robo/mikasa_robo_suite/vla/benchmarking.py:570`).
+
+\[Unverified\] Integration gaps matter for a memory harness: the runner discards reset `info`, calls `policy.forward(obs)` and reuses the policy object without an explicit episode-reset hook. Task-start callbacks can supply CSV task context, but dynamic per-episode language must be carried deliberately. Hylo must reset its memory per episode and expose only allowed observations/language; an empty action queue alone does not reset a recurrent agent (`references/memory/MIKASA-Robo/mikasa_robo_suite/vla/benchmarking.py:445`; `references/memory/MIKASA-Robo/mikasa_robo_suite/vla/benchmarking.py:475`; `references/memory/MIKASA-Robo/mikasa_robo_suite/vla/benchmarking.py:529`; `references/memory/MIKASA-Robo/mikasa_robo_suite/vla/benchmarking.py:658`).
+
+\[Implemented\] VLA evaluation code exists (`examples/eval_demo.py` and `vla/benchmarking.py`), as do dataset collection/conversion entrypoints. \[Docs/Interface only\] The authors report 22,500 trajectories in RLDS/LeRobot v3 formats; this release was not downloaded or validated here. The OpenVLA-OFT baseline README says only “Coming soon,” so the existence of the generic VLA evaluator does not establish a completed OpenVLA evaluation adapter (`references/memory/MIKASA-Robo/examples/eval_demo.py:1`; `references/memory/MIKASA-Robo/README.md:48`; `references/memory/MIKASA-Robo/README.md:127`; `references/memory/MIKASA-Robo/baselines/openvla_oft/README.md:1`).
+
+### 11.5 Extension Points
+
+\[Implemented\] New tasks require Gym/ManiSkill registration, a canonical wrapper configuration and a CSV row. A chunk policy and task/episode callbacks provide an evaluation adapter surface. These are suitable for Hylo's environment bridge, with explicit memory-reset and language plumbing added (`references/memory/MIKASA-Robo/mikasa_robo_suite/vla/utils/apply_wrappers.py:7`; `references/memory/MIKASA-Robo/mikasa_robo_suite/vla/benchmarking.py:620`).
+
+### 11.6 Dependencies and Runtime Requirements
+
+\[Implemented\] Python ≥3.9,<3.12, ManiSkill `3.0.0b15`, Gymnasium `0.29.1`, Torch `2.2.1` and NumPy `1.23.5` are pinned. This conflicts with the current RoboMME environment's pins, so use separate environments/processes. \[Needs model/hardware\] The documented quick start uses GPU simulation; VLA inference additionally needs model weights. No real robot is required for these simulation tasks (`references/memory/MIKASA-Robo/pyproject.toml:10`; `references/memory/MIKASA-Robo/pyproject.toml:26`; `references/memory/MIKASA-Robo/README.md:92`; `references/memory/robomme_benchmark/pyproject.toml:7`).
+
+### 11.7 License
+
+\[Implemented\] MIT code license. \[Unverified\] This does not automatically license upstream ManiSkill meshes or external datasets; their individual terms must be checked before redistribution. The dataset download instructions are not themselves a dataset-license grant (`references/memory/MIKASA-Robo/LICENSE:1`; `references/memory/MIKASA-Robo/pyproject.toml:29`; `references/memory/MIKASA-Robo/README.md:127`).
+
+### 11.8 Strengths, Weaknesses and Risks
+
+\[Implemented\] The retained RL tasks allow small controlled tests, while the VLA extension adds negative, prospective, checklist and tracking demands missing from a simple hidden-object task. Separating horizon from memory type supports stratified reporting (`references/memory/MIKASA-Robo/mikasa_robo_vla_envs.csv:33`; `references/memory/MIKASA-Robo/mikasa_robo_vla_envs.csv:36`; `references/memory/MIKASA-Robo/mikasa_robo_vla_envs.csv:45`; `references/memory/MIKASA-Robo/mikasa_robo_vla_envs.csv:87`).
+
+\[Unverified\] Wrapper-dependent cue handling, oracle-field exposure and missing explicit policy reset can invalidate a memory comparison if an adapter simply forwards every field. Success-once also differs from terminal success and must be preserved in reporting (`references/memory/MIKASA-Robo/docs/source/evaluation_protocol.rst:64`; `references/memory/MIKASA-Robo/mikasa_robo_suite/vla/benchmarking.py:451`; `references/memory/MIKASA-Robo/mikasa_robo_suite/vla/benchmarking.py:482`).
+
+\[Unverified\] **No identical registered task IDs** were found between the 32 RL/90 VLA MIKASA tasks and RoboMME's 16 tasks. Exact behavioral equivalence is not established. Under the explicit family-level mapping in the [benchmark comparison](../comparisons/memory-benchmark-comparison.md), **5 of 16 RoboMME tasks have partial or close conceptual analogues in the original RL set; 12 of 16 have analogues in the VLA extension**. These are our design mappings, not author-reported overlap statistics or common test episodes (`references/memory/MIKASA-Robo/mikasa_robo_suite/rl/memory_envs/__init__.py:1`; `references/memory/MIKASA-Robo/mikasa_robo_vla_envs.csv:1`; `references/memory/robomme_benchmark/src/robomme/env_record_wrapper/episode_config_resolver.py:17`).
+
+### 11.9 Reusable Components
+
+Reuse/adapt the MIT-licensed cue/occlusion task patterns, canonical wrapper configuration, task CSV and seeded result schema. For Hylo, take the small ShellGame/RememberColor patterns first and add externally reset memory, explicit frame/clock IDs and observation allowlists (`references/memory/MIKASA-Robo/mikasa_robo_suite/vla/utils/apply_wrappers.py:141`; `references/memory/MIKASA-Robo/mikasa_robo_suite/vla/benchmarking.py:192`; `references/memory/MIKASA-Robo/mikasa_robo_suite/vla/benchmarking.py:543`).
+
+### 11.10 Source Index
+
+| Concern | Source |
+|---|---|
+| Original RL inventory | `references/memory/MIKASA-Robo/mikasa_robo_suite/rl/memory_envs/__init__.py:1` |
+| Current VLA inventory | `references/memory/MIKASA-Robo/mikasa_robo_vla_envs.csv:1` |
+| Wrapper contract | `references/memory/MIKASA-Robo/mikasa_robo_suite/vla/utils/apply_wrappers.py:22` |
+| Proprioception conversion | `references/memory/MIKASA-Robo/mikasa_robo_suite/vla/utils/wrappers.py:83` |
+| Oracle-field stripping | `references/memory/MIKASA-Robo/baselines/ppo/ppo_memtasks.py:138` |
+| Seed and episode defaults | `references/memory/MIKASA-Robo/mikasa_robo_suite/vla/benchmarking.py:26` |
+| Evaluation loop | `references/memory/MIKASA-Robo/mikasa_robo_suite/vla/benchmarking.py:428` |
+| Dataset release description | `references/memory/MIKASA-Robo/README.md:127` |
+| Missing OpenVLA baseline | `references/memory/MIKASA-Robo/baselines/openvla_oft/README.md:1` |
+
+### 11.11 Verification Status
+
+\[Implemented\]\[Unverified\] Registration decorators were counted with isolated AST parsing, the CSV was counted without importing the repository, and wrappers/evaluation code were read. No environment, dataset, checkpoint, test or training script was executed. The dataset release remains author-reported and the OpenVLA baseline remains documentation-only at this commit (`references/memory/MIKASA-Robo/README.md:48`; `references/memory/MIKASA-Robo/baselines/openvla_oft/README.md:1`).
+
+---
+
+## 12. mem0 (`references/memory/mem0`)
+
+### 12.1 Positioning
+The most widely used general-purpose agent memory library: it uses an LLM to extract conversations/messages into self-contained factual statements, writes them into a pluggable vector store (Qdrant by default, ~28 supported), and isolates them by a user/agent/run triple scope; retrieval uses **additive hybrid scoring of semantic + BM25 + entity boost**. Suitable as Hylo's **semantic/episodic textual fact backend**.
+
+### 12.2 Architecture
 
 ```mermaid
 flowchart LR
@@ -465,7 +961,7 @@ flowchart LR
   RANK --> RR[optional reranker] --> RES[MemoryItem list]
 ```
 
-### 7.3 Core Data Structures and Interfaces
+### 12.3 Core Data Structures and Interfaces
 ```python
 # mem0/configs/base.py:16-26
 class MemoryItem(BaseModel):
@@ -485,7 +981,7 @@ def delete(self, memory_id) / delete_all(...) / history(memory_id)              
 #   create_col / insert / search / delete / update / get / list / reset / keyword_search / search_batch
 ```
 
-### 7.4 Write / Retrieval Flow
+### 12.4 Write / Retrieval Flow
 - **Write** \[Implemented\]: `infer=False` stores the raw text directly (`mem0/memory/main.py:882-911`); otherwise it takes the session's last 10 messages and similar old memories (`main.py:928`) as context and extracts facts in a single LLM call using `ADDITIVE_EXTRACTION_PROMPT` (`main.py:944`; prompt defined at `mem0/configs/prompts.py:468`).
 - **Key finding: the current OSS write path is "only ADD"** \[Implemented\]: the prompt states explicitly *"Your sole operation is ADD"* (`prompts.py:472`); deduplication relies only on a text md5 (`main.py:1022`). Classic mem0's ADD/UPDATE/DELETE/NONE conflict-decision prompt `DEFAULT_UPDATE_MEMORY_PROMPT` (`prompts.py:176`) is no longer called anywhere in `mem0/memory/` (referenced only by tests). In other words, **contradictory facts coexist**, and conflict resolution is left to retrieval-time ranking or manual `update/delete` by the caller.
 - **Metadata** \[Implemented\]: the payload writes `data/text_lemmatized/hash/created_at/updated_at/attributed_to` + user metadata (`main.py:1030-1041`); every change writes a SQLite history event (`main.py:1079-1088`; table structure at `mem0/memory/storage.py:108`).
@@ -493,23 +989,23 @@ def delete(self, memory_id) / delete_all(...) / history(memory_id)              
 - **Forgetting** \[Implemented\]: items past their `expiration_date` are hidden by default in search/get_all (`main.py:442-451`), a "soft-delete-style TTL"; no access-frequency-based decay.
 - **Procedural memory** \[Implemented\]: with `memory_type="procedural_memory"`, an entire agent trajectory is summarized into a single procedural memory (`main.py:2007-2048`), analogous to a "skill summary", but without verification.
 
-### 7.5 Extension Points
+### 12.5 Extension Points
 `VectorStoreBase`, `LLMBase`, `EmbedderBase` and rerankers are all factory-registered; `custom_instructions`/`prompt` override the extraction rules; metadata filtering supports operators such as `eq/ne/in/...` (`main.py:1415-1430`).
 
-### 7.6 Dependencies and Runtime Requirements
+### 12.6 Dependencies and Runtime Requirements
 `qdrant-client`, `openai`, `pydantic>=2`, `sqlalchemy`, **`posthog` (telemetry, on by default, disabled via the `MEM0_TELEMETRY` environment variable: `mem0/memory/telemetry.py:14-20`)**. Requires LLM + embedding services \[Needs model/hardware\].
 
-### 7.7 License
+### 12.7 License
 Apache-2.0.
 
-### 7.8 Strengths, Weaknesses and Risks
+### 12.8 Strengths, Weaknesses and Risks
 - Strengths: mature (tests, PyPI, multiple backends); the scope triple + metadata filter design maps directly to `robot_id / task_id / episode_id`; transparent hybrid retrieval scoring (`explain=True`).
 - Risks: oriented only to textual facts, no pose/time-interval semantics; the OSS write path does not handle contradictions; default telemetry must be disabled; fast version iteration (frequent API changes; `add` already takes keyword-only parameters).
 
-### 7.9 Reusable Components
+### 12.9 Reusable Components
 The `VectorStoreBase` abstraction (including keyword_search), additive fusion in `score_and_rank`, the history event table, soft expiry via `expiration_date`, and the scope filtering convention.
 
-### 7.10 Source Index
+### 12.10 Source Index
 | Topic | Location |
 |---|---|
 | MemoryItem | `references/memory/mem0/mem0/configs/base.py:16-26` |
@@ -524,17 +1020,17 @@ The `VectorStoreBase` abstraction (including keyword_search), additive fusion in
 | VectorStoreBase | `references/memory/mem0/mem0/vector_stores/base.py:6-85` |
 | Telemetry switch | `references/memory/mem0/mem0/memory/telemetry.py:14-20` |
 
-### 7.11 Verification Status
+### 12.11 Verification Status
 Static reading; not installed, not connected to any vector store or LLM. The "ADD-only" conclusion is based on grep: `get_update_memory_messages` has no callers inside the `mem0/` package [Implemented, statically confirmed].
 
 ---
 
-## 8. Graphiti (`references/memory/graphiti`)
+## 13. Graphiti (`references/memory/graphiti`)
 
-### 8.1 Positioning
+### 13.1 Positioning
 Zep's open-source **temporal knowledge graph** engine: it takes an *episode* (a chunk of messages/text/JSON) as the unit of writing, uses an LLM to extract entity nodes and fact edges, and **every fact edge carries dual timelines** (event time `valid_at/invalid_at` + system time `created_at/expired_at`); new facts invalidate contradictory old facts rather than deleting them. For Hylo's episodic memory, it provides a ready-made paradigm of "**temporal consistency + traceability**".
 
-### 8.2 Architecture
+### 13.2 Architecture
 
 ```mermaid
 flowchart TB
@@ -552,7 +1048,7 @@ flowchart TB
   RR --> R[EntityEdge facts / nodes / episodes / communities]
 ```
 
-### 8.3 Core Data Structures and Interfaces
+### 13.3 Core Data Structures and Interfaces
 ```python
 # graphiti_core/nodes.py
 class Node(BaseModel, ABC):  uuid, name, group_id, labels, created_at                       # :93-98
@@ -576,30 +1072,30 @@ async def search_(query, config: SearchConfig, ...)                             
 async def remove_episode(episode_uuid)                                                       # :2174
 ```
 
-### 8.4 Write / Retrieval Flow
-- **Write** \[Implemented\][Needs model/hardware]: `add_episode` executes in order extract_nodes (`graphiti_core/graphiti.py:1471`) -> resolve -> edge extraction and resolution -> `entity_edges = resolved_edges + invalidated_edges` (`graphiti.py:1507`) -> `_process_episode_data` saves the episode and episodic edges (`graphiti.py:1521`) -> optional community update.
+### 13.4 Write / Retrieval Flow
+- **Write** \[Implemented\]\[Needs model/hardware\]: `add_episode` executes in order extract_nodes (`graphiti_core/graphiti.py:1471`) -> resolve -> edge extraction and resolution -> `entity_edges = resolved_edges + invalidated_edges` (`graphiti.py:1507`) -> `_process_episode_data` saves the episode and episodic edges (`graphiti.py:1521`) -> optional community update.
 - **Contradiction invalidation (consolidation rather than deletion)** \[Implemented\]: in `resolve_edge_contradictions`, if the time intervals of new and old facts overlap and the old edge took effect first, then `edge.invalid_at = resolved_edge.valid_at`, `expired_at = now` (`graphiti_core/utils/maintenance/edge_operations.py:748-782`). History remains queryable.
 - **Retrieval** \[Implemented\]: methods `cosine_similarity / bm25 / breadth_first_search`, rerankers `rrf / node_distance / episode_mentions / mmr / cross_encoder` (`graphiti_core/search/search_config.py:32-58`); `SearchFilters` can filter by `valid_at/invalid_at/created_at/expired_at` date ranges, node label and edge type (`graphiti_core/search/search_filters.py:55-73`) -> supports **"as-of" point-in-time queries**.
 - **Custom ontology** \[Implemented\]: `entity_types` / `edge_types` accept Pydantic models, allowing definition of entity types such as `Object`, `Location`, `Skill` and attribute extraction.
 - **Forgetting** \[Implemented\]: `remove_episode` rolls back the nodes/edges produced by an episode (`graphiti.py:2174`); no automatic decay.
 
-### 8.5 Extension Points
+### 13.5 Extension Points
 The `GraphDriver` abstraction (Neo4j / FalkorDB / **Kuzu (embedded, no server needed)** / Neptune, `graphiti_core/driver/driver.py:59-96`); LLM client, embedder, cross-encoder and prompt library are configurable.
 
-### 8.6 Dependencies and Runtime Requirements
+### 13.6 Dependencies and Runtime Requirements
 `neo4j` driver, `openai`, `pydantic>=2.11`, `posthog` (telemetry, disabled via `GRAPHITI_TELEMETRY_ENABLED`: `graphiti_core/telemetry/telemetry.py:22`); requires a graph database + LLM + embedding \[Needs model/hardware\]. Each episode involves multiple LLM calls, so **write latency/cost is far higher than a vector store**, making it unsuitable for high-frequency sensor streams.
 
-### 8.7 License
+### 13.7 License
 Apache-2.0.
 
-### 8.8 Strengths, Weaknesses and Risks
+### 13.8 Strengths, Weaknesses and Risks
 - Strengths: dual timelines + invalidation rather than deletion + episode provenance (`EntityEdge.episodes`) are exactly the semantics episodic memory needs most; typed ontology; unit and integration tests; multiple graph backends.
 - Risks: no pose / geometry fields (position can only be stored as text/numeric attributes); writes depend heavily on LLM quality; the async API needs an event loop; graph database operations overhead.
 
-### 8.9 Reusable Components
+### 13.9 Reusable Components
 The bi-temporal field design of `EntityEdge`, the interval invalidation rule of `resolve_edge_contradictions` (a pure function), the date-filter DSL of `SearchFilters`, the multi-way recall + rerank composition of `SearchConfig`, and Kuzu as a local embedded backend.
 
-### 8.10 Source Index
+### 13.10 Source Index
 | Topic | Location |
 |---|---|
 | Node / EpisodicNode / EntityNode | `references/memory/graphiti/graphiti_core/nodes.py:93-98`, `:318-329`, `:499-502` |
@@ -612,12 +1108,12 @@ The bi-temporal field design of `EntityEdge`, the interval invalidation rule of 
 | Graph backend abstraction | `references/memory/graphiti/graphiti_core/driver/driver.py:59-96` |
 | Episode context window | `references/memory/graphiti/graphiti_core/utils/maintenance/graph_data_operations.py:29` |
 
-### 8.11 Verification Status
+### 13.11 Verification Status
 Static reading; not connected to a graph database, no LLM called.
 
 ---
 
-## 9. Cross-Comparison (four categories of memory needs × reference implementations)
+## 14. Cross-Comparison (four categories of memory needs × reference implementations)
 
 | Dimension | ReMEmbR | ConceptGraphs | Spark-DSG | ASPIRE | mem0 | Graphiti |
 |---|---|---|---|---|---|---|
@@ -634,16 +1130,16 @@ Static reading; not connected to a graph database, no LLM called.
 
 ---
 
-## 10. Implications for the Hylo Memory Layer
+## 15. Implications for the Hylo Memory Layer
 
-### 10.1 Five Core Findings
+### 15.1 Five Core Findings
 1. **A general-purpose vector store can be bent into doing spatio-temporal retrieval, but the semantics are wrong**: ReMEmbR treats position and time as FLOAT_VECTOR for L2 nearest neighbor (`references/memory/remembr/remembr/memory/milvus_memory.py:37-69`, `:130`), with no radius / time window / coordinate frame; Hylo should make *time intervals* and *pose (including frame_id)* first-class fields, paired with dedicated indexes (R-tree/KD-tree + interval tree), rather than stuffing them into embeddings.
 2. **Episodic memory needs dual timelines and "invalidation rather than deletion"**: Graphiti's `valid_at/invalid_at/created_at/expired_at` (`references/memory/graphiti/graphiti_core/edges.py:263-290`) and `resolve_edge_contradictions` (`.../edge_operations.py:748-782`) correspond directly to physical-world state changes such as "the cup was on the table, now it is in the cabinet"; mem0's current OSS is ADD-only (`references/memory/mem0/mem0/configs/prompts.py:472`) and cannot carry state consistency on its own.
 3. **The ontology of spatial memory is a graph, not a list**: Spark-DSG's layering (BUILDINGS→ROOMS→PLACES→OBJECTS, with AGENTS as a dynamic layer), `is_active/is_predicted`, `mergeNodes`, change-feed (`references/memory/Spark-DSG/include/spark_dsg/dynamic_scene_graph.h:389-450`) and Khronos's observation intervals (`.../node_attributes.h:410-421`) form a complete schema; ConceptGraphs provides the association/fusion rules for writing perception into that graph (`references/memory/concept-graphs/conceptgraph/slam/cfslam_pipeline_batch.py:56-80`, `.../slam/utils.py:178-222`).
 4. **Writes to skill memory must pass a validation gate**: ASPIRE's proposer→verifier→promote protocol (`references/memory/ASPIRE/.claude/skills/iterative-debugging/skills/README.md:20-34`) + usage ratings (`.../subagent-prompt.md:437-494`) + content-hash versioning (`.../scripts/campaign.py:115-137`) + execution sandbox (`references/memory/ASPIRE/src/cap_harness/runtime.py:159-200`) are the interface point between self-improvement and memory.
 5. **Memory output must be structured to be consumable by the planner/policy**: ReMEmbR constrains QA results to `AgentOutput(position, time, duration, binary, ...)` (`references/memory/remembr/remembr/agents/agent.py:5-12`) and converts them directly into `/goal_pose` (`.../agent_node.py:79-100`); Hylo's `query()` should return structured hits with pose/object ID/confidence, not merely concatenated text.
 
-### 10.2 Proposed General `MemoryItem` Schema
+### 15.2 Proposed General `MemoryItem` Schema
 
 ```python
 from dataclasses import dataclass, field
@@ -711,7 +1207,7 @@ class MemoryItem:
 - **spatial**: `{"layer": "OBJECTS|PLACES|ROOMS|AGENTS", "node_symbol": "O12", "semantic_label": int, "is_active": bool, "is_predicted": bool, "observed_intervals": [[t0,t1],...], "trajectory": [...]}` (maps to Spark-DSG / Khronos)
 - **skill**: `{"language": "python", "code": str, "api_surface": "cap@v1", "trigger": str, "preconditions": [...], "postconditions": [...], "status": "proposed|verified|refuted|deprecated", "verdicts": {"useful": n, "misleading": n, "wrong": n, "not_applicable": n}, "library_version": sha}`
 
-### 10.3 Proposed `Memory` Interface
+### 15.3 Proposed `Memory` Interface
 
 ```python
 from typing import Protocol, Iterable, Sequence
@@ -758,7 +1254,7 @@ class Memory(Protocol):
 | `SpatialMemory` | Spark-DSG (PyPI) or an equivalent Python implementation + KD-tree/R-tree spatial index + multiple embeddings per node | Spark-DSG schema + ConceptGraphs association/fusion |
 | `SkillMemory` | Git repository/directory (Markdown+code) + content hash + state machine (proposed→verified→deprecated) + sandboxed validator | ASPIRE protocol |
 
-### 10.4 Spatial and Skill Memory Requirements Beyond a Vector Store
+### 15.4 Spatial and Skill Memory Requirements Beyond a Vector Store
 
 **Spatial memory additionally needs:**
 - **Coordinate frames and pose correction**: every entry carries a `frame_id`; after loop closure/relocalization, apply `transform()` to the whole graph or a local correction (Spark-DSG `transform` / `mergeGraph(…, transform)`). A vector store cannot express this.
@@ -776,6 +1272,55 @@ class Memory(Protocol):
 - **Retrieval semantics**: match by trigger/preconditions (scene, object category, failure symptoms) rather than pure semantic similarity; embeddings are only for recall, and the final decision is made by the planner/LLM reading the trigger.
 - **Interface with the self-improvement layer**: proposals come from the self-improvement loop, and verification depends on the Simulator/Benchmark layer; skill memory is the module where the most Hylo layers converge, so it should be integrated last and have its schema defined first.
 
-### 10.5 License Conclusions
+### 15.5 License Conclusions
 - Can be used directly as dependencies or reused via rewriting: Spark-DSG (BSD), ConceptGraphs (MIT), ASPIRE (Apache-2.0), mem0 (Apache-2.0), Graphiti (Apache-2.0).
 - **Design may only be borrowed; code must not be copied**: ReMEmbR, RAVEN (NVIDIA non-commercial license); MemoryVLA, PRISM (no license).
+
+---
+
+## 16. Lessons for Hylo
+
+These are proposed Hylo designs, not reproduced upstream results. The governing boundary remains a frozen VLA, with memory, skills, validation and evolution owned by the outer harness. References to ReMEmbR and Zetta below reuse the earlier recorded source studies; those repositories were not re-cloned or re-audited in this extension.
+
+Subsequent Hylo implementation and measurements are recorded separately in the
+[memory RFC](../../rfcs/RFC-0009-benchmark-memory.md), [local validation](../experiments/2026-11-03-benchmark-memory.md)
+and [RoboMME pilot](../experiments/2026-11-03-robomme-memory-pilot.md). They do not change the
+static verification status of the pinned reference trees studied above.
+
+The later [performance review](../comparisons/memory-performance-review.md) compares
+stronger configurations and their evaluation boundaries. It motivated a frozen-model
+working-memory prototype, which was withdrawn and removed on 2026-11-04 after its
+[recorded evaluation](../experiments/2026-11-03-working-memory.md) showed no demonstrated
+gain. Its design remains historical context, not the current implementation plan.
+[SimpleMemVLA](../experiments/2026-11-04-simplememvla-integration.md) and
+[program evolution](../experiments/2026-11-04-harness-program-evolution.md) are separate
+implemented options with their own verification limits. MEMI and Astra-Guide are
+additional pinned online source reads, not new full clone audits.
+Their results motivate hypotheses; no claim of reproduced performance follows.
+
+The three implementation lessons below remain infrastructure choices. They support
+the model-directed decision loop rather than replacing it with task-template rules.
+Source capture, a strong history baseline and evidence-linked state/read interfaces
+come before introducing a new vector backend. The detailed mechanism selection and
+all-family experiment sequence are in [RFC-0009](../../rfcs/RFC-0009-benchmark-memory.md#integrated-plan).
+
+### 16.1 Direct Design Adoption
+
+1. **Typed, observable event memory.** Adapt SERA's event/count ledgers and typed intervention hooks so an observation produces a deduplicated event, a bounded state update and an explicit dispatch decision. Persist evidence pointers and episode/task scope; never let an intervention read evaluator state. SERA already provides component schemas, hashed artifacts and runtime hooks, but its denylist is not a complete information-flow guarantee. \[Implemented\]\[Unverified\] Sources: `references/memory/SERA/scripts/codex_rollout/interventions/bundle.py:28`; `references/memory/SERA/scripts/codex_rollout/interventions/bundle.py:106`; `references/memory/SERA/scripts/codex_rollout/interventions/registry.py:9`; `references/memory/SERA/scripts/codex_rollout/interventions/registry.py:63`.
+2. **Evidence-preserving spatiotemporal storage.** Use eMEM's separation of SQL records, vector recall and spatial/time indexes as the starting architecture for a CPU episodic backend. Add typed `frame_id`, clock/episode identity, validity intervals, original-observation retention and recoverable derived indexes. Configure compatible query embeddings explicitly. eMEM's current records lack full pose/frame semantics, archival drops text, and HNSW/SQL persistence is separate; it is an adaptable backend, not a complete Hylo memory contract. \[Implemented\]\[Unverified\] Sources: `references/memory/emem/emem/types.py:42`; `references/memory/emem/emem/store.py:1039`; `references/memory/emem/emem/store.py:1327`; `references/memory/emem/emem/store.py:1403`; `references/memory/emem/emem/store.py:534`; `references/memory/emem/emem/store.py:1686`.
+3. **Independent validation before immutable activation.** Adopt SERA's exact paired sample identities, disjoint generalization panels and artifact hashes, then add the paired statistical gate described in the [Zetta study](zetta-embodiment.md) and Hylo's own immutable activation/rollback ledger. Keep development, validation and report-only test roles explicit. SERA's count/rate thresholds are not McNemar significance; HarnessPAI's successful development rollout and post-write shrink guard are not independent skill validation. \[Implemented\]\[Unverified\] Sources: `references/memory/SERA/scripts/codex_rollout/self_evolve_v5.py:250`; `references/memory/SERA/scripts/codex_rollout/verify_self_evolve_v5_candidate.py:104`; `references/memory/SERA/scripts/codex_rollout/verify_self_evolve_v5_candidate.py:154`; `references/memory/HarnessPAI/harnesspai/memory/skill/writeback.py:389`. Hylo already specifies paired/regression/safety gates and rollback as requirements (`docs/design/mvp-v0.1.md:26`), not capabilities reproduced in this study.
+
+### 16.2 Reference Boundaries
+
+| Project or mechanism | Adoption decision | Evidence |
+|---|---|---|
+| HarnessPAI phase repair cards and VLA/code handover | Design only. No project LICENSE in the recorded tree; independently implement the idea. Do not adopt direct unrestricted program execution or claim its unfinished collector supplies VLA training data. | `references/memory/HarnessPAI/harnesspai/code_library/TEMPLATE.md:439`; `references/memory/HarnessPAI/harnesspai/memory/skill/query.py:44`; `references/memory/HarnessPAI/harnesspai/feedback/collect.py:47`; tree audit in MANIFEST. |
+| SERA, eMEM, RoboMME and MIKASA code | Reuse/adapt selected components under Apache-2.0 or MIT with attribution. Keep model, dataset and simulator-asset terms separate. | `references/memory/SERA/LICENSE:1`; `references/memory/emem/LICENSE:1`; `references/memory/robomme_benchmark/LICENSE:1`; `references/memory/robomme_policy_learning/LICENSE_GEMMA.txt:1`; `references/memory/MIKASA-Robo/LICENSE:1`. |
+| RoboMME model-internal memory | Reference for ablations; do not replace Hylo's frozen VLA with twelve history-aware perceptual/recurrent architectures. Symbolic prediction can live outside the policy, but its released executor still has a trained interface. | `references/memory/robomme_policy_learning/src/mme_vla_suite/models/integration/history_pi0.py:247`; `references/memory/robomme_policy_learning/src/mme_vla_suite/models/representation/recur_mem.py:45`; `references/memory/robomme_policy_learning/examples/robomme/subgoal_predictor.py:245`. |
+| ReMEmbR and other noncommercial/no-license references | Design only; no code copying. Apply the same boundary to MEMOBench's noncommercial dataset/annotations and independently author Hylo diagnostic predicates. | `references/memory/remembr/LICENSE.md:1`; [MEMOBench dataset terms](https://huggingface.co/datasets/SunSeaLucky/MEMOBench#license); [license comparison](../comparisons/memory-benchmark-comparison.md#licenses). |
+
+### 16.3 Benchmark Priority
+
+**First external integration: RoboMME**, while retaining `hylo-mj-v0` as the first CPU development/CI task set. RoboMME's 16 original tasks, explicit train/val/test episode metadata and symbolic-subgoal policy boundary exercise memory-guided control without requiring Hylo to train a new VLA. Begin with one task per memory family, consume every demo/intermediate observation frame, and keep evaluator-only predicates/oracles outside the agent process. This recommendation is conditional on an appropriate frozen checkpoint/action contract and the unresolved upstream asset inventory, not a claim of immediate drop-in compatibility (`references/memory/robomme_benchmark/src/robomme/env_record_wrapper/episode_config_resolver.py:17`; `references/memory/robomme_benchmark/src/robomme/env_record_wrapper/episode_config_resolver.py:147`; `references/memory/robomme_benchmark/doc/env_format.md:34`; `references/memory/robomme_policy_learning/examples/robomme/subgoal_predictor.py:233`).
+
+**Second: MIKASA VLA Short**, followed by its negative, checklist and prospective groups. The current branch's 90-task/ten-type manifest offers finer diagnostics than the original 32-task/four-category release, but its runner needs explicit policy-memory reset and permitted language propagation in Hylo's adapter (`references/memory/MIKASA-Robo/mikasa_robo_vla_envs.csv:1`; `references/memory/MIKASA-Robo/mikasa_robo_suite/vla/benchmarking.py:445`; `references/memory/MIKASA-Robo/docs/source/evaluation_protocol.rst:64`). The [benchmark comparison](../comparisons/memory-benchmark-comparison.md) defines the task overlap, paper-only references and proposed `hylo-mj-v0` mappings.

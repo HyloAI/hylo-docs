@@ -5,6 +5,27 @@ a configuration change, a subgoal plan, a reference to trained weights or to a s
 folder with one JSON file per skill version (`<name>@<version>.json`). Agents look skills up when a task starts,
 when a code agent writes its next block, when a proposer plans a round, or when a goal fails.
 
+## Building a library
+
+You need an existing campaign archive. The commands below run from the **workspace root**; replace the campaign
+paths with your own. For a complete example that produces a promoted program before building the library, follow
+[Develop and reuse a program skill](../research-and-skills.md).
+
+```bash
+# steering and weights skills from an improvement campaign's archive
+uv run hylo skills runs/campaigns/l10 --out runs/skills/libero10 --tags libero libero_10 --env libero
+# program skills from a campaign's promoted code candidates
+uv run hylo research skills runs/campaigns/pick --library runs/skills/manip --family pick_place
+```
+
+`hylo skills` turns every decided archive entry into a skill version with the status its evidence supports, and is
+safe to run again: entries already in the library are skipped. Candidates that change something other than the
+steering configuration or the weights are not expressible as skills and are listed as skipped.
+
+The `experience` proposer runs the same conversion before every round of a campaign, so a library grows while the
+campaign runs (see [Lessons](lessons.md#the-experience-proposer)). Role campaigns add recipe skills themselves, after
+the verifier's replay.
+
 ## Design
 
 **A skill is data, never code.** A skill is a configuration patch, a plan template, a rule set, a weight reference,
@@ -106,23 +127,6 @@ New skills start as `proposed`. Only evidence moves them on, and no other transi
 Refuted skills stay in the library, so a proposer can see what was tried and failed. Separately, each use can be
 marked `useful`, `misleading` or `not_applicable`; these verdicts accumulate per version and break ties.
 
-## Building a library
-
-```bash
-# steering and weights skills from an improvement campaign's archive
-uv run hylo skills runs/campaigns/l10 --out runs/skills/libero10 --tags libero libero_10 --env libero
-# program skills from a campaign's promoted code candidates
-uv run hylo research skills runs/campaigns/pick --library runs/skills/manip --family pick_place
-```
-
-`hylo skills` turns every decided archive entry into a skill version with the status its evidence supports, and is
-safe to run again: entries already in the library are skipped. Candidates that change something other than the
-steering configuration or the weights are not expressible as skills and are listed as skipped.
-
-The `experience` proposer runs the same conversion before every round of a campaign, so a library grows while the
-campaign runs (see [Lessons](lessons.md#the-experience-proposer)). Role campaigns add recipe skills themselves, after
-the verifier's replay.
-
 ## Applying skills
 
 ### The skills agent
@@ -210,3 +214,8 @@ uv run python examples/memory/04_skill_library.py      # in the harness reposito
   steer a local agent need the conversion functions called from a script, as the memory example does.
 - Weights skills are not applied per episode; reloading a policy is a configuration change for a campaign.
 - Matching instructions to programs uses word overlap, not embeddings.
+
+## Next
+
+- [Use memory](../using-memory.md): match a memory to its consuming agent.
+- [Memory](index.md): lifetime and evaluation boundaries.

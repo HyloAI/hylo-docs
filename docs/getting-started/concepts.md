@@ -15,7 +15,7 @@ Read [Physical RSI](../physical-rsi.md) for the loop and its boundaries, then
 
 A world is a simulation built from a scene description with robots, objects, cameras and goals. It provides a place
 for agents to act and receive measured feedback. Benchmark environments provide fixed tasks for comparison;
-robot adapters connect execution to hardware. See [Worlds](../user-guide/worlds.md).
+robot adapters connect execution to hardware. See [Worlds](../concepts/worlds.md).
 
 ## Agents
 

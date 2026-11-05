@@ -5,35 +5,28 @@ This page shows how to run your model in Hylo and which agent to wrap it in.
 A policy is a model or controller used by an [agent](agents.md). This guide covers configuring policy agents;
 the agent overview also covers programs and typed tool calls.
 
-## Design
+## Run a controller
 
-**The loop knows only agents.** The episode loop calls an agent and nothing else. Policies, reasoners, memory and
-world models live inside agents. Building a reasoner-plus-policy loop into the core would fix one way of thinking
-about robots in place, and an end-to-end model that needs no reasoner would then be the odd one out.
+Complete [Installation](../getting-started/installation.md). From **`bench/`**, run the shipped CPU controller:
 
-**A policy proposes, an agent decides.** A policy samples action chunks from an observation. An agent decides how to
-use them: how many to sample, which to take, how many steps to run before asking again, when to resample, whether
-memory or a critic biases them. Keeping the two apart means every steering, memory and critic technique works with
-every policy, and every policy runs under every agent.
+```bash
+uv run hylo run examples/configs/mujoco_reach.yaml
+```
 
-**Randomness comes only from seeds.** A stochastic policy may draw its noise only from the seeds it is given, and
-agents derive the seeds from the task, the chunk and the sample. Two agents compared on the same initial state draw
-the same noise, so a paired comparison measures the difference between them, not between their luck, and an episode
-can be replayed exactly.
-
-**Heavy stacks stay out of process.** A policy with its own dependencies runs in its own runtime behind the same
-contract, and its trace events are relayed to the episode. No simulator, model framework or vision-language-action
-model is required by the core.
-
-**The contract is checked, not assumed.** A conformance check runs every policy through shape, finiteness and seed
-determinism before it is used.
+The command prints episode outcomes and a run directory. The [quickstart](../getting-started/quickstart.md)
+explains the expected result. To use your own compatible policy, replace the `agent` block as shown below;
+`artifact:policy.bc` and `artifact:policy.flow` refer to artifacts you must first build or register.
 
 ## Policy and agent
 
 A **policy** returns action chunks from an observation. An **agent** holds a policy and decides how to use its
-chunks ([concepts](../getting-started/concepts.md)). Any policy runs under any of the agents below.
+chunks ([concepts](../getting-started/concepts.md)). Each wrapper requires a compatible policy contract.
 
 See [Agents](agents.md) for the control modes and their relationship to programs and tool calls.
+
+The optional `simplememvla` agent combines an episode video-history buffer with a compatible frozen
+video-conditioned checkpoint. It uses the released Panda controller interface and an explicit shared-batch
+runtime. Configuration, model requirements and verification limits are in [Video memory](memory/video.md).
 
 ## Agents that run a policy
 
@@ -226,6 +219,10 @@ difference into them. The results of `compare.py` are on the [leaderboard](../be
 
 Weight licences differ per checkpoint: PaliGemma-based pi0 and pi0.5 checkpoints are under the Gemma Terms of Use.
 The [plugin catalogue](../developer-guide/plugin-catalogue.md) lists each plugin's maturity and licences.
+
+## Design
+
+[Read the design rationale](../developer-guide/execution-model.md#policy-agents).
 
 ## Next
 

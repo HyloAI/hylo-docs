@@ -1,0 +1,929 @@
+{
+  "date": "2026-11-03",
+  "status": "completed_heuristic_diagnostic_baseline",
+  "official_full_benchmark": false,
+  "benchmark_protocol": "Original RoboMME environment scoring, four tasks, val indices 0 and 3; eight paired episodes. Unequal planner input compute.",
+  "protocol": {
+    "sera_root": "/home/gaobin/hylo-memory-eval/src/SERA",
+    "output": "/home/gaobin/hylo-memory-eval/results/pilot-v1",
+    "tasks": [
+      "VideoUnmask",
+      "PickHighlight",
+      "PickXtimes",
+      "PatternLock"
+    ],
+    "episodes": 2,
+    "episode_start": 0,
+    "episode_indices": [
+      0,
+      3
+    ],
+    "max_steps": 1300,
+    "split": "val",
+    "conditions": [
+      "memory_off",
+      "memory_on"
+    ],
+    "vision_url": "http://127.0.0.1:18231",
+    "policy_port": 19300,
+    "rgb_regions": true,
+    "execution_gates": true,
+    "script_sha256": "db74f14dbc2dd1dd9e15bdaa01438048bf23a6b4e9575ed341734ad099ecfde5",
+    "protocol": "Hylo pilot; shared current window, memory_on also processes reset prefix; unequal planner compute",
+    "source_sha256": {
+      "examples/memory/robomme/execution.py": "d392c85638d6d9dcebba5941456b0e60b21bc5c326759af3ffe299d59d508790",
+      "examples/memory/robomme/grounding.py": "cd64a45dc8ef506b03d56d140fc5c525229b0a3bdc4b80dbd7dfbc942f5c4c97",
+      "examples/memory/robomme/run_paired.py": "db74f14dbc2dd1dd9e15bdaa01438048bf23a6b4e9575ed341734ad099ecfde5",
+      "examples/memory/robomme/serve_vision.py": "32978cc2cbfc9ac28775cd270f34ffd2d789b280c15cc6d4d68484fa0b2cf19e",
+      "examples/memory/robomme/summarize.py": "6f6acabc1449213ef14054838434337acd29d600677df21206588e806cc5b971",
+      "packages/hylo-core/src/hylo/core/__init__.py": "c9fe3f69d1331f0ba9a3297ff0bbf43496adf77a9b3cbc1e2df4eb0e3965aef3",
+      "packages/hylo-core/src/hylo/core/agent.py": "04613ae076d7135449f4069890ea84b1942b5186669e3926a56414b5c91c1c93",
+      "packages/hylo-core/src/hylo/core/artifact.py": "d4481f8a83e0fad9e0368d1befe7284f6338f3cd7b935ddbc364337386548781",
+      "packages/hylo-core/src/hylo/core/benchmark.py": "69e9c10d9de6252dda500fec91b0eaa14d3d0c9c7514befee889885909e4f0b4",
+      "packages/hylo-core/src/hylo/core/cli.py": "1899735dadf7587c477e6614ec23562d4a9156c5f0dc55119bf9732b527998e5",
+      "packages/hylo-core/src/hylo/core/codec.py": "3722802151869c47199d4cd76fe5aca5d809683d6c83cd96e044de0f38578e5f",
+      "packages/hylo-core/src/hylo/core/compat.py": "dff30e4adef7765cebe72b261e9593d1eb993eaf2f0092d0c60770dc5d6e0034",
+      "packages/hylo-core/src/hylo/core/config.py": "5c0659778b4e936ed8588f6b61e23201643738d5590ec0cf0a4ee27fa9d597fd",
+      "packages/hylo-core/src/hylo/core/contract.py": "852438758548fad07195e209a9fb9c550812abae0a6ee6f2302c139824fa74f7",
+      "packages/hylo-core/src/hylo/core/datasource.py": "d04df96c799f655243bdb2a9dca6d650422fa723038b5ed38bb5711c836da4b0",
+      "packages/hylo-core/src/hylo/core/deployment.py": "7bee1afb8c1258f855c33b6d787fb1a68cb644186245162a288ffb6a39688cf7",
+      "packages/hylo-core/src/hylo/core/env.py": "b51c208e113bb8c4424feada6b0048a46ca6185e150abda01f368f9d1205cba2",
+      "packages/hylo-core/src/hylo/core/episode_memory.py": "32ef390aef42d63eef43a83d30e862801808fac71f1accc9953b788ea98bfeff",
+      "packages/hylo-core/src/hylo/core/errors.py": "78278858e39c692d6159a673cbce17c53d0f401d091e2b9ef709a0ee5b66c03e",
+      "packages/hylo-core/src/hylo/core/events.py": "c602f070ebd5216eca23c16efab1510be5ecbda3e54826e39c59717332c607cc",
+      "packages/hylo-core/src/hylo/core/experience.py": "fcf5ecc4146f0e0e1e5af07ca3f727ecf42b0ddecc5f8713e1ad27b8bf24724f",
+      "packages/hylo-core/src/hylo/core/improvement.py": "7e88a8ca28a27394804992612e2b54e3f02fb851dac30f58593f817ff773db49",
+      "packages/hylo-core/src/hylo/core/instrument.py": "53867dc0d3b95a392ade893a102fdf9f268b6cf91c855b7109b45dd5ba126b19",
+      "packages/hylo-core/src/hylo/core/kernel.py": "a75c4a061360745cac90e0f92e02ab54da19469ab4ab99e7ceba1f5d216d8efc",
+      "packages/hylo-core/src/hylo/core/learning.py": "a8350c2cfabe8c50319eb03620fe4dc568462e79b2b2b76aa0265ad3bed516a4",
+      "packages/hylo-core/src/hylo/core/memory.py": "9dd0bd032d5877f78d885b81d759f0579ba69d99460c33aae2d7c0b187d4ec06",
+      "packages/hylo-core/src/hylo/core/plugins.py": "39532e7ab670d99fcf985c2dc52236916010cb3920d3bf8e5a06c5aa1fe3d4e2",
+      "packages/hylo-core/src/hylo/core/policy.py": "0f030518eb87130b87780407720de3cf387d1e6f6411a02faab059be2163677d",
+      "packages/hylo-core/src/hylo/core/profile.py": "0ff86d99046c16714cd7784638f9bf8bd6b6b6209da2f460b65152bd1a57302f",
+      "packages/hylo-core/src/hylo/core/reasoning.py": "a61706e5a6c0f0f88689098cdcb31b828b0de94265a1ddf3b9f6ca234ec36b49",
+      "packages/hylo-core/src/hylo/core/registry.py": "4c393cbdde12b61f175f95354dc4ca63a4afd262d77ef18d15c5ed452ba5c6cb",
+      "packages/hylo-core/src/hylo/core/remote/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "packages/hylo-core/src/hylo/core/remote/agent_client.py": "9d2bf2360c604b942a6074d2929a506e32b677ace4dc79d1a71a88bd6e172a50",
+      "packages/hylo-core/src/hylo/core/remote/agent_server.py": "b283a879d616be80f77661b7b97c630884565ab13e4ad1885fb581fe8d60cb66",
+      "packages/hylo-core/src/hylo/core/remote/client.py": "44c23ad158429d3a7e86da17e950fbb2289f96fbbc276a07fc147139ee4e6cc0",
+      "packages/hylo-core/src/hylo/core/remote/handlers.py": "fd72d5ebd11e93a1e73b8351fc8c4db81dd9e6c45552cc9f4238a3cc727a6ece",
+      "packages/hylo-core/src/hylo/core/remote/protocol.py": "20787c61b40dbfc9fbc0c4fd29cd5450e4c12d7a282b31096fa79b8c92de489c",
+      "packages/hylo-core/src/hylo/core/remote/server.py": "0797adfeac8f09150ed0677ba7e27119da8cb2e292d39908cbaa06cbf39c49b0",
+      "packages/hylo-core/src/hylo/core/remote/wire.py": "5a1086b004c8579024bc109d1d1d2e810142dcf63df4e6d0ad0ca3e1e953b358",
+      "packages/hylo-core/src/hylo/core/remote/workcell.py": "afe98fb48c16a70aea8765fd1642eab9b9425a11cf25dfed915f16cc875839bb",
+      "packages/hylo-core/src/hylo/core/remote/ws.py": "65e5f58f14860dc510d66674c4d68624a32f3bbd97c3fb93a81c158d13f7a0e8",
+      "packages/hylo-core/src/hylo/core/robot.py": "9c72db757f29f5bb39d16325b2576be24dd1555213896028acef2d948b31f33d",
+      "packages/hylo-core/src/hylo/core/safety.py": "b225802008d48c15daffade09d9bcfb354433689c7ccee4f13771df0d0b33184",
+      "packages/hylo-core/src/hylo/core/scene.py": "ffc587a4c96fe9f19fbd72ad0a10b8db5c663b118ccb7386e0eb6fb4a72ff447",
+      "packages/hylo-core/src/hylo/core/scorecard.py": "30173c74f8511819e7de389243b5dcc4354303cf005326ecb696c96167086965",
+      "packages/hylo-core/src/hylo/core/scoring.py": "f27b499c7f7dd75d7cdd88a18893ba1815c1ee43e373d8a8e67a4a858e89d94d",
+      "packages/hylo-core/src/hylo/core/seal.py": "df89e35473763035cdd745da842790d9b7e2902b94639e0bcf15dd2fa11dbdd4",
+      "packages/hylo-core/src/hylo/core/stage.py": "4a324f62cbc4d42d5e0d48eed390df2f8ccec0c8a0cb9ce0af1681b88ba84687",
+      "packages/hylo-core/src/hylo/core/stage_cli.py": "9c8f76ded575574d5b28622e31d168f2c996756acfe72a186951b31ff9ac69f1",
+      "packages/hylo-core/src/hylo/core/store.py": "f57ecbb8c9f753202d1105d1ee3a2437689df981d7c5389ec07e19a2445ae1f2",
+      "packages/hylo-core/src/hylo/core/task.py": "33870cca33879f3f4294a7c3544c44276a93eddcbe3360bb901c9d7cb1191fc8",
+      "packages/hylo-core/src/hylo/core/tooling.py": "4b80ec37ac7f2b8526dc21530aad22b8302e58838b56d1a0e222966751a66609",
+      "packages/hylo-core/src/hylo/core/trace.py": "948851f3eef5262f5ed82106837d499d2637c637aa4f7a2c560a5000bffdea1c",
+      "packages/hylo-core/src/hylo/core/types.py": "1e45484fca656fb0408bc37caa8650ce719f7eeaf3b4e20cf29d79f67d0e7b5e",
+      "packages/hylo-core/src/hylo/testing/__init__.py": "dcb5eb32b53e08bf195739d4976900152a909b0d3ec668f14cc006b66fa7b5ae",
+      "packages/hylo-core/src/hylo/testing/conformance.py": "0917114ad556e81548875c8478e1b3f540dbede27c71f550b4249e370e4e4d4f",
+      "packages/hylo-core/src/hylo/testing/learners.py": "a60396ac70d4fca2ab81c19337db5b24bafbeb85802e6d9565c362ee3ec99fa4",
+      "packages/hylo-core/src/hylo/testing/point_reach.py": "b51b5f61f510a5d4655b4e73ad8b74d6dc0e8bf7300de2757a5dfeaca1edabec",
+      "packages/hylo-core/src/hylo/testing/setup.py": "4ee9f7ee9b8e5f496d26e75cf7f171cf9a91e32a833f50d7bd9243ded3efb61c",
+      "packages/hylo-manip/src/hylo/manip/__init__.py": "ee3c04510dca4c872ad82b02ff0d21d740734b4e404ed9acdb239eda59d4c7d6",
+      "packages/hylo-manip/src/hylo/manip/collision.py": "cf2232a4d93e157971a09cb31a2e061480cabe0ac1ef4f0b31249ece3d0d7f35",
+      "packages/hylo-manip/src/hylo/manip/datatypes.py": "cbcaba4762d38362c59ba1f9b2b6844f5933f609ab392237d01313019ec892e7",
+      "packages/hylo-manip/src/hylo/manip/dexgrasp.py": "d388dd69d956ce10c5f96f32814b722c20b662a90e50ddd6c514e02bc6ff9c34",
+      "packages/hylo-manip/src/hylo/manip/executor.py": "504b9c109a4e29435569635ab351d1b3cb8e83429ed85767d9d0976281828db1",
+      "packages/hylo-manip/src/hylo/manip/geometry.py": "2f9375132d91e10e940368c157b9f0407fd9ad9183354a0cdda06eaa6657b546",
+      "packages/hylo-manip/src/hylo/manip/grasp_quality.py": "877c462735693293ff65fd821a08365efa75afe2146b1b7341a7cf250ba84871",
+      "packages/hylo-manip/src/hylo/manip/grasping.py": "0139d54b2298ce35d7a32e282726e86dcdf15fbc8de4a0fd08cda7754fdc1685",
+      "packages/hylo-manip/src/hylo/manip/handmodel.py": "ddb043cc35d6dacbc11540b3e45a9766d08b0f0dc67dfcd43fa0314dcfc0805c",
+      "packages/hylo-manip/src/hylo/manip/handpath.py": "0ee7da7ab577e22fd38ddf0699bbf9f93450e8a9220513e16fddda87de81dacb",
+      "packages/hylo-manip/src/hylo/manip/kinematics.py": "49b04f486ec509b82504f354fa8a76ba639778fa168494810110e348e6b3f239",
+      "packages/hylo-manip/src/hylo/manip/perception.py": "356827b3feec8d2ecb9e59ea26294ec6ea00dce764a47d38f8b763bac7b14b50",
+      "packages/hylo-manip/src/hylo/manip/planning.py": "598ddb891f983414383034031df8d956c3ed16cb41898720859ad3371a0aabe8",
+      "packages/hylo-manip/src/hylo/manip/retarget.py": "b004baa258001869eaa0d72dc647a71c5c479f34705ae0d594a443d075088a22",
+      "packages/hylo-manip/src/hylo/manip/tools.py": "7d6d0d908c69d39a680a2a6a4b6f6cb37c9cabf3ebaac496ea51749e33e71608",
+      "packages/hylo-memory/src/hylo/memory/__init__.py": "a0006902d805c0b57a3148dd66800a52b3c7d38924a5d6a63ba6c07dd70bba7b",
+      "packages/hylo-memory/src/hylo/memory/action_bank.py": "1749d03c1cb5bbedbb52e9e88339a74715f8a8c5a16ca559919af17ff78fe63a",
+      "packages/hylo-memory/src/hylo/memory/episode.py": "4aa5092bfc92ef2427d8296f65fe16353fff271df0db36faffc3146011611df4",
+      "packages/hylo-memory/src/hylo/memory/frames.py": "8561a0b009b24c23412f06502f915ed96af583c9bc73f10dfae442c2fdd3e3cd",
+      "packages/hylo-memory/src/hylo/memory/lessons.py": "e3cf1c2b29f20637769d34f01631cebb70a034f88f80c40e90a2324db6c88511",
+      "packages/hylo-memory/src/hylo/memory/signals.py": "53d0969ec95f765ce0d5a33cd208653b93e2a7fdc84861a3983f864bf2b684b5",
+      "packages/hylo-memory/src/hylo/memory/skills.py": "f6d6faa0243694e55b3c5ea5829c9a49199c3152f392df8f3e58cc45811997b0",
+      "packages/hylo-memory/src/hylo/memory/sqlite.py": "c9dfa9ef13cbfd7e6c66d16424214f1aace2e47b41f187530f277246d12b2ce8",
+      "packages/hylo-memory/src/hylo/memory/visual.py": "b1f02bdb3c45fb4a9b47980e569ab52700d36ccf757a5a57b0789dec5a82a32c"
+    },
+    "vision_server": {
+      "ready": true,
+      "model": "/home/gaobin/.cache/huggingface/hub/models--Qwen--Qwen3.5-9B/snapshots/c202236235762e1c871ad0ccb60c8ee5ba337b9a",
+      "frozen": true,
+      "source_sha256": "32978cc2cbfc9ac28775cd270f34ffd2d789b280c15cc6d4d68484fa0b2cf19e"
+    },
+    "simulator_packages": {
+      "torch": "2.9.1",
+      "numpy": "1.26.4",
+      "sapien": "3.0.3",
+      "mani-skill": "3.0.0b21",
+      "pydantic": "2.14.2"
+    }
+  },
+  "results": [
+    {
+      "task": "VideoUnmask",
+      "episode": 0,
+      "split": "val",
+      "seed": 1060000,
+      "condition": "memory_off",
+      "status": "success",
+      "steps": 193,
+      "task_goal": "watch the video carefully, then pick up the container hiding the green cube",
+      "initial_frames": 67,
+      "render_device": "cuda:0",
+      "reset_observation_sha256": "0618f4d8f8395c017a4d774ab5ff5e315e75eeed9754b72acadffbe5f00b19c7",
+      "seconds": 55.797484868671745,
+      "memory_snapshot": "cd33dfba35d5ca767a65655dd07bdffea8f3fa1d7e7b4dedd140dcd69c72b328"
+    },
+    {
+      "task": "VideoUnmask",
+      "episode": 0,
+      "split": "val",
+      "seed": 1060000,
+      "condition": "memory_on",
+      "status": "success",
+      "steps": 169,
+      "task_goal": "watch the video carefully, then pick up the container hiding the green cube",
+      "initial_frames": 67,
+      "render_device": "cuda:0",
+      "reset_observation_sha256": "0618f4d8f8395c017a4d774ab5ff5e315e75eeed9754b72acadffbe5f00b19c7",
+      "seconds": 74.4008847293444,
+      "memory_snapshot": "0602ee4c4749d2e571b2b00aef8e8f8e30eb1dcdc1829d6561f357ab3cbbd307"
+    },
+    {
+      "task": "VideoUnmask",
+      "episode": 3,
+      "split": "val",
+      "seed": 1060300,
+      "condition": "memory_on",
+      "status": "fail",
+      "steps": 177,
+      "task_goal": "watch the video carefully, then pick up the container hiding the green cube, finally pick up another container hiding the blue cube",
+      "initial_frames": 67,
+      "render_device": "cuda:0",
+      "reset_observation_sha256": "6395c13da59fd6a8a0053a55e49b38b9879fbca08f27fe9015f42ae8e845c2f1",
+      "seconds": 81.8916148468852,
+      "memory_snapshot": "9f6a8d3059ed7283368a8bfb82ac61782ea9b0172f49cb937376425a1fae6720"
+    },
+    {
+      "task": "VideoUnmask",
+      "episode": 3,
+      "split": "val",
+      "seed": 1060300,
+      "condition": "memory_off",
+      "status": "fail",
+      "steps": 125,
+      "task_goal": "watch the video carefully, then pick up the container hiding the green cube, finally pick up another container hiding the blue cube",
+      "initial_frames": 67,
+      "render_device": "cuda:0",
+      "reset_observation_sha256": "6395c13da59fd6a8a0053a55e49b38b9879fbca08f27fe9015f42ae8e845c2f1",
+      "seconds": 39.49178390670568,
+      "memory_snapshot": "88ea409fa132a77c24a61e134ca77095486e05314f0b98325fcfda0f8889927e"
+    },
+    {
+      "task": "PickHighlight",
+      "episode": 0,
+      "split": "val",
+      "seed": 1120000,
+      "condition": "memory_off",
+      "status": "timeout",
+      "steps": 1300,
+      "task_goal": "first press the button, then pick up all cubes that have been highlighteted with white areas on the table",
+      "initial_frames": 1,
+      "render_device": "cuda:0",
+      "reset_observation_sha256": "776d6986ab9886a7e3fb8427d8bfa3d11dd4b490e24b7529d71909a6ea88a8fe",
+      "seconds": 353.8073476892896,
+      "memory_snapshot": "88c8c907aa9646f71b761f512fe99b18d8e89044605b53ebbf7baea68d4fe5f1"
+    },
+    {
+      "task": "PickHighlight",
+      "episode": 0,
+      "split": "val",
+      "seed": 1120000,
+      "condition": "memory_on",
+      "status": "success",
+      "steps": 154,
+      "task_goal": "first press the button, then pick up all cubes that have been highlighteted with white areas on the table",
+      "initial_frames": 1,
+      "render_device": "cuda:0",
+      "reset_observation_sha256": "776d6986ab9886a7e3fb8427d8bfa3d11dd4b490e24b7529d71909a6ea88a8fe",
+      "seconds": 81.22760061500594,
+      "memory_snapshot": "6eec0dd8f4f267ebae242aad30cf882aac305fa46fa36ad4971b3476d635a718"
+    },
+    {
+      "task": "PickHighlight",
+      "episode": 3,
+      "split": "val",
+      "seed": 1120300,
+      "condition": "memory_on",
+      "status": "timeout",
+      "steps": 1300,
+      "task_goal": "first press the button, then pick up all cubes that have been highlighteted with white areas on the table",
+      "initial_frames": 1,
+      "render_device": "cuda:0",
+      "reset_observation_sha256": "8d98a9971396e08ff9484f52bbb3df56c0ceacb9a459332422f842a802103e1e",
+      "seconds": 382.2630323199555,
+      "memory_snapshot": "bffc0e793d90e7102d031a060515615f3a173f7678b17d179ed1a9539accd48d"
+    },
+    {
+      "task": "PickHighlight",
+      "episode": 3,
+      "split": "val",
+      "seed": 1120300,
+      "condition": "memory_off",
+      "status": "timeout",
+      "steps": 1300,
+      "task_goal": "first press the button, then pick up all cubes that have been highlighteted with white areas on the table",
+      "initial_frames": 1,
+      "render_device": "cuda:0",
+      "reset_observation_sha256": "8d98a9971396e08ff9484f52bbb3df56c0ceacb9a459332422f842a802103e1e",
+      "seconds": 359.1075615589507,
+      "memory_snapshot": "4835b7e77596585a098e384bf94625b2600f437c413815bf3c18869091ae497a"
+    },
+    {
+      "task": "PickXtimes",
+      "episode": 0,
+      "split": "val",
+      "seed": 1010000,
+      "condition": "memory_off",
+      "status": "fail",
+      "steps": 519,
+      "robot_urdf_sha256": "524c6986dbbabe244e05801f262862205e880834d01459b06ee273016d0579ba",
+      "task_goal": "pick up the blue cube and place it on the target, repeating this action three times, then press the button to stop",
+      "initial_frames": 1,
+      "render_device": "cuda:0",
+      "reset_observation_sha256": "76f6fb4fc47db9bb52939d7b99342d44e0d7d743d1c6d841038e7e8a0957179b",
+      "seconds": 119.00110692996532,
+      "memory_snapshot": "f074d32529b750f7c98150626a95af4cd4cdf41daf9cbef22f80d2cec8799113"
+    },
+    {
+      "task": "PickXtimes",
+      "episode": 0,
+      "split": "val",
+      "seed": 1010000,
+      "condition": "memory_on",
+      "status": "success",
+      "steps": 640,
+      "robot_urdf_sha256": "524c6986dbbabe244e05801f262862205e880834d01459b06ee273016d0579ba",
+      "task_goal": "pick up the blue cube and place it on the target, repeating this action three times, then press the button to stop",
+      "initial_frames": 1,
+      "render_device": "cuda:0",
+      "reset_observation_sha256": "76f6fb4fc47db9bb52939d7b99342d44e0d7d743d1c6d841038e7e8a0957179b",
+      "seconds": 197.46052039181814,
+      "memory_snapshot": "88a7aa39442b0915bbfb0d44a739ae4b097d168a530abd4fd04e9dd30dbd5037"
+    },
+    {
+      "task": "PickXtimes",
+      "episode": 3,
+      "split": "val",
+      "seed": 1010300,
+      "condition": "memory_on",
+      "status": "success",
+      "steps": 936,
+      "robot_urdf_sha256": "524c6986dbbabe244e05801f262862205e880834d01459b06ee273016d0579ba",
+      "task_goal": "pick up the blue cube and place it on the target, repeating this action four times, then press the button to stop",
+      "initial_frames": 1,
+      "render_device": "cuda:0",
+      "reset_observation_sha256": "180619d61c06c3678f453c0f6b7379000472697d54a9c211e5c62b30c20212ae",
+      "seconds": 365.35300838854164,
+      "memory_snapshot": "2d45824ce3d5b69abaec2fd48bb018d3a71728f04f9a8602d956788ac0f12ca7"
+    },
+    {
+      "task": "PickXtimes",
+      "episode": 3,
+      "split": "val",
+      "seed": 1010300,
+      "condition": "memory_off",
+      "status": "fail",
+      "steps": 565,
+      "robot_urdf_sha256": "524c6986dbbabe244e05801f262862205e880834d01459b06ee273016d0579ba",
+      "task_goal": "pick up the blue cube and place it on the target, repeating this action four times, then press the button to stop",
+      "initial_frames": 1,
+      "render_device": "cuda:0",
+      "reset_observation_sha256": "180619d61c06c3678f453c0f6b7379000472697d54a9c211e5c62b30c20212ae",
+      "seconds": 148.56996464869007,
+      "memory_snapshot": "bc111e4eb55a94c0ce2f05db6b2ffbe40198563e4dc7cfb064b1e035328fdcdc"
+    },
+    {
+      "task": "PatternLock",
+      "episode": 0,
+      "split": "val",
+      "seed": 1150000,
+      "condition": "memory_off",
+      "status": "fail",
+      "steps": 17,
+      "task_goal": "watch the video carefully, then use the stick attached to the robot to retrace the same pattern",
+      "initial_frames": 66,
+      "render_device": "cuda:0",
+      "reset_observation_sha256": "263e644f929286b2049e7ee59dbeea27dfd31f384c427229c6283f0fc2b40906",
+      "seconds": 10.351397163234651,
+      "memory_snapshot": "49a78be8d6ce1b5ad99bab3f861b5864c7c83062eee0f7d2fe318da448f5ce24"
+    },
+    {
+      "task": "PatternLock",
+      "episode": 0,
+      "split": "val",
+      "seed": 1150000,
+      "condition": "memory_on",
+      "status": "fail",
+      "steps": 42,
+      "task_goal": "watch the video carefully, then use the stick attached to the robot to retrace the same pattern",
+      "initial_frames": 66,
+      "render_device": "cuda:0",
+      "reset_observation_sha256": "263e644f929286b2049e7ee59dbeea27dfd31f384c427229c6283f0fc2b40906",
+      "seconds": 41.22960293106735,
+      "memory_snapshot": "366738d1a3d2c21c32d6690198766813d2941b7500502c5370446be30aa35ff1"
+    },
+    {
+      "task": "PatternLock",
+      "episode": 3,
+      "split": "val",
+      "seed": 1150300,
+      "condition": "memory_on",
+      "status": "fail",
+      "steps": 97,
+      "task_goal": "watch the video carefully, then use the stick attached to the robot to retrace the same pattern",
+      "initial_frames": 232,
+      "render_device": "cuda:0",
+      "reset_observation_sha256": "21f8eff676138dda4a4149eca5dda11e04dc5a46022c18ead695a0c8e05fb976",
+      "seconds": 103.69429325964302,
+      "memory_snapshot": "22af21dce56f97c135efd400866ae8262c3b29f5a6038374b3ac5444431b141c"
+    },
+    {
+      "task": "PatternLock",
+      "episode": 3,
+      "split": "val",
+      "seed": 1150300,
+      "condition": "memory_off",
+      "status": "fail",
+      "steps": 19,
+      "task_goal": "watch the video carefully, then use the stick attached to the robot to retrace the same pattern",
+      "initial_frames": 232,
+      "render_device": "cuda:0",
+      "reset_observation_sha256": "21f8eff676138dda4a4149eca5dda11e04dc5a46022c18ead695a0c8e05fb976",
+      "seconds": 36.9407168100588,
+      "memory_snapshot": "952814aed048788b7c66d127f6d4e4b8f6ee2bab5ee680d8d2cf94628bf26022"
+    }
+  ],
+  "summary": {
+    "overall": {
+      "memory_off": {
+        "attempted": 8,
+        "successes": 1,
+        "success_per_attempt": 0.125,
+        "total_seconds": 1123.0673635755666,
+        "total_actions": 4038
+      },
+      "memory_on": {
+        "attempted": 8,
+        "successes": 4,
+        "success_per_attempt": 0.5,
+        "total_seconds": 1327.5205574822612,
+        "total_actions": 3515
+      }
+    },
+    "per_task": [
+      {
+        "task": "PatternLock",
+        "condition": "memory_off",
+        "attempted": 2,
+        "successes": 0,
+        "success_per_attempt": 0.0,
+        "wilson95": [
+          0.0,
+          0.6576197724933469
+        ],
+        "outcomes": {
+          "fail": 2
+        },
+        "median_seconds": 23.646056986646727
+      },
+      {
+        "task": "PatternLock",
+        "condition": "memory_on",
+        "attempted": 2,
+        "successes": 0,
+        "success_per_attempt": 0.0,
+        "wilson95": [
+          0.0,
+          0.6576197724933469
+        ],
+        "outcomes": {
+          "fail": 2
+        },
+        "median_seconds": 72.46194809535518
+      },
+      {
+        "task": "PickHighlight",
+        "condition": "memory_off",
+        "attempted": 2,
+        "successes": 0,
+        "success_per_attempt": 0.0,
+        "wilson95": [
+          0.0,
+          0.6576197724933469
+        ],
+        "outcomes": {
+          "timeout": 2
+        },
+        "median_seconds": 356.45745462412015
+      },
+      {
+        "task": "PickHighlight",
+        "condition": "memory_on",
+        "attempted": 2,
+        "successes": 1,
+        "success_per_attempt": 0.5,
+        "wilson95": [
+          0.09453120573423074,
+          0.9054687942657693
+        ],
+        "outcomes": {
+          "success": 1,
+          "timeout": 1
+        },
+        "median_seconds": 231.74531646748073
+      },
+      {
+        "task": "PickXtimes",
+        "condition": "memory_off",
+        "attempted": 2,
+        "successes": 0,
+        "success_per_attempt": 0.0,
+        "wilson95": [
+          0.0,
+          0.6576197724933469
+        ],
+        "outcomes": {
+          "fail": 2
+        },
+        "median_seconds": 133.7855357893277
+      },
+      {
+        "task": "PickXtimes",
+        "condition": "memory_on",
+        "attempted": 2,
+        "successes": 2,
+        "success_per_attempt": 1.0,
+        "wilson95": [
+          0.34238022750665303,
+          1.0
+        ],
+        "outcomes": {
+          "success": 2
+        },
+        "median_seconds": 281.4067643901799
+      },
+      {
+        "task": "VideoUnmask",
+        "condition": "memory_off",
+        "attempted": 2,
+        "successes": 1,
+        "success_per_attempt": 0.5,
+        "wilson95": [
+          0.09453120573423074,
+          0.9054687942657693
+        ],
+        "outcomes": {
+          "success": 1,
+          "fail": 1
+        },
+        "median_seconds": 47.64463438768871
+      },
+      {
+        "task": "VideoUnmask",
+        "condition": "memory_on",
+        "attempted": 2,
+        "successes": 1,
+        "success_per_attempt": 0.5,
+        "wilson95": [
+          0.09453120573423074,
+          0.9054687942657693
+        ],
+        "outcomes": {
+          "success": 1,
+          "fail": 1
+        },
+        "median_seconds": 78.1462497881148
+      }
+    ],
+    "paired": {
+      "memory_wins": 3,
+      "memory_losses": 0,
+      "ties": 5,
+      "incomplete_pairs": 0,
+      "invalid_pairs": 0,
+      "exact_mcnemar_one_sided": 0.125,
+      "exact_mcnemar_two_sided": 0.25
+    },
+    "interpretation": "Exploratory pilot, not a skill-promotion gate. Invalid attempts remain in per-attempt rates; paired statistics exclude invalid or incomplete pairs."
+  },
+  "trace_metrics": {
+    "analysis_source_sha256": "35e3a8c1495fa139a5ac9c01ed18e77c1cb06bb0ac25437a1d3461047f7bd2de",
+    "episodes": [
+      {
+        "task": "VideoUnmask",
+        "episode": 0,
+        "condition": "memory_off",
+        "status": "success",
+        "planner_rounds": 13,
+        "prefix_rounds": 0,
+        "planner_calls": 13,
+        "schema_repairs": 0,
+        "grounding_calls": 12,
+        "vlm_total_calls": 25,
+        "vlm_seconds": 43.671991776209325,
+        "execution_gates": {},
+        "grounding_fallbacks": {},
+        "max_omitted_reports": 0,
+        "max_supplied_frames": 16
+      },
+      {
+        "task": "VideoUnmask",
+        "episode": 0,
+        "condition": "memory_on",
+        "status": "success",
+        "planner_rounds": 15,
+        "prefix_rounds": 4,
+        "planner_calls": 15,
+        "schema_repairs": 0,
+        "grounding_calls": 11,
+        "vlm_total_calls": 26,
+        "vlm_seconds": 59.30389577802271,
+        "execution_gates": {},
+        "grounding_fallbacks": {},
+        "max_omitted_reports": 0,
+        "max_supplied_frames": 64
+      },
+      {
+        "task": "VideoUnmask",
+        "episode": 3,
+        "condition": "memory_on",
+        "status": "fail",
+        "planner_rounds": 16,
+        "prefix_rounds": 4,
+        "planner_calls": 16,
+        "schema_repairs": 0,
+        "grounding_calls": 12,
+        "vlm_total_calls": 28,
+        "vlm_seconds": 64.64398804400116,
+        "execution_gates": {},
+        "grounding_fallbacks": {},
+        "max_omitted_reports": 0,
+        "max_supplied_frames": 64
+      },
+      {
+        "task": "VideoUnmask",
+        "episode": 3,
+        "condition": "memory_off",
+        "status": "fail",
+        "planner_rounds": 8,
+        "prefix_rounds": 0,
+        "planner_calls": 8,
+        "schema_repairs": 0,
+        "grounding_calls": 8,
+        "vlm_total_calls": 16,
+        "vlm_seconds": 30.678008153568953,
+        "execution_gates": {},
+        "grounding_fallbacks": {},
+        "max_omitted_reports": 0,
+        "max_supplied_frames": 16
+      },
+      {
+        "task": "PickHighlight",
+        "episode": 0,
+        "condition": "memory_off",
+        "status": "timeout",
+        "planner_rounds": 82,
+        "prefix_rounds": 0,
+        "planner_calls": 82,
+        "schema_repairs": 0,
+        "grounding_calls": 19,
+        "vlm_total_calls": 101,
+        "vlm_seconds": 297.7529091620818,
+        "execution_gates": {},
+        "grounding_fallbacks": {},
+        "max_omitted_reports": 0,
+        "max_supplied_frames": 16
+      },
+      {
+        "task": "PickHighlight",
+        "episode": 0,
+        "condition": "memory_on",
+        "status": "success",
+        "planner_rounds": 10,
+        "prefix_rounds": 0,
+        "planner_calls": 11,
+        "schema_repairs": 1,
+        "grounding_calls": 0,
+        "vlm_total_calls": 11,
+        "vlm_seconds": 72.01318886689842,
+        "execution_gates": {},
+        "grounding_fallbacks": {},
+        "max_omitted_reports": 0,
+        "max_supplied_frames": 32
+      },
+      {
+        "task": "PickHighlight",
+        "episode": 3,
+        "condition": "memory_on",
+        "status": "timeout",
+        "planner_rounds": 82,
+        "prefix_rounds": 0,
+        "planner_calls": 82,
+        "schema_repairs": 0,
+        "grounding_calls": 25,
+        "vlm_total_calls": 107,
+        "vlm_seconds": 314.14315343042836,
+        "execution_gates": {},
+        "grounding_fallbacks": {
+          "abstain_no_current_target": 1
+        },
+        "max_omitted_reports": 0,
+        "max_supplied_frames": 32
+      },
+      {
+        "task": "PickHighlight",
+        "episode": 3,
+        "condition": "memory_off",
+        "status": "timeout",
+        "planner_rounds": 82,
+        "prefix_rounds": 0,
+        "planner_calls": 82,
+        "schema_repairs": 0,
+        "grounding_calls": 18,
+        "vlm_total_calls": 100,
+        "vlm_seconds": 302.50147730857134,
+        "execution_gates": {},
+        "grounding_fallbacks": {},
+        "max_omitted_reports": 0,
+        "max_supplied_frames": 16
+      },
+      {
+        "task": "PickXtimes",
+        "episode": 0,
+        "condition": "memory_off",
+        "status": "fail",
+        "planner_rounds": 33,
+        "prefix_rounds": 0,
+        "planner_calls": 33,
+        "schema_repairs": 0,
+        "grounding_calls": 0,
+        "vlm_total_calls": 33,
+        "vlm_seconds": 96.99780824640766,
+        "execution_gates": {
+          "wait_for_observed_grasp_and_relative_lift": 8,
+          "wait_for_observed_release": 1
+        },
+        "grounding_fallbacks": {
+          "continue_same_command": 3
+        },
+        "max_omitted_reports": 0,
+        "max_supplied_frames": 16
+      },
+      {
+        "task": "PickXtimes",
+        "episode": 0,
+        "condition": "memory_on",
+        "status": "success",
+        "planner_rounds": 40,
+        "prefix_rounds": 0,
+        "planner_calls": 40,
+        "schema_repairs": 0,
+        "grounding_calls": 8,
+        "vlm_total_calls": 48,
+        "vlm_seconds": 167.34450828982517,
+        "execution_gates": {
+          "wait_for_observed_grasp_and_relative_lift": 6,
+          "continue_press_primitive": 3
+        },
+        "grounding_fallbacks": {
+          "abstain_no_current_target": 2,
+          "continue_same_command": 1
+        },
+        "max_omitted_reports": 4,
+        "max_supplied_frames": 32
+      },
+      {
+        "task": "PickXtimes",
+        "episode": 3,
+        "condition": "memory_on",
+        "status": "success",
+        "planner_rounds": 59,
+        "prefix_rounds": 0,
+        "planner_calls": 61,
+        "schema_repairs": 2,
+        "grounding_calls": 5,
+        "vlm_total_calls": 66,
+        "vlm_seconds": 319.482614540495,
+        "execution_gates": {
+          "wait_for_observed_grasp_and_relative_lift": 3,
+          "wait_for_observed_release": 2,
+          "continue_press_primitive": 9
+        },
+        "grounding_fallbacks": {
+          "continue_same_command": 2
+        },
+        "max_omitted_reports": 20,
+        "max_supplied_frames": 32
+      },
+      {
+        "task": "PickXtimes",
+        "episode": 3,
+        "condition": "memory_off",
+        "status": "fail",
+        "planner_rounds": 36,
+        "prefix_rounds": 0,
+        "planner_calls": 36,
+        "schema_repairs": 0,
+        "grounding_calls": 2,
+        "vlm_total_calls": 38,
+        "vlm_seconds": 123.76569673698395,
+        "execution_gates": {
+          "wait_for_observed_grasp_and_relative_lift": 4,
+          "wait_for_observed_release": 5
+        },
+        "grounding_fallbacks": {
+          "continue_same_command": 2
+        },
+        "max_omitted_reports": 0,
+        "max_supplied_frames": 16
+      },
+      {
+        "task": "PatternLock",
+        "episode": 0,
+        "condition": "memory_off",
+        "status": "fail",
+        "planner_rounds": 2,
+        "prefix_rounds": 0,
+        "planner_calls": 2,
+        "schema_repairs": 0,
+        "grounding_calls": 0,
+        "vlm_total_calls": 2,
+        "vlm_seconds": 4.7839806117117405,
+        "execution_gates": {},
+        "grounding_fallbacks": {},
+        "max_omitted_reports": 0,
+        "max_supplied_frames": 16
+      },
+      {
+        "task": "PatternLock",
+        "episode": 0,
+        "condition": "memory_on",
+        "status": "fail",
+        "planner_rounds": 7,
+        "prefix_rounds": 4,
+        "planner_calls": 8,
+        "schema_repairs": 1,
+        "grounding_calls": 3,
+        "vlm_total_calls": 11,
+        "vlm_seconds": 33.03979064710438,
+        "execution_gates": {},
+        "grounding_fallbacks": {
+          "abstain_no_current_target": 1
+        },
+        "max_omitted_reports": 0,
+        "max_supplied_frames": 64
+      },
+      {
+        "task": "PatternLock",
+        "episode": 3,
+        "condition": "memory_on",
+        "status": "fail",
+        "planner_rounds": 21,
+        "prefix_rounds": 14,
+        "planner_calls": 22,
+        "schema_repairs": 1,
+        "grounding_calls": 7,
+        "vlm_total_calls": 29,
+        "vlm_seconds": 82.65515922056511,
+        "execution_gates": {},
+        "grounding_fallbacks": {
+          "abstain_no_current_target": 6
+        },
+        "max_omitted_reports": 0,
+        "max_supplied_frames": 64
+      },
+      {
+        "task": "PatternLock",
+        "episode": 3,
+        "condition": "memory_off",
+        "status": "fail",
+        "planner_rounds": 2,
+        "prefix_rounds": 0,
+        "planner_calls": 3,
+        "schema_repairs": 1,
+        "grounding_calls": 2,
+        "vlm_total_calls": 5,
+        "vlm_seconds": 25.5785502018407,
+        "execution_gates": {},
+        "grounding_fallbacks": {},
+        "max_omitted_reports": 0,
+        "max_supplied_frames": 16
+      }
+    ],
+    "overall": {
+      "memory_off": {
+        "planner_calls": 259,
+        "grounding_calls": 61,
+        "vlm_total_calls": 320,
+        "schema_repairs": 1,
+        "vlm_seconds": 925.7304221973754
+      },
+      "memory_on": {
+        "planner_calls": 255,
+        "grounding_calls": 71,
+        "vlm_total_calls": 326,
+        "schema_repairs": 5,
+        "vlm_seconds": 1112.6262988173403
+      }
+    },
+    "limitations": "No token counts or isolated executor GPU time recorded; VLM seconds are server wall time, not GPU profiling. Source traces retain original outputs and all repairs."
+  },
+  "launch": {
+    "pid": 2389860,
+    "argv": [
+      "/home/gaobin/hylo-memory-eval/src/SERA/.venv-sim/bin/python",
+      "-u",
+      "/home/gaobin/hylo-memory-eval/src/hylo-harness/examples/memory/robomme/run_paired.py",
+      "--sera-root",
+      "/home/gaobin/hylo-memory-eval/src/SERA",
+      "--output",
+      "/home/gaobin/hylo-memory-eval/results/pilot-v1",
+      "--episode-indices",
+      "0",
+      "3",
+      "--split",
+      "val",
+      "--rgb-regions",
+      "--execution-gates"
+    ],
+    "started_utc": "2026-11-03T11:31:36.991413+00:00",
+    "cuda_visible_devices": "1",
+    "runtime_limit": null
+  },
+  "completion": {
+    "episodes": 16,
+    "completed_utc": "2026-11-03T12:12:48.055726+00:00"
+  },
+  "evidence": {
+    "archive": "runs/memory-20261103/remote-readiness/evidence-pilot-v1.tar.gz",
+    "sha256": "3bcd178234f44ce0c46ec8c0b6d37a46e79a4f8c00f585e8db3b97a2d0393a7c",
+    "large_rgb_video_traces": "/home/gaobin/hylo-memory-eval/results/pilot-v1",
+    "artifact_manifest_sha256": "81dbba009ff6fea8c20b14c292b889b45ad1047b2cbd326f14a94499cdb51f92"
+  },
+  "validation_at_freeze": {
+    "recorded_utc": "2026-11-03T12:01:11.339231+00:00",
+    "functional_tests": {
+      "passed": 189,
+      "warnings": 1,
+      "warning": "Existing critic.py sigmoid overflow RuntimeWarning in test_critic; no memory-test failures.",
+      "cwd": "harness",
+      "command": "/home/bingao/hyloai/.venv/bin/python -m pytest packages/hylo-core/tests packages/hylo-memory/tests packages/hylo-agents/tests tests/integration/test_memory.py tests/test_examples_memory.py tests/test_robomme_memory_adapter.py tests/test_robomme_execution.py tests/test_robomme_summary.py -q"
+    },
+    "boundary_tests": {
+      "passed": 66,
+      "cwd": "harness",
+      "command": "/home/bingao/hyloai/.venv/bin/python -I -m pytest dev/test_boundaries.py -q"
+    },
+    "source_references": {
+      "checked": 494,
+      "unique_files": 112,
+      "invalid": 0,
+      "manifest_commit_matches": 6
+    },
+    "python310_ast": {
+      "checked_files": 7,
+      "result": "passed"
+    },
+    "source": {
+      "harness_base_commit": "41876d5cb446fdfe3222999fda127e2fe9edccdb",
+      "working_tree_changes": true
+    },
+    "pilot_protocol_sha256": "6b6c31aecfec43ff6ecaaa787e6bfcdfa8cfe03fe2a4e82c773f1c0a39f103c4",
+    "pilot_source_consistency": {
+      "files": 83,
+      "local_mismatches": 0,
+      "vision_server_source_matches": true
+    }
+  },
+  "followup": {
+    "task_specific_rule_candidate": "Withdrawn before GPU evaluation; archived under runs/memory-20261103/retired-rule-candidate",
+    "current_local_adapter_difference": "Generic malformed-output repair catches TypeError, KeyError and AttributeError; overflow classified as agent error. No new GPU score claimed for these changes.",
+    "focused_post_revision_tests": {
+      "passed": 20,
+      "command": ".venv/bin/python -m pytest harness/tests/test_robomme_memory_adapter.py harness/tests/test_robomme_execution.py harness/tests/test_robomme_summary.py -q"
+    },
+    "direction": "Model-managed multimodal memory, query-conditioned retrieval and validated experience evolution; proposed, not yet measured."
+  }
+}

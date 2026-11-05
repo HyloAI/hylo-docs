@@ -3,7 +3,8 @@
 Physical recursive self-improvement uses task outcomes to propose changes, verify their effects and carry adopted
 changes into later rounds. Hylo connects four capabilities in this loop: [agents](user-guide/agents.md) act in
 [worlds](user-guide/worlds.md), [memory](user-guide/memory/index.md) carries experience forward, and
-[skills](user-guide/skills.md) make verified capabilities reusable. People define the goals and boundaries.
+[skills](user-guide/skills.md) make verified capabilities reusable. People define the goals and boundaries. For hardware use, configure campaigns with `approval: manual` and
+validate the target deployment; campaign promotion defaults to `auto`.
 
 ![The Physical RSI loop: Build, Run, Improve, Verify and Deploy, with RSI campaigns over Improve and Verify and Serve beneath all five](assets/diagrams/physical-rsi-light.svg){ .hylo-diagram .only-light }
 ![The Physical RSI loop: Build, Run, Improve, Verify and Deploy, with RSI campaigns over Improve and Verify and Serve beneath all five](assets/diagrams/physical-rsi-dark.svg){ .hylo-diagram .only-dark }

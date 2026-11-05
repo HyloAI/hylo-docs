@@ -10,6 +10,7 @@ recorded traces, so each approach can be evaluated under explicit task and obser
 |---|---|---|
 | Run an existing model or controller | a policy agent | [Policies](policies.md) |
 | Give a policy subgoals, memory or steering | a composed or steered agent | [Policy agents](policies.md#agents-that-run-a-policy) |
+| Run a compatible frozen VLA with episode video history | `simplememvla` | [Video memory](memory/video.md) |
 | Execute a hand-written or frozen task program | `code.program` | [Developing programs](developing-strategies.md) |
 | Let a model write task code during an episode | `code.llm` | [Developing programs](developing-strategies.md) |
 | Let a model call typed robot tools one step at a time | `tools.llm` | [Tool-calling agents](tool-agents.md) |
