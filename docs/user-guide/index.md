@@ -2,7 +2,8 @@
 
 # Guides { #user-guides }
 
-Choose a capability, then follow its practical guides or watch a recorded workflow. Start with [Quickstart](../getting-started/quickstart.md)
+Each topic's Overview explains how it works, why it is designed that way and where its limits are.
+Then follow a practical guide or watch a demo. Start with [Quickstart](../getting-started/quickstart.md)
 for a first run, or [Concepts](overview.md) for the terms used across Hylo.
 
 | Capability | What you can do | Start here |

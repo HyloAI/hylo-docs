@@ -174,7 +174,7 @@ nav:
     - Tool agents: user-guide/tool-agents.md
     - Demos: user-guide/agents/robot-control.md
   - Memory:
-    - user-guide/memory/index.md
+    - Overview: user-guide/memory/index.md
     - Quickstart: user-guide/using-memory.md
     - Backends:
       - Spatial: user-guide/memory/spatial.md

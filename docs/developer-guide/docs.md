@@ -98,6 +98,10 @@ Small flows that change often can be Mermaid diagrams in a `mermaid` code block 
 The five product concepts are **Physical RSI, Worlds, Agents, Memory and Skills**. Physical RSI connects the
 other four. Home introduces that relationship; Guides groups explanations and practical guides by these
 five topics. Each topic starts with its concept page, followed by operational guides and recorded walkthroughs.
+The topic Overview owns the user-facing technical explanation: the problem, mechanism, design rationale,
+key flow and limits. A user must be able to understand these without visiting Developers. Keep that explanation
+visible on the page; concise navigation labels do not require removing technical content or hiding it in disclosures.
+Developers provides implementation and extension detail, while Reference owns exact fields and signatures.
 Skills have their own topic even though the library is implemented in the memory package. Deployment and
 operations form a supporting section in Guides.
 
@@ -176,8 +180,10 @@ product copy; keep broader model-serving ambitions in design planning.
 - Page titles name the capability or the task: Memory, Create a world, Develop a program skill.
 - Section titles name one action or topic: Setup, Retrieval, Constraints. Prefer two to four words; retain a
   qualifier when it prevents ambiguity. Do not put a full explanatory sentence in the table of contents.
-- Concept pages explain the capability, its use cases and the next action. Keep selection tables in one place.
-- Guides follow one usable path through prerequisites, commands and outputs. Keep required compatibility,
+- Concept pages explain the capability, its mechanism, design choices, limits and next action. Keep selection
+  tables in one place. Preserve the reasoning behind a design when simplifying prose; moving parameter tables
+  or implementation detail does not replace that explanation.
+- Operational guides follow one usable path through prerequisites, commands and outputs. Keep required compatibility,
   observation conditions and evaluation boundaries beside the relevant step.
 - Exact fields, defaults, storage rules and state transitions belong in Reference. A guide links to that lookup.
 - Measurements, trial history, failed attempts and long recorded traces belong in validation records or Research.

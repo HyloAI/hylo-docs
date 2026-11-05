@@ -31,12 +31,14 @@ The public navigation has four sections: **Get started, Guides, Developers,
 and Reference**. Home is the entry page. **Guides** groups concept explanations and practical guides under
 **Physical RSI, Worlds, Agents, Memory and Skills**, with recorded examples in their corresponding topics,
 followed by deployment and operations.
+Each topic's Overview explains its mechanisms, design choices and limits within Guides. Developers adds
+implementation and extension detail; simplifying navigation must not remove the user-facing technical explanation.
 The full site adds **Internal** for current direction, decisions,
 research, experiments and historical records. `mkdocs.yml` owns the navigation; the public build inherits it
 and filters internal/excluded entries with `mkdocs/public_hook.py`.
 
-Navigation labels name capabilities; page and section titles name tasks or short topics. Guides focus on setup,
-usage and outputs. Memory fields and skill status live in `docs/reference/memory.md`; campaign fields live in
+Navigation labels name capabilities; page and section titles name tasks or short topics. Operational guides focus
+on setup, usage and outputs. Exact memory fields and skill status rules live in `docs/reference/memory.md`; campaign fields live in
 `docs/configuration/campaigns.md`. Recorded measurements and traces are reached through Validation > Records,
 including `docs/developer-guide/validation/guide-results.md`. Preserve published URLs and section anchors when
 shortening titles. The [authoring guide](docs/developer-guide/docs.md#titles-and-scope) defines this structure.

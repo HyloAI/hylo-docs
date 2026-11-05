@@ -22,6 +22,50 @@ A policy is a model or controller used by an agent. The agent decides how to use
 execution, steering and planning. A research session is a development process that produces a program; the
 resulting program can then run through `code.program` without model calls.
 
+## Decision mechanisms
+
+### Policies
+
+A policy maps observations to proposed actions, often as a chunk of future steps. The agent decides how much of
+that chunk to execute before observing again. It can also sample alternatives, use a critic, apply recovery rules
+or retrieve a memory prior when the policy supports those interfaces. Shorter chunks allow more frequent feedback;
+longer chunks reduce inference calls but commit to more actions before replanning.
+
+A composed agent can separate slower reasoning from the control policy: a reasoner chooses a target or subgoal,
+while the policy produces the motion. Keeping these components inside the agent lets a direct action model and a
+planner-driven model use the same episode loop. A technique requiring flow sampling, video context or a critic
+still needs a compatible policy; composition does not supply missing model capabilities.
+
+### Programs
+
+A program expresses task logic explicitly: perceive, choose a target, call robot tools, inspect the result and
+branch or retry. `code.program` runs an existing program; `code.llm` asks a model to write code during an episode.
+Developing and freezing a program moves model calls into development, so later execution can reuse the same logic
+without generating it again. Its behaviour still depends on new observations, tool results and the conditions
+covered by its tests. Code execution uses the restrictions described in [Security](security.md#model-written-programs).
+
+### Tool calls
+
+A tool-calling model alternates between observations and typed requests. Read tools can measure targets or compute
+grasp options without moving the robot. An action is submitted separately, executed through the episode kernel
+and safety checks, and answered with a measured receipt. The model sees the effect before choosing its next action.
+
+Target and grasp handles are tied to the observation that produced them. After motion, stale handles are refused
+and the model must measure again. This prevents old coordinates from being treated as current facts. The task's
+own check determines success independently of what the model reports when it finishes.
+
+## Execution and evidence
+
+The episode kernel binds an agent to an environment, checks their action compatibility, obtains observations,
+asks the agent for actions and passes executed steps through the safety shield. Traces record proposed and
+executed actions, interventions and outcomes. Scorers read that record, allowing different agent types to be
+evaluated under the same protocol.
+
+Observation privileges and timing remain part of the comparison. In synchronous execution the world waits for
+inference; in realtime execution it continues and stale actions can be dropped. Two agents are comparable only
+when the task, permitted observations, controller and evaluation conditions support the comparison. A shared
+execution path alone does not make different benchmark results interchangeable.
+
 ## Integration { #worlds-memory-and-skills }
 
 Agents act in an environment: a benchmark, a [world](worlds.md) or a robot adapter. The environment supplies

@@ -10,8 +10,26 @@ configure `approval: manual` for anything that will run on hardware and validate
 ![The Physical RSI loop: Build, Run, Improve, Verify and Deploy.](assets/diagrams/physical-rsi-light.svg){ .hylo-diagram .only-light }
 ![The Physical RSI loop: Build, Run, Improve, Verify and Deploy.](assets/diagrams/physical-rsi-dark.svg){ .hylo-diagram .only-dark }
 
-<span id="the-bottleneck"></span>
-<span id="grounding"></span>
+## Motivation { #the-bottleneck }
+
+Running a robot autonomously does not make its improvement autonomous. Someone still has to inspect failures,
+choose a change, compare it with the current version and decide whether to keep it. Physical RSI connects those
+steps so an adopted improvement becomes the starting point for the next round.
+
+The change can be a controller setting, a recovery rule, a prompt, a program, a memory bank or learned weights.
+This lets a system improve a useful part of its behaviour without requiring a new model-training run every time.
+Which changes are available depends on the agent and its compatible generators or learners.
+
+## Physical feedback { #grounding }
+
+The proposal and its evaluation have different roles. A model may suggest a better grasp or write a sorting
+program, but its explanation is not evidence that the task succeeded. Task checks measure what happened: whether
+an object was lifted, where it ended up, whether a controller reached its target, and which interventions occurred.
+In simulation, scoring can use privileged state while the agent receives only its permitted observations.
+
+This separation matters because an optimiser can improve a score by exploiting its definition. Success conditions
+must be fixed outside the candidate, and evaluation must cover the claim being made. Passing one scene's check
+establishes that result; improvement across a task family requires a comparison on a declared set of tasks.
 
 ## Improvement loop { #the-loop }
 
@@ -31,6 +49,30 @@ it does not replace the active version. Task checks provide feedback independent
 A campaign diagnoses failures, asks a generator for changes, screens candidates and applies a paired promotion
 gate. It records the evidence and version history. Generators may propose settings, steering rules, programs or
 learner artifacts. They cannot change the protected safety, scoring or benchmark settings.
+
+### Selection and confirmation
+
+Development runs expose failures; a separate screening split helps choose among candidates. The gate then
+compares a selected candidate with its parent on matched initial states. Pairing reduces differences caused by
+which scenes happened to be easy. Regression and safety checks can veto a candidate even when its average
+success rate improves. Matching seeds also requires a consistent model runtime and batching protocol when
+controlling policy randomness.
+
+The held-out report is separate from candidate selection. These roles reduce selection bias, but the current
+campaign can reuse gate states across cycles and expose previous outcomes through its archive. They are not an
+unlimited supply of fresh tests; the [split access rules](user-guide/campaigns.md#split-access) describe that limit.
+
+### Versioned progress
+
+A candidate names a configuration change and any sealed artifacts it needs. Their provenance records the data
+and settings used to produce them. Promotion records the parent, candidate and evidence; a rejected candidate
+remains in the archive without replacing the active version. Retaining failures helps later proposals avoid
+repeating them, while retaining versions makes rollback possible.
+
+Behaviour changes, measurement tools and proposal advice need different evidence. An agent change goes through
+the campaign gate; a learned judge needs calibration against known outcomes; a lesson earns credit through the
+outcomes of candidates that used it. A persuasive lesson or a calibrated judge does not by itself prove an agent
+has improved.
 
 Start with [First improvement](getting-started/first-improvement.md) for a complete CPU example, then use
 [Campaigns](user-guide/campaigns.md) to configure your own loop.
