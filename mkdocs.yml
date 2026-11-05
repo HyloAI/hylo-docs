@@ -132,21 +132,27 @@ nav:
   - First improvement: getting-started/first-improvement.md
   - Next steps: getting-started/next-steps.md
   - Optional environments: getting-started/optional-environments.md
-- Concepts:
-  - Overview: getting-started/concepts.md
-  - Physical RSI: physical-rsi.md
-  - Worlds: concepts/worlds.md
-  - Agents: user-guide/agents.md
-  - Memory: user-guide/memory/index.md
-  - Skills: user-guide/skills.md
-- Guides:
+- User Guides:
   - user-guide/index.md
-  - Build and run:
+  - How Hylo fits together: getting-started/concepts.md
+  - Physical RSI:
+    - Overview: physical-rsi.md
+    - Run experiments: user-guide/experiments.md
+    - Benchmarking:
+      - benchmarking/index.md
+      - Leaderboard: benchmarking/leaderboard.md
+    - Learn from runs: user-guide/learning.md
+    - Run campaigns: user-guide/campaigns.md
+  - Worlds:
+    - Overview: concepts/worlds.md
     - Create a world: user-guide/worlds.md
+  - Agents:
+    - Overview: user-guide/agents.md
     - Run policies: user-guide/policies.md
     - Develop programs: user-guide/developing-strategies.md
     - Run tool-calling agents: user-guide/tool-agents.md
-  - Memory and reuse:
+  - Memory:
+    - user-guide/memory/index.md
     - Choose and use memory: user-guide/using-memory.md
     - Memory backends:
       - user-guide/memory/spatial.md
@@ -154,14 +160,10 @@ nav:
       - user-guide/memory/video.md
       - user-guide/memory/action.md
       - user-guide/memory/lessons.md
+  - Skills:
+    - Overview: user-guide/skills.md
     - Build and use a skill library: user-guide/memory/skills.md
     - Develop and reuse program skills: user-guide/research-and-skills.md
-  - Evaluate and improve:
-    - user-guide/experiments.md
-    - Compare agents: benchmarking/index.md
-    - benchmarking/leaderboard.md
-    - user-guide/learning.md
-    - user-guide/campaigns.md
   - Deploy and operate:
     - user-guide/deployment.md
     - user-guide/studio.md

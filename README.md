@@ -27,8 +27,10 @@ Physical RSI connects agents acting in worlds with accumulated memory and reusab
 concepts; task guides explain execution, evaluation, learning, campaigns and deployment. Skills have their own
 navigation entry even though the library is implemented in the memory package. Architecture describes the
 implementation; historical designs are grouped under the internal archive.
-The public navigation has six sections: **Get started, Concepts, Guides, Examples and results, Developers,
-and Reference**. Home is the entry page. The full site adds **Internal** for current direction, decisions,
+The public navigation has five sections: **Get started, User Guides, Examples and results, Developers,
+and Reference**. Home is the entry page. **User Guides** groups concept explanations and practical guides under
+**Physical RSI, Worlds, Agents, Memory and Skills**, followed by deployment and operations.
+The full site adds **Internal** for current direction, decisions,
 research, experiments and historical records. `mkdocs.yml` owns the navigation; the public build inherits it
 and filters internal/excluded entries with `mkdocs/public_hook.py`.
 

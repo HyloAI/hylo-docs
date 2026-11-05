@@ -79,30 +79,37 @@ Small flows that change often can be Mermaid diagrams in a `mermaid` code block 
 
 ## Style
 
-### The concepts and the guides
+<span id="the-concepts-and-the-guides"></span>
+
+### User Guides organised by concept
 
 The five product concepts are **Physical RSI, Worlds, Agents, Memory and Skills**. Physical RSI connects the
-other four. Home introduces that relationship; Concepts defines it; each topic page explains its own capability.
-Skills have a separate navigation entry even though the library is implemented in the memory package.
+other four. Home introduces that relationship; User Guides groups explanations and practical guides by these
+five topics. Each topic starts with its concept page, followed by operational guides.
+Skills have their own topic even though the library is implemented in the memory package. Deployment and
+operations form a supporting section in User Guides.
 
 | Content | Responsibility |
 |---|---|
 | Home | a brief product introduction, the five concepts and starting points |
-| Concepts | how the five concepts relate; supporting command/config terms are secondary |
+| User Guides | concept explanations and concrete operations grouped by topic |
+| How Hylo fits together | how the five concepts relate; supporting command/config terms are secondary |
 | RSI | the improvement loop, what can change and how outcomes support those changes |
 | Worlds | scenes, robots, interactions and goal checks |
 | Agents | choosing policies, programs or tool calls |
 | Memory | observations and experience, storage, retrieval and data boundaries |
 | Skills | reusable task capabilities, applicability, verification and reuse |
-| Guides | concrete operations: run, evaluate, learn, improve, deploy and inspect |
+| Deploy and operate | deployment, Studio, stores, safety and security |
 | Examples and results | measured results, conditions, reproduction commands and failures |
 | Developers | architecture, extension tutorials and contributing |
 | Reference | exact CLI, configuration, contracts, formats and module API details |
 | Internal | current direction, decisions, research conclusions, experiment records and historical archive |
 
 Get started contains the minimal installation, first run, first improvement and task chooser. Optional runtime
-setup lives on its own page. Concepts explains a capability; Guides completes a task; Examples and results owns
-the measured evidence. Keep each fact in its primary page and link from the other contexts.
+setup lives on its own page. Within each User Guides topic, the concept page explains a capability and the
+operational guides complete tasks. Physical RSI contains experiments, benchmarking, learning and campaigns;
+Skills contains library management and program-skill development. Examples and results owns the measured
+evidence. Keep each fact in its primary page and link from the other contexts.
 
 Do not retell the full improvement loop or skill lifecycle at the start of each guide. State the page's task and
 link to the relevant concept. Distinguish robot capabilities, concrete library records and coding-agent instructions.
@@ -186,7 +193,7 @@ Each fact lives on one page. Other pages give one sentence and a link.
 
 | Fact | Home |
 |---|---|
-| the five concepts and their relationship | Concepts |
+| the five concepts and their relationship | How Hylo fits together in User Guides |
 | agent selection and control modes | Agents |
 | skill kinds, status, matching and application | Skill library |
 | measured example results | Showcase, generated from the example READMEs |

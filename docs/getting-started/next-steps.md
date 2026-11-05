@@ -16,7 +16,7 @@ After the [quickstart](quickstart.md), choose one path. Each guide states its ow
 
 ## Find explanations and evidence
 
-- [Concepts](concepts.md) explains Worlds, Agents, Memory, Skills and Physical RSI.
+- [User Guides](../user-guide/index.md) groups explanations and tasks by Physical RSI, Worlds, Agents, Memory and Skills.
 - [Examples and results](../showcase/index.md) records what has been measured and under which conditions.
 - [Optional environments](optional-environments.md) covers Studio, camera rendering and isolated simulator runtimes.
 - [Reference](../reference/index.md) contains exact CLI, configuration and API details.

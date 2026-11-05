@@ -49,6 +49,6 @@ stated task and observation conditions; it does not establish readiness on hardw
 
 ## Go deeper
 
-- [Guides](user-guide/index.md): complete a task from setup to recorded result.
+- [User Guides](user-guide/index.md): explore each concept and follow its practical guides.
 - [Architecture](design/overview.md): understand the components and extension boundaries.
 - [Reference](reference/index.md): look up commands, configuration, contracts and API details.
