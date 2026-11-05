@@ -29,53 +29,13 @@ Add one workcell file per robot or simulator. Set up the robot computer first
 
 ## A workcell config
 
-The template for a real arm:
-
-```yaml title="workcells/so101.yaml"
-name: so101
-env:
-  type: lerobot.robot
-  remote: {runtime: robot}              # named runtime from this machine's profile: the venv with lerobot + feetech
-  params:
-    robot:
-      type: so101_follower
-      params: {port: /dev/ttyACM0, id: arm1, max_relative_target: 10.0}
-    cameras: {}                         # e.g. {front: agentview, wrist: wrist} with configured cameras
-    action_low: [-110, -100, -100, -100, -160, 0]
-    action_high: [110, 100, 100, 100, 160, 100]
-    home: [0, -90, 90, 0, 0, 10]
-    home_steps: 90
-    control_hz: 30
-policy: {url: "ws://gpu-box:8000/hylo", protocol: hylo}   # protocol: the policy wire protocol (hylo or openpi)
-runtime:                                # realtime execution settings, not a named runtime
-  clock: wall                           # the default is virtual: always set wall on hardware
-  refill_steps: 10
-  max_hold_steps: 30
-  require_reset_confirm: true
-  verdict_timeout_s: 120
-safety: {max_delta: 8.0}
-image_every: 5
-max_steps: 900
-output_dir: runs/workcell
-```
-
-!!! warning "Set `clock: wall` on hardware"
-    The `runtime:` block's `clock` defaults to `virtual`. A real robot needs `clock: wall`.
-
-| What | Where | Notes |
-|---|---|---|
-| motor calibration | LeRobot's own calibration, keyed by the robot `id` (`arm1`) | made with LeRobot's tools on the robot computer; Hylo does not store it |
-| joint limits (the action box) | `env.params.action_low`, `action_high` | in the robot's units (degrees, gripper 0-100); required for a real robot |
-| per-step limit in the robot | `env.params.robot.params.max_relative_target` | LeRobot clamps each commanded change; keep it |
-| home pose | `env.params.home`, `home_steps` | reset moves there by interpolation; each step is clipped to the action box only and does not pass through the safety shield ([safety](../user-guide/safety.md#safety-on-robots)) |
-| cameras | `env.params.cameras` | robot camera name to observation name (`agentview`, `wrist`) |
-| control rate | `env.params.control_hz` | the wall-clock loop rate |
+Copy a template for your robot and set its port, identity, cameras, action limits and home pose.
+See [Workcell configuration](workcells.md) for the YAML example, field defaults and safety-limit settings.
 
 ## Safety limits
 
-`safety:` can only add guards or tighten limits. The action box itself comes from `action_low` and `action_high` in
-this file, so review changes there as safety changes. [Safety](../user-guide/safety.md#configure-guards) describes
-every guard.
+Review changes to robot action limits and safety settings before starting a workcell.
+See [workcell safety fields](workcells.md#safety-limits) and [Safety](../user-guide/safety.md).
 
 ## Machine-specific settings
 

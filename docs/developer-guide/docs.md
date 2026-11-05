@@ -28,13 +28,13 @@ uv run python docs/mkdocs/check_site.py docs/site-public --url-prefix /hylo-docs
 ## Generated pages
 
 `mkdocs.yml` owns the shared navigation. `mkdocs.public.yml` inherits it; the public hook removes Internal and
-excluded entries. Add a page to that shared navigation once. Generated module, command-family and workflow
+excluded entries. Add a page to that shared navigation once. Generated package, module, command-family and workflow
 pages are reached through their indexes and listed under `not_in_nav` so they do not overwhelm the sidebar.
 
 | Page | Source | Edit |
 |---|---|---|
 | User Guide, Benchmarking, Configuration, most of Developer Guide | `docs/` in hylo-docs | the Markdown file |
-| Developers > Plugin development/Internals; Reference > Interfaces and experiment schema | `harness/docs/`, copied at build time | the file in hylo-harness |
+| Developers > Plugin development/Interface notes/Internals; Reference > Configuration > Experiment configuration | `harness/docs/`, copied at build time | the file in hylo-harness |
 | [CLI Reference](../cli/index.md) | every `hylo` subcommand's `--help` | the argparse help in the code |
 | [Plugin catalogue](plugin-catalogue.md) | every installed plugin's contract, maturity and licence | the package's `hylo.meta` declaration |
 | [Examples](../getting-started/examples.md) | the header comment of each config in `bench/examples/` and `plugins/examples/` | the config file |
@@ -117,6 +117,19 @@ reproduction records. Keep each fact in its primary page and link from the other
 Do not retell the full improvement loop or skill lifecycle at the start of each guide. State the page's task and
 link to the relevant concept. Distinguish robot capabilities, concrete library records and coding-agent instructions.
 Historical design snapshots belong under the archive, with a link to the current documentation.
+
+### Reference organisation
+
+Reference has six lookup categories: CLI, Configuration, Worlds & tools, Python API, Data formats & schemas,
+and Plugin catalogue. Keep exact fields, defaults, signatures and current behaviour here.
+Python API is the single entry point for core contracts and the complete package index. Individual packages and
+modules stay out of the sidebar; link them from the indexes. Configuration pages own YAML field tables;
+Python API pages own the corresponding Python objects; format pages own generated schemas.
+
+Put setup steps in User Guides, extension explanations in Developers, runnable configurations in the Get started
+example catalogue, and historical assumptions or proposed features in Internal. Preserve published paths and
+anchors when changing navigation. When a guide and a reference share a table, keep it in the reference and link
+from the guide.
 
 ### Shared website wording
 

@@ -41,6 +41,9 @@ def harness_docs() -> None:
         # Source READMEs can retain published legacy documentation URLs.
         text = text.replace("../../showcase/", "../../developer-guide/validation/")
         note = f"!!! note \"Source\"\n    Maintained in hylo-harness: `docs/{rel}`.\n\n"
+        if rel.startswith("interfaces/"):
+            note += ("See the [interface notes index](../../developer-guide/interfaces.md) for design context and "
+                     "links to current APIs. Versioned proposals and prototype results below retain their original scope.\n\n")
         title, _, body = text.partition("\n")
         write(f"harness/{rel}", f"{title}\n\n{note}{body}", f)
     if not src.is_dir():
@@ -331,9 +334,9 @@ def package_api() -> None:
 
     curated = _curated()
 
-    index = ["# Packages", "",
+    index = ["# Package index", "",
              "The API of every Hylo package, generated from its docstrings and type annotations (mkdocstrings). "
-             "Plugins and leaf repositories should depend on the [core contracts](../index.md) only; the rest is "
+             "Plugins and leaf repositories should depend on the [core contracts](../contracts.md) only; the rest is "
              "documented by module so that it can be read, extended and debugged. Members whose names start with an underscore "
              "are left out.", ""]
     for repo, dirs in PACKAGES.items():
@@ -373,7 +376,7 @@ def package_api() -> None:
                           f'[Module API]({module_target(m)}){{ data-api-module="{m}" }}. '
                           f"{_first_line(src, m)}", ""]
                 detail = [f"# {m}", "", f"[Package: {dist}](../../packages/{dist}.md) · "
-                          "[Core contracts](../../index.md)", "", f"::: {m}", "    options:",
+                          "[Core contracts](../../contracts.md)", "", f"::: {m}", "    options:",
                           "      show_root_heading: true", "      heading_level: 2", "      show_submodules: false",
                           "      members_order: source", "      show_if_no_docstring: true", ""]
                 write(f"api/modules/{dist}/{m}.md", "\n".join(detail))

@@ -35,7 +35,10 @@ research, experiments and historical records. `mkdocs.yml` owns the navigation; 
 and filters internal/excluded entries with `mkdocs/public_hook.py`.
 
 Recorded case introductions live in `docs/use-cases/`; reproduction records under `docs/developer-guide/validation/` are generated from repository example
-READMEs. Public Research articles and benchmark results live at https://hyloai.github.io/research/, in the website repository. Edit those sources to change measured results. API package indexes link to generated module pages;
+READMEs. Public Research articles and benchmark results live at https://hyloai.github.io/research/, in the website repository. Edit those sources to change measured results. Reference groups CLI, Configuration, Worlds & tools, Python API, Data formats & schemas and the Plugin catalogue.
+Python API owns the package index; individual packages are reached from that index rather than expanded in navigation.
+Interface notes live under Developers, deployment setup under User Guides, and the example catalogue under Get started.
+API package indexes link to generated module pages;
 the CLI index links to generated command-family pages. New packages need entries in the generator's package list
 and the shared navigation. Keep implemented, measured and unrun capabilities distinct.
 

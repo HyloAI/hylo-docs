@@ -20,6 +20,7 @@ After the [quickstart](quickstart.md), choose one path. Each guide states its ow
 - [Use Cases](../use-cases/index.md) shows recorded workflows and reproduction entry points.
 - [Research](https://hyloai.github.io/research/) publishes experimental findings and benchmarks.
 - [Optional environments](optional-environments.md) covers Studio, camera rendering and isolated simulator runtimes.
+- [Example catalogue](examples.md) lists shipped experiment and campaign configurations.
 - [Reference](../reference/index.md) contains exact CLI, configuration and API details.
 
 ## Next

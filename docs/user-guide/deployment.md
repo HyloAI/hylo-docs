@@ -209,34 +209,8 @@ connect, when the prompt changes, or when the client sends `{"reset": true}`.
 
 ### Workcells
 
-`hylo serve workcell` takes `--config` (required), `--host` (default `127.0.0.1`), `--port` (default `8100`) and
-`--token`. Its config:
-
-| Field | Default | Meaning |
-|---|---|---|
-| `name` | required | the workcell's name; its run is `<output_dir>/workcell-<name>` |
-| `env` | required | any environment plugin, local or in another venv (`remote: {runtime: ...}`) |
-| `benchmark` | none | a benchmark whose `validation` tasks can be started by `task_id`; without it, free-form instructions only |
-| `policy` | none | default policy endpoint: `url`, `protocol` (`hylo` or `openpi`), `token`, `params` |
-| `runtime` | see below | the episode loop's timing |
-| `safety` | `{}` | safety shield config: `max_delta`, `guards` ([safety](safety.md#configure-guards)) |
-| `image_every` | `10` | keep every n-th camera frame in the trace; every frame is streamed live |
-| `split` | `deployment` | the split recorded episodes get |
-| `max_steps` | `600` | step limit for free-form instructions; benchmark tasks have their own |
-| `output_dir` | `runs/workcell` | where the run is written, relative to the working directory |
-
-The workcell's `runtime:` block holds the episode loop's timing. It takes the keys of an experiment's
-[`timing:`](experiments.md#timing-sync-and-realtime), with these differences:
-
-| Key | Workcell default | Meaning |
-|---|---|---|
-| `mode` | `realtime` | experiments default to `sync` |
-| `clock` | `virtual` | set `wall` on hardware ([step 2](#2-the-robot-computer)) |
-| `require_reset_confirm` | `false` | wait for the operator's `reset_done` before the move to home |
-| `verdict_timeout_s` | `0` | how long to wait for a verdict when the environment cannot judge success |
-| `record_privileged` | `true` | store privileged state, when the environment has any |
-
-`runtime.image_every` has no effect: the top-level `image_every` decides which frames the trace keeps.
+See [Workcell configuration](../configuration/workcells.md) for YAML fields, defaults, runtime settings and a
+complete example. [Deployments repository](../configuration/deployments-repo.md) explains how to keep those files.
 
 ### Workcell API
 

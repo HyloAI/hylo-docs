@@ -1,7 +1,16 @@
-# World reference
+# Worlds & tools
 
 Stage fields, robot packs, controls and goal checks. Start with [Create and run a world](../user-guide/worlds.md)
 for a complete example. [Worlds](../user-guide/worlds/overview.md) explains the concepts.
+
+| Look up | Section |
+|---|---|
+| Entity fields, revisions and storage | [Stages](#stages) |
+| Supported robots and controls | [Robot packs](#robot-packs) |
+| Actions, receipts and generation checks | [Actions](#running-a-world) |
+| Goal predicates and failure reasons | [Goal checks](#checking-goals) |
+| Images, depth, segmentation and export | [Cameras and data](#cameras-and-data) |
+| Human entities and routes | [People](#people) |
 
 ## Stages
 
@@ -16,7 +25,7 @@ A stage is a list of entities, each with a pose and one kind of content:
 | `camera` | field of view and image size; it looks along its own −z axis (`look_at` builds a pose) |
 | `light`, `human` | a light; a walking person with a route, speed and height |
 
-??? example "Two entities of the stage in the picture above, as stored"
+??? example "Two stored stage entities"
 
     ```json
     {"id": "panda", "parent": null, "pose": {"pos": [0.0, 0.0, 0.4], "quat": [1.0, 0.0, 0.0, 0.0]}, "locked": false,

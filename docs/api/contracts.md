@@ -3,7 +3,7 @@
 Every plugin group's contract lives in hylo-core, so a plugin's contract comes from hylo-core alone. This page lists what a
 plugin must provide and the data that passes between the episode loop, environments and agents. The
 [plugin system](../harness/plugin-system.md) explains how plugins are registered; the
-[interfaces](../harness/interfaces/environment.md) explain the design behind each contract; the
+[interface notes](../developer-guide/interfaces.md) explain the design behind each contract; the
 [plugin catalogue](../developer-guide/plugin-catalogue.md) lists what implements them.
 
 ## Environments
