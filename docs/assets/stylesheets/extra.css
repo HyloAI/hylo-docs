@@ -83,3 +83,32 @@
   transform: rotate(-45deg);
 }
 .hylo-toc-group[open] > .hylo-toc-summary .hylo-toc-chevron::before { transform: rotate(45deg); }
+
+/* Reference details use quiet disclosure rows instead of callout styling. */
+.md-typeset details.hylo-content-details {
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: .2rem;
+  box-shadow: none;
+  font-size: inherit;
+}
+.md-typeset .hylo-content-details > summary {
+  background: transparent;
+  padding-left: .7rem;
+}
+.md-typeset .hylo-content-details > summary::before { display: none; }
+.md-typeset .hylo-content-details > summary > :is(h2, h3, h4, h5, h6) {
+  display: inline;
+  margin: 0;
+  font-size: .8rem;
+  font-weight: 600;
+  letter-spacing: normal;
+  text-transform: none;
+  overflow-wrap: anywhere;
+}
+.md-typeset .hylo-content-details > summary:focus-visible {
+  outline: 2px solid var(--md-accent-fg-color);
+  outline-offset: 2px;
+}
+@media print {
+  .md-typeset details.hylo-content-details > :not(summary) { display: block !important; }
+}

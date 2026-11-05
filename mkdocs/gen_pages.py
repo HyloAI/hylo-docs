@@ -76,11 +76,11 @@ def cli_reference() -> None:
         detail = [f"# hylo {c}", "", description, "", "[All commands](../index.md)",
                   "", "```text", text, "```"]
         # Keep existing command anchors useful without repeating the full help on the index.
-        lines += ["", f"## hylo {c}", "", f"[{description}](commands/{c}.md)"]
+        lines += ["", f"## hylo {c} {{ .hylo-collapsible }}", "", f"[{description}](commands/{c}.md)"]
         usage = text.split("\n\n")[0]
         subs = re.search(r"\{([a-z,_-]+)\}", usage)
         for sub in (subs.group(1).split(",") if subs else []):
-            detail += ["", f"## hylo {c} {sub}", "", "```text", _help(c, sub), "```"]
+            detail += ["", f"## hylo {c} {sub} {{ .hylo-collapsible }}", "", "```text", _help(c, sub), "```"]
             lines += ["", f"### hylo {c} {sub}", "",
                       f"[Arguments and defaults](commands/{c}.md#hylo-{c}-{sub})."]
         write(f"cli/commands/{c}.md", "\n".join(detail) + "\n")
@@ -150,13 +150,15 @@ def examples() -> None:
         if not d.is_dir():
             lines += [f"## {title}", "", missing(repo)]
             continue
-        lines += [f"## {title}", "", "| Example | What it shows |", "|---|---|"]
-        for f in sorted(d.glob("*.yaml")):
-            lines.append(f"| [`{f.stem}`](#{repo}-{f.stem.replace('_', '-')}) | {_header(f) or '-'} |")
-        lines.append("")
+        lines += [f"## {title}", "", "Expand an example for its description, command and configuration.", ""]
         for f in sorted(d.glob("*.yaml")):
             path = f"{repo}/{sub}/{f.name}"
-            lines += [f"### {f.stem} {{ #{repo}-{f.stem.replace('_', '-')} }}", "",
+            # Config comments use placeholders such as <dataset>. Keep them as text,
+            # while preserving inline Markdown code, rather than creating HTML tags.
+            description = re.sub(r"(`+).*?\1|[<>]",
+                                 lambda m: {"<": "&lt;", ">": "&gt;"}.get(m[0], m[0]), _header(f))
+            lines += [f"### {f.stem} {{ #{repo}-{f.stem.replace('_', '-')} .hylo-collapsible }}", "",
+                      description, "",
                       f"```bash\nuv run {cmd.format(path=path)}\n```", "",
                       f'??? example "{path}"', "", "    ```yaml",
                       *[f"    {l}" for l in f.read_text().rstrip().splitlines()], "    ```", ""]
@@ -273,7 +275,7 @@ def formats() -> None:
         except Exception as exc:  # noqa: BLE001 - one missing package must not stop the docs
             lines += ["", f"## {name}", "", f"Not available here: {exc}"]
             continue
-        lines += ["", f"## {name}", "", f"`{module}.{cls}` (`hylo schema {name}`)", "",
+        lines += ["", f"## {name} {{ .hylo-collapsible }}", "", f"`{module}.{cls}` (`hylo schema {name}`)", "",
                   f'??? abstract "JSON Schema"', "", "    ```json",
                   *[f"    {l}" for l in json.dumps(schema, indent=2).splitlines()], "    ```"]
     write("api/formats.md", "\n".join(lines) + "\n")

@@ -48,6 +48,7 @@ extra_css:
 
 extra_javascript:
   - assets/javascripts/reference-links.js
+  - assets/javascripts/content-details.js
   - assets/javascripts/toc.js
 
 hooks:

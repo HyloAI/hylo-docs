@@ -35,6 +35,12 @@ The page table of contents shows its main sections first. Nested headings are co
 controls in `overrides/partials/toc-item.html`; section titles remain links. `assets/javascripts/toc.js` expands
 the matching groups when a reader follows a section anchor, including in the mobile navigation.
 
+Examples, CLI subcommand help and schemas mark detailed headings with `.hylo-collapsible` in the generator.
+`assets/javascripts/content-details.js` folds those sections and individual API members into disclosure rows,
+preserving heading IDs and opening ancestors for direct links and search results. The example catalogue keeps
+each description beside its command instead of repeating it in a large table. Guide steps and page overviews
+remain expanded; the full reference content is also available without JavaScript.
+
 | Page | Source | Edit |
 |---|---|---|
 | User Guide, Benchmarking, Configuration, most of Developer Guide | `docs/` in hylo-docs | the Markdown file |
