@@ -1,0 +1,5603 @@
+<!DOCTYPE html><html lang="en" class="no-js"><head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Agents act in worlds, learn from experience and reuse verified skills. Hylo connects those capabilities through a measured improvement loop.">
+      
+      
+      
+        <link rel="canonical" href="https://hyloai.github.io/hylo-docs/api/packages/hylo-core/">
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/logo.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.0">
+    
+    
+      
+        <title>Hylo core - Hylo</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,700,700i%7CJetBrains+Mono:400,400i,700,700i&amp;display=fallback">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  <link href="../../../assets/stylesheets/glightbox.min.css" rel="stylesheet"><script src="../../../assets/javascripts/glightbox.min.js"></script><style id="glightbox-style">
+            html.glightbox-open { overflow: initial; height: 100%; }
+            .gslide-title { margin-top: 0px; user-select: text; }
+            .gslide-desc { color: #666; user-select: text; }
+            .gslide-image img { background: white; }
+            .gscrollbar-fixer { padding-right: 15px; }
+            .gdesc-inner { font-size: 0.75rem; }
+            body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color); }
+            body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color); }
+            body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color); }
+        </style></head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#hylo-core" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="https://hyloai.github.io/" title="Hylo" class="md-header__button md-logo" aria-label="Hylo" data-md-component="logo">
+      
+  <img src="../../../assets/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"></path></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Hylo
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Hylo core
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    <div class="hylo-global-links" aria-label="Hylo website">
+      <a href="https://hyloai.github.io/">Home</a>
+      <a href="https://hyloai.github.io/research/">Research</a>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo" aria-label="Switch to light mode" type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden="">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9zM20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12zm-9.15 3.96h2.3L12 9z"></path></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom" aria-label="Switch to dark mode" type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden="">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"></path></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom" aria-label="Switch to system preference" type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Switch to system preference" for="__palette_0" hidden="">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"></path></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required="">
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard="" data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"></path></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix="">
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/HyloAI/hylo-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"></path></svg>
+  </div>
+  <div class="md-source__repository">
+    HyloAI/hylo-docs
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../getting-started/installation/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Get started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../user-guide/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Guides
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../design/overview/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Developers
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../reference/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="https://hyloai.github.io/" title="Hylo" class="md-nav__button md-logo" aria-label="Hylo" data-md-component="logo">
+      
+  <img src="../../../assets/logo.svg" alt="logo">
+
+    </a>
+    Hylo
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/HyloAI/hylo-docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"></path></svg>
+  </div>
+  <div class="md-source__repository">
+    HyloAI/hylo-docs
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix="">
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2">
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Get started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Get started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../getting-started/installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../getting-started/quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    First run
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../getting-started/first-improvement/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    First improvement
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../getting-started/next-steps/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Next steps
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../getting-started/optional-environments/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Optional environments
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../getting-started/examples/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Examples
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3">
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../user-guide/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guides
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../user-guide/overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Concepts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3">
+        
+          
+          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Physical RSI
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Physical RSI
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../physical-rsi/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../user-guide/experiments/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Experiments
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3_3">
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../benchmarking/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Benchmarking
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3_3_3" id="__nav_3_3_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Benchmarking
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../benchmarking/leaderboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Compare agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../user-guide/learning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Learning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../user-guide/campaigns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Campaigns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_4">
+        
+          
+          <label class="md-nav__link" for="__nav_3_4" id="__nav_3_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Worlds
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Worlds
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../user-guide/worlds/overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../user-guide/worlds/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Create a world
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../user-guide/worlds/examples/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Demos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_5">
+        
+          
+          <label class="md-nav__link" for="__nav_3_5" id="__nav_3_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agents
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Agents
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../user-guide/agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../user-guide/policies/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Policies
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../user-guide/developing-strategies/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Programs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../user-guide/tool-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tool agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../user-guide/agents/robot-control/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Demos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_6">
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../user-guide/memory/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Memory
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3_6" id="__nav_3_6_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Memory
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../user-guide/using-memory/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quickstart
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_6_3">
+        
+          
+          <label class="md-nav__link" for="__nav_3_6_3" id="__nav_3_6_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Backends
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_6_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_6_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Backends
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../user-guide/memory/spatial/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Spatial
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../user-guide/memory/events/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Events
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../user-guide/memory/video/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Video
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../user-guide/memory/action/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Actions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../user-guide/memory/lessons/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lessons
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_7">
+        
+          
+          <label class="md-nav__link" for="__nav_3_7" id="__nav_3_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Skills
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Skills
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../user-guide/skills/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../user-guide/memory/skills/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Skill library
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../user-guide/research-and-skills/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Program skills
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../user-guide/skills/development-and-reuse/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Demos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_8">
+        
+          
+          <label class="md-nav__link" for="__nav_3_8" id="__nav_3_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Operations
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Operations
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../user-guide/deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deployment
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../configuration/deployments-repo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deployments repository
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../user-guide/studio/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Studio
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../user-guide/store/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Store
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../user-guide/safety/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Safety
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../user-guide/security/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Security
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4">
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Developers
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Developers
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../design/overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2">
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../developer-guide/validation/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Validation
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Validation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../developer-guide/validation/core/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Core
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../developer-guide/validation/runtime/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Runtime
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../developer-guide/validation/plugins/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Plugins
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../developer-guide/validation/instruments/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Instruments
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../developer-guide/validation/video-memory/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Video memory
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../developer-guide/validation/records/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Records
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../developer-guide/execution-model/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Execution model
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_4">
+        
+          
+          <label class="md-nav__link" for="__nav_4_4" id="__nav_4_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Extensions
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Extensions
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../developer-guide/adding-a-policy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Add a policy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../developer-guide/adding-an-environment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Add an environment
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../developer-guide/adding-a-learner/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Add a learner
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../developer-guide/adding-a-generator/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Add a generator
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../developer-guide/program-repair/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Program repair
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_5">
+        
+          
+          <label class="md-nav__link" for="__nav_4_5" id="__nav_4_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Plugins
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Plugins
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../harness/extending/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Extending
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../harness/plugin-system/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Plugin system
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_6">
+        
+          
+          <label class="md-nav__link" for="__nav_4_6" id="__nav_4_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Interfaces
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Interfaces
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../developer-guide/interfaces/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Interface notes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../harness/interfaces/environment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Environment
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../harness/interfaces/agent/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../harness/interfaces/reasoner/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reasoner
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../harness/interfaces/memory/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Memory
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../harness/interfaces/benchmark/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Benchmark
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../harness/interfaces/improvement/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Improvement
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_7">
+        
+          
+          <label class="md-nav__link" for="__nav_4_7" id="__nav_4_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Internals
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Internals
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../harness/execution-lifecycle/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Execution lifecycle
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../harness/dependency-graph/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dependency graph
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_8">
+        
+          
+          <label class="md-nav__link" for="__nav_4_8" id="__nav_4_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contributing
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Contributing
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../developer-guide/contributing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contributing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../developer-guide/testing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Testing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../developer-guide/troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Troubleshooting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../developer-guide/versioning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Compatibility
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5">
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../reference/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_3">
+        
+          
+          <label class="md-nav__link" for="__nav_5_3" id="__nav_5_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Configuration
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../harness/experiment-schema/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Experiments
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../configuration/campaigns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Campaigns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../configuration/profiles/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Profiles
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../configuration/environment-variables/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Environment variables
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../benchmarking/protocols/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Protocols
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../configuration/workcells/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Workcells
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/worlds/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Worlds &amp; tools
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/memory/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Memory &amp; skills
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_6">
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Python API
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5_6" id="__nav_5_6_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Python API
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contracts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Core contracts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../kernel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Episode loop
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../artifacts-and-store/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Artifacts and store
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Package index
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../formats/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data formats
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../developer-guide/plugin-catalogue/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Plugin catalogue
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+      
+        
+
+<li class="md-nav__item">
+  
+    
+  <a href="#hylocore" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hylo.core
+      
+    </span>
+  </a>
+
+  
+</li>
+      
+        
+
+<li class="md-nav__item">
+  
+    
+  <a href="#hylocoreagent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hylo.core.agent
+      
+    </span>
+  </a>
+
+  
+</li>
+      
+        
+
+<li class="md-nav__item">
+  
+    
+  <a href="#hylocoreartifact" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hylo.core.artifact
+      
+    </span>
+  </a>
+
+  
+</li>
+      
+        
+
+<li class="md-nav__item">
+  
+    
+  <a href="#hylocorebenchmark" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hylo.core.benchmark
+      
+    </span>
+  </a>
+
+  
+</li>
+      
+        
+
+<li class="md-nav__item">
+  
+    
+  <a href="#hylocorecli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hylo.core.cli
+      
+    </span>
+  </a>
+
+  
+</li>
+      
+        
+
+<li class="md-nav__item">
+  
+    
+  <a href="#hylocorecodec" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hylo.core.codec
+      
+    </span>
+  </a>
+
+  
+</li>
+      
+        
+
+<li class="md-nav__item">
+  
+    
+  <a href="#hylocorecompat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hylo.core.compat
+      
+    </span>
+  </a>
+
+  
+</li>
+      
+        
+
+<li class="md-nav__item">
+  
+    
+  <a href="#hylocoreconfig" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hylo.core.config
+      
+    </span>
+  </a>
+
+  
+</li>
+      
+        
+
+<li class="md-nav__item">
+  
+    
+  <a href="#hylocorecontract" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hylo.core.contract
+      
+    </span>
+  </a>
+
+  
+</li>
+      
+        
+
+<li class="md-nav__item">
+  
+    
+  <a href="#hylocoredatasource" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hylo.core.datasource
+      
+    </span>
+  </a>
+
+  
+</li>
+      
+        
+
+<li class="md-nav__item">
+  
+    
+  <a href="#hylocoredeployment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hylo.core.deployment
+      
+    </span>
+  </a>
+
+  
+</li>
+      
+        
+
+<li class="md-nav__item">
+  
+    
+  <a href="#hylocoreenv" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hylo.core.env
+      
+    </span>
+  </a>
+
+  
+</li>
+      
+        
+
+<li class="md-nav__item">
+  
+    
+  <a href="#hylocoreepisode_memory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hylo.core.episode_memory
+      
+    </span>
+  </a>
+
+  
+</li>
+      
+        
+
+<li class="md-nav__item">
+  
+    
+  <a href="#hylocoreerrors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hylo.core.errors
+      
+    </span>
+  </a>
+
+  
+</li>
+      
+        
+
+<li class="md-nav__item">
+  
+    
+  <a href="#hylocoreevents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hylo.core.events
+      
+    </span>
+  </a>
+
+  
+</li>
+      
+        
+
+<li class="md-nav__item">
+  
+    
+  <a href="#hylocoreexperience" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hylo.core.experience
+      
+    </span>
+  </a>
+
+  
+</li>
+      
+        
+
+<li class="md-nav__item">
+  
+    
+  <a href="#hylocoreimprovement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hylo.core.improvement
+      
+    </span>
+  </a>
+
+  
+</li>
+      
+        
+
+<li class="md-nav__item">
+  
+    
+  <a href="#hylocoreinstrument" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hylo.core.instrument
+      
+    </span>
+  </a>
+
+  
+</li>
+      
+        
+
+<li class="md-nav__item">
+  
+    
+  <a href="#hylocorekernel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hylo.core.kernel
+      
+    </span>
+  </a>
+
+  
+</li>
+      
+        
+
+<li class="md-nav__item">
+  
+    
+  <a href="#hylocorelearning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hylo.core.learning
+      
+    </span>
+  </a>
+
+  
+</li>
+      
+        
+
+<li class="md-nav__item">
+  
+    
+  <a href="#hylocorememory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hylo.core.memory
+      
+    </span>
+  </a>
+
+  
+</li>
+      
+        
+
+<li class="md-nav__item">
+  
+    
+  <a href="#hylocoreplugins" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hylo.core.plugins
+      
+    </span>
+  </a>
+
+  
+</li>
+      
+        
+
+<li class="md-nav__item">
+  
+    
+  <a href="#hylocorepolicy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hylo.core.policy
+      
+    </span>
+  </a>
+
+  
+</li>
+      
+        
+
+<li class="md-nav__item">
+  
+    
+  <a href="#hylocoreprofile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hylo.core.profile
+      
+    </span>
+  </a>
+
+  
+</li>
+      
+        
+
+<li class="md-nav__item">
+  
+    
+  <a href="#hylocorereasoning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hylo.core.reasoning
+      
+    </span>
+  </a>
+
+  
+</li>
+      
+        
+
+<li class="md-nav__item">
+  
+    
+  <a href="#hylocoreregistry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hylo.core.registry
+      
+    </span>
+  </a>
+
+  
+</li>
+      
+        
+
+<li class="md-nav__item">
+  
+    
+  <a href="#hylocoreremote" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hylo.core.remote
+      
+    </span>
+  </a>
+
+  
+</li>
+      
+        
+
+<li class="md-nav__item">
+  
+    
+  <a href="#hylocoreremoteagent_client" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hylo.core.remote.agent_client
+      
+    </span>
+  </a>
+
+  
+</li>
+      
+        
+
+<li class="md-nav__item">
+  
+    
+  <a href="#hylocoreremoteagent_server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hylo.core.remote.agent_server
+      
+    </span>
+  </a>
+
+  
+</li>
+      
+        
+
+<li class="md-nav__item">
+  
+    
+  <a href="#hylocoreremoteclient" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hylo.core.remote.client
+      
+    </span>
+  </a>
+
+  
+</li>
+      
+        
+
+<li class="md-nav__item">
+  
+    
+  <a href="#hylocoreremotehandlers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hylo.core.remote.handlers
+      
+    </span>
+  </a>
+
+  
+</li>
+      
+        
+
+<li class="md-nav__item">
+  
+    
+  <a href="#hylocoreremoteprotocol" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hylo.core.remote.protocol
+      
+    </span>
+  </a>
+
+  
+</li>
+      
+        
+
+<li class="md-nav__item">
+  
+    
+  <a href="#hylocoreremoteserver" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hylo.core.remote.server
+      
+    </span>
+  </a>
+
+  
+</li>
+      
+        
+
+<li class="md-nav__item">
+  
+    
+  <a href="#hylocoreremotewire" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hylo.core.remote.wire
+      
+    </span>
+  </a>
+
+  
+</li>
+      
+        
+
+<li class="md-nav__item">
+  
+    
+  <a href="#hylocoreremoteworkcell" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hylo.core.remote.workcell
+      
+    </span>
+  </a>
+
+  
+</li>
+      
+        
+
+<li class="md-nav__item">
+  
+    
+  <a href="#hylocoreremotews" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hylo.core.remote.ws
+      
+    </span>
+  </a>
+
+  
+</li>
+      
+        
+
+<li class="md-nav__item">
+  
+    
+  <a href="#hylocorerobot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hylo.core.robot
+      
+    </span>
+  </a>
+
+  
+</li>
+      
+        
+
+<li class="md-nav__item">
+  
+    
+  <a href="#hylocoresafety" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hylo.core.safety
+      
+    </span>
+  </a>
+
+  
+</li>
+      
+        
+
+<li class="md-nav__item">
+  
+    
+  <a href="#hylocorescene" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hylo.core.scene
+      
+    </span>
+  </a>
+
+  
+</li>
+      
+        
+
+<li class="md-nav__item">
+  
+    
+  <a href="#hylocorescorecard" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hylo.core.scorecard
+      
+    </span>
+  </a>
+
+  
+</li>
+      
+        
+
+<li class="md-nav__item">
+  
+    
+  <a href="#hylocorescoring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hylo.core.scoring
+      
+    </span>
+  </a>
+
+  
+</li>
+      
+        
+
+<li class="md-nav__item">
+  
+    
+  <a href="#hylocoreseal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hylo.core.seal
+      
+    </span>
+  </a>
+
+  
+</li>
+      
+        
+
+<li class="md-nav__item">
+  
+    
+  <a href="#hylocorestage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hylo.core.stage
+      
+    </span>
+  </a>
+
+  
+</li>
+      
+        
+
+<li class="md-nav__item">
+  
+    
+  <a href="#hylocorestage_cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hylo.core.stage_cli
+      
+    </span>
+  </a>
+
+  
+</li>
+      
+        
+
+<li class="md-nav__item">
+  
+    
+  <a href="#hylocorestore" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hylo.core.store
+      
+    </span>
+  </a>
+
+  
+</li>
+      
+        
+
+<li class="md-nav__item">
+  
+    
+  <a href="#hylocoretask" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hylo.core.task
+      
+    </span>
+  </a>
+
+  
+</li>
+      
+        
+
+<li class="md-nav__item">
+  
+    
+  <a href="#hylocoretooling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hylo.core.tooling
+      
+    </span>
+  </a>
+
+  
+</li>
+      
+        
+
+<li class="md-nav__item">
+  
+    
+  <a href="#hylocoretrace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hylo.core.trace
+      
+    </span>
+  </a>
+
+  
+</li>
+      
+        
+
+<li class="md-nav__item">
+  
+    
+  <a href="#hylocoretypes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hylo.core.types
+      
+    </span>
+  </a>
+
+  
+</li>
+      
+        
+
+<li class="md-nav__item">
+  
+    
+  <a href="#hylotesting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hylo.testing
+      
+    </span>
+  </a>
+
+  
+</li>
+      
+        
+
+<li class="md-nav__item">
+  
+    
+  <a href="#hylotestingconformance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hylo.testing.conformance
+      
+    </span>
+  </a>
+
+  
+</li>
+      
+        
+
+<li class="md-nav__item">
+  
+    
+  <a href="#hylotestinglearners" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hylo.testing.learners
+      
+    </span>
+  </a>
+
+  
+</li>
+      
+        
+
+<li class="md-nav__item">
+  
+    
+  <a href="#hylotestingpoint_reach" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hylo.testing.point_reach
+      
+    </span>
+  </a>
+
+  
+</li>
+      
+        
+
+<li class="md-nav__item">
+  
+    
+  <a href="#hylotestingsetup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hylo.testing.setup
+      
+    </span>
+  </a>
+
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<!-- generated by mkdocs/gen_pages.py at build time; edit the source, not this page --><h1 id="hylo-core">hylo-core<a class="headerlink" href="#hylo-core" title="Permanent link">¶</a></h1>
+<p>Hylo core: contracts, kernel, safety shield, events, trace, registry, config, remote env protocol</p>
+<p>Repository hylo-harness, <code>packages/hylo-core</code>. Licence: Apache-2.0. Depends on: <code>numpy&gt;=1.24</code>, <code>pydantic&gt;=2.7</code>, <code>pyyaml&gt;=6</code>, <code>websockets&gt;=13</code>, <code>msgpack&gt;=1.0</code>.</p>
+<details class="info">
+<summary>Registered entry points</summary>
+<table>
+<thead>
+<tr>
+<th>Group</th>
+<th>Name</th>
+<th>Object</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>agents</td>
+<td><code>remote</code></td>
+<td><code>hylo.core.remote.agent_client:RemoteAgent</code></td>
+</tr>
+<tr>
+<td>agents</td>
+<td><code>remote.ws</code></td>
+<td><code>hylo.core.remote.ws:WSAgent</code></td>
+</tr>
+<tr>
+<td>commands</td>
+<td><code>profile</code></td>
+<td><code>hylo.core.profile:main</code></td>
+</tr>
+<tr>
+<td>commands</td>
+<td><code>seal</code></td>
+<td><code>hylo.core.seal:main</code></td>
+</tr>
+<tr>
+<td>commands</td>
+<td><code>stage</code></td>
+<td><code>hylo.core.stage_cli:main</code></td>
+</tr>
+<tr>
+<td>commands</td>
+<td><code>store</code></td>
+<td><code>hylo.core.store:main</code></td>
+</tr>
+<tr>
+<td>envs</td>
+<td><code>remote.ws</code></td>
+<td><code>hylo.core.remote.ws:WSEnvironment</code></td>
+</tr>
+<tr>
+<td>envs</td>
+<td><code>testing.point_reach</code></td>
+<td><code>hylo.testing.point_reach:PointReachEnv</code></td>
+</tr>
+<tr>
+<td>guards</td>
+<td><code>delta_limit</code></td>
+<td><code>hylo.core.safety:DeltaLimitGuard</code></td>
+</tr>
+<tr>
+<td>guards</td>
+<td><code>keep_out</code></td>
+<td><code>hylo.core.safety:KeepOutGuard</code></td>
+</tr>
+<tr>
+<td>guards</td>
+<td><code>norm_limit</code></td>
+<td><code>hylo.core.safety:NormLimitGuard</code></td>
+</tr>
+<tr>
+<td>guards</td>
+<td><code>workspace</code></td>
+<td><code>hylo.core.safety:workspace_guard</code></td>
+</tr>
+<tr>
+<td>learners</td>
+<td><code>testing.summary</code></td>
+<td><code>hylo.testing.learners:SummaryLearner</code></td>
+</tr>
+</tbody>
+</table>
+</details>
+<table>
+<thead>
+<tr>
+<th>Module</th>
+<th>Summary</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="../../modules/hylo-core/hylo.core/"><code>hylo.core</code></a></td>
+<td>Hylo core: contracts, execution kernel, safety shield, events, trace, registry, config</td>
+</tr>
+<tr>
+<td><a href="../../contracts/#hylo.core.agent"><code>hylo.core.agent</code></a></td>
+<td>Agent contract. The kernel only knows <code>Agent</code>; reasoners, planners, policies, world models and</td>
+</tr>
+<tr>
+<td><a href="../../artifacts-and-store/#hylo.core.artifact"><code>hylo.core.artifact</code></a></td>
+<td>Derived artifacts (RFC-0004): everything the system learns is a versioned, digest-pinned directory with provenance</td>
+</tr>
+<tr>
+<td><a href="../../contracts/#hylo.core.benchmark"><code>hylo.core.benchmark</code></a></td>
+<td>Benchmark = versioned set of TaskSpecs + evaluation protocol (splits, seeds, episodes); the <code>benchmarks</code> plugin</td>
+</tr>
+<tr>
+<td><a href="../../modules/hylo-core/hylo.core.cli/"><code>hylo.core.cli</code></a></td>
+<td><code>hylo</code>: the command dispatcher. Each package registers its own subcommands</td>
+</tr>
+<tr>
+<td><a href="../../modules/hylo-core/hylo.core.codec/"><code>hylo.core.codec</code></a></td>
+<td>JSON-safe encoding for numpy arrays and arbitrary payloads. No pickle anywhere (RPent's socket RPC</td>
+</tr>
+<tr>
+<td><a href="../../modules/hylo-core/hylo.core.compat/"><code>hylo.core.compat</code></a></td>
+<td>Bind-time compatibility check between an Agent and an Environment</td>
+</tr>
+<tr>
+<td><a href="../../config/#hylo.core.config"><code>hylo.core.config</code></a></td>
+<td>Versioned experiment configuration and run manifest (design/experiment-schema.md)</td>
+</tr>
+<tr>
+<td><a href="../../modules/hylo-core/hylo.core.contract/"><code>hylo.core.contract</code></a></td>
+<td>Base class and field types for data contracts</td>
+</tr>
+<tr>
+<td><a href="../../modules/hylo-core/hylo.core.datasource/"><code>hylo.core.datasource</code></a></td>
+<td>External data contracts (RFC-0004): demonstrations, videos and other robots' logs</td>
+</tr>
+<tr>
+<td><a href="../../artifacts-and-store/#hylo.core.deployment"><code>hylo.core.deployment</code></a></td>
+<td>The active version of an improvement campaign, as a file (hylo.active/v0.1)</td>
+</tr>
+<tr>
+<td><a href="../../contracts/#hylo.core.env"><code>hylo.core.env</code></a></td>
+<td>Environment contract. An Environment = Simulator + Task logic behind reset/step</td>
+</tr>
+<tr>
+<td><a href="../../modules/hylo-core/hylo.core.episode_memory/"><code>hylo.core.episode_memory</code></a></td>
+<td>Observable episode-memory contracts. No simulator handles, evaluators or model dependencies</td>
+</tr>
+<tr>
+<td><a href="../../modules/hylo-core/hylo.core.errors/"><code>hylo.core.errors</code></a></td>
+<td>Error taxonomy (semantics follow inspect-robots errors.py and vla-eval EpisodeError.phase)</td>
+</tr>
+<tr>
+<td><a href="../../kernel/#hylo.core.events"><code>hylo.core.events</code></a></td>
+<td>Typed events and a synchronous event bus</td>
+</tr>
+<tr>
+<td><a href="../../modules/hylo-core/hylo.core.experience/"><code>hylo.core.experience</code></a></td>
+<td>Experience contracts (RFC-0003): action memory, lessons and skills. Contracts and protocols only; stores live in</td>
+</tr>
+<tr>
+<td><a href="../../contracts/#hylo.core.improvement"><code>hylo.core.improvement</code></a></td>
+<td>The <code>generators</code> plugin contract (hylo.generator) and the records of an improvement campaign</td>
+</tr>
+<tr>
+<td><a href="../../contracts/#hylo.core.instrument"><code>hylo.core.instrument</code></a></td>
+<td>Instruments (RFC-0004): learned components that measure or label instead of act</td>
+</tr>
+<tr>
+<td><a href="../../kernel/#hylo.core.kernel"><code>hylo.core.kernel</code></a></td>
+<td>Execution kernel: the one episode loop, used for evaluation, learning rollouts and deployment</td>
+</tr>
+<tr>
+<td><a href="../../contracts/#hylo.core.learning"><code>hylo.core.learning</code></a></td>
+<td>Learning pipeline contracts (RFC-0004): data source -&gt; labeler -&gt; learner -&gt; sealed artifact -&gt; candidate -&gt; gate</td>
+</tr>
+<tr>
+<td><a href="../../modules/hylo-core/hylo.core.memory/"><code>hylo.core.memory</code></a></td>
+<td>Memory contracts (schema from our research notes)</td>
+</tr>
+<tr>
+<td><a href="../../config/#hylo.core.plugins"><code>hylo.core.plugins</code></a></td>
+<td>Contract versions and plugin metadata (RFC-0005 part 4)</td>
+</tr>
+<tr>
+<td><a href="../../contracts/#hylo.core.policy"><code>hylo.core.policy</code></a></td>
+<td>Policies (plugin group "policies"): action-chunk generators that agents run, steer and compose</td>
+</tr>
+<tr>
+<td><a href="../../config/#hylo.core.profile"><code>hylo.core.profile</code></a></td>
+<td>Execution profiles (hylo.profile/v0.1): where components run on this machine, kept out of experiment configs</td>
+</tr>
+<tr>
+<td><a href="../../contracts/#hylo.core.reasoning"><code>hylo.core.reasoning</code></a></td>
+<td>Reasoning plugin contracts, one per role (each its own plugin group and version):</td>
+</tr>
+<tr>
+<td><a href="../../config/#hylo.core.registry"><code>hylo.core.registry</code></a></td>
+<td>Plugin registry: explicit registration, <code>module:attr</code> references (vla-eval style) and</td>
+</tr>
+<tr>
+<td><a href="../../modules/hylo-core/hylo.core.remote/"><code>hylo.core.remote</code></a></td>
+<td></td>
+</tr>
+<tr>
+<td><a href="../../modules/hylo-core/hylo.core.remote.agent_client/"><code>hylo.core.remote.agent_client</code></a></td>
+<td>RemoteAgent: an Agent proxy for an AgentServer subprocess (e.g. a VLA in its own torch venv)</td>
+</tr>
+<tr>
+<td><a href="../../modules/hylo-core/hylo.core.remote.agent_server/"><code>hylo.core.remote.agent_server</code></a></td>
+<td>AgentServer: hosts one Agent in its own process (and venv), mirroring the EnvServer</td>
+</tr>
+<tr>
+<td><a href="../../modules/hylo-core/hylo.core.remote.client/"><code>hylo.core.remote.client</code></a></td>
+<td>RemoteEnvironment: an Environment proxy for an EnvServer subprocess</td>
+</tr>
+<tr>
+<td><a href="../../modules/hylo-core/hylo.core.remote.handlers/"><code>hylo.core.remote.handlers</code></a></td>
+<td>Transport-agnostic request dispatch for the EnvServer and AgentServer protocols</td>
+</tr>
+<tr>
+<td><a href="../../modules/hylo-core/hylo.core.remote.protocol/"><code>hylo.core.remote.protocol</code></a></td>
+<td>EnvServer protocol <code>hylo.envserver/v0.1</code>: newline-delimited JSON over a subprocess's stdio</td>
+</tr>
+<tr>
+<td><a href="../../modules/hylo-core/hylo.core.remote.server/"><code>hylo.core.remote.server</code></a></td>
+<td>EnvServer: hosts one Environment in its own process (in practice its own venv/container), so</td>
+</tr>
+<tr>
+<td><a href="../../modules/hylo-core/hylo.core.remote.wire/"><code>hylo.core.remote.wire</code></a></td>
+<td>msgpack-numpy wire format (the one openpi uses), shared by the policy server (hylo-serve) and the openpi client</td>
+</tr>
+<tr>
+<td><a href="../../modules/hylo-core/hylo.core.remote.workcell/"><code>hylo.core.remote.workcell</code></a></td>
+<td>Workcell API (hylo.workcell/v0.1): what a workcell serves and a control plane calls</td>
+</tr>
+<tr>
+<td><a href="../../modules/hylo-core/hylo.core.remote.ws/"><code>hylo.core.remote.ws</code></a></td>
+<td>WebSocket transport for the EnvServer / AgentServer protocols: run a simulator or a policy on another</td>
+</tr>
+<tr>
+<td><a href="../../contracts/#hylo.core.robot"><code>hylo.core.robot</code></a></td>
+<td>Robot description contract (hylo.robot/v0.1): what a manipulation environment tells tool-using agents about its</td>
+</tr>
+<tr>
+<td><a href="../../contracts/#hylo.core.safety"><code>hylo.core.safety</code></a></td>
+<td>SafetyShield: the single, non-bypassable checkpoint between any Agent and any Environment</td>
+</tr>
+<tr>
+<td><a href="../../contracts/#hylo.core.scene"><code>hylo.core.scene</code></a></td>
+<td>Table-top scene contract (hylo.scene/v0.1): a manipulation task written as data, so a model can author it, a</td>
+</tr>
+<tr>
+<td><a href="../../artifacts-and-store/#hylo.core.scorecard"><code>hylo.core.scorecard</code></a></td>
+<td>Scorecards (hylo.scorecard/v0.1): the result of running one policy under one benchmark protocol</td>
+</tr>
+<tr>
+<td><a href="../../contracts/#hylo.core.scoring"><code>hylo.core.scoring</code></a></td>
+<td>The <code>scorers</code> and <code>gate_tests</code> plugin contracts (hylo.scorer, hylo.gate_test) and the data they exchange</td>
+</tr>
+<tr>
+<td><a href="../../modules/hylo-core/hylo.core.seal/"><code>hylo.core.seal</code></a></td>
+<td>Run evidence: hash-chain checks, run seals and a scan of what models were shown (RFC-0007 part 5)</td>
+</tr>
+<tr>
+<td><a href="../../modules/hylo-core/hylo.core.stage/"><code>hylo.core.stage</code></a></td>
+<td>Stage contract (hylo.stage/v0.1): an open world as an entity tree that a person, a model or a program edits through</td>
+</tr>
+<tr>
+<td><a href="../../modules/hylo-core/hylo.core.stage_cli/"><code>hylo.core.stage_cli</code></a></td>
+<td><code>hylo stage</code>: stages (hylo.stage/v0.1) on disk, with their revisions</td>
+</tr>
+<tr>
+<td><a href="../../artifacts-and-store/#hylo.core.store"><code>hylo.core.store</code></a></td>
+<td>Run and artifact store (hylo.store/v0.1): global ids, references instead of paths, deletion protection, sync</td>
+</tr>
+<tr>
+<td><a href="../../contracts/#hylo.core.task"><code>hylo.core.task</code></a></td>
+<td>Task contracts. A TaskSpec covers both LIBERO-style declarative tasks with fixed init states and</td>
+</tr>
+<tr>
+<td><a href="../../modules/hylo-core/hylo.core.tooling/"><code>hylo.core.tooling</code></a></td>
+<td>Typed tool surfaces (hylo.tools/v0.1): what a tool-calling model may call, declared once and checked on every call</td>
+</tr>
+<tr>
+<td><a href="../../kernel/#hylo.core.trace"><code>hylo.core.trace</code></a></td>
+<td>Event-sourced, replayable episode trace</td>
+</tr>
+<tr>
+<td><a href="../../contracts/#hylo.core.types"><code>hylo.core.types</code></a></td>
+<td>Core data contracts shared by every layer (design/interfaces/environment.md, agent.md)</td>
+</tr>
+<tr>
+<td><a href="../../modules/hylo-core/hylo.testing/"><code>hylo.testing</code></a></td>
+<td>Test fixtures shipped with core: the test double environment (testing.point_reach) and the conformance kit</td>
+</tr>
+<tr>
+<td><a href="../../modules/hylo-core/hylo.testing.conformance/"><code>hylo.testing.conformance</code></a></td>
+<td>Conformance kit: contract checks every plugin must pass (design/plugin-system.md §6)</td>
+</tr>
+<tr>
+<td><a href="../../modules/hylo-core/hylo.testing.learners/"><code>hylo.testing.learners</code></a></td>
+<td>A dependency-free learner for tests and conformance: summarises development runs into a sealed artifact</td>
+</tr>
+<tr>
+<td><a href="../../modules/hylo-core/hylo.testing.point_reach/"><code>hylo.testing.point_reach</code></a></td>
+<td>Test double: a deterministic 2-D point-mass environment ("testing.point_reach") for unit and conformance tests</td>
+</tr>
+<tr>
+<td><a href="../../modules/hylo-core/hylo.testing.setup/"><code>hylo.testing.setup</code></a></td>
+<td>Where plugin checks run: a real simulator when one is installed, the test double otherwise</td>
+</tr>
+</tbody>
+</table>
+<h2 id="hylocore"><code>hylo.core</code><a class="headerlink" href="#hylocore" title="Permanent link">¶</a></h2>
+<p><a data-api-module="hylo.core" href="../../modules/hylo-core/hylo.core/">Module API</a>. Hylo core: contracts, execution kernel, safety shield, events, trace, registry, config</p>
+<h2 id="hylocoreagent"><code>hylo.core.agent</code><a class="headerlink" href="#hylocoreagent" title="Permanent link">¶</a></h2>
+<p>A core contract: documented in <a href="../../contracts/#hylo.core.agent">contracts</a>.</p>
+<h2 id="hylocoreartifact"><code>hylo.core.artifact</code><a class="headerlink" href="#hylocoreartifact" title="Permanent link">¶</a></h2>
+<p>A core contract: documented in <a href="../../artifacts-and-store/#hylo.core.artifact">artifacts and store</a>.</p>
+<h2 id="hylocorebenchmark"><code>hylo.core.benchmark</code><a class="headerlink" href="#hylocorebenchmark" title="Permanent link">¶</a></h2>
+<p>A core contract: documented in <a href="../../contracts/#hylo.core.benchmark">contracts</a>.</p>
+<h2 id="hylocorecli"><code>hylo.core.cli</code><a class="headerlink" href="#hylocorecli" title="Permanent link">¶</a></h2>
+<p><a data-api-module="hylo.core.cli" href="../../modules/hylo-core/hylo.core.cli/">Module API</a>. <code>hylo</code>: the command dispatcher. Each package registers its own subcommands</p>
+<h2 id="hylocorecodec"><code>hylo.core.codec</code><a class="headerlink" href="#hylocorecodec" title="Permanent link">¶</a></h2>
+<p><a data-api-module="hylo.core.codec" href="../../modules/hylo-core/hylo.core.codec/">Module API</a>. JSON-safe encoding for numpy arrays and arbitrary payloads. No pickle anywhere (RPent's socket RPC</p>
+<h2 id="hylocorecompat"><code>hylo.core.compat</code><a class="headerlink" href="#hylocorecompat" title="Permanent link">¶</a></h2>
+<p><a data-api-module="hylo.core.compat" href="../../modules/hylo-core/hylo.core.compat/">Module API</a>. Bind-time compatibility check between an Agent and an Environment</p>
+<h2 id="hylocoreconfig"><code>hylo.core.config</code><a class="headerlink" href="#hylocoreconfig" title="Permanent link">¶</a></h2>
+<p>A core contract: documented in <a href="../../config/#hylo.core.config">config</a>.</p>
+<h2 id="hylocorecontract"><code>hylo.core.contract</code><a class="headerlink" href="#hylocorecontract" title="Permanent link">¶</a></h2>
+<p><a data-api-module="hylo.core.contract" href="../../modules/hylo-core/hylo.core.contract/">Module API</a>. Base class and field types for data contracts</p>
+<h2 id="hylocoredatasource"><code>hylo.core.datasource</code><a class="headerlink" href="#hylocoredatasource" title="Permanent link">¶</a></h2>
+<p><a data-api-module="hylo.core.datasource" href="../../modules/hylo-core/hylo.core.datasource/">Module API</a>. External data contracts (RFC-0004): demonstrations, videos and other robots' logs</p>
+<h2 id="hylocoredeployment"><code>hylo.core.deployment</code><a class="headerlink" href="#hylocoredeployment" title="Permanent link">¶</a></h2>
+<p>A core contract: documented in <a href="../../artifacts-and-store/#hylo.core.deployment">artifacts and store</a>.</p>
+<h2 id="hylocoreenv"><code>hylo.core.env</code><a class="headerlink" href="#hylocoreenv" title="Permanent link">¶</a></h2>
+<p>A core contract: documented in <a href="../../contracts/#hylo.core.env">contracts</a>.</p>
+<h2 id="hylocoreepisode_memory"><code>hylo.core.episode_memory</code><a class="headerlink" href="#hylocoreepisode_memory" title="Permanent link">¶</a></h2>
+<p><a data-api-module="hylo.core.episode_memory" href="../../modules/hylo-core/hylo.core.episode_memory/">Module API</a>. Observable episode-memory contracts. No simulator handles, evaluators or model dependencies</p>
+<h2 id="hylocoreerrors"><code>hylo.core.errors</code><a class="headerlink" href="#hylocoreerrors" title="Permanent link">¶</a></h2>
+<p><a data-api-module="hylo.core.errors" href="../../modules/hylo-core/hylo.core.errors/">Module API</a>. Error taxonomy (semantics follow inspect-robots errors.py and vla-eval EpisodeError.phase)</p>
+<h2 id="hylocoreevents"><code>hylo.core.events</code><a class="headerlink" href="#hylocoreevents" title="Permanent link">¶</a></h2>
+<p>A core contract: documented in <a href="../../kernel/#hylo.core.events">kernel</a>.</p>
+<h2 id="hylocoreexperience"><code>hylo.core.experience</code><a class="headerlink" href="#hylocoreexperience" title="Permanent link">¶</a></h2>
+<p><a data-api-module="hylo.core.experience" href="../../modules/hylo-core/hylo.core.experience/">Module API</a>. Experience contracts (RFC-0003): action memory, lessons and skills. Contracts and protocols only; stores live in</p>
+<h2 id="hylocoreimprovement"><code>hylo.core.improvement</code><a class="headerlink" href="#hylocoreimprovement" title="Permanent link">¶</a></h2>
+<p>A core contract: documented in <a href="../../contracts/#hylo.core.improvement">contracts</a>.</p>
+<h2 id="hylocoreinstrument"><code>hylo.core.instrument</code><a class="headerlink" href="#hylocoreinstrument" title="Permanent link">¶</a></h2>
+<p>A core contract: documented in <a href="../../contracts/#hylo.core.instrument">contracts</a>.</p>
+<h2 id="hylocorekernel"><code>hylo.core.kernel</code><a class="headerlink" href="#hylocorekernel" title="Permanent link">¶</a></h2>
+<p>A core contract: documented in <a href="../../kernel/#hylo.core.kernel">kernel</a>.</p>
+<h2 id="hylocorelearning"><code>hylo.core.learning</code><a class="headerlink" href="#hylocorelearning" title="Permanent link">¶</a></h2>
+<p>A core contract: documented in <a href="../../contracts/#hylo.core.learning">contracts</a>.</p>
+<h2 id="hylocorememory"><code>hylo.core.memory</code><a class="headerlink" href="#hylocorememory" title="Permanent link">¶</a></h2>
+<p><a data-api-module="hylo.core.memory" href="../../modules/hylo-core/hylo.core.memory/">Module API</a>. Memory contracts (schema from our research notes)</p>
+<h2 id="hylocoreplugins"><code>hylo.core.plugins</code><a class="headerlink" href="#hylocoreplugins" title="Permanent link">¶</a></h2>
+<p>A core contract: documented in <a href="../../config/#hylo.core.plugins">config</a>.</p>
+<h2 id="hylocorepolicy"><code>hylo.core.policy</code><a class="headerlink" href="#hylocorepolicy" title="Permanent link">¶</a></h2>
+<p>A core contract: documented in <a href="../../contracts/#hylo.core.policy">contracts</a>.</p>
+<h2 id="hylocoreprofile"><code>hylo.core.profile</code><a class="headerlink" href="#hylocoreprofile" title="Permanent link">¶</a></h2>
+<p>A core contract: documented in <a href="../../config/#hylo.core.profile">config</a>.</p>
+<h2 id="hylocorereasoning"><code>hylo.core.reasoning</code><a class="headerlink" href="#hylocorereasoning" title="Permanent link">¶</a></h2>
+<p>A core contract: documented in <a href="../../contracts/#hylo.core.reasoning">contracts</a>.</p>
+<h2 id="hylocoreregistry"><code>hylo.core.registry</code><a class="headerlink" href="#hylocoreregistry" title="Permanent link">¶</a></h2>
+<p>A core contract: documented in <a href="../../config/#hylo.core.registry">config</a>.</p>
+<h2 id="hylocoreremote"><code>hylo.core.remote</code><a class="headerlink" href="#hylocoreremote" title="Permanent link">¶</a></h2>
+<p><a data-api-module="hylo.core.remote" href="../../modules/hylo-core/hylo.core.remote/">Module API</a>. </p>
+<h2 id="hylocoreremoteagent_client"><code>hylo.core.remote.agent_client</code><a class="headerlink" href="#hylocoreremoteagent_client" title="Permanent link">¶</a></h2>
+<p><a data-api-module="hylo.core.remote.agent_client" href="../../modules/hylo-core/hylo.core.remote.agent_client/">Module API</a>. RemoteAgent: an Agent proxy for an AgentServer subprocess (e.g. a VLA in its own torch venv)</p>
+<h2 id="hylocoreremoteagent_server"><code>hylo.core.remote.agent_server</code><a class="headerlink" href="#hylocoreremoteagent_server" title="Permanent link">¶</a></h2>
+<p><a data-api-module="hylo.core.remote.agent_server" href="../../modules/hylo-core/hylo.core.remote.agent_server/">Module API</a>. AgentServer: hosts one Agent in its own process (and venv), mirroring the EnvServer</p>
+<h2 id="hylocoreremoteclient"><code>hylo.core.remote.client</code><a class="headerlink" href="#hylocoreremoteclient" title="Permanent link">¶</a></h2>
+<p><a data-api-module="hylo.core.remote.client" href="../../modules/hylo-core/hylo.core.remote.client/">Module API</a>. RemoteEnvironment: an Environment proxy for an EnvServer subprocess</p>
+<h2 id="hylocoreremotehandlers"><code>hylo.core.remote.handlers</code><a class="headerlink" href="#hylocoreremotehandlers" title="Permanent link">¶</a></h2>
+<p><a data-api-module="hylo.core.remote.handlers" href="../../modules/hylo-core/hylo.core.remote.handlers/">Module API</a>. Transport-agnostic request dispatch for the EnvServer and AgentServer protocols</p>
+<h2 id="hylocoreremoteprotocol"><code>hylo.core.remote.protocol</code><a class="headerlink" href="#hylocoreremoteprotocol" title="Permanent link">¶</a></h2>
+<p><a data-api-module="hylo.core.remote.protocol" href="../../modules/hylo-core/hylo.core.remote.protocol/">Module API</a>. EnvServer protocol <code>hylo.envserver/v0.1</code>: newline-delimited JSON over a subprocess's stdio</p>
+<h2 id="hylocoreremoteserver"><code>hylo.core.remote.server</code><a class="headerlink" href="#hylocoreremoteserver" title="Permanent link">¶</a></h2>
+<p><a data-api-module="hylo.core.remote.server" href="../../modules/hylo-core/hylo.core.remote.server/">Module API</a>. EnvServer: hosts one Environment in its own process (in practice its own venv/container), so</p>
+<h2 id="hylocoreremotewire"><code>hylo.core.remote.wire</code><a class="headerlink" href="#hylocoreremotewire" title="Permanent link">¶</a></h2>
+<p><a data-api-module="hylo.core.remote.wire" href="../../modules/hylo-core/hylo.core.remote.wire/">Module API</a>. msgpack-numpy wire format (the one openpi uses), shared by the policy server (hylo-serve) and the openpi client</p>
+<h2 id="hylocoreremoteworkcell"><code>hylo.core.remote.workcell</code><a class="headerlink" href="#hylocoreremoteworkcell" title="Permanent link">¶</a></h2>
+<p><a data-api-module="hylo.core.remote.workcell" href="../../modules/hylo-core/hylo.core.remote.workcell/">Module API</a>. Workcell API (hylo.workcell/v0.1): what a workcell serves and a control plane calls</p>
+<h2 id="hylocoreremotews"><code>hylo.core.remote.ws</code><a class="headerlink" href="#hylocoreremotews" title="Permanent link">¶</a></h2>
+<p><a data-api-module="hylo.core.remote.ws" href="../../modules/hylo-core/hylo.core.remote.ws/">Module API</a>. WebSocket transport for the EnvServer / AgentServer protocols: run a simulator or a policy on another</p>
+<h2 id="hylocorerobot"><code>hylo.core.robot</code><a class="headerlink" href="#hylocorerobot" title="Permanent link">¶</a></h2>
+<p>A core contract: documented in <a href="../../contracts/#hylo.core.robot">contracts</a>.</p>
+<h2 id="hylocoresafety"><code>hylo.core.safety</code><a class="headerlink" href="#hylocoresafety" title="Permanent link">¶</a></h2>
+<p>A core contract: documented in <a href="../../contracts/#hylo.core.safety">contracts</a>.</p>
+<h2 id="hylocorescene"><code>hylo.core.scene</code><a class="headerlink" href="#hylocorescene" title="Permanent link">¶</a></h2>
+<p>A core contract: documented in <a href="../../contracts/#hylo.core.scene">contracts</a>.</p>
+<h2 id="hylocorescorecard"><code>hylo.core.scorecard</code><a class="headerlink" href="#hylocorescorecard" title="Permanent link">¶</a></h2>
+<p>A core contract: documented in <a href="../../artifacts-and-store/#hylo.core.scorecard">artifacts and store</a>.</p>
+<h2 id="hylocorescoring"><code>hylo.core.scoring</code><a class="headerlink" href="#hylocorescoring" title="Permanent link">¶</a></h2>
+<p>A core contract: documented in <a href="../../contracts/#hylo.core.scoring">contracts</a>.</p>
+<h2 id="hylocoreseal"><code>hylo.core.seal</code><a class="headerlink" href="#hylocoreseal" title="Permanent link">¶</a></h2>
+<p><a data-api-module="hylo.core.seal" href="../../modules/hylo-core/hylo.core.seal/">Module API</a>. Run evidence: hash-chain checks, run seals and a scan of what models were shown (RFC-0007 part 5)</p>
+<h2 id="hylocorestage"><code>hylo.core.stage</code><a class="headerlink" href="#hylocorestage" title="Permanent link">¶</a></h2>
+<p><a data-api-module="hylo.core.stage" href="../../modules/hylo-core/hylo.core.stage/">Module API</a>. Stage contract (hylo.stage/v0.1): an open world as an entity tree that a person, a model or a program edits through</p>
+<h2 id="hylocorestage_cli"><code>hylo.core.stage_cli</code><a class="headerlink" href="#hylocorestage_cli" title="Permanent link">¶</a></h2>
+<p><a data-api-module="hylo.core.stage_cli" href="../../modules/hylo-core/hylo.core.stage_cli/">Module API</a>. <code>hylo stage</code>: stages (hylo.stage/v0.1) on disk, with their revisions</p>
+<h2 id="hylocorestore"><code>hylo.core.store</code><a class="headerlink" href="#hylocorestore" title="Permanent link">¶</a></h2>
+<p>A core contract: documented in <a href="../../artifacts-and-store/#hylo.core.store">artifacts and store</a>.</p>
+<h2 id="hylocoretask"><code>hylo.core.task</code><a class="headerlink" href="#hylocoretask" title="Permanent link">¶</a></h2>
+<p>A core contract: documented in <a href="../../contracts/#hylo.core.task">contracts</a>.</p>
+<h2 id="hylocoretooling"><code>hylo.core.tooling</code><a class="headerlink" href="#hylocoretooling" title="Permanent link">¶</a></h2>
+<p><a data-api-module="hylo.core.tooling" href="../../modules/hylo-core/hylo.core.tooling/">Module API</a>. Typed tool surfaces (hylo.tools/v0.1): what a tool-calling model may call, declared once and checked on every call</p>
+<h2 id="hylocoretrace"><code>hylo.core.trace</code><a class="headerlink" href="#hylocoretrace" title="Permanent link">¶</a></h2>
+<p>A core contract: documented in <a href="../../kernel/#hylo.core.trace">kernel</a>.</p>
+<h2 id="hylocoretypes"><code>hylo.core.types</code><a class="headerlink" href="#hylocoretypes" title="Permanent link">¶</a></h2>
+<p>A core contract: documented in <a href="../../contracts/#hylo.core.types">contracts</a>.</p>
+<h2 id="hylotesting"><code>hylo.testing</code><a class="headerlink" href="#hylotesting" title="Permanent link">¶</a></h2>
+<p><a data-api-module="hylo.testing" href="../../modules/hylo-core/hylo.testing/">Module API</a>. Test fixtures shipped with core: the test double environment (testing.point_reach) and the conformance kit</p>
+<h2 id="hylotestingconformance"><code>hylo.testing.conformance</code><a class="headerlink" href="#hylotestingconformance" title="Permanent link">¶</a></h2>
+<p><a data-api-module="hylo.testing.conformance" href="../../modules/hylo-core/hylo.testing.conformance/">Module API</a>. Conformance kit: contract checks every plugin must pass (design/plugin-system.md §6)</p>
+<h2 id="hylotestinglearners"><code>hylo.testing.learners</code><a class="headerlink" href="#hylotestinglearners" title="Permanent link">¶</a></h2>
+<p><a data-api-module="hylo.testing.learners" href="../../modules/hylo-core/hylo.testing.learners/">Module API</a>. A dependency-free learner for tests and conformance: summarises development runs into a sealed artifact</p>
+<h2 id="hylotestingpoint_reach"><code>hylo.testing.point_reach</code><a class="headerlink" href="#hylotestingpoint_reach" title="Permanent link">¶</a></h2>
+<p><a data-api-module="hylo.testing.point_reach" href="../../modules/hylo-core/hylo.testing.point_reach/">Module API</a>. Test double: a deterministic 2-D point-mass environment ("testing.point_reach") for unit and conformance tests</p>
+<h2 id="hylotestingsetup"><code>hylo.testing.setup</code><a class="headerlink" href="#hylotestingsetup" title="Permanent link">¶</a></h2>
+<p><a data-api-module="hylo.testing.setup" href="../../modules/hylo-core/hylo.testing.setup/">Module API</a>. Where plugin checks run: a real simulator when one is installed, the test double otherwise</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden="">
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"></path></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright 2026 Hylo AI
+    </div>
+  
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.indexes", "navigation.path", "navigation.top", "content.code.copy", "content.tabs.link", "search.highlight", "search.share", "toc.follow"], "search": "../../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.c21346df.min.js"></script>
+      
+        <script src="../../../assets/javascripts/reference-links.js"></script>
+      
+        <script src="../../../assets/javascripts/content-details.js"></script>
+      
+        <script src="../../../assets/javascripts/toc.js"></script>
+      
+    
+  
+<script id="init-glightbox">const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});
+document$.subscribe(()=>{ lightbox.reload(); });
+</script></body></html>

@@ -1,0 +1,114 @@
+/* Hylo palette, shared with hyloai.github.io: graphite, warm white, one cinnabar accent */
+:root, [data-md-color-scheme="default"] {
+  --md-primary-fg-color: #171c22;
+  --md-primary-fg-color--light: #3a4048;
+  --md-primary-fg-color--dark: #0e1115;
+  --md-accent-fg-color: #c8442d;
+  --md-typeset-a-color: #b23a25;
+  --md-default-bg-color: #fbfaf7;
+  --hylo-ok: #15803d;
+  --hylo-warn: #b45309;
+  --hylo-hw: #6d28d9;
+  --hylo-figure-bg: #ffffff;
+}
+[data-md-color-scheme="slate"] {
+  --md-primary-fg-color: #1a1d21;
+  --md-primary-fg-color--light: #e8664d;
+  --md-primary-fg-color--dark: #0e1115;
+  --md-accent-fg-color: #e8664d;
+  --md-typeset-a-color: #ef7a62;
+  --md-default-bg-color: #121416;
+  --hylo-ok: #4ade80;
+  --hylo-warn: #fbbf24;
+  --hylo-hw: #c4b5fd;
+  --hylo-figure-bg: #f8fafc;
+}
+.hylo-badge { font-weight: 600; white-space: nowrap; }
+.hylo-ok { color: var(--hylo-ok); }
+.hylo-warn { color: var(--hylo-warn); }
+.hylo-hw { color: var(--hylo-hw); }
+
+/* diagrams come in a light and a dark version; show the one for the current scheme */
+.md-typeset img.hylo-diagram { display: block; width: 100%; margin: 1.2em auto; }
+[data-md-color-scheme="default"] .md-typeset img.only-dark,
+[data-md-color-scheme="slate"] .md-typeset img.only-light { display: none; }
+
+/* charts and screenshots are drawn on white; in dark mode they sit on a light card */
+.md-typeset img.hylo-figure, .md-typeset figure img {
+  background: var(--hylo-figure-bg);
+  border-radius: 6px;
+  padding: 6px;
+}
+.md-typeset figure { margin: 1.5em auto; }
+.md-typeset figcaption { max-width: 46rem; font-size: .72rem; color: var(--md-default-fg-color--light); }
+
+/* home page */
+.hylo-hero { padding: 1.2rem 0 .4rem; }
+.hylo-hero h1 { margin-bottom: .3rem; font-weight: 800; letter-spacing: -.02em; color: var(--md-default-fg-color); }
+.md-typeset .md-button--primary { background: #c8442d; border-color: #c8442d; color: #fff; }
+.md-typeset .md-button--primary:hover { background: #b23a25; border-color: #b23a25; }
+.hylo-hero p.hylo-tagline { font-size: 1.05rem; max-width: 40rem; color: var(--md-default-fg-color--light); }
+.md-typeset .grid.cards > ul > li { border-radius: 8px; }
+.md-typeset table:not([class]) { font-size: .72rem; }
+[data-md-color-scheme="slate"] .md-typeset .md-button:not(.md-button--primary) {
+  color: var(--md-primary-fg-color--light);
+  border-color: var(--md-primary-fg-color--light);
+}
+
+/* Global website destinations remain separate from the documentation topics. */
+.hylo-global-links { display: flex; gap: .8rem; align-items: center; font-size: .7rem; }
+.hylo-global-links a { white-space: nowrap; padding: .5rem .1rem; }
+.hylo-global-links a:hover { color: var(--md-accent-fg-color); }
+@media (max-width: 600px) { .hylo-global-links { gap: .5rem; font-size: .65rem; } .hylo-global-links a:first-child { display: none; } }
+
+/* Page contents show section headings first, with nested details on demand. */
+.hylo-toc-summary {
+  display: flex;
+  align-items: center;
+  gap: .3rem;
+  margin-top: .625em;
+  cursor: pointer;
+  list-style: none;
+}
+.hylo-toc-summary::-webkit-details-marker { display: none; }
+.hylo-toc-summary > .md-nav__link { flex: 1; min-width: 0; margin-top: 0; }
+.hylo-toc-summary:focus-visible { outline: 2px solid var(--md-accent-fg-color); outline-offset: 2px; }
+.hylo-toc-chevron { display: grid; place-items: center; width: 1.2rem; height: 1.2rem; flex-shrink: 0; }
+.hylo-toc-chevron::before {
+  content: "";
+  width: .3rem;
+  height: .3rem;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: rotate(-45deg);
+}
+.hylo-toc-group[open] > .hylo-toc-summary .hylo-toc-chevron::before { transform: rotate(45deg); }
+
+/* Reference details use quiet disclosure rows instead of callout styling. */
+.md-typeset details.hylo-content-details {
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: .2rem;
+  box-shadow: none;
+  font-size: inherit;
+}
+.md-typeset .hylo-content-details > summary {
+  background: transparent;
+  padding-left: .7rem;
+}
+.md-typeset .hylo-content-details > summary::before { display: none; }
+.md-typeset .hylo-content-details > summary > :is(h2, h3, h4, h5, h6) {
+  display: inline;
+  margin: 0;
+  font-size: .8rem;
+  font-weight: 600;
+  letter-spacing: normal;
+  text-transform: none;
+  overflow-wrap: anywhere;
+}
+.md-typeset .hylo-content-details > summary:focus-visible {
+  outline: 2px solid var(--md-accent-fg-color);
+  outline-offset: 2px;
+}
+@media print {
+  .md-typeset details.hylo-content-details > :not(summary) { display: block !important; }
+}
