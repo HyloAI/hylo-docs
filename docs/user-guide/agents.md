@@ -47,3 +47,4 @@ in the [Validation records](../developer-guide/validation/tool-agents.md).
 - [Policies](policies.md): configure a policy and its agent.
 - [Programs](developing-strategies.md): run and edit a task program.
 - [Tool-calling agents](tool-agents.md): run, watch and steer a model through typed tools.
+- [Robot-control walkthrough](agents/robot-control.md): watch a recorded episode with checked actions.

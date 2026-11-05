@@ -27,9 +27,10 @@ Physical RSI connects agents acting in worlds with accumulated memory and reusab
 concepts; task guides explain execution, evaluation, learning, campaigns and deployment. Skills have their own
 navigation entry even though the library is implemented in the memory package. Architecture describes the
 implementation; historical designs are grouped under the internal archive.
-The public navigation has five sections: **Get started, Guides, Use cases, Developers,
+The public navigation has four sections: **Get started, Guides, Developers,
 and Reference**. Home is the entry page. **Guides** groups concept explanations and practical guides under
-**Physical RSI, Worlds, Agents, Memory and Skills**, followed by deployment and operations.
+**Physical RSI, Worlds, Agents, Memory and Skills**, with recorded examples in their corresponding topics,
+followed by deployment and operations.
 The full site adds **Internal** for current direction, decisions,
 research, experiments and historical records. `mkdocs.yml` owns the navigation; the public build inherits it
 and filters internal/excluded entries with `mkdocs/public_hook.py`.
@@ -40,7 +41,8 @@ usage and outputs. Memory fields and skill status live in `docs/reference/memory
 including `docs/developer-guide/validation/guide-results.md`. Preserve published URLs and section anchors when
 shortening titles. The [authoring guide](docs/developer-guide/docs.md#titles-and-scope) defines this structure.
 
-Recorded case introductions live in `docs/use-cases/`. Validation includes curated summaries and reproduction
+Recorded walkthroughs live under `docs/user-guide/worlds/`, `docs/user-guide/agents/` and
+`docs/user-guide/skills/`, alongside their topic guides. Validation includes curated summaries and reproduction
 records generated from repository example READMEs. Public Research articles and benchmark results live at
 https://hyloai.github.io/research/, in the website repository. Edit the original records to change measured results.
 Reference groups CLI, Configuration, Worlds & tools, Memory & skills, Python API, Data formats and the Plugin catalogue.

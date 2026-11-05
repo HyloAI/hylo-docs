@@ -13,7 +13,7 @@ Hylo connects those capabilities through a measured improvement loop.</p>
 
 [Get started](getting-started/installation.md){ .md-button .md-button--primary }
 [Quickstart](getting-started/quickstart.md){ .md-button }
-[Use cases](use-cases/index.md){ .md-button }
+[Guides](user-guide/index.md){ .md-button }
 
 </div>
 
@@ -43,9 +43,19 @@ For hardware use, configure manual campaign approval and validate the target dep
 | [Memory](user-guide/memory/index.md) | observations and experience that inform later decisions |
 | [Skills](user-guide/skills.md) | reusable implementations with applicability and verification evidence |
 
-[Concepts](user-guide/overview.md) explains their relationship. [Use cases](use-cases/index.md)
-shows complete workflows. [Research](https://hyloai.github.io/research/) publishes measured outcomes and analysis. A simulation result applies to its
+[Concepts](user-guide/overview.md) explains their relationship.
+[Research](https://hyloai.github.io/research/) publishes measured outcomes and analysis. A simulation result applies to its
 stated task and observation conditions; it does not establish readiness on hardware.
+
+## Recorded workflows
+
+Watch a complete task, then follow the guide within each topic to try it yourself.
+
+| Task | Guide topic and example |
+|---|---|
+| Build a world | [Worlds: scene construction and robot motion](user-guide/worlds/examples.md) |
+| Control a robot | [Agents: a model calling robot tools](user-guide/agents/robot-control.md) |
+| Develop and reuse a skill | [Skills: program development and reuse](user-guide/skills/development-and-reuse.md) |
 
 ## Explore { #go-deeper }
 

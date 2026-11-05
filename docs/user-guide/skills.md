@@ -45,4 +45,4 @@ apply or execute. A remembered location informs a decision. A retrieved sorting 
 
 - [Program skills](research-and-skills.md): develop, verify and reuse a program.
 - [Skill library](memory/skills.md): build a library and configure retrieval.
-- [Sorting demo](../use-cases/program-skills.md): watch a recorded development and reuse workflow.
+- [Sorting demo](skills/development-and-reuse.md): watch a recorded development and reuse workflow.

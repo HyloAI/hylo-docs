@@ -166,11 +166,13 @@ nav:
   - Worlds:
     - Overview: user-guide/worlds/overview.md
     - Create a world: user-guide/worlds.md
+    - Demos: user-guide/worlds/examples.md
   - Agents:
     - Overview: user-guide/agents.md
     - Policies: user-guide/policies.md
     - Programs: user-guide/developing-strategies.md
     - Tool agents: user-guide/tool-agents.md
+    - Demos: user-guide/agents/robot-control.md
   - Memory:
     - user-guide/memory/index.md
     - Quickstart: user-guide/using-memory.md
@@ -184,6 +186,7 @@ nav:
     - Overview: user-guide/skills.md
     - Skill library: user-guide/memory/skills.md
     - Program skills: user-guide/research-and-skills.md
+    - Demos: user-guide/skills/development-and-reuse.md
   - Operations:
     - user-guide/deployment.md
     - Deployments repository: configuration/deployments-repo.md
@@ -191,11 +194,6 @@ nav:
     - user-guide/store.md
     - user-guide/safety.md
     - user-guide/security.md
-- Use cases:
-  - use-cases/index.md
-  - Build worlds: use-cases/worlds.md
-  - Control robots: use-cases/robot-control.md
-  - Reuse skills: use-cases/program-skills.md
 - Developers:
   - Architecture: design/overview.md
   - Validation:

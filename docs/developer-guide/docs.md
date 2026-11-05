@@ -51,7 +51,7 @@ remain expanded; the full reference content is also available without JavaScript
 | [Formats and schemas](../api/formats.md) | the format table and `hylo schema` | the code |
 | API Reference: the core pages | a short hand-written intro in `docs/api/`, then the docstrings | the intro here, the rest in the code |
 | API package indexes and module pages | the docstrings of every package | the code |
-| Use cases | curated recorded workflows | `docs/use-cases/` |
+| Guides walkthroughs | curated recorded workflows | `docs/user-guide/worlds/`, `docs/user-guide/agents/`, `docs/user-guide/skills/` |
 | Validation records | generated example READMEs and curated evidence summaries | the source README; summary prose in `docs/developer-guide/validation/` |
 | Public Research | website articles and benchmark results | the website repository |
 
@@ -97,14 +97,14 @@ Small flows that change often can be Mermaid diagrams in a `mermaid` code block 
 
 The five product concepts are **Physical RSI, Worlds, Agents, Memory and Skills**. Physical RSI connects the
 other four. Home introduces that relationship; Guides groups explanations and practical guides by these
-five topics. Each topic starts with its concept page, followed by operational guides.
+five topics. Each topic starts with its concept page, followed by operational guides and recorded walkthroughs.
 Skills have their own topic even though the library is implemented in the memory package. Deployment and
 operations form a supporting section in Guides.
 
 | Content | Responsibility |
 |---|---|
 | Home | a brief product introduction, the five concepts and starting points |
-| Guides | concept explanations and concrete operations grouped by topic |
+| Guides | concept explanations, concrete operations and recorded workflows grouped by topic |
 | Concepts | how the five concepts relate; supporting command/config terms are secondary |
 | RSI | the improvement loop, what can change and how outcomes support those changes |
 | Worlds | scenes, robots, interactions and goal checks |
@@ -112,7 +112,6 @@ operations form a supporting section in Guides.
 | Memory | observations and experience, storage, retrieval and data boundaries |
 | Skills | reusable task capabilities, applicability, verification and reuse |
 | Operations | deployment, Studio, stores, safety and security |
-| Use cases | recorded task workflows and reproduction entry points |
 | Public Research (website) | experimental findings, conditions, limitations and benchmark results |
 | Developers | architecture, extension tutorials, system validation and contributing |
 | Reference | exact CLI, configuration, contracts, formats and module API details |
@@ -185,7 +184,8 @@ product copy; keep broader model-serving ambitions in design planning.
   Keep a short link from the guide. Expected tutorial output may stay when it helps a reader check their run.
 - A section that only links elsewhere usually belongs in Next or a short reference paragraph. Preserve its old
   fragment as an HTML span instead of retaining an empty heading in the table of contents.
-- Use cases lead with the task and demo. State scope up front; put detailed recording provenance in a disclosure.
+- Recorded walkthroughs live in their Guides topic and lead with the task and demo. State scope up front;
+  put detailed recording provenance in a disclosure and link to the operational guide for reproduction.
 - Mark experimental integrations at their entry point. Moving results out of a guide must not imply broader
   reliability or remove conditions needed to use the capability correctly.
 

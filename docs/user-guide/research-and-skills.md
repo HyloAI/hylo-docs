@@ -143,4 +143,4 @@ for that choice. A standalone `--evaluate` command does not run the campaign pro
 
 - [Skill library](memory/skills.md): retrieve and apply program skills.
 - [Campaigns](campaigns.md): promotion, approval and rollback.
-- [Sorting demo](../use-cases/program-skills.md): recorded development, verification and reuse.
+- [Sorting demo](skills/development-and-reuse.md): recorded development, verification and reuse.

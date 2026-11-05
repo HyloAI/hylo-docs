@@ -150,7 +150,7 @@ when the model should write a reusable sequence of actions in Python.
 
 ## Next
 
-- [Robot-control demo](../use-cases/robot-control.md): a recorded episode with checked actions.
+- [Robot-control demo](agents/robot-control.md): a recorded episode with checked actions.
 
 - [Execution model](../developer-guide/execution-model.md#tool-calling-agents): runtime and implementation details.
 
