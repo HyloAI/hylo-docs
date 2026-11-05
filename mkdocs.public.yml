@@ -6,7 +6,7 @@ site_url: https://hyloai.github.io/hylo-docs/
 site_dir: site-public
 repo_url: https://github.com/HyloAI/hylo-docs
 repo_name: HyloAI/hylo-docs
-copyright: Copyright 2026 Hylo AI · Apache License 2.0
+copyright: Copyright 2026 Hylo AI
 exclude_docs: |
   *.inc.md
   research/

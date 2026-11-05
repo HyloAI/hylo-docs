@@ -42,6 +42,7 @@ theme:
 
 extra:
   homepage: https://hyloai.github.io/
+  generator: false
 
 extra_css:
   - assets/stylesheets/extra.css
