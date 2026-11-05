@@ -60,3 +60,26 @@
 .hylo-global-links a { white-space: nowrap; padding: .5rem .1rem; }
 .hylo-global-links a:hover { color: var(--md-accent-fg-color); }
 @media (max-width: 600px) { .hylo-global-links { gap: .5rem; font-size: .65rem; } .hylo-global-links a:first-child { display: none; } }
+
+/* Page contents show section headings first, with nested details on demand. */
+.hylo-toc-summary {
+  display: flex;
+  align-items: center;
+  gap: .3rem;
+  margin-top: .625em;
+  cursor: pointer;
+  list-style: none;
+}
+.hylo-toc-summary::-webkit-details-marker { display: none; }
+.hylo-toc-summary > .md-nav__link { flex: 1; min-width: 0; margin-top: 0; }
+.hylo-toc-summary:focus-visible { outline: 2px solid var(--md-accent-fg-color); outline-offset: 2px; }
+.hylo-toc-chevron { display: grid; place-items: center; width: 1.2rem; height: 1.2rem; flex-shrink: 0; }
+.hylo-toc-chevron::before {
+  content: "";
+  width: .3rem;
+  height: .3rem;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: rotate(-45deg);
+}
+.hylo-toc-group[open] > .hylo-toc-summary .hylo-toc-chevron::before { transform: rotate(45deg); }

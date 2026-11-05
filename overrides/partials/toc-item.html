@@ -1,0 +1,31 @@
+{# Keep section links visible; disclose detailed headings on demand. #}
+{% macro toc_link(item) %}
+  <a href="{{ item.url }}" class="md-nav__link">
+    <span class="md-ellipsis">
+      {% if item.typeset %}
+        <span class="md-typeset">{{ item.typeset.title }}</span>
+      {% else %}
+        {{ item.title }}
+      {% endif %}
+    </span>
+  </a>
+{% endmacro %}
+<li class="md-nav__item">
+  {% if toc_item.children %}
+    <details class="hylo-toc-group">
+      <summary class="hylo-toc-summary">
+        {{ toc_link(toc_item) }}
+        <span class="hylo-toc-chevron" aria-hidden="true"></span>
+      </summary>
+      <nav class="md-nav" aria-label="{{ toc_item.title | striptags | e }}">
+        <ul class="md-nav__list">
+          {% for toc_item in toc_item.children %}
+            {% include "partials/toc-item.html" %}
+          {% endfor %}
+        </ul>
+      </nav>
+    </details>
+  {% else %}
+    {{ toc_link(toc_item) }}
+  {% endif %}
+</li>

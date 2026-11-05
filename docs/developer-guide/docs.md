@@ -31,6 +31,10 @@ uv run python docs/mkdocs/check_site.py docs/site-public --url-prefix /hylo-docs
 excluded entries. Add a page to that shared navigation once. Generated package, module, command-family and workflow
 pages are reached through their indexes and listed under `not_in_nav` so they do not overwhelm the sidebar.
 
+The page table of contents shows its main sections first. Nested headings are collapsed with native disclosure
+controls in `overrides/partials/toc-item.html`; section titles remain links. `assets/javascripts/toc.js` expands
+the matching groups when a reader follows a section anchor, including in the mobile navigation.
+
 | Page | Source | Edit |
 |---|---|---|
 | User Guide, Benchmarking, Configuration, most of Developer Guide | `docs/` in hylo-docs | the Markdown file |
