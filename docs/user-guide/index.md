@@ -13,9 +13,7 @@ for a first run, or [Concepts](overview.md) for the terms used across Hylo.
 | [Memory](memory/index.md) | Use earlier observations and experience | [Use memory](using-memory.md) |
 | [Skills](skills.md) | Retrieve and apply verified implementations | [Program skills](research-and-skills.md) |
 
-<span id="examples-and-results"></span>
-
-## Recorded workflows { #use-cases }
+## Demos
 
 See a complete task, then follow its guide to run it yourself. Each walkthrough includes a recorded demo,
 its observation conditions and a reproduction entry point within the corresponding Guides topic.
@@ -35,7 +33,7 @@ its observation conditions and a reproduction entry point within the correspondi
 | Manage runs and artifacts | [Store](store.md) |
 | Configure action checks and access | [Safety](safety.md), [Security](security.md) |
 
-## Try an example { #run-a-small-example }
+## Try an example
 
 From the workspace root:
 
@@ -44,9 +42,6 @@ uv run python harness/examples/core/02_safety_shield.py --quick
 ```
 
 [Core validation](../developer-guide/validation/core.md) explains the output.
-
-<span id="explore-the-evidence"></span>
-<span id="find-a-configuration"></span>
 
 ## Next
 

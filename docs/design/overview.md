@@ -173,7 +173,7 @@ and the workcell API. A boundary lint enforces this ([contributing](../developer
   improves a deliberately weak parent; from-scratch local-model research remains unsuccessful. Free-scene and
   motion-free showcases and formal robosuite/RoboCasa program evaluations remain unrun.
 - Program execution uses an in-process restricted namespace. Artifact/candidate validation and guard ordering
-  have known gaps; see [Security](../user-guide/security.md) and [recorded workflows](../user-guide/index.md#use-cases).
+  have known gaps; see [Security](../user-guide/security.md) and [demos](../user-guide/index.md#demos).
 - Campaigns run in the foreground of the shell that started them. Studio starts jobs as local subprocesses; it does
   not queue them.
 - The robot path has run with a simulated arm. No physical robot has been connected.

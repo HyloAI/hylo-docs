@@ -17,7 +17,7 @@ After the [quickstart](quickstart.md), choose one path. Each guide states its ow
 ## Explore { #find-explanations-and-evidence }
 
 - [Guides](../user-guide/index.md) groups explanations and tasks by Physical RSI, Worlds, Agents, Memory and Skills.
-- [Recorded workflows](../user-guide/index.md#use-cases) pairs demos with reproduction entry points in each Guides topic.
+- [Demos](../user-guide/index.md#demos) pair recordings with reproduction entry points in each Guides topic.
 - [Research](https://hyloai.github.io/research/) publishes experimental findings and benchmarks.
 - [Optional environments](optional-environments.md) covers Studio, camera rendering and isolated simulator runtimes.
 - [Examples](examples.md) lists shipped experiment and campaign configurations.

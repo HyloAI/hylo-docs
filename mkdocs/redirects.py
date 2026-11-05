@@ -11,10 +11,6 @@ from mkdocs.utils import get_relative_url
 
 
 REDIRECTS = {
-    'use-cases/worlds.md': 'user-guide/worlds/examples.md',
-    'use-cases/robot-control.md': 'user-guide/agents/robot-control.md',
-    'use-cases/program-skills.md': 'user-guide/skills/development-and-reuse.md',
-    'use-cases/index.md': 'user-guide/index.md',
     'showcase/studio.md': 'developer-guide/validation/studio.md',
     'showcase/core.md': 'developer-guide/validation/core.md',
     'showcase/memory.md': 'developer-guide/validation/memory.md',
@@ -28,10 +24,6 @@ REDIRECTS = {
     'showcase/tool-agents.md': 'developer-guide/validation/tool-agents.md',
     'showcase/phase-guided.md': 'developer-guide/validation/phase-guided.md',
     'showcase/video-memory.md': 'developer-guide/validation/video-memory.md',
-    'showcase/index.md': 'user-guide/index.md',
-    'showcase/worlds.md': 'user-guide/worlds/examples.md',
-    'showcase/robot-control.md': 'user-guide/agents/robot-control.md',
-    'showcase/program-skills.md': 'user-guide/skills/development-and-reuse.md',
     'showcase/system-results.md': 'developer-guide/validation/index.md',
     'showcase/tool-agents-robot-toolkit.md': 'developer-guide/validation/tool-agents-robot-toolkit.md',
     'showcase/tool-agents-program-improvement.md': 'developer-guide/validation/tool-agents-program-improvement.md',
